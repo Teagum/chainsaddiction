@@ -1,10 +1,10 @@
 CC = gcc
-OBJ = test.o linalg.o
+OBJ = test_linalg.o linalg.o
 
-test: $(OBJ)
+test_linalg: $(OBJ)
 	$(CC) -o $@ $(OBJ)
 
-test.o: test.c
+testi_linalg.o: test_linalg.c
 	$(CC) -c $*.c
 
 lianlg.o: linalg.c

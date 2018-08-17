@@ -3,7 +3,7 @@
 
 Vector *NewEmptyVector(size_t n)
 {
-	double *data = malloc( n * sizeof(double) );
+	scalar *data = malloc( n * sizeof(scalar) );
 	checkVectorAlloc(data);
 
 	Vector *vector = malloc( sizeof(Vector) );
@@ -16,7 +16,7 @@ Vector *NewEmptyVector(size_t n)
 }
 
 
-Vector *NewVector(size_t n, double val)
+Vector *NewVector(size_t n, scalar val)
 {
 	Vector *vector = NewEmptyVector(n);
 	fill_vector(vector, val);
@@ -40,14 +40,14 @@ void print_vector(Vector *vector)
 
 
 
-Matrix *NewMatrix(size_t n_rows, size_t n_cols, double fill_val)
+Matrix *NewMatrix(size_t n_rows, size_t n_cols, scalar fill_val)
 {
-	double **data = malloc( n_rows * sizeof(double *) );
+	scalar **data = malloc( n_rows * sizeof(scalar *) );
 	checkMatrixAlloc(data);
 
 	for (size_t i = 0; i < n_rows; i++)
 	{
-		data[i] = malloc( n_cols * sizeof(double) );
+		data[i] = malloc( n_cols * sizeof(scalar) );
 		checkMatrixAlloc(data[i]);
 	}
 	
@@ -91,6 +91,131 @@ void print_matrix(Matrix *matrix)
 		}
 		printf("\n");
 	}
+}
+
+/* 
+ * Vector scalar operations 
+ */
+
+Vector *v_d_add(Vector *v, scalar s)
+{
+    Vector *out = NewEmptyVector(v->n);
+    
+    for (size_t i = 0; i < (v -> n); i++)
+    {
+        out -> data[i] = v -> data[i] + s;
+    }
+
+    return out;
+}
+
+
+Vector *v_d_sub(Vector *v, scalar s)
+{
+    Vector *out = NewEmptyVector(v->n);
+
+    for (size_t i = 0; i < (v -> n); i++)
+    {
+        out -> data[i] = v -> data[i] - s;
+    }
+
+    return out;
+}
+
+
+Vector *v_d_mul(Vector *v, scalar s)
+{
+    Vector *out = NewEmptyVector(v->n);
+    
+    for (size_t i = 0; i < (v -> n); i++)
+    {
+        out -> data[i] = v -> data[i] * s;
+    }
+
+    return out;
+}
+
+
+Vector *v_d_div(Vector *v, scalar s)
+{
+    Vector *out = NewEmptyVector(v->n);
+    
+    if ( s != 0 )
+    {
+        for (size_t i = 0; i < (v -> n); i++)
+        {
+            out -> data[i] = v -> data[i] / s;
+        }
+    }
+    else
+    {
+        return NULL;
+    }
+
+    return out;
+}
+
+/*
+ * Elementwise vector / vector operations
+ */
+
+Vector *v_v_add(Vector *v, Vector *u)
+{
+    Vector *out = NewEmptyVector(v->n);
+
+    for (size_t i = 0; i < (v -> n); i++)
+    {
+        out->data[i] = v->data[i] + u->data[i];
+    }
+
+    return out;
+}
+
+
+Vector *v_v_sub(Vector *v, Vector *u)
+{
+    Vector *out = NewEmptyVector(v->n);
+
+    for (size_t i = 0; i < (v -> n); i++)
+    {
+        out->data[i] = v->data[i] - u->data[i];
+    }
+
+    return out;
+}
+
+
+Vector *v_v_mul(Vector *v, Vector *u)
+{
+    Vector *out = NewEmptyVector(v->n);
+
+    for (size_t i = 0; i < (v -> n); i++)
+    {
+        out->data[i] = v->data[i] * u->data[i];
+    }
+
+    return out;
+}
+
+
+Vector *v_v_div(Vector *v, Vector *u)
+{
+    Vector *out = NewEmptyVector(v->n);
+
+    for (size_t i = 0; i < (v -> n); i++)
+    {
+        if ( ! (u->data[i] == 0.) )
+        {
+            out->data[i] = v->data[i] + u->data[i];
+        }
+        else
+        {
+            fprintf(stderr, "v_v_div: Argh, Zero division!");
+            return NULL;
+        }
+    }
+
+    return out;
 }
 
 
