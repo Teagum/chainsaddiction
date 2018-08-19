@@ -5,17 +5,17 @@
 #include <stdio.h>
 
 
-#define checkVectorAlloc(ptr)	if (ptr == NULL)							\
-								{											\
-									printf("Vector allocation failed.\n");	\
-									return NULL;							\
+#define checkVectorAlloc(ptr)	if (ptr == NULL)										\
+								{														\
+									fprintf(stderr, "Vector allocation failed.\n");		\
+									return NULL;										\
 								}									
 
 
-#define checkMatrixAlloc(ptr)	if (ptr == NULL)							\
-								{											\
-									printf("Matrix allocation failed).\n"); \
-									return NULL;							\
+#define checkMatrixAlloc(ptr)	if (ptr == NULL)										\
+								{														\
+									fprintf(stderr, "Matrix allocation failed).\n"); 	\
+									return NULL;										\
 								}
 
               
@@ -25,9 +25,9 @@
 									}
 
 
-#define fill_matrix(matrix, value)	for (size_t __idx_i = 0; __idx_i < (mat -> n_rows); __idx_i++)      \
+#define fill_matrix(mat, value)		for (size_t __idx_i = 0; __idx_i < (mat -> n_rows); __idx_i++)      \
 									{																	\
-										for (size_t __jdx_j = 0; __jdx_j < (mat-> n_cols); __idx_j++)	\
+										for (size_t __idx_j = 0; __idx_j < (mat-> n_cols); __idx_j++)	\
 										{																\
 											mat->data[__idx_i][__idx_j] = value;						\
 										}																\
@@ -57,7 +57,7 @@
 									{																	\
 										if (value == 0.)												\
 										{																\
-											fprintf(stderr, "v_d_DIV: zero division encountered");		\
+											fprintf(stderr, "v_d_DIV: zero division encountered.");		\
 											exit(-1);													\
 										}																\
 										else															\
@@ -67,13 +67,13 @@
 									}
 
 
-typedef long scalar scalar;
+typedef long double Scalar;
 
 
 typedef struct
 {
 	size_t n;
-	scalar *data;
+	Scalar *data;
 } Vector;
 
 
@@ -81,23 +81,26 @@ typedef struct
 {
 	size_t n_rows;
 	size_t n_cols;
-	scalar **data;
+	Scalar **data;
 } Matrix;
 
 
 Vector *NewEmptyVector(size_t n);
-Vector *NewVector(size_t n, scalar fill_val);
-void free_vector(Vector *vector);
-void print_vector(Vector *vector);
+Vector *NewVector(size_t n, Scalar fill_val);
 
-Matrix *NewMatrix(size_t n_rows, size_t n_cols, scalar fill_val);
+Matrix *NewEmptyMatrix(size_t n_rows, size_t n_cols);
+Matrix *NewMatrix(size_t n_rows, size_t n_cols, Scalar fill_val);
+
+void free_vector(Vector *vector);
 void free_matrix(Matrix *matrix);
+
+void print_vector(Vector *vector);
 void print_matrix(Matrix *matrix);
 
-Vector *v_d_add(Vector *v, scalar s);
-Vector *v_d_sub(Vector *v, scalar s);
-Vector *v_d_mul(Vector *v, scalar s);
-Vector *v_d_div(Vector *v, scalar s);
+Vector *v_s_add(Vector *v, Scalar s);
+Vector *v_s_sub(Vector *v, Scalar s);
+Vector *v_s_mul(Vector *v, Scalar s);
+Vector *v_s_div(Vector *v, Scalar s);
 
 Vector *v_v_add(Vector *v, Vector *u);
 Vector *v_v_sub(Vector *v, Vector *u);

@@ -3,7 +3,7 @@
 
 Vector *NewEmptyVector(size_t n)
 {
-	scalar *data = malloc( n * sizeof(scalar) );
+	Scalar *data = malloc( n * sizeof(Scalar) );
 	checkVectorAlloc(data);
 
 	Vector *vector = malloc( sizeof(Vector) );
@@ -16,7 +16,7 @@ Vector *NewEmptyVector(size_t n)
 }
 
 
-Vector *NewVector(size_t n, scalar val)
+Vector *NewVector(size_t n, Scalar val)
 {
 	Vector *vector = NewEmptyVector(n);
 	fill_vector(vector, val);
@@ -24,39 +24,15 @@ Vector *NewVector(size_t n, scalar val)
 }
 
 
-void free_vector(Vector *vector)
+Matrix *NewEmptyMatrix(size_t n_rows, size_t n_cols)
 {
-	free( vector -> data );
-	free( vector );
-}
-
-
-void print_vector(Vector *vector)
-{
-	for (size_t i = 0; i < vector -> n; i++)
-		printf("%f\n", vector -> data[i]);
-	printf("\n");
-}
-
-
-
-Matrix *NewMatrix(size_t n_rows, size_t n_cols, scalar fill_val)
-{
-	scalar **data = malloc( n_rows * sizeof(scalar *) );
+	Scalar **data = malloc( n_rows * sizeof(Scalar *) );
 	checkMatrixAlloc(data);
 
 	for (size_t i = 0; i < n_rows; i++)
 	{
-		data[i] = malloc( n_cols * sizeof(scalar) );
+		data[i] = malloc( n_cols * sizeof(Scalar) );
 		checkMatrixAlloc(data[i]);
-	}
-	
-	for (size_t i = 0; i < n_rows; i++)
-	{
-		for (size_t j = 0; j < n_cols; j++)
-		{
-			data[i][j] = fill_val;
-		}
 	}
 
 	Matrix *matrix = malloc( sizeof(Matrix) );
@@ -70,6 +46,21 @@ Matrix *NewMatrix(size_t n_rows, size_t n_cols, scalar fill_val)
 }	
 
 
+Matrix *NewMatrix(size_t n_rows, size_t n_cols, Scalar fill_val)
+{
+	Matrix *matrix = NewEmptyMatrix(n_rows, n_cols);
+	fill_matrix(matrix, fill_val);	
+	return matrix;
+}
+
+
+void free_vector(Vector *vector)
+{
+	free( vector -> data );
+	free( vector );
+}
+
+
 void free_matrix(Matrix *matrix)
 {
 	for (size_t i = 0; i < matrix -> n_rows; i++)
@@ -81,23 +72,31 @@ void free_matrix(Matrix *matrix)
 }
 
 
+void print_vector(Vector *vector)
+{
+	for (size_t i = 0; i < vector -> n; i++)
+		fprintf(stdout, "%Lf\n", vector -> data[i]);
+	fprintf(stdout, "\n");
+}
+
+
 void print_matrix(Matrix *matrix)
 {
 	for (size_t i = 0; i < matrix -> n_rows; i++)
 	{
 		for (size_t j = 0; j < matrix -> n_cols; j++)
 		{
-			printf("%f\t", matrix -> data[i][j]);
+			fprintf(stdout, "%Lf\t", matrix -> data[i][j]);
 		}
-		printf("\n");
+		fprintf(stdout, "\n");
 	}
 }
 
 /* 
- * Vector scalar operations 
+ * Vector Scalar operations 
  */
 
-Vector *v_d_add(Vector *v, scalar s)
+Vector *v_s_add(Vector *v, Scalar s)
 {
     Vector *out = NewEmptyVector(v->n);
     
@@ -110,7 +109,7 @@ Vector *v_d_add(Vector *v, scalar s)
 }
 
 
-Vector *v_d_sub(Vector *v, scalar s)
+Vector *v_s_sub(Vector *v, Scalar s)
 {
     Vector *out = NewEmptyVector(v->n);
 
@@ -123,7 +122,7 @@ Vector *v_d_sub(Vector *v, scalar s)
 }
 
 
-Vector *v_d_mul(Vector *v, scalar s)
+Vector *v_s_mul(Vector *v, Scalar s)
 {
     Vector *out = NewEmptyVector(v->n);
     
@@ -136,7 +135,7 @@ Vector *v_d_mul(Vector *v, scalar s)
 }
 
 
-Vector *v_d_div(Vector *v, scalar s)
+Vector *v_s_div(Vector *v, Scalar s)
 {
     Vector *out = NewEmptyVector(v->n);
     
@@ -238,12 +237,12 @@ Matrix *matmul(Matrix *A, Matrix *B)
 
 Vector *mat_vect_prod(Matrix *A, Vector *b)
 {
-	Vector *out = NewEmptyVector(b->n);
+	Vector *out = NewEmptyVector(A->n_rows);
 	for (size_t i = 0; i < A->n_rows; i++)
 	{
 		for (size_t j = 0; j < A->n_cols; j++)
 		{
-			out->data[i] += A->data[i][j] * b->data[j];
+			out->data[i] += (A->data[i][j]) * (b->data[j]);
 		}
 	}
 	return out;
