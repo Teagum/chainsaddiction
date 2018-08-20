@@ -1,5 +1,8 @@
 #include "linalg.h"
 
+/*
+ * Vector initialization 
+ */
 
 Vector *NewEmptyVector(size_t n)
 {
@@ -21,6 +24,17 @@ Vector *NewVector(size_t n, Scalar val)
 	Vector *vector = NewEmptyVector(n);
 	fill_vector(vector, val);
 	return vector;
+}
+
+
+Vector *NewFromArray(size_t n, Scalar arr[])
+{
+	Vector *out = NewEmptyVector(n);
+	for (size_t i = 0; i < n; i++)
+	{
+		out->data[i] = arr[i];
+	}
+	return out;
 }
 
 

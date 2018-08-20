@@ -1,11 +1,14 @@
 CC = gcc
-OBJ = test_linalg.o linalg.o
+OBJ = test_fwbw.o linalg.o stats.o
 
-test_linalg: $(OBJ)
+test_fwbw: $(OBJ)
 	$(CC) -o $@ $(OBJ)
 
-testi_linalg.o: test_linalg.c
+test_fwbw.o: test_fwbw.c
 	$(CC) -c $*.c
 
 lianlg.o: linalg.c
-	$(CC) -c linalg.c
+	$(CC) -c $*.c
+
+stats.o: stats.c
+	$(CC) -c $*.c

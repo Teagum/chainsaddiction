@@ -1,11 +1,12 @@
 #ifndef STATS_H
 #define STATS_H
 
+#include "linalg.h"
 
-typedef long double scalar;
 
+Scalar poisson_pmf(Scalar lambda, long x);
+Scalar poisson_log_pmf(Scalar lambda, long x);
+Vector *ppmf(Vector *lambda, long x);
 
-scalar poisson_pmf(scalar lambda, long x);
-scalar poisson_log_pmf(scalar lambda, long x);
 
 #endif    /* STATS_H */

@@ -87,6 +87,7 @@ typedef struct
 
 Vector *NewEmptyVector(size_t n);
 Vector *NewVector(size_t n, Scalar fill_val);
+Vector *NewFromArray(size_t n, Scalar arr[]);
 
 Matrix *NewEmptyMatrix(size_t n_rows, size_t n_cols);
 Matrix *NewMatrix(size_t n_rows, size_t n_cols, Scalar fill_val);
