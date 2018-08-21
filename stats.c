@@ -1,6 +1,4 @@
-#include <math.h>
 #include "stats.h"
-#include "linalg.h"
 
 
 Scalar poisson_log_pmf(Scalar lambda, long x)
@@ -15,12 +13,10 @@ Scalar poisson_pmf(Scalar lambda, long x)
 }
 
 
-Vector *ppmf(Vector *lambda, long x)
+void ppmf(Vector *lambda, long x, Vector* out)
 {
-    Vector *out = NewEmptyVector(lambda->n);
     for (size_t i = 0; i < lambda->n; i++)
     {
         out->data[i] = poisson_pmf(lambda->data[i], x);
     }
-    return out;
 }

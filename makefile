@@ -1,14 +1,22 @@
 CC = gcc
-OBJ = test_fwbw.o linalg.o stats.o
+CFLAGS = -Wall
+OBJ = test_fwbw.o fwbw.o linalg.o stats.o
 
 test_fwbw: $(OBJ)
-	$(CC) -o $@ $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $(OBJ) 
 
 test_fwbw.o: test_fwbw.c
-	$(CC) -c $*.c
+	$(CC) $(CFLAGS) -c $*.c
 
-lianlg.o: linalg.c
-	$(CC) -c $*.c
+fwbw.o: fwbw.c
+	$(CC) $(CFLAGS) -c $*.c
 
-stats.o: stats.c
-	$(CC) -c $*.c
+linalg.o: linalg.c
+	$(CC) $(CFLAGS) -c $*.c
+
+stats.o: stats.c linalg.h
+	$(CC) $(CFLAGS) -c $*.c 
+
+clean:
+	rm -f *.o
+	rm test_fwbw

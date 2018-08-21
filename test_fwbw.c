@@ -1,23 +1,34 @@
+#include "fwbw.h"
 #include "linalg.h"
-#include "stats.h"
 
 
 int main()
-{
-	Vector *x = NewVector(3, 4);
-	Vector *lambda = NewVector(3, 3);
-	Scalar arr[] = { .5, .3, .2 };
-	Vector *delta = NewFromArray(3, arr); 
+{	
+	const size_t m = 3;
+	const size_t n = 5;
 
-	Vector *p_xi = ppmf(lambda, x->data[0]);
-	Vector *a_t =  v_v_mul(delta, p_xi);
-	print_vector(a_t);
+	Scalar __x[] = { 15, 24, 33, 42, 51 };
+	Vector *x = NewVectorFromArray(5, __x);
+
+	Scalar __lambda[] = { 10, 20, 30 };
+	Vector *_lambda = NewVectorFromArray(m, __lambda);
+
+	Scalar __gamma[] = { .7, .2, .1,
+       		             .1, .7, .2,
+		 	     .2, .1, .7 };	
+	Matrix *_gamma = NewMatrixFromArray(m, m, __gamma);
+
+	Scalar __delta[] = { .5, .3, .2 };
+	Vector *_delta = NewVectorFromArray(m, __delta); 
+
+
+
+	fwbw(x, m, n, _lambda, _gamma, _delta);
 
 
 	free_vector(x);
-	free_vector(lambda);
-	free_vector(delta);
-	free_vector(p_xi);
-	free_vector(a_t);
+	free_vector(_lambda);
+	free_matrix(_gamma);
+	free_vector(_delta);
 	return 0;
 }
