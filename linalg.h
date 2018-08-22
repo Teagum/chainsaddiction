@@ -169,10 +169,10 @@ Scalar v_prod(Vector *v);
 Scalar v_mean(Vector *v);
 
 /* Vector deallocation */
-void free_vector(Vector *vector);
+void v_free(Vector *vector);
 
 /* Vector output */
-void print_vector(Vector *vector);
+void v_print(Vector *vector);
 
 /*
  * Matrix interface
@@ -188,14 +188,14 @@ void m_set_row(Matrix *M, size_t i, Vector *v);
 void m_set_col(Matrix *M, size_t i, Vector *v);
 
 /* Matrix deallocation */
-void free_matrix(Matrix *matrix);
+void m_free(Matrix *matrix);
 
 /* Matrix output */
-void print_matrix(Matrix *matrix);
+void m_print(Matrix *matrix);
 
-Vector *mat_vect_prod(Matrix *A, Vector *b);
-Vector *vect_mat_prod(Vector *v, Matrix *A);
-Matrix *matmul(Matrix *A, Matrix *B);
+Vector *m_v_mul(Matrix *A, Vector *b);
+Vector *v_m_mul(Vector *v, Matrix *A);
+Matrix *m_m_mul(Matrix *A, Matrix *B);
 
 
 #endif    /* LINALG_H */

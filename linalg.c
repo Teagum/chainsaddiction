@@ -249,7 +249,7 @@ Scalar v_mean(Vector *v)
  * Vector deallocation
  */
 
-void free_vector(Vector *vector)
+void v_free(Vector *vector)
 {
 	free( vector -> data );
 	free( vector );
@@ -260,11 +260,12 @@ void free_vector(Vector *vector)
  * Vector output
  */
 
-void print_vector(Vector *vector)
+void v_print(Vector *vector)
 {
+	fprintf(stdout, "[");
 	for (size_t i = 0; i < vector -> n; i++)
-		fprintf(stdout, "%Lf\n", vector -> data[i]);
-	fprintf(stdout, "\n");
+		fprintf(stdout, "\t%Lf", vector -> data[i]);
+	fprintf(stdout, "\t]\n");
 }
 
 
@@ -314,7 +315,7 @@ Matrix *NewMatrixFromArray(size_t m, size_t n, Scalar arr[])
 	{
 		for (size_t j = 0; j < m; j++)
 		{
-			out->data[i][j] = arr[i*m+n];
+			out->data[i][j] = arr[i*m+j];
 		}
 	}
 	return out;
@@ -329,7 +330,7 @@ void m_set_row(Matrix *M, size_t i, Vector *v)
 {
 	for (size_t j = 0; j < (v->n); j++)
 	{
-		M->data[i][j] = v->data[i];
+		M->data[i][j] = v->data[j];
 	}
 }
 
@@ -347,7 +348,7 @@ void m_set_col(Matrix *M, size_t j, Vector *v)
  * Matrix multiplication
  */
 
-Matrix *matmul(Matrix *A, Matrix *B)
+Matrix *m_m_mul(Matrix *A, Matrix *B)
 {
 	Matrix *C = NewMatrix( A -> n_rows, B -> n_cols, 0);
 
@@ -364,7 +365,7 @@ Matrix *matmul(Matrix *A, Matrix *B)
 	return C;
 }
 
-Vector *mat_vect_prod(Matrix *A, Vector *b)
+Vector *m_v_mul(Matrix *A, Vector *b)
 {
 	Vector *out = NewEmptyVector(A->n_rows);
 	for (size_t i = 0; i < A->n_rows; i++)
@@ -377,7 +378,7 @@ Vector *mat_vect_prod(Matrix *A, Vector *b)
 	return out;
 }
 
-Vector *vect_mat_prod(Vector *v, Matrix *A)
+Vector *v_m_mul(Vector *v, Matrix *A)
 {
 	Vector *out = NewEmptyVector(A->n_cols);
 	for (size_t i = 0; i < A->n_cols; i++)
@@ -395,7 +396,7 @@ Vector *vect_mat_prod(Vector *v, Matrix *A)
  * Matrix deallocation
  */
 
-void free_matrix(Matrix *matrix)
+void m_free(Matrix *matrix)
 {
 	for (size_t i = 0; i < matrix -> n_rows; i++)
 	{
@@ -410,14 +411,17 @@ void free_matrix(Matrix *matrix)
  * Matrix output 
  */
 
-void print_matrix(Matrix *matrix)
+void m_print(Matrix *matrix)
 {
+	fprintf(stdout, "[\n");
 	for (size_t i = 0; i < matrix -> n_rows; i++)
 	{
+		fprintf(stdout, "\t[");
 		for (size_t j = 0; j < matrix -> n_cols; j++)
 		{
-			fprintf(stdout, "%Lf\t", matrix -> data[i][j]);
+			fprintf(stdout, "\t%Lf", matrix -> data[i][j]);
 		}
-		fprintf(stdout, "\n");
+		fprintf(stdout, "\t]\n");
 	}
+	fprintf(stdout, "]\n");
 }

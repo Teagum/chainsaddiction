@@ -4,6 +4,12 @@
 #include "linalg.h"
 #include "stats.h"
 
-void fwbw(Vector *x, size_t m, size_t n, Vector *_lambda, Matrix *_gamma, Vector *_delta);
+
+typedef struct {
+    Matrix *alpha;
+    Matrix *beta;
+} AB_probs;
+
+AB_probs *fwbw(Scalar *x, size_t n, size_t m, Scalar *_lambda, Scalar **_gamma, Scalar *_delta);
 
 #endif	/* FWBW_H */

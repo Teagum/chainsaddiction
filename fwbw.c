@@ -1,52 +1,107 @@
 #include "fwbw.h"
-#include "stdio.h"
-
-typedef struct {
-    Vector *_lambda;
-    Matrix *_gamma;
-    Vector *delta;
-} Params;
 
 
-void fwbw(Vector *x, size_t m, size_t n, Vector *_lambda, Matrix *_gamma, Vector *_delta)
+AB_probs *fwbw(Scalar *x, size_t n, size_t m, Scalar *_lambda, Scalar **_gamma, Scalar *_delta)
 {
 	
-	Scalar sai = 0;		/* sum alpha_i */
-	Scalar lsf = 0;		/* log scale factor */
+	Scalar sum_buff = 0;		/* sum prob */
+	Scalar lsf = 0;				/* log scale factor */
 
-	Vector *prob_i = NewEmptyVector(_lambda->n);
-	Vector *alpha_i = NewEmptyVector(_lambda->n);
-
-	Matrix *alpha = NewEmptyMatrix(n, m);
-	/* Matrix *beta  = NewMatrix(n, m, 0L); */
-
-	
-	ppmf(_lambda, x->data[0], prob_i);
-	printf("prob_i:\n");
-	print_vector(prob_i);
-
-	alpha_i = v_v_mul(_delta, prob_i);
-	printf("alpha_i:\n");
-	print_vector(alpha_i);	
-
-	sai = v_sum(alpha_i);
-	lsf = log1pl(sai);
-	printf("sai: %Lf, lsf %Lf", sai, lsf);
-
+	Scalar *prob = malloc( m * sizeof(Scalar) );	 /* probabilities at t */
+	Scalar *buff = malloc( m * sizeof(Scalar) );     /* calculation buffer */
+	Scalar *eggs = malloc( m * sizeof(Scalar) );     /* calculation buffer */
+	Matrix *alpha = NewEmptyMatrix(n, m);			
+	Matrix *beta  = NewMatrix(n, m, 0L);
 	/*
-	v_s_DIV(alpha_i, sai); 
-	v_s_ADD(alpha_i, lsf);
+	 * Forward 
+	 */
+
+	/* Initial step t = 0*/
+	for (size_t j = 0; j < m; j++)
+	{
+		prob[j] = poisson_pmf(_lambda[j], x[0]) * _delta[j];
+		sum_buff += prob[j];
+	}
+	lsf = log(sum_buff);
+
+	for (size_t j = 0; j < m; j++)
+	{
+		prob[j] = prob[j] / sum_buff;
+		alpha->data[0][j] = log( prob[j] ) + lsf;
+	}
 	
-	m_set_row(alpha, 0, alpha_i);
+	/* remaining forward steps */
+	for (size_t i = 1; i < n; i++)
+	{
+		sum_buff = 0;
+		for (size_t j = 0; j < m; j++)
+		{
+			for (size_t k = 0; k < m; k++)
+			{
+				buff[j] += prob[k] * _gamma[k][j];
+			}
+			buff[j] *= poisson_pmf( _lambda[j], x[i] );
+			sum_buff += buff[j];
+		}
+		lsf += log( sum_buff );
+		for (size_t j = 0; j < m; j++)
+		{
+			prob[j] = buff[j] / sum_buff;
+			buff[j] = 0;
+			alpha->data[i][j] = log( prob[j] ) + lsf;
+		}
+	}
+	
+	/*
+	 * Backward pass
+	 */
 
+	/* Initial step */
+	for (size_t j = 0; j < m; j++)
+	{
+		prob[j] = 1L / (Scalar) m;
+	}
+	lsf = log(m);
 
-	print_vector(alpha_i);
-	*/
+	/* remaining backward steps */
+	for (size_t i = n-1; i > 0; i--)
+	{
+		for (size_t j = 0; j < m; j++)
+		{
+			Scalar aa =poisson_pmf(_lambda[j], x[i]);  
+			eggs[j] = aa * prob[j];
+		}
+		
+		for (size_t j = 0; j < m; j++)
+		{
+			sum_buff = 0;
+			for (size_t k = 0; k < m; k++)
+			{
+				buff[j] += _gamma[j][k] * eggs[k];
+			}
+			sum_buff += buff[j];
+		}
+
+		lsf += log(sum_buff);
+		for (size_t j = 0; j < m; j++)
+		{
+			prob[j] = buff[j] / sum_buff;
+			buff[j] = 0;
+			beta->data[i-1][j] = log( prob[j] ) + lsf;
+		}
+	}
+
 	/* Params theta;
 	 * return theta;
 	 */
-}
+	
+	AB_probs *ab = malloc( sizeof(AB_probs) );
+	ab->alpha = alpha;
+	ab->beta = beta;
 
+	free(prob);
+	free(buff);
+	free(eggs);
 
-
-
+	return ab;
+}	
