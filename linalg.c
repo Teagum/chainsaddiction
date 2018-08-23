@@ -39,6 +39,17 @@ Vector *NewVectorFromArray(size_t n, Scalar arr[])
 
 
 /*
+ * Data access
+ */
+
+
+Scalar *v_dptr(Vector *v)
+{
+	return v->data;
+}
+
+
+/*
  * Elementwise ops
  */
 
@@ -245,6 +256,17 @@ Scalar v_mean(Vector *v)
 }
 
 
+Scalar v_max(Vector *v)
+{
+	Scalar max = v->data[0];
+	for (size_t i = 1; i < (v->n); i++)
+	{
+		max = ( (v->data[i]) > max )  ?  v->data[i]  :  max;
+	}
+	return max;
+}
+
+
 /*
  * Vector deallocation
  */
@@ -323,8 +345,15 @@ Matrix *NewMatrixFromArray(size_t m, size_t n, Scalar arr[])
 
 
 /* 
- * get / set rows / cols
+ * Data access
  */
+
+
+Scalar **m_dptr(Matrix *M)
+{
+	return M->data;
+}
+
 
 void m_set_row(Matrix *M, size_t i, Vector *v)
 {

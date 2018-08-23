@@ -145,6 +145,9 @@ Vector *NewEmptyVector(size_t n);
 Vector *NewVector(size_t n, Scalar fill_val);
 Vector *NewVectorFromArray(size_t n, Scalar arr[]);
 
+/* Data access */
+Scalar *v_dptr(Vector *v);
+
 /* Elementwise ops */
 Vector *v_exp(Vector *v);
 Vector *v_m1_exp(Vector *v);
@@ -183,7 +186,8 @@ Matrix *NewEmptyMatrix(size_t n_rows, size_t n_cols);
 Matrix *NewMatrix(size_t n_rows, size_t n_cols, Scalar fill_val);
 Matrix *NewMatrixFromArray(size_t m, size_t n, Scalar arr[]);
 
-/* Matrix row/col get/set */
+/* Data access */
+Scalar **m_dptr(Matrix *M);
 void m_set_row(Matrix *M, size_t i, Vector *v);
 void m_set_col(Matrix *M, size_t i, Vector *v);
 
