@@ -58,7 +58,8 @@ Lfbp *lfwbw(const Scalar *x, const size_t n, const size_t m,
 			{
 				buff[j] += prob[k] * _gamma[k][j];
 			}
-			buff[j] *= poisson_pmf( _lambda[j], x[i] );
+			poisson_probs->data[i][j] = poisson_pmf( _lambda[j], x[i] );
+			buff[j] *= poisson_probs->data[i][j];
 			sum_buff += buff[j];
 		}
 		lsf += log( sum_buff );
@@ -86,8 +87,7 @@ Lfbp *lfwbw(const Scalar *x, const size_t n, const size_t m,
 	{
 		for (size_t j = 0; j < m; j++)
 		{
-			Scalar aa =poisson_pmf(_lambda[j], x[i]);  
-			eggs[j] = aa * prob[j];
+			eggs[j] = poisson_probs->data[i][j] * prob[j];
 		}
 		
 		for (size_t j = 0; j < m; j++)
@@ -136,11 +136,10 @@ HmmParams *EM(const Scalar *x, const size_t n, const size_t m,
 	      	const size_t max_iter, const Scalar tol,	
 		const Scalar *__lambda, Scalar **__gamma, const Scalar *__delta)
 {
-
+	/* use these arrays to construct the return struct */
 	Vector *this_lambda = NewEmptyVector(m);
 	Matrix *this_gamma  = NewEmptyMatrix(m, m);
 	Vector *this_delta  = NewEmptyVector(m);
-
 	Scalar *_lambda = v_dptr(this_lambda);
 	Scalar **_gamma = m_dptr(this_gamma);
 	Scalar *_delta  = v_dptr(this_delta);
@@ -155,6 +154,7 @@ HmmParams *EM(const Scalar *x, const size_t n, const size_t m,
 		}
 	}
 
+	/* buffers for iterative computation. FREE IN ANY CASE */
 	Vector *new_lambda = NewEmptyVector(m);
 	Matrix *new_gamma  = NewEmptyMatrix(m, m);
 	Vector *new_delta  = NewEmptyVector(m);
@@ -162,7 +162,7 @@ HmmParams *EM(const Scalar *x, const size_t n, const size_t m,
 	Scalar *lambda_ = v_dptr(new_lambda);
 	Scalar **gamma_ = m_dptr(new_gamma);
 	Scalar *delta_  = v_dptr(new_delta);
-
+	
 	Lfbp 	*lab	= NULL;
 	Scalar  **alpha	= NULL;
 	Scalar  **beta	= NULL;
@@ -174,27 +174,39 @@ HmmParams *EM(const Scalar *x, const size_t n, const size_t m,
 	Scalar 	llk	= 0;
 	Scalar 	rs_gamma = 0;
 	Scalar 	rs_delta = 0;
+	Scalar 	s	= 0;
 
 	for (size_t n_iter = 0; n_iter < max_iter; n_iter++)
 	{	
+		/*
 		printf("Iter: %zu\n", n_iter);
+		printf("==================================\n");
+		*/
+
 		/* E Step */
 		lab 	= lfwbw(x, n, m, _lambda, _gamma, _delta);
 		alpha 	= lab->alpha->data;
 		beta 	= lab->beta->data;
 		probs 	= lab->prob->data;
+		
+		/*	
+		m_print(lab->alpha);
+		m_print(lab->beta);
+		m_print(lab->prob);
+		*/
 
 		c = alpha[n-1][0];
 		for (size_t i = 1; i < m; i++)
-			c = ( (alpha[n-1][0]) > c )  ?  alpha[n-1][0]  :  c;
+			if ( alpha[n-1][i] > c ) c = alpha[n-1][i];
 
 		llk = 0;
 		for (size_t i = 0; i < m; i++)
 			llk += expl(alpha[n-1][i] - c);
 		llk = logl(llk) + c;
-
+		
 		/* M Step */
 		crit = 0;
+		rs_delta = 0;
 		for (size_t i = 0; i < m; i++)
 		{	
 			/* Lambda */
@@ -202,12 +214,15 @@ HmmParams *EM(const Scalar *x, const size_t n, const size_t m,
 			bcc = 0;
 			for (size_t j = 0; j < n; j++)
 			{
-				acc += alpha[j][i] + beta[j][i] - llk;
-				bcc += acc * x[j];
+				s = expl(alpha[j][i] + beta[j][i] - llk); 
+				acc += s;
+				bcc += s * x[j];
 			}
 			lambda_[i] = bcc / acc;
+			
+			/* printf("%Lf\t%Lf\n",_lambda[i], lambda_[i]); */
+		
 			crit += fabsl(_lambda[i] - lambda_[i]);
-
 			/* Gamma */
 			rs_gamma = 0;
 			for (size_t j = 0; j < m; j++)
@@ -215,27 +230,42 @@ HmmParams *EM(const Scalar *x, const size_t n, const size_t m,
 				acc = 0;
 				for (size_t k = 0; k < (n-1); k++)
 				{
-					acc += expl(alpha[k][i] + beta[k+1][j] + logl(probs[k+1][j]) + llk);
+					/*
+					printf("%10Lf \t %10Lf \t %10Le\n", alpha[k][i], beta[k+1][j],
+									 probs[k+1][j]);
+									 */
+					acc +=  expl(alpha[k][i] + beta[k+1][j] + logl(probs[k+1][j]) - llk); 
 				}
+				/*
+				printf("\n ACC =  %1.3LF \n", acc);
+				*/
 				gamma_[i][j] = _gamma[i][j] * acc;
 				rs_gamma += gamma_[i][j];
-			}	
+			}
 
-			/* Delta && normalize Gamma */		
-			rs_delta = 0;
 			for (size_t j = 0; j < m; j++)
 			{
 				gamma_[i][j] /= rs_gamma;
-				delta_[i] = expl(alpha[0][j] + beta[0][j] - llk);
-				rs_delta += delta_[i];
-
 				crit += fabsl(_gamma[i][j] - gamma_[i][j]);
 			}
+
+			/* Delta */
+			delta_[i] = expl(alpha[0][i] + beta[0][i] - llk);
+			rs_delta += delta_[i];
+			/*	
+			printf("[%zu]  %Lf\t%Lf\t|\t%Lf\t%Lf\n", i, _lambda[i], lambda_[i], _delta[i], delta_[i]);
+
+			m_print(new_gamma);	
+			*/
+		}
+
+		for (size_t i = 0; i < m; i++)
+		{
 			delta_[i] /= rs_delta;
 			crit += fabsl(_delta[i] - delta_[i]); 
 		}
 
-		if (crit < tol)		/* on convergence */
+		if (crit < tol)		/* algorithm converged */
 		{
 			v_free(new_lambda);
 			m_free(new_gamma);
@@ -260,6 +290,10 @@ HmmParams *EM(const Scalar *x, const size_t n, const size_t m,
 				}
 			}
 		}
+		/*
+		printf("[%zu] c = %Lf, llk = %Lf, crit = %Lf\n", n_iter, c, llk, crit);
+		printf("\n\n");
+		*/
 	}	
 
 	/* No convergence after max_iter*/

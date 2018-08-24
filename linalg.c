@@ -37,6 +37,15 @@ Vector *NewVectorFromArray(size_t n, Scalar arr[])
 	return out;
 }
 
+/*
+Vector *NewVectorFromFile(const char *fpath)
+{
+	FILE *file = fopen(fpath, 'r');
+	
+
+	fclose(file);
+	return ;
+*/
 
 /*
  * Data access

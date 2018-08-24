@@ -1,11 +1,11 @@
 CC = gcc
 CFLAGS = -Wall
-OBJ = test_fwbw.o hmmcore.o linalg.o stats.o
+OBJ = test_core.o hmmcore.o linalg.o stats.o
 
-test_fwbw: $(OBJ)
+test_core: $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $(OBJ) 
 
-test_fwbw.o: test_fwbw.c
+test_core.o: test_core.c
 	$(CC) $(CFLAGS) -c $*.c
 
 hmmcore.o: hmmcore.c hmmcore.h
@@ -19,4 +19,4 @@ stats.o: stats.c linalg.h
 
 clean:
 	rm -f *.o
-	rm test_fwbw
+	rm test_core
