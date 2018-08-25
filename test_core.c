@@ -37,11 +37,8 @@ int main()
 	v_print(theta->lambda_);
 	m_print(theta->gamma_);
 	v_print(theta->delta_);
+	free_HmmParams(theta);
 
-	/*
-	Lfbp *abp = lfwbw(x, n, m, _lambda->data, _gamma->data, _delta->data);
-	m_print(abp->alpha);
-*/
 	v_free(v_x);
 	v_free(_lambda);
 	m_free(_gamma);

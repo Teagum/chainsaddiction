@@ -26,4 +26,9 @@ HmmParams *EM(const Scalar *x, const size_t n, const size_t m,
 	      	const size_t max_iter, const Scalar tol,	
 		const Scalar *__lambda, Scalar **__gamma, const Scalar *__delta);
 
+
+void free_Lfbp(Lfbp *abp);
+void free_HmmParams(HmmParams *hp);
+
+
 #endif	/* FWBW_H */

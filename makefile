@@ -6,7 +6,7 @@ test_core: $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $(OBJ) 
 
 test_core.o: test_core.c
-	$(CC) $(CFLAGS) -c $*.c
+	$(CC) $(CFLAGS) -c -g $*.c
 
 hmmcore.o: hmmcore.c hmmcore.h
 	$(CC) $(CFLAGS) -c $*.c

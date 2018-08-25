@@ -1,6 +1,7 @@
 #include "hmmcore.h"
 
 
+
 /* 
  * Compute the log-forward/backward probabilitiesi
  */
@@ -113,7 +114,7 @@ Lfbp *lfwbw(const Scalar *x, const size_t n, const size_t m,
 	free(buff);
 	free(eggs);
 
-	Lfbp *ab = malloc( sizeof(Lfbp*) );
+	Lfbp *ab = malloc( sizeof(Lfbp) );
 	ab->alpha = alpha;
 	ab->beta = beta;
 	ab->prob = poisson_probs;
@@ -267,10 +268,11 @@ HmmParams *EM(const Scalar *x, const size_t n, const size_t m,
 
 		if (crit < tol)		/* algorithm converged */
 		{
+			free_Lfbp(lab);
 			v_free(new_lambda);
 			m_free(new_gamma);
 			v_free(new_delta);
-
+			
 			HmmParams *theta = malloc( sizeof(HmmParams) );
 		       	theta->lambda_ = this_lambda;
 			theta->gamma_ = this_gamma;
@@ -297,6 +299,8 @@ HmmParams *EM(const Scalar *x, const size_t n, const size_t m,
 	}	
 
 	/* No convergence after max_iter*/
+	free_Lfbp(lab);
+
 	v_free(this_lambda);
 	m_free(this_gamma);
 	v_free(this_delta);
@@ -309,17 +313,19 @@ HmmParams *EM(const Scalar *x, const size_t n, const size_t m,
 }
 
 
+void free_Lfbp(Lfbp *abp)
+{
+	m_free(abp->alpha);
+	m_free(abp->beta);
+	m_free(abp->prob);
+	free(abp);
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+void free_HmmParams(HmmParams *hp)
+{
+	v_free(hp->lambda_);
+	m_free(hp->gamma_);
+	v_free(hp->delta_);
+	free(hp);
+}
 
