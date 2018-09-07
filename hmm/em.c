@@ -64,7 +64,7 @@ int poisson_expectation_maximization(
 							 (n_iter = %zu).\n", *n_iter);
 			return 0;
 		}
-		
+
 		c = alpha[n-1][0];
 		for (size_t i = 1; i < m; i++)
 		{

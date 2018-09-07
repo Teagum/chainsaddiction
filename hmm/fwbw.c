@@ -26,7 +26,7 @@ int log_poisson_forward_backward(
 {
 	
 	scalar	sum_buff	= 0;		/* sum prob */
-	scalar	lsf			= 0;		/* log scale factor */
+	scalar	lsf			= 0;		/* logl scale factor */
 
 	scalar *_pxt = malloc( m * sizeof(scalar) );	 /* probabilities at time `t` */
 	if (_pxt != NULL) memory_guard[0] = _pxt;
@@ -52,20 +52,21 @@ int log_poisson_forward_backward(
 		_pxt[j] = pprob[0][j] * delta_[j];
 		sum_buff += _pxt[j];
 	}
-	lsf = log(sum_buff);
-
+	lsf = logl(sum_buff);
+	
 	for (size_t j = 0; j < m; j++)
 	{
 		_pxt[j] /= sum_buff;
-		alpha[0][j] = log( _pxt[j] ) + lsf;
+		alpha[0][j] = logl( _pxt[j] ) + lsf;
 	}
-
+	
 	/* remaining forward steps */
 	for (size_t i = 1; i < n; i++)
 	{
 		sum_buff = 0;
 		for (size_t j = 0; j < m; j++)
 		{
+			_buff[j] = 0;
 			for (size_t k = 0; k < m; k++)
 			{
 				_buff[j] += _pxt[k] * gamma_[k*m+j];
@@ -74,13 +75,12 @@ int log_poisson_forward_backward(
 			_buff[j] *= pprob[i][j];
 			sum_buff += _buff[j];
 		}
-		lsf += log( sum_buff );
+		lsf += logl( sum_buff );
 
 		for (size_t j = 0; j < m; j++)
 		{
 			_pxt[j] = _buff[j] / sum_buff;
-			alpha[i][j] = log( _pxt[j] ) + lsf;
-			_buff[j] = 0;
+			alpha[i][j] = logl( _pxt[j] ) + lsf;
 		}
 	}
 
@@ -91,9 +91,9 @@ int log_poisson_forward_backward(
 	/* Initial step */
 	for (size_t j = 0; j < m; j++)
 	{
-		_pxt[j] = 1L / (scalar) m;
+		_pxt[j] = 1.L / (scalar) m;
 	}
-	lsf = log(m);
+	lsf = logl(m);
 
 	/* remaining backward steps */
 	for (size_t i = n-1; i > 0; i--)
@@ -113,12 +113,12 @@ int log_poisson_forward_backward(
 			sum_buff += _buff[j];
 		}
 
-		lsf += log(sum_buff);
+		lsf += logl(sum_buff);
 		for (size_t j = 0; j < m; j++)
 		{
 			_pxt[j] = _buff[j] / sum_buff;
 			_buff[j] = 0;
-			beta[i-1][j] = log( _pxt[j] ) + lsf;
+			beta[i-1][j] = logl( _pxt[j] ) + lsf;
 		}
 	}
 
@@ -128,6 +128,8 @@ int log_poisson_forward_backward(
 	return 1;
 
 fail:
-	cleanUp();
+	free(_pxt);
+	free(_buff);
+	free(_eggs);
 	return 0;
 }	

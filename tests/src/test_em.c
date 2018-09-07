@@ -52,7 +52,7 @@ int main(void)
 		{
 			for (size_t j = 0; j < m; j++)
 			{
-				printf("%Lf\t", gamma_[i*m+j]);
+				printf("%10.10Lf\t", gamma_[i*m+j]);
 			}
 			printf("\n");
 		}
@@ -61,7 +61,7 @@ int main(void)
 		for (size_t i = 0; i < m; i++)
 			printf("%Lf\t", delta_[i]);
 		
-		printf("\nLLK:\t%Lf", llk);
+		printf("\n\nLLK:\t%Lf", llk);
 		printf("\nn_iter:\t%zu\n", n_iter);
 
 		free(lambda_);
