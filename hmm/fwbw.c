@@ -1,18 +1,6 @@
 #include "fwbw.h"
 
 
-static inline void cleanUp()
-{
-	for (size_t i = 0; i < 3; i++)
-	{
-		if (memory_guard[0] != NULL)
-		{
-			free(memory_guard[0]);
-		}
-	}
-}
-
-
 int log_poisson_forward_backward(
 		const long	 *x,
 		const size_t n,
@@ -20,44 +8,46 @@ int log_poisson_forward_backward(
 		const scalar *lambda_, 
 		const scalar *gamma_,
 		const scalar *delta_,
-		scalar **alpha,
-		scalar **beta,
-		scalar **pprob)
+		scalar *alpha,
+		scalar *beta,
+		scalar *pprob)
 {
 	
 	scalar	sum_buff	= 0;		/* sum prob */
 	scalar	lsf			= 0;		/* logl scale factor */
+	int 	success		= 1;
 
-	scalar *_pxt = malloc( m * sizeof(scalar) );	 /* probabilities at time `t` */
-	if (_pxt != NULL) memory_guard[0] = _pxt;
-    else goto fail;
+	scalar *_pxt = NULL;
+	scalar *_buff = NULL;
+	scalar *_eggs = NULL;
 
-	scalar *_buff = malloc( m * sizeof(scalar) );     /* calculation buffer */
-	if (_buff != NULL) memory_guard[1] = _buff;
-    else goto fail;
+	_pxt = malloc (m * sizeof(*_pxt));		/* probabilities at time `t` */
+	if (_pxt == NULL) { success=0; goto fail; } 
 
-	scalar *_eggs = malloc( m * sizeof(scalar) );     /* calculation buffer */
-	if (_eggs != NULL) memory_guard[2] = _eggs; 
-	else goto fail;
+	_buff = malloc (m * sizeof(*_buff));	/* calculation buffer */
+	if (_buff == NULL) { success=0; goto fail; } 
+
+	_eggs = malloc (m * sizeof(*_eggs));	/* calculation buffer */
+	if (_eggs == NULL) { success=0; goto fail; }
 
 
 	/*
 	 * Forward pass 
 	 */
 
-	/* Initial step t = 0*/
+	/* Initial step t = 0 */
 	for (size_t j = 0; j < m; j++)
 	{
-		pprob[0][j] = poisson_pmf( lambda_[j], x[0] );
-		_pxt[j] = pprob[0][j] * delta_[j];
+		pprob[j] = poisson_pmf (lambda_[j], x[0]);
+		_pxt[j] = pprob[j] * delta_[j];
 		sum_buff += _pxt[j];
 	}
-	lsf = logl(sum_buff);
+	lsf = logl (sum_buff);
 	
 	for (size_t j = 0; j < m; j++)
 	{
 		_pxt[j] /= sum_buff;
-		alpha[0][j] = logl( _pxt[j] ) + lsf;
+		alpha[j] = logl (_pxt[j]) + lsf;
 	}
 	
 	/* remaining forward steps */
@@ -71,16 +61,16 @@ int log_poisson_forward_backward(
 			{
 				_buff[j] += _pxt[k] * gamma_[k*m+j];
 			}
-			pprob[i][j] = poisson_pmf( lambda_[j], x[i] );
-			_buff[j] *= pprob[i][j];
+			pprob[i*m+j] = poisson_pmf (lambda_[j], x[i]);
+			_buff[j] *= pprob[i*m+j];
 			sum_buff += _buff[j];
 		}
-		lsf += logl( sum_buff );
+		lsf += logl (sum_buff);
 
 		for (size_t j = 0; j < m; j++)
 		{
 			_pxt[j] = _buff[j] / sum_buff;
-			alpha[i][j] = logl( _pxt[j] ) + lsf;
+			alpha[i*m+j] = logl (_pxt[j]) + lsf;
 		}
 	}
 
@@ -100,7 +90,7 @@ int log_poisson_forward_backward(
 	{
 		for (size_t j = 0; j < m; j++)
 		{
-			_eggs[j] = pprob[i][j] * _pxt[j];
+			_eggs[j] = pprob[i*m+j] * _pxt[j];
 		}
 		
 		for (size_t j = 0; j < m; j++)
@@ -113,23 +103,19 @@ int log_poisson_forward_backward(
 			sum_buff += _buff[j];
 		}
 
-		lsf += logl(sum_buff);
+		lsf += logl (sum_buff);
 		for (size_t j = 0; j < m; j++)
 		{
 			_pxt[j] = _buff[j] / sum_buff;
 			_buff[j] = 0;
-			beta[i-1][j] = logl( _pxt[j] ) + lsf;
+			beta[(i-1)*m+j] = logl (_pxt[j]) + lsf;
 		}
 	}
-
-	free(_pxt);
-	free(_buff);
-	free(_eggs);
-	return 1;
 
 fail:
 	free(_pxt);
 	free(_buff);
 	free(_eggs);
-	return 0;
+	return success;
 }	
+

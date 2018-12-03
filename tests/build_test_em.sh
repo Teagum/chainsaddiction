@@ -1,9 +1,5 @@
 INCLUDE='-I../include/'
 
-gcc -c $INCLUDE ../hmm/matrix.c
-gcc -c $INCLUDE ../hmm/stats.c
-gcc -c $INCLUDE ../hmm/fwbw.c
-gcc -c $INCLUDE ../hmm/em.c
-gcc -c $INCLUDE src/test_em.c
-gcc -o test_em test_em.o em.o fwbw.o matrix.o stats.o
+gcc -c -Wall -Wsign-compare $INCLUDE ../hmm/stats.c ../hmm/fwbw.c ../hmm/em.c ../hmm/hmm.c src/test_em.c
+gcc -o test_em test_em.o hmm.o em.o fwbw.o stats.o
 mv *.o build/

@@ -1,164 +1,168 @@
 #include <string.h>
 #include "em.h"
-
-
-
+#include "hmm.h"
 
 int poisson_expectation_maximization(
-		const	long	*x,
-		const	size_t	n,
-		const	size_t	m,
-		const	size_t	max_iter,
-		const	scalar	tol,
-		const	scalar	*init_lambda,
-		const 	scalar	*init_gamma,
-		const	scalar	*init_delta,
-				scalar	*lambda_,
-				scalar	*gamma_,
-				scalar	*delta_,
-				scalar	*llk,
-				size_t	*n_iter)
+		const	long		*x,
+		const	size_t		n,
+				PoissonHMM	*hmm)
 {
-	/* use these arrays to construct the return struct */
-	size_t v_size = m * sizeof(scalar);
-	size_t m_size = m * v_size;
-
-	/* implement proper exception handling */
-	scalar	*next_lambda = malloc( v_size );
-	if (next_lambda == NULL) return 0;
+	scalar	acc			= 0.0L;
+	scalar 	bcc			= 0.0L;
+	scalar	c			= 0.0L;
+	scalar  crit		= 0.0L;
+	scalar 	rs_delta 	= 0.0L;
+	scalar 	rs_gamma 	= 0.0L;
+	scalar 	s			= 0.0L;
+	int		success		= 0;
+	size_t	m			= hmm->m;	/* just for convenience */
 	
-	scalar	*next_gamma	= malloc( m_size );
-	if (next_gamma == NULL) return 0;
+	size_t vector_s = m * sizeof(scalar);
+	size_t matrix_s	= m * vector_s;
+	size_t buffer_s = n * vector_s;
+
+	scalar *alpha 		= NULL;
+	scalar *beta  		= NULL;
+	scalar *pprob 		= NULL;
+	scalar *next_lambda	= NULL;
+	scalar *next_gamma	= NULL;
+	scalar *next_delta	= NULL;
+
+	alpha = malloc (buffer_s);
+	if (alpha == NULL) goto fail;
+
+	beta = malloc (buffer_s);
+	if (beta == NULL) goto fail;
+
+	pprob = malloc (buffer_s);
+	if (pprob == NULL) goto fail;
+
+	next_lambda	= malloc (vector_s);
+	if (next_lambda == NULL) goto fail;
 	
-	scalar	*next_delta	= malloc( v_size );
-	if (next_delta == NULL) return 0;
+	next_gamma = malloc (matrix_s);
+	if (next_gamma == NULL) goto fail;
 
-	memcpy(lambda_, init_lambda, v_size);
-	memcpy(gamma_, init_gamma, m_size);
-	memcpy(delta_, init_delta, v_size);
+	next_delta = malloc (vector_s);
+	if (next_delta == NULL) goto fail;
 
-	/* TODO: check abort on failed alloc */
-	scalar	**alpha	=	alloc_matrix(n, m);
-	scalar	**beta	=	alloc_matrix(n, m);
-	scalar	**pprob	=	alloc_matrix(n, m);
 
-	int		fwbw		= 0;
-	scalar	acc			= 0;
-	scalar 	bcc			= 0;
-	scalar	c			= 0;
-	scalar  crit		= 0;
-	scalar 	rs_gamma 	= 0;
-	scalar 	rs_delta 	= 0;
-	scalar 	s			= 0;
-
-	for (*n_iter = 0; *n_iter < max_iter; (*n_iter)++)
+	for (hmm->n_iter = 0; hmm->n_iter < hmm->max_iter; (hmm->n_iter)++)
 	{	
 		/* E Step */
-		fwbw = log_poisson_forward_backward(
-							x, n, m, 
-							lambda_, gamma_, delta_,
+		int fwbw_ret = log_poisson_forward_backward(
+							x, (size_t) n, (size_t) m, 
+							hmm->lambda_, hmm->gamma_, hmm->delta_,
 							alpha, beta, pprob);
-		if (fwbw == 0)
+		if (fwbw_ret == 0)
 		{
 			fprintf(stderr, "Forward/Backward algorithm failed \
-							 (n_iter = %zu).\n", *n_iter);
-			return 0;
+							 (n_iter = %zu).\n", hmm->n_iter);
+			goto fail;
 		}
 
-		c = alpha[n-1][0];
-		for (size_t i = 1; i < m; i++)
+		c = alpha[(n-1)*m];
+		for (size_t j = 1; j < m; j++)
 		{
-			if ( alpha[n-1][i] > c )
+			if ( alpha[(n-1)*m+j] > c )
 			{
-				c = alpha[n-1][i];
+				c = alpha[(n-1)*m+j];
 			}
 		}
 
-		*llk = 0;
-		for (size_t i = 0; i < m; i++)
+		hmm->nll = 0;
+		for (size_t j = 0; j < m; j++)
 		{
-			*llk += expl( alpha[n-1][i] - c );
+			hmm->nll += expl (alpha[(n-1)*m+j] - c);
 		}
-		*llk = logl(*llk) + c;
+		hmm->nll = logl(hmm->nll) + c;
 		
 		/* M Step */
 		crit 		= 0;
 		rs_delta 	= 0;
-		for (size_t i = 0; i < m; i++)
+		for (size_t j = 0; j < m; j++)
 		{	
 			/* Lambda */
 			acc = 0;
 			bcc = 0;
-			for (size_t j = 0; j < n; j++)
+			for (size_t i = 0; i < n; i++)
 			{
-				s = expl( alpha[j][i] + beta[j][i] - (*llk)	); 
+				s = expl (alpha[i*m+j] + beta[i*m+j] - (hmm->nll)); 
 				bcc += s;
-				acc += s * x[j];
+				acc += s * x[i];
 			}
-			next_lambda[i] = acc / bcc;
-			crit += fabsl( next_lambda[i] - lambda_[i] );
+			next_lambda[j] = acc / bcc;
+			crit += fabsl (next_lambda[j] - hmm->lambda_[j] );
 
 			/* Gamma */
 			rs_gamma = 0;
-			for (size_t j = 0; j < m; j++)
+			for (size_t i = 0; i < m; i++)
 			{
 				acc = 0;
 				for (size_t k = 0; k < (n-1); k++)
 				{
-					acc +=  expl(	alpha[k][i] 
-								  +	beta[k+1][j] 
-								  + logl( pprob[k+1][j] )
-								  - (*llk) ); 
+					acc +=  expl(	alpha[k*m+j] 
+								  +	beta[(k+1)*m+i]
+								  + logl (pprob[(k+1)*m+i])
+								  - hmm->nll); 
 				}
-				next_gamma[i*m+j] = gamma_[i*m+j] * acc;
-				rs_gamma += next_gamma[i*m+j];
+				next_gamma[j*m+i] = hmm->gamma_[j*m+i] * acc;
+				rs_gamma += next_gamma[j*m+i];
 			}
 
-			for (size_t j = 0; j < m; j++)
+			for (size_t i = 0; i < m; i++)
 			{
-				next_gamma[i*m+j] /= rs_gamma;
-				crit += fabsl( next_gamma[i*m+j] - gamma_[i*m+j] );
+				next_gamma[j*m+i] /= rs_gamma;
+				crit += fabsl (next_gamma[j*m+i] - hmm->gamma_[j*m+i]);
 			}
 
 			/* Delta */
-			next_delta[i] = expl( alpha[0][i] + beta[0][i] - *llk );
-			rs_delta += next_delta[i];
+			next_delta[j] = expl (alpha[j] + beta[j] - hmm->nll);
+			rs_delta += next_delta[j];
 		}
 
-		for (size_t i = 0; i < m; i++)
+		for (size_t j = 0; j < m; j++)
 		{
-			next_delta[i] /= rs_delta;
-			crit += fabsl( next_delta[i] - delta_[i] ); 
+			next_delta[j] /= rs_delta;
+			crit += fabsl (next_delta[j] - hmm->delta_[j]); 
 		}
 
-		if (crit >= tol)		/* no convergence yet -> copy and reiterate */
+		/* no convergence yet -> copy and reiterate */
+		if (crit >= hmm->tol)
 		{
-			memcpy( lambda_, next_lambda, v_size );
-			memcpy( gamma_,  next_gamma,  m_size );
-			memcpy( delta_,  next_delta,  v_size );
+			memcpy (hmm->lambda_, next_lambda, vector_s);
+			memcpy (hmm->gamma_,  next_gamma,  matrix_s);
+			memcpy (hmm->delta_,  next_delta,  vector_s);
 		}
 		else	/* convergence */
 		{
-			free(next_lambda);
-			free(next_gamma);
-			free(next_delta);
+			success = 1;
+			free (next_lambda);
+			free (next_gamma);
+			free (next_delta);
 
-			free_matrix(alpha, n);
-			free_matrix(beta, n);
-			free_matrix(pprob, n);
-
-			return 1;
+			free (alpha);
+			free (beta);
+			free (pprob);
+			
+			hmm->aic = compute_aic (hmm->nll, hmm->m, n);
+			hmm->bic = compute_bic (hmm->nll, hmm->m, n);
+			fprintf(stderr, "-----EM fine----\n");
+			return success;
 		}
 	}
 
+fail:
 	/* No convergence after max_iter*/
-	free(next_lambda);
-	free(next_gamma);
-	free(next_delta);
+	fprintf(stderr, "------EM failed----\n");
+	free (next_lambda);
+	free (next_gamma);
+	free (next_delta);
 
-	free_matrix(alpha, n);
-	free_matrix(beta, n);
-	free_matrix(pprob, n);
+	free (alpha);
+	free (beta);
+	free (pprob);
 
-	return 0;	
+	return success;	
 }
+

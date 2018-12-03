@@ -1,8 +1,9 @@
 #ifndef STATS_H
 #define STATS_H
 
+#include <stdlib.h>
 #include <math.h>
-#include "matrix.h"
+#include "scalar.h"
 
 scalar	poisson_pmf		(scalar lambda, long x);
 scalar	poisson_log_pmf	(scalar lambda, long x);

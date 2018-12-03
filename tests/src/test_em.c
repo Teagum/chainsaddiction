@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "matrix.h"
 #include "fwbw.h"
 #include "em.h"
+#include "hmm.h"
 
 int main(void)
 {
@@ -21,62 +21,48 @@ int main(void)
 						18, 16, 13, 12, 13, 20, 15, 16, 12, 18,
 						15, 16, 13, 15, 16, 11, 11 };
 	
-	scalar	l[m]	=	{ 10.L, 20.L, 30.L };
+	scalar	l[m]	=	{ 10L, 20L, 30L };
 	scalar	g[m*m]	=	{ .8, .1, .1,
 						  .1, .8, .1,
 						  .1, .1, .8  };
 	scalar	d[m]	=	{ 1./3., 1./3., 1./3. };
 	
-	size_t	n_iter	= 	0;
-	scalar	llk		=	0;
 
-	scalar *lambda_	= malloc( m * sizeof(scalar) );
-	scalar *gamma_	= malloc( m * m * sizeof(scalar) ); 
-	scalar *delta_	= malloc( m * sizeof(scalar) );
+	PoissonHMM *phmm = NewPoissonHMM(m, l, g, d, 1000, 1e-5);
+	success = poisson_expectation_maximization(x, n, phmm);
 
-	
-	success = poisson_expectation_maximization(
-				x, n, m, 1000, 1e-5,
-				l, g, d, 
-				lambda_, gamma_, delta_,
-				&llk, &n_iter);
-
-	if (success != 0)
+	if (success == 1)
 	{
 		printf("Lambda:\n");
 		for (size_t i = 0; i < m; i++)
-			printf("%Lf\t", lambda_[i]);
+			printf("%Lf\t", phmm->lambda_[i]);
 
-		printf("\n\nGamma\n");
+		printf("\n\nGamma:\n");
 		for (size_t i = 0; i < m; i++)
 		{
 			for (size_t j = 0; j < m; j++)
 			{
-				printf("%10.10Lf\t", gamma_[i*m+j]);
+				printf("%10.10Lf\t", phmm->gamma_[i*m+j]);
 			}
 			printf("\n");
 		}
 
 		printf("\nDelta:\n");
 		for (size_t i = 0; i < m; i++)
-			printf("%Lf\t", delta_[i]);
+			printf("%Lf\t", phmm->delta_[i]);
 		
-		printf("\n\nLLK:\t%Lf", llk);
-		printf("\nn_iter:\t%zu\n", n_iter);
-
-		free(lambda_);
-		free(gamma_);
-		free(delta_);
-
+		printf("\n\nNLL:\t%Lf\n", phmm->nll);
+		printf("AIC:\t%Lf\n", phmm->aic);
+		printf("BIC:\t%Lf\n\n", phmm->bic);
+		printf("n_iter:\t%zu\n", phmm->n_iter);
+		
+		DeletePoissonHMM(phmm);
 		return 0;
 	}
 	else
 	{
-		printf("No convergence.");
-		free(lambda_);
-		free(gamma_);
-		free(delta_);
-
-		return -1;
+		puts("No convergence.");
+		DeletePoissonHMM(phmm);
+		return 125;
 	}
 }

@@ -15,10 +15,16 @@ int main(int argc, char *argv[])
 						.1, .1, .8 };
 	scalar	d[m]	= { 1./3., 1./3., 1./3. };
 
-	scalar	**alpha	= alloc_matrix(n, m);
-	scalar	**beta	= alloc_matrix(n, m);
-	scalar	**probs	= alloc_matrix(n, m);
-	scalar	**data	= NULL;
+	scalar	*alpha	= malloc (n*m*sizeof(scalar));
+	if (alpha == NULL) return 0;
+
+	scalar	*beta	= malloc (n*m*sizeof(scalar));
+	if (beta == NULL) { free(alpha); return 0; }
+
+	scalar	*probs	= malloc (n*m*sizeof(scalar));
+	if (probs == NULL) { free(alpha); free(beta); return 0; }
+
+	scalar *data = NULL;
 
 	log_poisson_forward_backward(x, n, m, l, g, d, alpha, beta, probs);
 
@@ -42,14 +48,14 @@ int main(int argc, char *argv[])
 	{
 		for (size_t j = 0; j < m; j++)
 		{
-			printf("%15.10Lf", *(*(data+i)+j) );
+			printf("%15.10Lf", data[i*m+j] );
 		}
 		printf("\n");
 	}
 
-	free_matrix(alpha, n);
-	free_matrix(beta, n);
-	free_matrix(probs, n);
+	free(alpha);
+	free(beta);
+	free(probs);
 
 	return 0;
 }
