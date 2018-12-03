@@ -54,6 +54,37 @@ int poisson_expectation_maximization(
 							x, (size_t) n, (size_t) m, 
 							hmm->lambda_, hmm->gamma_, hmm->delta_,
 							alpha, beta, pprob);
+
+		/* --------- debug ------ */
+		for (size_t i = 0; i < n; i++)
+		{
+			for (size_t j = 0; j < m; j++)
+			{
+				if (!isfinite( (float) alpha[i*m+j] ))
+				{
+					fprintf(stderr, "NaN in alpha[%zu, %zu], n_iter: %zu\n", i, j, hmm->n_iter);
+					fflush(stderr);
+					goto fail;
+				}
+
+				if (!isfinite(beta[i*m+j]))
+				{
+					fprintf(stderr, "NaN in beta[%zu, %zu], n_iter: %zu\n", i, j, hmm->n_iter);
+					fflush(stderr);
+					goto fail;
+				}
+
+				if (!isfinite(pprob[i*m+j]))
+				{
+					fprintf(stderr, "NaN in pprob[%zu, %zu], n_iter: %zu\n", i, j, hmm->n_iter);
+					fflush(stderr);
+					goto fail;
+				}
+			}
+		}
+		/* ------ END DEBUG _______ */
+
+
 		if (fwbw_ret == 0)
 		{
 			fprintf(stderr, "Forward/Backward algorithm failed \
