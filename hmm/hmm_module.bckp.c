@@ -17,77 +17,63 @@ hmm_poisson_fit(PyObject* self, PyObject* args)
 static PyObject *
 hmm_poisson_EM(PyObject* self, PyObject* args)
 {
-	PyObject *py_X		= NULL;
-	PyObject *py_lambda = NULL;
-	PyObject *py_gamma	= NULL;
-	PyObject *py_delta	= NULL;
-	npy_intp max_iter   = 0;
-	double   tol		= 0;
+	PyArrayObject	*x		= NULL;
+	PyArrayObject	*_lambda= NULL;
+	PyArrayObject	*_gamma	= NULL;
+	PyArrayObject	*_delta	= NULL;
+	npy_intp		max_iter= 0;
+	double			tol		= 0;
 
-	PyArrayObject *X		= NULL;
-	PyArrayObject *_lambda	= NULL;
-	PyArrayObject *_gamma	= NULL;
-	PyArrayObject *_delta	= NULL;
+	if (!PyArg_ParseTuple(args, "OOOOld", &x, &_lambda, &_gamma,
+		&_delta, &max_iter, &tol)) return NULL;
 
-	if (!PyArg_ParseTuple(args, "OOOOld", &py_X, &py_lambda, &py_gamma,
-		&py_delta, &max_iter, &tol)) return NULL;
-
-	X		= (PyArrayObject *) PyArray_FROM_OTF(py_X, NPY_LONG, NPY_ARRAY_IN_ARRAY);
-	_lambda	= (PyArrayObject *) PyArray_FROM_OTF(py_lambda, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
-	_gamma	= (PyArrayObject *) PyArray_FROM_OTF(py_gamma, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
-	_delta	= (PyArrayObject *) PyArray_FROM_OTF(py_delta, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
-
-	if (X == NULL || _lambda == NULL || _gamma == NULL || _delta == NULL)
-	{
-		Py_XDECREF(X);
-		Py_XDECREF(_lambda);
-		Py_XDECREF(_gamma);
-		Py_XDECREF(_delta);
-		PyErr_SetString(PyExc_MemoryError, "Memory Error");
-		Py_RETURN_NONE;
-	}
-
-	npy_intp n = PyArray_SIZE(X);
+	npy_intp n = PyArray_SIZE(x);
 	npy_intp m = PyArray_SIZE(_lambda);
 
-	PoissonHMM *hmm	= NewPoissonHMM ((size_t) m,
-									 PyArray_DATA (_lambda),
-									 PyArray_DATA (_gamma),
-									 PyArray_DATA (_delta),
-									 (size_t) max_iter, (scalar) tol);
-	if (hmm == NULL) return NULL;
+	PoissonHMM *hmm	= NewPoissonHMM( m,
+						PyArray_DATA(_lambda),
+						PyArray_DATA(_gamma),
+						PyArray_DATA(_delta),
+						(size_t) max_iter, (scalar) tol);
 
+	int success = poisson_expectation_maximization(PyArray_DATA(x),
+												   (size_t) n, hmm);
 
-	int success =  poisson_expectation_maximization(PyArray_DATA(X), (size_t) n, hmm); 
-    
+	if (success == 1)
 	{
-		npy_intp dims_1d[] = { m };
-		npy_intp dims_2d[] = { m, m };
+		npy_intp	dims_1d[]	= { m };
+		npy_intp	dims_2d[]	= { m, m };
+		size_t		v_size		= (size_t) m * sizeof(scalar);
+		size_t		m_size		= (size_t) m * v_size;
 
-		PyArrayObject *lambda_ = Apollon_NewPyArray1d(dims_1d);
-		PyArrayObject *gamma_  = Apollon_NewPyArray2d(dims_2d);
-		PyArrayObject *delta_  = Apollon_NewPyArray1d(dims_1d);
-		
-		for (size_t i = 0; i < (size_t)m; i++)
-			printf("%Lf\t", hmm->lambda_[i]);
+		PyArrayObject *lambda_	= Apollon_NewPyArray1d(dims_1d);
+		PyArrayObject *gamma_	= Apollon_NewPyArray2d(dims_2d);
+		PyArrayObject *delta_	= Apollon_NewPyArray1d(dims_1d);
+
+		scalar *data = PyArray_DATA(lambda_);
+		memcpy (PyArray_DATA(lambda_), hmm->lambda_, v_size);	
+		memcpy (PyArray_DATA(gamma_), hmm->gamma_,  m_size);	
+		memcpy (PyArray_DATA(delta_), hmm->delta_, v_size);
+
+		for (npy_intp i = 0; i < m; i++)
+			fprintf(stdout, "%Lf\t", data[i]);
 
 		hmm->aic = compute_aic(hmm->nll, m,  n);
 		hmm->bic = compute_bic(hmm->nll, m,  n);
 
-		PyObject *out = NULL;
-		out = Py_BuildValue("iNNNdddk", success, 
-			lambda_, 
-			gamma_, 
-			delta_, 
-							(double) hmm->aic, (double) hmm->bic,
-							(double) hmm->nll, hmm->n_iter);
+		PyObject *out = PyTuple_Pack(7, lambda_, gamma_, delta_, 
+						   PyFloat_FromDouble(hmm->aic), PyFloat_FromDouble(hmm->bic),
+						   PyFloat_FromDouble(hmm->nll), PyLong_FromSize_t(hmm->n_iter));
 
-		Py_DECREF (X);
-		Py_DECREF (_lambda);
-		Py_DECREF (_gamma);
-		Py_DECREF (_delta);
+		Py_INCREF(out);
 		DeletePoissonHMM(hmm);
 		return out;
+	}
+	else
+	{
+		DeletePoissonHMM(hmm);
+		PyErr_SetString(PyExc_ValueError, "Training failed.");
+		Py_RETURN_NONE;
 	}
 }
 

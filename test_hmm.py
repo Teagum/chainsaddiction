@@ -14,18 +14,26 @@ x = np.array([  13, 14,  8, 10, 16, 26, 32, 27, 18, 32,
                 15, 16, 13, 15, 16, 11, 11])
 
 m = 3
+
 _lambda = np.array([10., 20., 30.])
+
 _gamma = np.array([[.8,  .1, .1],
                    [ .1, .8, .1],
                    [ .1, .1, .8]])
+
 _delta = np.array([1./3., 1./3., 1./3.])
 
-__lambda = np.require(_lambda, dtype=np.float128, requirements=['C_CONTIGUOUS', 'ALIGNED'])
-__gamma = np.require(_gamma, dtype=np.float128, requirements=['C_CONTIGUOUS', 'ALIGNED'])
-__delta = np.require(_delta, dtype=np.float128, requirements=['C_CONTIGUOUS', 'ALIGNED'])
-__x = np.require(x, dtype=np.long, requirements=['C_CONTIGUOUS', 'ALIGNED'])
 
-y = hmm.hmm_poisson_EM(x, __lambda, __gamma, __delta, 1000, 1e-5)
+y = hmm.hmm_poisson_EM(x, _lambda, _gamma, _delta, 1000, 1e-5)
+if y[0] == 0:
+    print('Model failed\n')
+else:
+    print('Success: {}\n'.format(y[0]))
+    print('Lambda:\n{}\n'.format(y[1]))
+    print('Gamma:\n{}\n'.format(y[2]))
+    print('Delta:\n{}\n'.format(y[3]))
+    print('AIC: {}\n'.format(y[4]))
+    print('BIC: {}\n'.format(y[5]))
+    print('nLL: {}\n'.format(y[6]))
+    print('iter: {}\n'.format(y[7]))
 
-for i in y:
-    print(i, '\n')

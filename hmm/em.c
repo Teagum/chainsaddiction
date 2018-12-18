@@ -21,41 +21,49 @@ int poisson_expectation_maximization(
 	size_t matrix_s	= m * vector_s;
 	size_t buffer_s = n * vector_s;
 
-	scalar *alpha 		= NULL;
-	scalar *beta  		= NULL;
-	scalar *pprob 		= NULL;
-	scalar *next_lambda	= NULL;
-	scalar *next_gamma	= NULL;
-	scalar *next_delta	= NULL;
+	scalar *alpha 		= malloc (buffer_s);
+	scalar *beta  		= malloc (buffer_s);
+	scalar *pprob 		= malloc (buffer_s);
+	scalar *next_lambda	= malloc (vector_s);
+	scalar *next_gamma	= malloc (matrix_s);
+	scalar *next_delta	= malloc (vector_s);
 
-	alpha = malloc (buffer_s);
-	if (alpha == NULL) goto fail;
-
-	beta = malloc (buffer_s);
-	if (beta == NULL) goto fail;
-
-	pprob = malloc (buffer_s);
-	if (pprob == NULL) goto fail;
-
-	next_lambda	= malloc (vector_s);
-	if (next_lambda == NULL) goto fail;
-	
-	next_gamma = malloc (matrix_s);
-	if (next_gamma == NULL) goto fail;
-
-	next_delta = malloc (vector_s);
-	if (next_delta == NULL) goto fail;
-
+	if (alpha == NULL || beta == NULL || pprob == NULL ||
+		next_lambda == NULL || next_gamma == NULL ||
+		next_delta == NULL)
+	{
+		free (alpha);
+		free (beta);
+		free (pprob);
+		free (next_lambda);
+		free (next_gamma);
+		free (next_delta);
+		return 0;
+	}
 
 	for (hmm->n_iter = 0; hmm->n_iter < hmm->max_iter; (hmm->n_iter)++)
-	{	
+	{
+        /* printf("N_ITER: %zu\n", hmm->n_iter); */
+
 		/* E Step */
 		int fwbw_ret = log_poisson_forward_backward(
-							x, (size_t) n, (size_t) m, 
+							x, n, m, 
 							hmm->lambda_, hmm->gamma_, hmm->delta_,
 							alpha, beta, pprob);
 
 		/* --------- debug ------ */
+		/* print alpha beta pprob
+		for (size_t i =0; i<n; i++)
+		{
+			for (size_t j =0; j<m;j++)
+			{
+				printf("%Lf\t", beta[i*m+j]);
+			}
+			printf("\n");
+		}
+		*/
+
+        /* assert NaNs
 		for (size_t i = 0; i < n; i++)
 		{
 			for (size_t j = 0; j < m; j++)
@@ -64,24 +72,22 @@ int poisson_expectation_maximization(
 				{
 					fprintf(stderr, "NaN in alpha[%zu, %zu], n_iter: %zu\n", i, j, hmm->n_iter);
 					fflush(stderr);
-					goto fail;
 				}
 
 				if (!isfinite(beta[i*m+j]))
 				{
 					fprintf(stderr, "NaN in beta[%zu, %zu], n_iter: %zu\n", i, j, hmm->n_iter);
 					fflush(stderr);
-					goto fail;
 				}
 
 				if (!isfinite(pprob[i*m+j]))
 				{
 					fprintf(stderr, "NaN in pprob[%zu, %zu], n_iter: %zu\n", i, j, hmm->n_iter);
 					fflush(stderr);
-					goto fail;
 				}
 			}
 		}
+        */
 		/* ------ END DEBUG _______ */
 
 
@@ -89,7 +95,7 @@ int poisson_expectation_maximization(
 		{
 			fprintf(stderr, "Forward/Backward algorithm failed \
 							 (n_iter = %zu).\n", hmm->n_iter);
-			goto fail;
+			goto exit_point;
 		}
 
 		c = alpha[(n-1)*m];
@@ -159,6 +165,7 @@ int poisson_expectation_maximization(
 		}
 
 		/* no convergence yet -> copy and reiterate */
+        /* printf("(%Lf, %Lf)\n", crit, hmm->tol); */
 		if (crit >= hmm->tol)
 		{
 			memcpy (hmm->lambda_, next_lambda, vector_s);
@@ -166,33 +173,22 @@ int poisson_expectation_maximization(
 			memcpy (hmm->delta_,  next_delta,  vector_s);
 		}
 		else	/* convergence */
-		{
+		{   
 			success = 1;
-			free (next_lambda);
-			free (next_gamma);
-			free (next_delta);
-
-			free (alpha);
-			free (beta);
-			free (pprob);
-			
-			hmm->aic = compute_aic (hmm->nll, hmm->m, n);
-			hmm->bic = compute_bic (hmm->nll, hmm->m, n);
-			fprintf(stderr, "-----EM fine----\n");
-			return success;
+			goto exit_point;
 		}
 	}
 
-fail:
+exit_point:
 	/* No convergence after max_iter*/
-	fprintf(stderr, "------EM failed----\n");
-	free (next_lambda);
-	free (next_gamma);
-	free (next_delta);
 
 	free (alpha);
 	free (beta);
 	free (pprob);
+
+	free (next_lambda);
+	free (next_gamma);
+	free (next_delta);
 
 	return success;	
 }

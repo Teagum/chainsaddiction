@@ -1,5 +1,5 @@
 #include "fwbw.h"
-
+#include "stdio.h"
 
 int log_poisson_forward_backward(
 		const long	 *x,
@@ -81,7 +81,8 @@ int log_poisson_forward_backward(
 	/* Initial step */
 	for (size_t j = 0; j < m; j++)
 	{
-		_pxt[j] = 1.L / (scalar) m;
+		_pxt[j] = 1.0L / (scalar) m;
+        beta[(n-1)*m+j] = 0.0L;
 	}
 	lsf = logl(m);
 

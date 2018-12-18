@@ -9,10 +9,10 @@ NewPoissonHMM (size_t m,
 			   scalar tol)
 {
 	PoissonHMM *phmm = malloc (sizeof (PoissonHMM));
-	
-	size_t lambda_s 	= m * sizeof (*(phmm->lambda_));
-	size_t gamma_s		= m * lambda_s;
-	size_t delta_s		= lambda_s;
+	if (phmm == NULL) return NULL;
+
+	size_t vector_s 	= m * sizeof (*(phmm->lambda_));
+	size_t matrix_s		= m * vector_s;
 
 	phmm->m 			= m;
 
@@ -24,13 +24,16 @@ NewPoissonHMM (size_t m,
 	phmm->tol			= tol;
 	phmm->n_iter		= 0L;
 
-	phmm->lambda_	 	= malloc (lambda_s);
-	phmm->gamma_		= malloc (gamma_s);
-	phmm->delta_		= malloc (delta_s);
+	phmm->lambda_	 	= malloc (vector_s);
+	phmm->gamma_		= malloc (matrix_s);
+	phmm->delta_		= malloc (vector_s);
 
-	memcpy (phmm->lambda_, init_lambda, lambda_s);
-	memcpy (phmm->gamma_,  init_gamma,  gamma_s);
-	memcpy (phmm->delta_,  init_delta,  delta_s);
+	if (phmm->lambda_ == NULL || phmm->gamma_ == NULL || phmm->delta_ == NULL)
+		return NULL;
+
+	memcpy (phmm->lambda_, init_lambda, vector_s);
+	memcpy (phmm->gamma_,  init_gamma,  matrix_s);
+	memcpy (phmm->delta_,  init_delta,  vector_s);
 
 	phmm->aic			= 0.0L;
 	phmm->bic			= 0.0L;

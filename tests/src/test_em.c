@@ -31,6 +31,9 @@ int main(void)
 	PoissonHMM *phmm = NewPoissonHMM(m, l, g, d, 1000, 1e-5);
 	success = poisson_expectation_maximization(x, n, phmm);
 
+	phmm->aic = compute_aic (phmm->nll, phmm->m, n);
+	phmm->bic = compute_bic (phmm->nll, phmm->m, n);
+
 	if (success == 1)
 	{
 		printf("Lambda:\n");
