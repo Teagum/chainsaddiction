@@ -43,53 +43,11 @@ int poisson_expectation_maximization(
 
 	for (hmm->n_iter = 0; hmm->n_iter < hmm->max_iter; (hmm->n_iter)++)
 	{
-        /* printf("N_ITER: %zu\n", hmm->n_iter); */
-
 		/* E Step */
 		int fwbw_ret = log_poisson_forward_backward(
 							x, n, m, 
 							hmm->lambda_, hmm->gamma_, hmm->delta_,
 							alpha, beta, pprob);
-
-		/* --------- debug ------ */
-		/* print alpha beta pprob
-		for (size_t i =0; i<n; i++)
-		{
-			for (size_t j =0; j<m;j++)
-			{
-				printf("%Lf\t", beta[i*m+j]);
-			}
-			printf("\n");
-		}
-		*/
-
-        /* assert NaNs
-		for (size_t i = 0; i < n; i++)
-		{
-			for (size_t j = 0; j < m; j++)
-			{
-				if (!isfinite( (float) alpha[i*m+j] ))
-				{
-					fprintf(stderr, "NaN in alpha[%zu, %zu], n_iter: %zu\n", i, j, hmm->n_iter);
-					fflush(stderr);
-				}
-
-				if (!isfinite(beta[i*m+j]))
-				{
-					fprintf(stderr, "NaN in beta[%zu, %zu], n_iter: %zu\n", i, j, hmm->n_iter);
-					fflush(stderr);
-				}
-
-				if (!isfinite(pprob[i*m+j]))
-				{
-					fprintf(stderr, "NaN in pprob[%zu, %zu], n_iter: %zu\n", i, j, hmm->n_iter);
-					fflush(stderr);
-				}
-			}
-		}
-        */
-		/* ------ END DEBUG _______ */
-
 
 		if (fwbw_ret == 0)
 		{
