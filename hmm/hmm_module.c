@@ -75,10 +75,7 @@ hmm_poisson_EM(PyObject* self, PyObject* args)
 		hmm->bic = compute_bic(hmm->nll, m,  n);
 
 		PyObject *out = NULL;
-		out = Py_BuildValue("iNNNdddk", success, 
-			lambda_, 
-			gamma_, 
-			delta_, 
+		out = Py_BuildValue("iNNNdddk", success, lambda_, gamma_, delta_, 
 							(double) hmm->aic, (double) hmm->bic,
 							(double) hmm->nll, hmm->n_iter);
 
