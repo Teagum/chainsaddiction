@@ -1,7 +1,7 @@
 INCLUDE = -Iinclude/
 CFLAGS  = -Wall -Wsign-compare
 
-hmm.cpython-37m-darwin.so:
+hmm.cpython-37m-darwin.so: hmm/hmm_module.c
 	python3 setup.py build_ext --inplace
 
 clean:
