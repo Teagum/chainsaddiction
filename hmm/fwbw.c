@@ -1,8 +1,8 @@
+#include <stdio.h>
 #include "fwbw.h"
-#include "stdio.h"
 
 int log_poisson_forward_backward(
-		const long	 *x,
+		const long   *x,
 		const size_t n,
 		const size_t m,
 		const scalar *lambda_, 
@@ -10,67 +10,64 @@ int log_poisson_forward_backward(
 		const scalar *delta_,
 		scalar *alpha,
 		scalar *beta,
-		scalar *pprob)
+		scalar *pois_pr)
 {
-	
-	scalar	sum_buff	= 0;		/* sum prob */
-	scalar	lsf			= 0;		/* logl scale factor */
-	int 	success		= 1;
+	scalar sum_buff = LDBL_EPSILON;    /* sum prob */
+	scalar lsf      = 0.0L;            /* log scale factor */
+	int    success  = 1;
 
-	scalar *_pxt = NULL;
-	scalar *_buff = NULL;
-	scalar *_eggs = NULL;
+	scalar *pr_x_t   = malloc (m * sizeof (scalar));     /* probabilities at time `t` */
+	scalar *buff     = malloc (m * sizeof (scalar));     /* calculation buffer */
+	scalar *prob_acc = malloc (m * sizeof (scalar));     /* probability accumulator */
 
-	_pxt = malloc (m * sizeof(*_pxt));		/* probabilities at time `t` */
-	if (_pxt == NULL) { success=0; goto fail; } 
-
-	_buff = malloc (m * sizeof(*_buff));	/* calculation buffer */
-	if (_buff == NULL) { success=0; goto fail; } 
-
-	_eggs = malloc (m * sizeof(*_eggs));	/* calculation buffer */
-	if (_eggs == NULL) { success=0; goto fail; }
-
+	if (pr_x_t == NULL || buff == NULL || prob_acc == NULL)
+	{
+		success = 0;
+		goto fail;
+	}
 
 	/*
 	 * Forward pass 
 	 */
 
 	/* Initial step t = 0 */
-	for (size_t j = 0; j < m; j++)
+	for (size_t i = 0; i < m; i++)
 	{
-		pprob[j] = poisson_pmf (lambda_[j], x[0]);
-		_pxt[j] = pprob[j] * delta_[j];
-		sum_buff += _pxt[j];
+		pois_pr[i] = poisson_pmf (lambda_[i], x[0]);
+		pr_x_t[i] = pois_pr[i] * delta_[i];
+		sum_buff += pr_x_t[i];
 	}
+
 	lsf = logl (sum_buff);
 	
-	for (size_t j = 0; j < m; j++)
+	for (size_t i = 0; i < m; i++)
 	{
-		_pxt[j] /= sum_buff;
-		alpha[j] = logl (_pxt[j]) + lsf;
+		pr_x_t[i] /= sum_buff;
+		alpha[i] = logl (pr_x_t[i]) + lsf;
 	}
 	
 	/* remaining forward steps */
-	for (size_t i = 1; i < n; i++)
+	for (size_t t = 1; t < n; t++)
 	{
-		sum_buff = 0;
-		for (size_t j = 0; j < m; j++)
+		sum_buff = LDBL_EPSILON;
+		for (size_t i = 0; i < m; i++)
 		{
-			_buff[j] = 0;
-			for (size_t k = 0; k < m; k++)
+			buff[i] = 0.0L;
+			for (size_t j = 0; j < m; j++)
 			{
-				_buff[j] += _pxt[k] * gamma_[k*m+j];
+				buff[i] += pr_x_t[j] * gamma_[j*m+i];
 			}
-			pprob[i*m+j] = poisson_pmf (lambda_[j], x[i]);
-			_buff[j] *= pprob[i*m+j];
-			sum_buff += _buff[j];
+			pois_pr[t*m+i] = poisson_pmf (lambda_[i], x[t]);
+			buff[i] *= pois_pr[t*m+i];
+			sum_buff += buff[i];
 		}
+
 		lsf += logl (sum_buff);
 
-		for (size_t j = 0; j < m; j++)
+		for (size_t i = 0; i < m; i++)
 		{
-			_pxt[j] = _buff[j] / sum_buff;
-			alpha[i*m+j] = logl (_pxt[j]) + lsf;
+			pr_x_t[i] = buff[i] / sum_buff;
+			alpha[t*m+i] = logl (pr_x_t[i]) + lsf;
 		}
 	}
 
@@ -79,44 +76,43 @@ int log_poisson_forward_backward(
 	 */
 
 	/* Initial step */
-	for (size_t j = 0; j < m; j++)
+	for (size_t i = 0; i < m; i++)
 	{
-		_pxt[j] = 1.0L / (scalar) m;
-        beta[(n-1)*m+j] = 0.0L;
+		pr_x_t[i] = 1.0L / (scalar) m;
+        beta[(n-1)*m+i] = 0.0L;
 	}
-	lsf = logl(m);
+	lsf = logl (m);
 
 	/* remaining backward steps */
-	for (size_t i = n-1; i > 0; i--)
+	for (size_t t = n-1; t > 0; t--)
 	{
-		for (size_t j = 0; j < m; j++)
+		for (size_t i = 0; i < m; i++)
 		{
-			_eggs[j] = pprob[i*m+j] * _pxt[j];
+			prob_acc[i] = pois_pr[t*m+i] * pr_x_t[i];
 		}
 		
-		for (size_t j = 0; j < m; j++)
+		for (size_t i = 0; i < m; i++)
 		{
-			sum_buff = 0;
-			for (size_t k = 0; k < m; k++)
+			sum_buff = LDBL_EPSILON;
+			for (size_t j = 0; j < m; j++)
 			{
-				_buff[j] += gamma_[j*m+k] * _eggs[k];
+				buff[i] += gamma_[i*m+j] * prob_acc[j];
 			}
-			sum_buff += _buff[j];
+			sum_buff += buff[i];
 		}
 
 		lsf += logl (sum_buff);
-		for (size_t j = 0; j < m; j++)
+		for (size_t i = 0; i < m; i++)
 		{
-			_pxt[j] = _buff[j] / sum_buff;
-			_buff[j] = 0;
-			beta[(i-1)*m+j] = logl (_pxt[j]) + lsf;
+			pr_x_t[i] = buff[i] / sum_buff;
+			buff[i] = 0.0L;
+			beta[(t-1)*m+i] = logl (pr_x_t[i]) + lsf;
 		}
 	}
 
 fail:
-	free(_pxt);
-	free(_buff);
-	free(_eggs);
+	free (pr_x_t);
+	free (buff);
+	free (prob_acc);
 	return success;
 }	
-

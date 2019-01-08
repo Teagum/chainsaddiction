@@ -1,8 +1,9 @@
 #ifndef FWBW_H
 #define FWBW_H
 
-#include <stdlib.h>
+#include <float.h>
 #include <math.h>
+#include <stdlib.h>
 #include "stats.h"
 #include "scalar.h"
 
