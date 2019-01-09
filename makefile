@@ -1,4 +1,5 @@
 INCLUDE = -Iinclude/
+TEST_INCLUDE = -Iinclude/ -Itests/src/
 CFLAGS  = -Wall -Wsign-compare
 
 hmm.cpython-37m-darwin.so: hmm/*.c include/*.h #hmm_module.c hmm/em.c hmm/fwbw.c
@@ -17,8 +18,10 @@ test_em:
 	rm *.o
 	tests/test_em
 
-test_fwbw:
-	gcc -c $(CFLAGS) $(INCLUDE) hmm/stats.c hmm/fwbw.c tests/src/test_fwbw.c
-	gcc -o tests/test_fwbw test_fwbw.o fwbw.o stats.o
+fwbw:
+	gcc -c $(CFLAGS) $(TEST_INCLUDE) hmm/stats.c hmm/fwbw.c tests/src/test_fwbw.c tests/src/test_utilities.c
+	gcc -o tests/test_fwbw test_fwbw.o fwbw.o stats.o test_utilities.o
 	rm *.o
-	tests/test_fwbw -b
+
+test_fwbw:
+	tests/test_fwbw < tests/data/earthquakes.txt

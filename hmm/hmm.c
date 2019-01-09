@@ -1,4 +1,5 @@
 #include "hmm.h"
+#include <stdio.h>
 
 PoissonHMM*
 NewPoissonHMM (size_t m,
@@ -60,6 +61,6 @@ compute_aic(scalar nll, size_t m, size_t n)
 scalar
 compute_bic(scalar nll, size_t m, size_t n)
 {
-	return 2.0L * nll + logl((scalar) n) * (scalar) (2*m + m*m);
+	return 2.0L * nll + logl ((scalar) n) * (scalar) (2*m + m*m);
 }
 
