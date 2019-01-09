@@ -8,16 +8,19 @@
 #include "fwbw.h"
 #include "scalar.h"
 
-#define Apollon_NewPyArray1d(dims)							\
-	 (PyArrayObject*) PyArray_New(&PyArray_Type,			\
-								  1, dims, NPY_LONGDOUBLE,	\
-								  NULL, NULL, 0, 			\
-								  NPY_ARRAY_CARRAY, NULL)	\
 
-#define Apollon_NewPyArray2d(dims)							\
-	 (PyArrayObject*) PyArray_New(&PyArray_Type,			\
-								  2, dims, NPY_LONGDOUBLE,	\
-								  NULL, NULL, 0, 			\
-								  NPY_ARRAY_CARRAY, NULL)	\
+#define Apollon_NewPyArray1d(shape)                     \
+        ((PyArrayObject *)                              \
+        PyArray_NewFromDescr (&PyArray_Type,            \
+                PyArray_DescrFromType (NPY_LONGDOUBLE), \
+                1, shape, NULL, NULL, 0, NULL));
 
-#endif	/* hmm_module_h */
+
+#define Apollon_NewPyArray2d(shape)                     \
+        ((PyArrayObject *)                              \
+        PyArray_NewFromDescr (&PyArray_Type,            \
+                PyArray_DescrFromType (NPY_LONGDOUBLE), \
+                2, shape, NULL, NULL, 0, NULL));
+
+
+#endif  /* hmm_module_h */
