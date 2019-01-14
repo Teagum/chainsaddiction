@@ -1,30 +1,54 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "test_utilities.h"
 
-/* read values seperate by newline from 
- * a file as long integer. Return number of read values.
- */
-size_t read_stdin (long *buffer, size_t n)
+DataSet *ReadFromStdin(void)
 {
-    size_t cnt = 0;
-    size_t N   = n;
+    size_t N       = 100;
+    size_t row_cnt = 0;
+    size_t max_len = 50;
 
-    while (!feof(stdin))
+    char buffer[max_len];
+    void *mem_buffer = NULL;
+    char *e;
+
+    DataSet *X = malloc (sizeof (*X));
+    if (X == NULL) return NULL;
+
+    X->data = malloc (N * sizeof (*X->data));
+    if (X->data == NULL) goto error;
+
+    while (fgets (buffer, max_len, stdin))
     {
-        printf("%zu\n", cnt);
-        if (cnt >= N-1)
+        if (!(row_cnt < N))
         {
-            puts("REALLOC");
-            N += 100;
-            buffer = realloc (buffer, N * sizeof (long));
+            N += 50;
+            mem_buffer= realloc (X->data, N);
+            if (mem_buffer == NULL) goto error;
+            X->data = mem_buffer;
+            mem_buffer = NULL;
         }
 
-        if (fscanf(stdin, "%ld", &buffer[cnt++]) != 1)
-            break;
+        X->data[row_cnt] = strtol (buffer, &e, 10);
+        fprintf (stdout, "%zu : %ld\n", row_cnt, X->data[row_cnt]);
+
+        if (errno != 0)
+            fprintf(stderr, "Error reading line %zu. Skipping it.\n", row_cnt);
+
+        row_cnt++;
     }
+    printf("\n\n");
+    N = row_cnt;
+    //X->data = realloc (X->data, N);
+    X->size = N;
 
-    N = cnt-1;
-    buffer = realloc (buffer, N * sizeof (long));
+    return X;
 
-    return N;
+error:
+    free_DataSet (X);
+    return NULL;    
+}
+
+void free_DataSet(DataSet *X)
+{
+    free (X->data);
+    free (X);
 }

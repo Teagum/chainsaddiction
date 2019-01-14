@@ -1,6 +1,18 @@
 #ifndef test_utilities_h
 #define test_utilities_h
 
-size_t read_stdin (long *buffer, size_t n);
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+
+typedef struct {
+    long   *data;
+    size_t size;
+} DataSet;
+
+
+DataSet *ReadFromStdin();
+
+void free_DataSet(DataSet *X);
 
 #endif  /*test_utilities_h */

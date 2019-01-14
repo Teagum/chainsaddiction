@@ -11,7 +11,23 @@ int main(int argc, char *argv[])
     long *x = malloc (n * sizeof (long));
 
     n = read_stdin(x, n);   
+    
+    printf("Number of elements: %zu\n", n);
 
+    //for (size_t i = 0; i < n; i++)
+      //printf("%zu: %ld\n", i, x[i]);
+    
+    free (x);        
+    return 0;
+
+
+
+
+
+
+
+
+    /*
     scalar  l[] = { 10L, 20L, 30L };
     scalar  g[] = { .8, .1, .1,
                     .1, .8, .1,
@@ -25,13 +41,8 @@ int main(int argc, char *argv[])
     {
         free (alpha); free (beta); free (probs); return 0;
     }
-
     scalar *data = NULL;
 
-    for (size_t i = 0; i < n; i++)
-        printf("%zu: %ld\n", i, x[i]);
-
-    return 0;
     log_poisson_forward_backward(x, n, m, l, g, d, alpha, beta, probs);
 
     if (argc < 2)
@@ -64,4 +75,5 @@ int main(int argc, char *argv[])
     free(probs);
     free(x);
     return 0;
+    */
 }
