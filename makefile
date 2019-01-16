@@ -19,8 +19,8 @@ test_em:
 	tests/test_em
 
 fwbw:
-	gcc -c $(CFLAGS) $(TEST_INCLUDE) hmm/stats.c hmm/fwbw.c tests/src/test_fwbw.c tests/src/test_utilities.c
-	gcc -o tests/test_fwbw test_fwbw.o fwbw.o stats.o test_utilities.o
+	gcc -c $(CFLAGS) $(INCLUDE) hmm/stats.c hmm/fwbw.c tests/src/test_fwbw.c hmm/utilities.c
+	gcc -o tests/test_fwbw test_fwbw.o fwbw.o stats.o utilities.o
 	rm *.o
 
 test_fwbw:
