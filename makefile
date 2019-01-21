@@ -1,7 +1,7 @@
 INCLUDE = -Iinclude/
 TEST_INCLUDE = -Iinclude/ -Itests/src/
 CFLAGS  = -Wall -Wsign-compare
-
+MACROS = -Dwarn_nan
 hmm.cpython-37m-darwin.so: hmm/*.c include/*.h #hmm_module.c hmm/em.c hmm/fwbw.c
 	python3 setup.py build_ext --inplace
 
@@ -19,9 +19,9 @@ test_em:
 	tests/test_em
 
 fwbw:
-	gcc -c $(CFLAGS) $(INCLUDE) hmm/stats.c hmm/fwbw.c tests/src/test_fwbw.c hmm/utilities.c
-	gcc -o tests/test_fwbw test_fwbw.o fwbw.o stats.o utilities.o
+	gcc -c $(CFLAGS) $(INCLUDE) $(MACROS) hmm/stats.c hmm/fwbw.c hmm/utilities.c hmm/hmm.c tests/src/test_fwbw.c
+	gcc -o tests/test_fwbw stats.o fwbw.o utilities.o hmm.o test_fwbw.o
 	rm *.o
 
 test_fwbw:
-	tests/test_fwbw < tests/data/earthquakes.txt
+	tests/test_fwbw -a 3 tests/data/params_3s < tests/data/earthquakes.txt
