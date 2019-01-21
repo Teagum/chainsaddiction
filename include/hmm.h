@@ -4,45 +4,59 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "hmm.h"
 #include "scalar.h"
 
+typedef struct {
+    scalar *restrict lambda;
+    scalar *restrict gamma;
+    scalar *restrict delta;
+} PoisParams;
 
 typedef struct {
-	size_t	m;
+    size_t m;
+    size_t n_iter;
+    size_t max_iter;
+    scalar tol;
+    scalar aic;
+    scalar bic;
+    scalar nll;
+    PoisParams *init;
+    PoisParams *params;
+} PoisHmm;
 
-	scalar	*init_lambda;
-	scalar	*init_gamma;
-	scalar	*init_delta;
+/** Allocate a new Params struct. Elements of
+ * parameter vectors remain uninitialized.
+ */
+PoisParams *PoisHmm_NewEmptyParams (size_t m);
 
-	size_t	n_iter;
-	size_t	max_iter;
-	scalar	tol;
+/** Allocate new PoisParams and init with parameters read from file. */
+PoisParams *PoisHmm_ParamsFromFile (const char *fname);
 
-	scalar	*lambda_;
-	scalar	*gamma_;
-	scalar	*delta_;	
+/** Print Poisson parameters to stdout. */
+void PoisHmm_PrintParams (PoisParams *params, size_t m_states);
 
-	scalar	aic;	
-	scalar	bic;
-	scalar	nll;
-} PoissonHMM;
+/** Deallocate the Parms struct */
+void PoisHmm_FreeParams (PoisParams *params);
 
-PoissonHMM*
-NewPoissonHMM (size_t  m,
-			   scalar *init_lambda,
-			   scalar *init_gamma,
-			   scalar *init_delta,
-			   size_t max_iter,
-			   scalar tol);
+/** Allocate new PoisHmm with init data from compile time constants. */
+PoisHmm *
+PoisHmm_FromData(size_t  m,
+        scalar *restrict init_lambda,
+        scalar *restrict init_gamma,
+        scalar *restrict init_delta,
+        size_t max_iter,
+        scalar tol);
 
+/** Deallocate a PoisHmm.*/
 void
-DeletePoissonHMM (PoissonHMM *phmm);
+PoisHmm_DeleteHmm (PoisHmm *ph);
 
+/* Compute Akaine Information criterion. */
 scalar
 compute_aic(scalar nll, size_t m, size_t n);
 
+/* Compute Bayes Information criterion. */
 scalar
 compute_bic(scalar nll, size_t m, size_t n);
 
-#endif	/* HMM_H */
+#endif  /* HMM_H */

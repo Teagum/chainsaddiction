@@ -1,90 +1,191 @@
-#include "hmm.h"
 #include <stdio.h>
+#include "hmm.h"
 
-PoissonHMM *read_params (const char *fname)
+PoisParams *PoisHmm_NewEmptyParams (size_t m)
 {
-    int    success  = 0;
-    size_t m_states = 0;
-    size_t vector_s = 0; m * sizeof (*(phmm->lambda_));
-    size_t matrix_s = 0; m * vector_s;
-    FILE   *file    = NULL;
+    size_t vector_s = m * sizeof (scalar);
+    size_t matrix_s = m * vector_s;
+
+    PoisParams *params = malloc (sizeof (*params));
+    if (params == NULL)
+    {
+        goto error;
+    }
+
+    params->lambda = malloc (vector_s);
+    params->gamma  = malloc (matrix_s);
+    params->delta  = malloc (vector_s);
+
+    if (params->lambda == NULL ||
+        params->gamma  == NULL ||
+        params->delta  == NULL)
+    {
+        goto error;
+    }
+
+    return params;
+
+error:
+    fprintf (stderr, "Could not allocate parameters.\n");
+    PoisHmm_FreeParams (params);
+    return NULL;
+}
+
+PoisParams *PoisHmm_ParamsFromFile (const char *fname)
+{
+    int        success  = 0;
+    size_t     m_states = 0;
+    FILE       *file    = NULL;
+    PoisParams *params  = NULL;
 
     file = fopen (fname, "r");
     if (file == NULL)
     {
         fprintf (stderr, "Could not open file.\n");
-        return NULL;
+        goto error;
     }
 
-    PoissonHMM *ph = malloc (sizeof (*ph));
-    if (phmm == NULL)
-    {
-        fprintf (stderr, "Could not init PoissonHMM.\n");
-        fclose (file);
-        return NULL;
-    }
-
-    success = fscanf (file, "%zu", &ph->m);
+    success = fscanf (file, "%zu", &m_states);
     if (success == EOF)
     {
-        fprintf (stderr, "Error reading number of states.\n");
-        fclose (file);
-        DeletePoissonHMM (ph);
+        fprintf (stderr, "Could not read number of states.\n");
+        goto error;
+    }
+
+    params = PoisHmm_NewEmptyParams (m_states);
+    if (params == 0)
+    {
+        fprintf (stderr, "Could not allocate Params.\n");
+        goto error;
+    }
+
+    for (size_t i = 0; i < m_states; i++)
+    {
+        success = fscanf (file, "%Lf,", &params->lambda[i]);
+        if (success == EOF)
+        {
+            fprintf (stderr, "Error reading lambda at (%zu).\n", i);
+            goto error;
+        }
+    }
+
+    for (size_t i = 0; i < m_states * m_states; i++)
+    {
+        success = fscanf (file, "%Lf,", &params->gamma[i]);
+        if (success == EOF)
+        {
+            fprintf (stderr, "Error reading gamma at (%zu, %zu).\n",
+                     i/m_states, i%m_states);
+            goto error;
+        }
+    }
+
+    for (size_t i = 0; i < m_states; i++)
+    {
+        success = fscanf (file, "%Lf,", &params->delta[i]);
+        if (success == EOF)
+        {
+            fprintf (stderr, "Error reading delta at (%zu).\n", i);
+            goto error;
+        }
+    }
+
+    return params;
+
+error:
+    fclose (file);
+    PoisHmm_FreeParams (params);
+    return NULL;
+}
+
+void PoisHmm_PrintParams (PoisParams *params, size_t m_states)
+{
+    fprintf (stdout, "\nStates: %zu\n\n", m_states);
+
+    fprintf (stdout, "Lambda:\n");
+    for (size_t i = 0; i < m_states; i++)
+        fprintf (stdout, "%Lf\t", params->lambda[i]);
+
+    fprintf (stdout, "\n\nGamma:\n");
+    for (size_t i = 0; i < m_states; i++)
+    {
+        for (size_t j = 0; j < m_states; j++)
+        {
+            fprintf (stdout, "%20.19Lf\t", params->gamma[i*m_states+j]);
+        }
+        fprintf (stdout, "\n");
+    }
+
+    fprintf (stdout, "\nDelta:\n");
+    for (size_t i = 0; i < m_states; i++)
+        fprintf (stdout, "%Lf\t", params->delta[i]);
+
+    fprintf (stdout, "\n");
+}
+
+void PoisHmm_FreeParams (PoisParams *params)
+{
+        free (params->lambda);
+        free (params->gamma);
+        free (params->delta);
+        free (params);
+}
+
+PoisHmm *
+PoisHmm_FromData (size_t m_states,
+             scalar *restrict init_lambda,
+             scalar *restrict init_gamma,
+             scalar *restrict init_delta,
+             size_t max_iter,
+             scalar tol)
+{
+    size_t vector_s = m_states * sizeof (scalar);
+    size_t matrix_s = m_states * vector_s;
+
+    PoisHmm *ph = malloc (sizeof (*ph));
+    if (ph == NULL)
+    {
+        fprintf (stderr, "Could not allocate PoissonHMM.\n");
         return NULL;
     }
 
+    ph->m        = m_states;
+    ph->max_iter = max_iter;
+    ph->tol      = tol;
+    ph->n_iter   = 0L;
 
-}
-PoissonHMM*
-NewPoissonHMM (size_t m,
-               scalar *init_lambda,
-               scalar *init_gamma,
-               scalar *init_delta,
-               size_t max_iter,
-               scalar tol)
-{
-    PoissonHMM *phmm = malloc (sizeof (*phmm));
-    if (phmm == NULL) return NULL;
-
-    size_t vector_s     = m * sizeof (*(phmm->lambda_));
-    size_t matrix_s     = m * vector_s;
-
-    phmm->m             = m;
-
-    phmm->init_lambda   = init_lambda; 
-    phmm->init_gamma    = init_gamma;
-    phmm->init_delta    = init_delta;
-
-    phmm->max_iter      = max_iter;
-    phmm->tol           = tol;
-    phmm->n_iter        = 0L;
-
-    phmm->lambda_       = malloc (vector_s);
-    phmm->gamma_        = malloc (matrix_s);
-    phmm->delta_        = malloc (vector_s);
-
-    if (phmm->lambda_ == NULL || phmm->gamma_ == NULL || phmm->delta_ == NULL)
+    ph->init   = PoisHmm_NewEmptyParams (m_states);
+    ph->params = PoisHmm_NewEmptyParams (m_states);
+    if (ph->init == NULL || ph->params == NULL)
+    {
+        fprintf (stderr, "Could not allocate parameter vectors.\n");
+        PoisHmm_FreeParams (ph->init);
+        PoisHmm_FreeParams (ph->params);
         return NULL;
+    }
+
+    ph->init->lambda = init_lambda;
+    ph->init->gamma  = init_gamma;
+    ph->init->delta  = init_delta;
 
     // This should be done by EM
-    memcpy (phmm->lambda_, init_lambda, vector_s);
-    memcpy (phmm->gamma_,  init_gamma,  matrix_s);
-    memcpy (phmm->delta_,  init_delta,  vector_s);
+    memcpy (ph->params->lambda, ph->init->lambda, vector_s);
+    memcpy (ph->params->gamma,  ph->init->gamma,  matrix_s);
+    memcpy (ph->params->delta,  ph->init->delta,  vector_s);
 
-    phmm->aic           = 0.0L;
-    phmm->bic           = 0.0L;
-    phmm->nll           = 0.0L;
+    ph->aic = 0.0L;
+    ph->bic = 0.0L;
+    ph->nll = 0.0L;
 
-    return phmm;
+    return ph;
 }
 
 void
-DeletePoissonHMM (PoissonHMM *phmm)
+PoisHmm_DeleteHmm (PoisHmm *ph)
 {
-    free (phmm->lambda_);
-    free (phmm->gamma_);
-    free (phmm->delta_);
-    free (phmm);
+    PoisHmm_FreeParams (ph->init);
+    PoisHmm_FreeParams (ph->params);
+    free (ph);
 }
 
 scalar

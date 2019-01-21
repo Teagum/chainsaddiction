@@ -6,17 +6,15 @@
 #include <stdlib.h>
 #include "stats.h"
 #include "scalar.h"
+#include "hmm.h"
 
+int PoisHmm_log_forward_backward(
+        const long *restrict x,
+        const size_t n,
+        const size_t m,
+        PoisParams *restrict params,
+        scalar *restrict alpha,
+        scalar *restrict beta,
+        scalar *restrict pois_pr);
 
-int log_poisson_forward_backward(
-		const long	 *x,
-		const size_t n,
-		const size_t m,
-		const scalar *lambda_, 
-		const scalar *gamma_,
-		const scalar *delta_,
-		scalar *alpha,
-		scalar *beta,
-		scalar *pprob);
-
-#endif	/* FWBW_H */
+#endif  /* FWBW_H */
