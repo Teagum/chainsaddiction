@@ -139,15 +139,15 @@ PoisHmm_FromData (size_t m_states,
              size_t max_iter,
              scalar tol)
 {
-    size_t vector_s = m_states * sizeof (scalar);
-    size_t matrix_s = m_states * vector_s;
-
     PoisHmm *ph = malloc (sizeof (*ph));
     if (ph == NULL)
     {
         fprintf (stderr, "Could not allocate PoissonHMM.\n");
         return NULL;
     }
+
+    size_t vector_s = m_states * sizeof (scalar);
+    size_t matrix_s = m_states * vector_s;
 
     ph->m        = m_states;
     ph->max_iter = max_iter;
@@ -164,14 +164,9 @@ PoisHmm_FromData (size_t m_states,
         return NULL;
     }
 
-    ph->init->lambda = init_lambda;
-    ph->init->gamma  = init_gamma;
-    ph->init->delta  = init_delta;
-
-    // This should be done by EM
-    memcpy (ph->params->lambda, ph->init->lambda, vector_s);
-    memcpy (ph->params->gamma,  ph->init->gamma,  matrix_s);
-    memcpy (ph->params->delta,  ph->init->delta,  vector_s);
+    memcpy (ph->init->lambda, init_lambda, vector_s);
+    memcpy (ph->init->gamma,  init_gamma,  matrix_s);
+    memcpy (ph->init->delta,  init_delta,  vector_s);
 
     ph->aic = 0.0L;
     ph->bic = 0.0L;
@@ -189,7 +184,7 @@ PoisHmm_DeleteHmm (PoisHmm *ph)
 }
 
 scalar
-compute_aic(scalar nll, size_t m, size_t n)
+compute_aic(scalar nll, size_t m)
 {
     return 2.0L * (scalar) (nll + 2*m + m*m);
 }

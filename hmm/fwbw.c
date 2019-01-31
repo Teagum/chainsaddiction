@@ -36,7 +36,9 @@ int PoisHmm_log_forward_backward(
     }
 
     lsf = logl (sum_buff);
-    printf ("SUM_BUFF: %60.50Lf\n, LOGSUM: %60.50Lf\n", sum_buff, lsf);
+#ifdef DEBUG
+    fprintf (stdout, "SUM_BUFF: %60.50Lf\n, LOGSUM: %60.50Lf\n", sum_buff, lsf);
+#endif
     for (size_t i = 0; i < m; i++)
     {
         pr_x_t[i] /= sum_buff;

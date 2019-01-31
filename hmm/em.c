@@ -2,10 +2,8 @@
 #include "em.h"
 #include "hmm.h"
 
-int poisson_expectation_maximization(
-        const long   *x,
-        const size_t n,
-              PoissonHMM *hmm)
+int PoisHmm_EM (const DataSet *restrict x,
+                      PoisHmm *restrict hmm)
 {
     scalar acc      = 0.0L;
     scalar bcc      = 0.0L;
@@ -16,6 +14,7 @@ int poisson_expectation_maximization(
     scalar s        = 0.0L;
     int    success  = 0;
     size_t m        = hmm->m;   /* just for convenience */
+    size_t n        = x->size;  /* just for convenience */
 
     size_t vector_s = m * sizeof (scalar);
     size_t matrix_s = m * vector_s;
@@ -28,6 +27,7 @@ int poisson_expectation_maximization(
     scalar *next_gamma  = malloc (matrix_s);
     scalar *next_delta  = malloc (vector_s);
 
+
     if (alpha == NULL || beta == NULL || pprob == NULL ||
         next_lambda == NULL || next_gamma == NULL ||
         next_delta == NULL)
@@ -35,12 +35,15 @@ int poisson_expectation_maximization(
         goto exit_point;
     }
 
-    for (hmm->n_iter = 0; hmm->n_iter < hmm->max_iter; (hmm->n_iter)++)
+    memcpy (hmm->params->lambda, hmm->init->lambda, vector_s);
+    memcpy (hmm->params->gamma,  hmm->init->gamma,  matrix_s);
+    memcpy (hmm->params->delta,  hmm->init->delta,  vector_s);
+
+    for (; hmm->n_iter < hmm->max_iter; (hmm->n_iter)++)
     {
         /* E Step */
-        int fwbw_ret = log_poisson_forward_backward (x, n, m,
-                            hmm->lambda_, hmm->gamma_, hmm->delta_,
-                            alpha, beta, pprob);
+        int fwbw_ret = PoisHmm_log_forward_backward (x->data, n, m,
+                                        hmm->params, alpha, beta, pprob);
 
         if (fwbw_ret == 0)
         {
@@ -64,7 +67,6 @@ int poisson_expectation_maximization(
             hmm->nll += expl (alpha[(n-1)*m+j] - c);
         }
         hmm->nll = logl (hmm->nll) + c;
-        printf("NLL:\t%Lf\n", hmm->nll);
 
         /* M Step */
         crit     = 0;
@@ -78,31 +80,31 @@ int poisson_expectation_maximization(
             {
                 s = expl (alpha[i*m+j] + beta[i*m+j] - (hmm->nll));
                 bcc += s;
-                acc += s * x[i];
+                acc += s * x->data[i];
             }
             next_lambda[j] = acc / bcc;
-            crit += fabsl (next_lambda[j] - hmm->lambda_[j]);
+            crit += fabsl (next_lambda[j] - hmm->params->lambda[j]);
 
             /* Gamma */
             rs_gamma = 0;
             for (size_t i = 0; i < m; i++)
             {
                 acc = 0;
-                for (size_t k = 0; k < (n-1); k++)
+                for (size_t k = 0; k < (n - 1); k++)
                 {
                     acc +=  expl (alpha[k*m+j]
                                   + beta[(k+1)*m+i]
                                   + logl (pprob[(k+1)*m+i])
                                   - hmm->nll);
                 }
-                next_gamma[j*m+i] = hmm->gamma_[j*m+i] * acc;
+                next_gamma[j*m+i] = hmm->params->gamma[j*m+i] * acc;
                 rs_gamma += next_gamma[j*m+i];
             }
 
             for (size_t i = 0; i < m; i++)
             {
                 next_gamma[j*m+i] /= rs_gamma;
-                crit += fabsl (next_gamma[j*m+i] - hmm->gamma_[j*m+i]);
+                crit += fabsl (next_gamma[j*m+i] - hmm->params->gamma[j*m+i]);
             }
 
             /* Delta */
@@ -113,15 +115,15 @@ int poisson_expectation_maximization(
         for (size_t j = 0; j < m; j++)
         {
             next_delta[j] /= rs_delta;
-            crit += fabsl (next_delta[j] - hmm->delta_[j]);
+            crit += fabsl (next_delta[j] - hmm->params->delta[j]);
         }
 
         /* no convergence yet -> copy and reiterate */
         if (crit >= hmm->tol)
         {
-            memcpy (hmm->lambda_, next_lambda, vector_s);
-            memcpy (hmm->gamma_,  next_gamma,  matrix_s);
-            memcpy (hmm->delta_,  next_delta,  vector_s);
+            memcpy (hmm->params->lambda, next_lambda, vector_s);
+            memcpy (hmm->params->gamma,  next_gamma,  matrix_s);
+            memcpy (hmm->params->delta,  next_delta,  vector_s);
         }
         else    /* convergence */
         {

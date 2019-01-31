@@ -4,6 +4,9 @@
 #include <float.h>
 #include <math.h>
 #include <stdlib.h>
+#ifdef DEBUG
+#include <stdio.h>
+#endif
 #include "stats.h"
 #include "scalar.h"
 #include "hmm.h"

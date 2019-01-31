@@ -53,7 +53,7 @@ PoisHmm_DeleteHmm (PoisHmm *ph);
 
 /* Compute Akaine Information criterion. */
 scalar
-compute_aic(scalar nll, size_t m, size_t n);
+compute_aic(scalar nll, size_t m);
 
 /* Compute Bayes Information criterion. */
 scalar

@@ -12,11 +12,10 @@ clean:
 test:
 	python3 test_hmm.py
 
-test_em:
-	gcc -c $(CFLAGS) $(INCLUDE) hmm/stats.c hmm/fwbw.c hmm/em.c hmm/hmm.c tests/src/test_em.c
-	gcc -o tests/test_em test_em.o hmm.o em.o fwbw.o stats.o
+em:
+	gcc -c $(CFLAGS) $(INCLUDE) hmm/stats.c hmm/fwbw.c hmm/em.c hmm/utilities.c hmm/hmm.c tests/src/test_em.c
+	gcc -o tests/test_em stats.o fwbw.o em.o utilities.o hmm.o test_em.o
 	rm *.o
-	tests/test_em
 
 fwbw:
 	gcc -c $(CFLAGS) $(INCLUDE) $(MACROS) hmm/stats.c hmm/fwbw.c hmm/utilities.c hmm/hmm.c tests/src/test_fwbw.c
@@ -24,4 +23,7 @@ fwbw:
 	rm *.o
 
 test_fwbw:
-	tests/test_fwbw -a 3 tests/data/params_3s < tests/data/earthquakes.txt
+	tests/test_fwbw -a 3 tests/data/params_3s < tests/data/earthquakes
+
+test_em:
+	tests/test_em 3 < tests/data/earthquakes
