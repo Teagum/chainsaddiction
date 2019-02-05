@@ -42,8 +42,8 @@ int PoisHmm_EM (const DataSet *restrict x,
     for (; hmm->n_iter < hmm->max_iter; (hmm->n_iter)++)
     {
         /* E Step */
-        int fwbw_ret = PoisHmm_log_forward_backward (x->data, n, m,
-                                        hmm->params, alpha, beta, pprob);
+        int fwbw_ret = PoisHmm_FwBw (x->data, n, m, hmm->params,
+                                     alpha, beta, pprob);
 
         if (fwbw_ret == 0)
         {

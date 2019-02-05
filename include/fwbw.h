@@ -11,7 +11,10 @@
 #include "scalar.h"
 #include "hmm.h"
 
-int PoisHmm_log_forward_backward(
+
+/** Compute the forward and backward probabilies in log domain.
+ */
+int PoisHmm_FwBw(
         const long *restrict x,
         const size_t n,
         const size_t m,

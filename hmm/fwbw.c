@@ -1,6 +1,6 @@
 #include "fwbw.h"
 
-int PoisHmm_log_forward_backward(
+int PoisHmm_FwBw(
         const long *restrict x,
         const size_t n,
         const size_t m,
