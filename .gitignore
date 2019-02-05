@@ -1,5 +1,6 @@
 *.so
 *.o
+*.swp
 .DS_STORE
 build/
 *.egg-info/
