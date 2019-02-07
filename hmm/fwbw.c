@@ -36,9 +36,6 @@ int PoisHmm_FwBw(
     }
 
     lsf = logl (sum_buff);
-#ifdef DEBUG
-    fprintf (stdout, "SUM_BUFF: %60.50Lf\n, LOGSUM: %60.50Lf\n", sum_buff, lsf);
-#endif
     for (size_t i = 0; i < m; i++)
     {
         pr_x_t[i] /= sum_buff;
@@ -90,9 +87,10 @@ int PoisHmm_FwBw(
             prob_acc[i] = pois_pr[t*m+i] * pr_x_t[i];
         }
 
+        sum_buff = LDBL_EPSILON;
         for (size_t i = 0; i < m; i++)
         {
-            sum_buff = LDBL_EPSILON;
+            buff[i] = 0.0L;
             for (size_t j = 0; j < m; j++)
             {
                 buff[i] += params->gamma[i*m+j] * prob_acc[j];

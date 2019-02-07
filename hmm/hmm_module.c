@@ -47,44 +47,55 @@ hmm_poisson_EM(PyObject* self, PyObject* args)
         Py_RETURN_NONE;
     }
 
-    npy_intp n = PyArray_SIZE (X);
     npy_intp m = PyArray_SIZE (_lambda);
 
-    PoissonHMM *hmm = NewPoissonHMM ((size_t) m,
-                                PyArray_DATA (_lambda),
-                                PyArray_DATA (_gamma),
-                                PyArray_DATA (_delta),
-                                (size_t) max_iter, (scalar) tol);
-    if (hmm == NULL) return NULL;
+    PoisHmm *ph = PoisHmm_FromData ((size_t) m,
+                            PyArray_DATA (_lambda),
+                            PyArray_DATA (_gamma),
+                            PyArray_DATA (_delta),
+                            (size_t) max_iter, (scalar) tol);
+    if (ph == NULL)
+    {
+        Py_XDECREF (X);
+        Py_XDECREF (_lambda);
+        Py_XDECREF (_gamma);
+        Py_XDECREF (_delta);
+        PyErr_SetString (PyExc_MemoryError, "Could not allocate HMM.");
+        Py_RETURN_NONE;
+    }
 
+    DataSet X_train = {PyArray_DATA (X), (size_t) PyArray_SIZE (X)};
 
-    int success = poisson_expectation_maximization (PyArray_DATA (X), (size_t) n, hmm); 
-    
+    int success = PoisHmm_EM (&X_train, ph); 
+
     {
         npy_intp dims_1d[] = { m };
         npy_intp dims_2d[] = { m, m };
+        size_t   vector_s  = (size_t) m * sizeof (scalar);
+        size_t   matrix_s  = (size_t) m * vector_s;
 
         PyArrayObject *lambda_ = Apollon_NewPyArray1d (dims_1d);
         PyArrayObject *gamma_  = Apollon_NewPyArray2d (dims_2d);
         PyArrayObject *delta_  = Apollon_NewPyArray1d (dims_1d);
 
-        memcpy (PyArray_DATA (lambda_), hmm->lambda_, m * sizeof (scalar));
-        memcpy (PyArray_DATA (gamma_),  hmm->gamma_,  m * m * sizeof (scalar));
-        memcpy (PyArray_DATA (delta_),  hmm->delta_,  m * sizeof (scalar));
+        memcpy (PyArray_DATA (lambda_), ph->params->lambda, vector_s);
+        memcpy (PyArray_DATA (gamma_),  ph->params->gamma,  matrix_s);
+        memcpy (PyArray_DATA (delta_),  ph->params->delta,  vector_s);
 
-        hmm->aic = compute_aic(hmm->nll, m,  n);
-        hmm->bic = compute_bic(hmm->nll, m,  n);
+        ph->aic = compute_aic(ph->nll, ph->m);
+        ph->bic = compute_bic(ph->nll, ph->m,  X_train.size);
 
         PyObject *out = NULL;
         out = Py_BuildValue("iNNNdddk", success, lambda_, gamma_, delta_, 
-                            (double) hmm->aic, (double) hmm->bic,
-                            (double) hmm->nll, hmm->n_iter);
+                            (double) ph->aic, (double) ph->bic,
+                            (double) ph->nll, ph->n_iter);
 
         Py_DECREF (X);
         Py_DECREF (_lambda);
         Py_DECREF (_gamma);
         Py_DECREF (_delta);
-        DeletePoissonHMM(hmm);
+        PoisHmm_DeleteHmm (ph);
+
         return out;
     }
 }
@@ -101,23 +112,15 @@ hmm_poisson_fwbw(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "OOOO", &x, &lambda_, &gamma_, &delta_))
         return NULL;
 
-    npy_intp    n       = PyArray_SIZE(x);
-    npy_intp    m       = PyArray_SIZE(lambda_);
+    npy_intp    n       = PyArray_SIZE (x);
+    npy_intp    m       = PyArray_SIZE (lambda_);
     npy_intp    dims[]  = { n, m };
 
-    PyArrayObject *alpha    = Apollon_NewPyArray2d(dims);
-    PyArrayObject *beta     = Apollon_NewPyArray2d(dims);
-    PyArrayObject *lp_prob  = Apollon_NewPyArray2d(dims);
-                              
-    int success = log_poisson_forward_backward (PyArray_DATA(x),
-                                                (size_t) n, (size_t) m,
-                                                PyArray_DATA(lambda_),
-                                                PyArray_DATA(gamma_),
-                                                PyArray_DATA(delta_),
-                                                PyArray_DATA(alpha),
-                                                PyArray_DATA(beta),
-                                                PyArray_DATA(lp_prob));
-
+    PyArrayObject *alpha    = Apollon_NewPyArray2d (dims);
+    PyArrayObject *beta     = Apollon_NewPyArray2d (dims);
+    PyArrayObject *pois_pr  = Apollon_NewPyArray2d (dims);
+    
+    /*
     if (success == 1)
     {
         PyObject *out = PyTuple_Pack(3, alpha, beta, lp_prob);
@@ -129,6 +132,8 @@ hmm_poisson_fwbw(PyObject *self, PyObject *args)
         PyErr_SetString(PyExc_RuntimeError, "Training failed.");
         Py_RETURN_NONE;
     }
+    */
+    Py_RETURN_NONE;
 }
 
 

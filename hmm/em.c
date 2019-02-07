@@ -29,8 +29,7 @@ int PoisHmm_EM (const DataSet *restrict x,
 
 
     if (alpha == NULL || beta == NULL || pprob == NULL ||
-        next_lambda == NULL || next_gamma == NULL ||
-        next_delta == NULL)
+        next_lambda == NULL || next_gamma == NULL || next_delta == NULL)
     {
         goto exit_point;
     }
@@ -45,6 +44,7 @@ int PoisHmm_EM (const DataSet *restrict x,
         int fwbw_ret = PoisHmm_FwBw (x->data, n, m, hmm->params,
                                      alpha, beta, pprob);
 
+
         if (fwbw_ret == 0)
         {
             fprintf (stderr, "Forward/Backward algorithm failed \
@@ -55,7 +55,7 @@ int PoisHmm_EM (const DataSet *restrict x,
         c = alpha[(n-1)*m];
         for (size_t j = 1; j < m; j++)
         {
-            if ( alpha[(n-1)*m+j] > c )
+            if (alpha[(n-1)*m+j] > c)
             {
                 c = alpha[(n-1)*m+j];
             }
@@ -69,8 +69,8 @@ int PoisHmm_EM (const DataSet *restrict x,
         hmm->nll = logl (hmm->nll) + c;
 
         /* M Step */
-        crit     = 0;
-        rs_delta = 0;
+        crit     = 0.0L;
+        rs_delta = 0.0L;
         for (size_t j = 0; j < m; j++)
         {
             /* Lambda */
