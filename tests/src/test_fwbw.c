@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
     if (argc != 4)
     {
-        fprintf (stdout, "Usage: test_fwbw -[abp] m param_file < dataset\n");
+        fprintf (stdout, "Usage: test_fwbw -[abpn] m param_file < dataset\n");
         return 0;
     }
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     else if (strcmp(argv[1], "-p") == 0) output = probs;
     else output = alpha;
 
-    PoisHmm_log_forward_backward (X->data, X->size, m, params, alpha, beta, probs);
+    PoisHmm_FwBw (X->data, X->size, m, params, alpha, beta, probs);
 
     for (size_t i = 0; i < X->size; i++)
     {
