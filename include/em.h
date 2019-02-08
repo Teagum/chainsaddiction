@@ -7,10 +7,9 @@
 #include "fwbw.h"
 #include "scalar.h"
 #include "hmm.h"
+#include "utilities.h"
 
-int poisson_expectation_maximization(
-		const	long		*x,
-		const	size_t		n,
-				PoissonHMM	*ph);
+int PoisHmm_EM (const DataSet *restrict x,
+                      PoisHmm *restrict ph);
 
-#endif	/* EM_H */
+#endif  /* EM_H */

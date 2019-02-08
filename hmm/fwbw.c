@@ -1,121 +1,115 @@
 #include "fwbw.h"
 
-
-int log_poisson_forward_backward(
-		const long	 *x,
-		const size_t n,
-		const size_t m,
-		const scalar *lambda_, 
-		const scalar *gamma_,
-		const scalar *delta_,
-		scalar *alpha,
-		scalar *beta,
-		scalar *pprob)
+int PoisHmm_FwBw(
+        const long *restrict x,
+        const size_t n,
+        const size_t m,
+        PoisParams *restrict params,
+        scalar *restrict alpha,
+        scalar *restrict beta,
+        scalar *restrict pois_pr)
 {
-	
-	scalar	sum_buff	= 0;		/* sum prob */
-	scalar	lsf			= 0;		/* logl scale factor */
-	int 	success		= 1;
+    scalar sum_buff = LDBL_EPSILON;     /* acccumates probabilities */
+    scalar lsf      = 0.0L;             /* log scale factor */
+    int    success  = 1;
+    
+    scalar *pr_x_t   = malloc (m * sizeof (scalar));     /* probabilities at time `t` */
+    scalar *buff     = malloc (m * sizeof (scalar));     /* calculation buffer */
+    scalar *prob_acc = malloc (m * sizeof (scalar));     /* probability accumulator */
 
-	scalar *_pxt = NULL;
-	scalar *_buff = NULL;
-	scalar *_eggs = NULL;
+    if (pr_x_t == NULL || buff == NULL || prob_acc == NULL)
+    {
+        success = 0;
+        goto fail;
+    }
 
-	_pxt = malloc (m * sizeof(*_pxt));		/* probabilities at time `t` */
-	if (_pxt == NULL) { success=0; goto fail; } 
+    /*
+     * Forward pass
+     */
 
-	_buff = malloc (m * sizeof(*_buff));	/* calculation buffer */
-	if (_buff == NULL) { success=0; goto fail; } 
+    /* Initial step t = 0 */
+    for (size_t i = 0; i < m; i++)
+    {
+        pois_pr[i] = poisson_pmf (params->lambda[i], x[0]);
+        pr_x_t[i]  = pois_pr[i] * params->delta[i];
+        sum_buff  += pr_x_t[i];
+    }
 
-	_eggs = malloc (m * sizeof(*_eggs));	/* calculation buffer */
-	if (_eggs == NULL) { success=0; goto fail; }
+    lsf = logl (sum_buff);
+    for (size_t i = 0; i < m; i++)
+    {
+        pr_x_t[i] /= sum_buff;
+        alpha[i] = logl (pr_x_t[i]) + lsf;
+    }
 
+    /* remaining forward steps */
+    for (size_t t = 1; t < n; t++)
+    {
+        sum_buff = LDBL_EPSILON;
+        for (size_t i = 0; i < m; i++)
+        {
+            buff[i] = 0.0L;
+            for (size_t j = 0; j < m; j++)
+            {
+                buff[i] += pr_x_t[j] * params->gamma[j*m+i];
+            }
+            pois_pr[t*m+i] = poisson_pmf (params->lambda[i], x[t]);
+            buff[i] *= pois_pr[t*m+i];
+            sum_buff += buff[i];
+        }
 
-	/*
-	 * Forward pass 
-	 */
+        lsf += logl (sum_buff);
 
-	/* Initial step t = 0 */
-	for (size_t j = 0; j < m; j++)
-	{
-		pprob[j] = poisson_pmf (lambda_[j], x[0]);
-		_pxt[j] = pprob[j] * delta_[j];
-		sum_buff += _pxt[j];
-	}
-	lsf = logl (sum_buff);
-	
-	for (size_t j = 0; j < m; j++)
-	{
-		_pxt[j] /= sum_buff;
-		alpha[j] = logl (_pxt[j]) + lsf;
-	}
-	
-	/* remaining forward steps */
-	for (size_t i = 1; i < n; i++)
-	{
-		sum_buff = 0;
-		for (size_t j = 0; j < m; j++)
-		{
-			_buff[j] = 0;
-			for (size_t k = 0; k < m; k++)
-			{
-				_buff[j] += _pxt[k] * gamma_[k*m+j];
-			}
-			pprob[i*m+j] = poisson_pmf (lambda_[j], x[i]);
-			_buff[j] *= pprob[i*m+j];
-			sum_buff += _buff[j];
-		}
-		lsf += logl (sum_buff);
+        for (size_t i = 0; i < m; i++)
+        {
+            pr_x_t[i] = buff[i] / sum_buff;
+            alpha[t*m+i] = logl (pr_x_t[i]) + lsf;
+        }
+    }
 
-		for (size_t j = 0; j < m; j++)
-		{
-			_pxt[j] = _buff[j] / sum_buff;
-			alpha[i*m+j] = logl (_pxt[j]) + lsf;
-		}
-	}
+    /*
+     * Backward pass
+     */
 
-	/*
-	 * Backward pass
-	 */
+    /* Initial step */
+    for (size_t i = 0; i < m; i++)
+    {
+        pr_x_t[i] = 1.0L / (scalar) m;
+        beta[(n-1)*m+i] = 0.0L;
+    }
+    lsf = logl (m);
 
-	/* Initial step */
-	for (size_t j = 0; j < m; j++)
-	{
-		_pxt[j] = 1.L / (scalar) m;
-	}
-	lsf = logl(m);
+    /* remaining backward steps */
+    for (size_t t = n-1; t > 0; t--)
+    {
+        for (size_t i = 0; i < m; i++)
+        {
+            prob_acc[i] = pois_pr[t*m+i] * pr_x_t[i];
+        }
 
-	/* remaining backward steps */
-	for (size_t i = n-1; i > 0; i--)
-	{
-		for (size_t j = 0; j < m; j++)
-		{
-			_eggs[j] = pprob[i*m+j] * _pxt[j];
-		}
-		
-		for (size_t j = 0; j < m; j++)
-		{
-			sum_buff = 0;
-			for (size_t k = 0; k < m; k++)
-			{
-				_buff[j] += gamma_[j*m+k] * _eggs[k];
-			}
-			sum_buff += _buff[j];
-		}
+        sum_buff = LDBL_EPSILON;
+        for (size_t i = 0; i < m; i++)
+        {
+            buff[i] = 0.0L;
+            for (size_t j = 0; j < m; j++)
+            {
+                buff[i] += params->gamma[i*m+j] * prob_acc[j];
+            }
+            sum_buff += buff[i];
+        }
 
-		lsf += logl (sum_buff);
-		for (size_t j = 0; j < m; j++)
-		{
-			_pxt[j] = _buff[j] / sum_buff;
-			_buff[j] = 0;
-			beta[(i-1)*m+j] = logl (_pxt[j]) + lsf;
-		}
-	}
+        lsf += logl (sum_buff);
+        for (size_t i = 0; i < m; i++)
+        {
+            pr_x_t[i] = buff[i] / sum_buff;
+            buff[i] = 0.0L;
+            beta[(t-1)*m+i] = logl (pr_x_t[i]) + lsf;
+        }
+    }
 
 fail:
-	free(_pxt);
-	free(_buff);
-	free(_eggs);
-	return success;
-}	
-
+    free (pr_x_t);
+    free (buff);
+    free (prob_acc);
+    return success;
+}
