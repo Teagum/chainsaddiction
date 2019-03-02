@@ -1,0 +1,5 @@
+before_script:
+        - python --version
+
+build:
+        - python setup.py build_ext
