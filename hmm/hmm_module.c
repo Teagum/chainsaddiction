@@ -4,42 +4,32 @@
 
 
 static PyObject *
-hmm_poisson_fit(PyObject* self, PyObject* args)
+hmm_poisson_fit_em (PyObject *self, PyObject *args)
 {
-    /* 1. alloc alpha, beta, pprob
-     * 2. call fwbw
-     * 3. wrap alpha, beta, pprob in arrays
-     * 4. return the arrays  */
-    Py_RETURN_NONE;
-}
-
-
-static PyObject *
-hmm_poisson_EM(PyObject* self, PyObject* args)
-{
-    PyObject *py_X      = NULL;
+    PyObject *py_Xtrain = NULL;
     PyObject *py_lambda = NULL;
     PyObject *py_gamma  = NULL;
     PyObject *py_delta  = NULL;
+    npy_intp m_states   = 0;
     npy_intp max_iter   = 0;
     double   tol        = 0.0;
 
-    PyArrayObject *X       = NULL;
+    PyArrayObject *X_t     = NULL;
     PyArrayObject *_lambda = NULL;
     PyArrayObject *_gamma  = NULL;
     PyArrayObject *_delta  = NULL;
 
-    if (!PyArg_ParseTuple(args, "OOOOld", &py_X, &py_lambda, &py_gamma,
+    if (!PyArg_ParseTuple(args, "OlOOOld", &py_Xtrain, &m_states, &py_lambda, &py_gamma,
         &py_delta, &max_iter, &tol)) return NULL;
 
-    X       = (PyArrayObject *) PyArray_FROM_OTF(py_X, NPY_LONG, NPY_ARRAY_IN_ARRAY);
+    X_t     = (PyArrayObject *) PyArray_FROM_OTF(py_Xtrain, NPY_LONG,       NPY_ARRAY_IN_ARRAY);
     _lambda = (PyArrayObject *) PyArray_FROM_OTF(py_lambda, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
-    _gamma  = (PyArrayObject *) PyArray_FROM_OTF(py_gamma, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
-    _delta  = (PyArrayObject *) PyArray_FROM_OTF(py_delta, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
+    _gamma  = (PyArrayObject *) PyArray_FROM_OTF(py_gamma,  NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
+    _delta  = (PyArrayObject *) PyArray_FROM_OTF(py_delta,  NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
 
-    if (X == NULL || _lambda == NULL || _gamma == NULL || _delta == NULL)
+    if (X_t == NULL || _lambda == NULL || _gamma == NULL || _delta == NULL)
     {
-        Py_XDECREF (X);
+        Py_XDECREF (X_t);
         Py_XDECREF (_lambda);
         Py_XDECREF (_gamma);
         Py_XDECREF (_delta);
@@ -47,16 +37,15 @@ hmm_poisson_EM(PyObject* self, PyObject* args)
         Py_RETURN_NONE;
     }
 
-    npy_intp m = PyArray_SIZE (_lambda);
-
-    PoisHmm *ph = PoisHmm_FromData ((size_t) m,
+    PoisHmm *ph = PoisHmm_FromData ((size_t) m_states,
                             PyArray_DATA (_lambda),
                             PyArray_DATA (_gamma),
                             PyArray_DATA (_delta),
                             (size_t) max_iter, (scalar) tol);
+
     if (ph == NULL)
     {
-        Py_XDECREF (X);
+        Py_XDECREF (X_t);
         Py_XDECREF (_lambda);
         Py_XDECREF (_gamma);
         Py_XDECREF (_delta);
@@ -64,15 +53,15 @@ hmm_poisson_EM(PyObject* self, PyObject* args)
         Py_RETURN_NONE;
     }
 
-    DataSet X_train = {PyArray_DATA (X), (size_t) PyArray_SIZE (X)};
+    DataSet X_train = {PyArray_DATA (X_t), (size_t) PyArray_SIZE (X_t)};
 
-    int success = PoisHmm_EM (&X_train, ph); 
+    int success = PoisHmm_EM (&X_train, ph);
 
     {
-        npy_intp dims_1d[] = { m };
-        npy_intp dims_2d[] = { m, m };
-        size_t   vector_s  = (size_t) m * sizeof (scalar);
-        size_t   matrix_s  = (size_t) m * vector_s;
+        npy_intp dims_1d[] = { m_states };
+        npy_intp dims_2d[] = { m_states, m_states };
+        size_t   vector_s  = (size_t) m_states * sizeof (scalar);
+        size_t   matrix_s  = (size_t) m_states * vector_s;
 
         PyArrayObject *lambda_ = Apollon_NewPyArray1d (dims_1d);
         PyArrayObject *gamma_  = Apollon_NewPyArray2d (dims_2d);
@@ -86,11 +75,11 @@ hmm_poisson_EM(PyObject* self, PyObject* args)
         ph->bic = compute_bic(ph->nll, ph->m,  X_train.size);
 
         PyObject *out = NULL;
-        out = Py_BuildValue("iNNNdddk", success, lambda_, gamma_, delta_, 
+        out = Py_BuildValue("iNNNdddk", success, lambda_, gamma_, delta_,
                             (double) ph->aic, (double) ph->bic,
                             (double) ph->nll, ph->n_iter);
 
-        Py_DECREF (X);
+        Py_DECREF (X_t);
         Py_DECREF (_lambda);
         Py_DECREF (_gamma);
         Py_DECREF (_delta);
@@ -104,54 +93,36 @@ hmm_poisson_EM(PyObject* self, PyObject* args)
 static PyObject *
 hmm_poisson_fwbw(PyObject *self, PyObject *args)
 {
-    PyArrayObject *x        = NULL;
-    PyArrayObject *lambda_  = NULL;
-    PyArrayObject *gamma_   = NULL;
-    PyArrayObject *delta_   = NULL;
-
-    if (!PyArg_ParseTuple(args, "OOOO", &x, &lambda_, &gamma_, &delta_))
-        return NULL;
-
-    npy_intp    n       = PyArray_SIZE (x);
-    npy_intp    m       = PyArray_SIZE (lambda_);
-    npy_intp    dims[]  = { n, m };
-
-    PyArrayObject *alpha    = Apollon_NewPyArray2d (dims);
-    PyArrayObject *beta     = Apollon_NewPyArray2d (dims);
-    PyArrayObject *pois_pr  = Apollon_NewPyArray2d (dims);
-    
-    /*
-    if (success == 1)
-    {
-        PyObject *out = PyTuple_Pack(3, alpha, beta, lp_prob);
-        Py_INCREF(out);
-        return out;
-    }
-    else
-    {
-        PyErr_SetString(PyExc_RuntimeError, "Training failed.");
-        Py_RETURN_NONE;
-    }
-    */
+    PyErr_SetString (PyExc_NotImplementedError, "");
     Py_RETURN_NONE;
 }
 
 
 static PyObject *
-hmm_poisson_viterbi(PyObject* self, PyObject* args)
+hmm_poisson_em (PyObject *self, PyObject *args)
 {
+    PyErr_SetString (PyExc_NotImplementedError, "");
     Py_RETURN_NONE;
 }
 
+
+static PyObject *
+hmm_poisson_viterbi (PyObject *self, PyObject *args)
+{
+    PyErr_SetString (PyExc_NotImplementedError, "");
+    Py_RETURN_NONE;
+}
+
+
 static PyMethodDef
 HMM_Methods[] = {
-    {"hmm_poisson_fit", hmm_poisson_fit, METH_VARARGS, 
-     "hmm_poisson_fit(x, m, _lambda, _gamma, _delta, max_iter, tol)"},
-    
-    {"hmm_poisson_EM", hmm_poisson_EM, METH_VARARGS,
-     "docstring"},
+    {"hmm_poisson_fit_em", hmm_poisson_fit_em, METH_VARARGS,
+     "hmm_poisson_fit_em (x, m, _lambda, _gamma, _delta, max_iter, tol)"},
 
     {"hmm_poisson_fwbw", hmm_poisson_fwbw, METH_VARARGS,
+     "docstring"},
+
+    {"hmm_poisson_em", hmm_poisson_em, METH_VARARGS,
      "docstring"},
 
     {"hmm_poisson_viterbi", hmm_poisson_viterbi, METH_VARARGS,
