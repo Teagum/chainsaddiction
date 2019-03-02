@@ -4,9 +4,9 @@ from setuptools import setup, Extension
 from numpy.distutils.misc_util import get_numpy_include_dirs
 
 setup(
-        name            = 'hmm',
+        name            = 'chains_addiction',
         version         = '0.1',
-        description     = 'PoissonHMM for Python3',
+        description     = 'Discrete time, finit state space, stationary Hidden Markov Model.',
         include_dirs    = get_numpy_include_dirs(),
         ext_modules     =   [
                                 Extension(
