@@ -1,6 +1,6 @@
 build:
   image: python:latest
-  before_scrpt:
+  before_script:
     - pip install numpy
   script:
     - python setup.py build_ext
