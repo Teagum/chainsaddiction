@@ -1,6 +1,6 @@
 before_script:
-  - python --version
+  - python3 --version
 
 build:
   script:
-    - python setup.py build_ext
+    - python3 setup.py build_ext
