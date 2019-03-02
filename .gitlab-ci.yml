@@ -1,5 +1,6 @@
-
 build:
-  image: python:3.7
+  image: python:latest
+  before:
+    - pip install numpy
   script:
-    - python3.7 setup.py build_ext
+    - python setup.py build_ext
