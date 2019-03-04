@@ -115,7 +115,7 @@ hmm_poisson_viterbi (PyObject *self, PyObject *args)
 
 
 static PyMethodDef
-HMM_Methods[] = {
+CA_Methods[] = {
     {"hmm_poisson_fit_em", hmm_poisson_fit_em, METH_VARARGS,
      "hmm_poisson_fit_em (x, m, _lambda, _gamma, _delta, max_iter, tol)"},
 
@@ -132,18 +132,18 @@ HMM_Methods[] = {
 };
 
 static struct PyModuleDef
-hmm_module = {
+chains_addiction_module = {
     PyModuleDef_HEAD_INIT,
-    "hmm",
+    "chains_addiction",
     NULL,
     -1,
-    HMM_Methods
+    CA_Methods
 };
 
 PyMODINIT_FUNC
-PyInit_hmm(void)
+PyInit_chains_addiction (void)
 {
-    import_array();
-    return PyModule_Create (&hmm_module);
+    import_array ();
+    return PyModule_Create (&chains_addiction_module);
 }
 

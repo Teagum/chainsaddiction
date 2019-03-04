@@ -3,12 +3,12 @@ TEST_INCLUDE = -Iinclude/ -Itests/src/
 CFLAGS  = -Wall -Wsign-compare
 MACROS = -DDebug -Dwarn_nan 
 
-hmm.cpython-37m-darwin.so: hmm/*.c include/*.h
-	python3 setup.py build_ext --inplace
+chains_addiction.cpython-37m-darwin.so: hmm/*.c include/*.h
+	pip3 install .
 
 clean:
 	rm -rf build/
-	rm hmm.cpython-37m-darwin.so
+	rm chains_addiction.cpython-37m-darwin.so
 
 test:
 	python3 test_hmm.py
