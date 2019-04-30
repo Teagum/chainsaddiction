@@ -7,7 +7,7 @@ setup(
         name            = 'chains_addiction',
         version         = '0.1',
         description     = 'Discrete time, finit state space, stationary Hidden Markov Model.',
-        install_requires = ['numpy>=15.0.0']
+        install_requires = ['numpy>=15.0.0'],
         include_dirs    = get_numpy_include_dirs(),
         ext_modules     =   [
                                 Extension(
