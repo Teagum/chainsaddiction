@@ -2,7 +2,6 @@
 *.o
 *.swp
 .DS_STORE
-build/
 tests/bin/
 *.egg-info/
 *.ipynb_checkpoints/
