@@ -1,23 +1,17 @@
 #/usr/bin/env python3
-
+from pathlib import Path
 from setuptools import setup, Extension
-from numpy.distutils.misc_util import get_numpy_include_dirs
+from setuptools.config import read_configuration
 
-setup(
-        name            = 'chains_addiction',
-        version         = '0.1',
-        description     = 'Discrete time, finit state space, stationary Hidden Markov Model.',
-        include_dirs    = get_numpy_include_dirs(),
-        ext_modules     =   [
-                                Extension(
-                                    'chains_addiction',
-                                    sources     = [ 'hmm/stats.c',
-                                                    'hmm/fwbw.c',
-                                                    'hmm/em.c',
-                                                    'hmm/hmm.c',
-                                                    'hmm/hmm_module.c'],
 
-                                include_dirs    = ['./include/'])
-                            ]
-      )
+class GetNumpyInclude:
+    def __str__(self):
+        import numpy
+        return numpy.get_include()
 
+src_path = Path('chains_addiction')
+config = read_configuration('setup.cfg')
+ext = Extension('chains_addiction',
+        sources = [f'{srcf!s}' for srcf in src_path.glob('*.c')],
+        include_dirs = ['include/', GetNumpyInclude()])
+setup(ext_modules = [ext])

@@ -2,6 +2,9 @@
 *.o
 *.swp
 .DS_STORE
+.venv
+.eggs/
+dist/
 build/
 tests/bin/
 *.egg-info/
