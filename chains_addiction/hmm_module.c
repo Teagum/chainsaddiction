@@ -63,6 +63,9 @@ hmm_poisson_fit_em (PyObject *self, PyObject *args)
         size_t   vector_s  = (size_t) m_states * sizeof (scalar);
         size_t   matrix_s  = (size_t) m_states * vector_s;
 
+        PyObject *py_success = (success == 0) ? Py_True : Py_False;
+        Py_INCREF (py_success);
+
         PyArrayObject *lambda_ = Apollon_NewPyArray1d (dims_1d);
         PyArrayObject *gamma_  = Apollon_NewPyArray2d (dims_2d);
         PyArrayObject *delta_  = Apollon_NewPyArray1d (dims_1d);
@@ -75,7 +78,7 @@ hmm_poisson_fit_em (PyObject *self, PyObject *args)
         ph->bic = compute_bic(ph->nll, ph->m,  X_train.size);
 
         PyObject *out = NULL;
-        out = Py_BuildValue("iNNNdddk", success, lambda_, gamma_, delta_,
+        out = Py_BuildValue("ONNNdddk", py_success, lambda_, gamma_, delta_,
                             (double) ph->aic, (double) ph->bic,
                             (double) ph->nll, ph->n_iter);
 
