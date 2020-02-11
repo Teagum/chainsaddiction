@@ -2,8 +2,12 @@
 *.o
 *.swp
 .DS_STORE
+.venv
+.eggs/
+dist/
+build/
 tests/bin/
 *.egg-info/
 *.ipynb_checkpoints/
 tests/test_fwbw
-.venv/
+__pycache__/

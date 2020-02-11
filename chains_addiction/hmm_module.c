@@ -33,7 +33,8 @@ hmm_poisson_fit_em (PyObject *self, PyObject *args)
         Py_XDECREF (_lambda);
         Py_XDECREF (_gamma);
         Py_XDECREF (_delta);
-        PyErr_SetString (PyExc_MemoryError, "Memory Error");
+        PyErr_SetString (PyExc_MemoryError,
+            "Could not allocate memory for input array.");
         Py_RETURN_NONE;
     }
 
@@ -54,14 +55,15 @@ hmm_poisson_fit_em (PyObject *self, PyObject *args)
     }
 
     DataSet X_train = {PyArray_DATA (X_t), (size_t) PyArray_SIZE (X_t)};
-
     int success = PoisHmm_EM (&X_train, ph);
-
     {
         npy_intp dims_1d[] = { m_states };
         npy_intp dims_2d[] = { m_states, m_states };
         size_t   vector_s  = (size_t) m_states * sizeof (scalar);
         size_t   matrix_s  = (size_t) m_states * vector_s;
+
+        PyObject *py_success = (success == 0) ? Py_True : Py_False;
+        Py_INCREF (py_success);
 
         PyArrayObject *lambda_ = Apollon_NewPyArray1d (dims_1d);
         PyArrayObject *gamma_  = Apollon_NewPyArray2d (dims_2d);
@@ -72,19 +74,18 @@ hmm_poisson_fit_em (PyObject *self, PyObject *args)
         memcpy (PyArray_DATA (delta_),  ph->params->delta,  vector_s);
 
         ph->aic = compute_aic(ph->nll, ph->m);
-        ph->bic = compute_bic(ph->nll, ph->m,  X_train.size);
+        ph->bic = compute_bic(ph->nll, ph->m, X_train.size);
 
         PyObject *out = NULL;
-        out = Py_BuildValue("iNNNdddk", success, lambda_, gamma_, delta_,
-                            (double) ph->aic, (double) ph->bic,
-                            (double) ph->nll, ph->n_iter);
+        out = Py_BuildValue("ONNNdddk", py_success, lambda_, gamma_, delta_,
+                (double) ph->aic, (double) ph->bic,
+                (double) ph->nll, ph->n_iter);
 
         Py_DECREF (X_t);
         Py_DECREF (_lambda);
         Py_DECREF (_gamma);
         Py_DECREF (_delta);
         PoisHmm_DeleteHmm (ph);
-
         return out;
     }
 }
@@ -146,4 +147,3 @@ PyInit_chains_addiction (void)
     import_array ();
     return PyModule_Create (&chains_addiction_module);
 }
-

@@ -12,7 +12,7 @@ int PoisHmm_EM (const DataSet *restrict x,
     scalar rs_delta = 0.0L;
     scalar rs_gamma = 0.0L;
     scalar s        = 0.0L;
-    int    success  = 0;
+    int    success  = -1;
     size_t m        = hmm->m;   /* just for convenience */
     size_t n        = x->size;  /* just for convenience */
 
@@ -127,7 +127,7 @@ int PoisHmm_EM (const DataSet *restrict x,
         }
         else    /* convergence */
         {
-            success = 1;
+            success = 0;
             goto exit_point;
         }
     }
