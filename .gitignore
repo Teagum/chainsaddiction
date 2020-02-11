@@ -6,3 +6,4 @@ tests/bin/
 *.egg-info/
 *.ipynb_checkpoints/
 tests/test_fwbw
+.venv/
