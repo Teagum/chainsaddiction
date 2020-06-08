@@ -7,6 +7,7 @@
 #ifdef DEBUG
 #include <stdio.h>
 #endif
+#include "restrict.h"
 #include "stats.h"
 #include "scalar.h"
 #include "hmm.h"
