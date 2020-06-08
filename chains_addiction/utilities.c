@@ -2,10 +2,10 @@
 
 DataSet *read_dataset(DataSet *X)
 {
-    size_t N       = 10;
-    size_t row_cnt = 0;
-    size_t max_len = 60;
+    const size_t N       = 10;
+    const size_t max_len = 60;
     char buffer[max_len];
+    size_t row_cnt = 0;
 
     X = malloc (sizeof (*X));
     if (X == NULL) goto exit_point;
@@ -51,9 +51,9 @@ DataSet *realloc_dataset(DataSet *X, size_t new_size)
         free_dataset (X);
         return NULL;
     }
-    
+
     X->size = new_size;
     X->data = mem_buffer;
-    
+
     return X;
 }
