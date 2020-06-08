@@ -2,6 +2,7 @@
 #include "em.h"
 #include "hmm.h"
 
+
 int PoisHmm_EM (const DataSet *restrict x,
                       PoisHmm *restrict hmm)
 {
