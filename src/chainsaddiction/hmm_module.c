@@ -133,17 +133,17 @@ CA_Methods[] = {
 };
 
 static struct PyModuleDef
-chains_addiction_module = {
+chainsaddiction_module = {
     PyModuleDef_HEAD_INIT,
-    "chains_addiction",
+    "chainsaddiction",
     NULL,
     -1,
     CA_Methods
 };
 
 PyMODINIT_FUNC
-PyInit_chains_addiction (void)
+PyInit_chainsaddiction (void)
 {
     import_array ();
-    return PyModule_Create (&chains_addiction_module);
+    return PyModule_Create (&chainsaddiction_module);
 }

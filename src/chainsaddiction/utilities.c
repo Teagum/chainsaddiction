@@ -1,9 +1,10 @@
 #include "utilities.h"
 
+#define max_len 60
+#define N 10
+
 DataSet *read_dataset(DataSet *X)
 {
-    const size_t N       = 10;
-    const size_t max_len = 60;
     char buffer[max_len];
     size_t row_cnt = 0;
 

@@ -1,23 +1,43 @@
 # ChainsAddiction
 
-ChainsAddiction is a tool for simple training discrete-time Hidden Markov
-Models. It is written in `C` and features a `numpy`-based Python extension
-module.
+ChainsAddiction is an easy to use  tool for time series analysis with
+discrete-time Hidden Markov Models. It is written in `C` as a  `numpy`-based
+Python extension module.
+
 
 ## Installation
-Clone this repository, change to its root directory and issue
+### Prerequisites
+The installation of chainsaddiction requires to following tools:
+- terminal emulator
+- git
+- Python >= 3.7
+- pip
+- C Compiler
+Hence, users with BSD und Unix-like systems should be fine.
+
+## How to install
+First, clone this repository by copying the following command in your terminal app.
+Replace `path/to/ca/` with the directory in which the chainsaddiction should be cloned.
+
+    git clone https://gitlab.rrz.uni-hamburg.de/bal7668/chainsaddiction.git path/to/ca/
+
+Second, change to root directory of your freshly clone chainsaddiction repo:
+
+    cd path/to/ca
+
+Third, instruct Python to install chainsaddiction:
 
     pip install .
 
-## Working with the C API
+DONE.
+
 
 ## Working with the Python interpreter
-Calling Chains_addiction from `Python` is simple as pie. You just need to import
+Calling chainsaddiction from `Python` is simple as pie. You just need to import
 it:
 
-    import chains_addiction as ca
+    import chainsaddiction as ca
     ca.hmm_poisson_fit_em(x, m, init_means, init_tpm, int_sd, max_iter=1000, tol=1e-5)
 
 ## Notes
 - Currently only Poisson-distributed HMM are implemented.
-- ChainsAddiction does not support Python 2. Specifically, it requires `Python >= 3.5` and `numpy >= 1.16`.
