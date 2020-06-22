@@ -7,13 +7,14 @@ Python extension module.
 
 ## Installation
 ### Prerequisites
-The installation of chainsaddiction requires to following tools:
+The installation of chainsaddiction requires to following tools to be installed
+on your system:
 - terminal emulator
 - git
 - Python >= 3.7
 - pip
-- C Compiler
-Hence, users with BSD und Unix-like systems should be fine.
+- C compiler
+
 
 ## How to install
 First, clone this repository by copying the following command in your terminal app.
