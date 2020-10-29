@@ -4,13 +4,44 @@
 #include <stdlib.h>
 #include <math.h>
 #include "scalar.h"
+#include "restrict.h"
 
-#ifdef warn_nan
-#include <stdio.h>
-#endif
+/** Log probability mass function of the Poisson distribution.
+ *
+ * @params qnt   - Qunatile.
+ * @param lambda - Expected value. 
+ */
+scalar
+poisson_logpmf (
+    const long qnt,
+    const scalar lambda);
 
-scalar  poisson_pmf     (scalar lambda, long x);
-scalar  poisson_log_pmf (scalar lambda, long x);
-void    ppmf            (scalar *lambda, size_t m, long x, scalar *out);
+
+/** Probability mass function of the Poisson distribution.
+ *
+ * @params qnt   - Qunatile.
+ * @param lambda - Expected value. 
+ */
+scalar
+poisson_pmf (
+    const long qnt,
+    const scalar lambda);
+
+
+/** Vectorized log probability mass function of the Poisson distribution.
+ *
+ * @param qunatiles   - Quantiles.
+ * @param n_qnts - Number of qnts.
+ * @param means       - Expected values
+ * @param m_means     - Number of means.
+ * @param log_probs   - Output buffer.
+ */
+void
+v_poisson_logpmf (
+    const long *restrict qnts,
+    const size_t n_qnts,
+    const scalar *restrict means,
+    const size_t m_means,
+    scalar *restrict log_probs);
 
 #endif    /* STATS_H */

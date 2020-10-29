@@ -2,36 +2,37 @@
 
 
 scalar
-poisson_log_pmf (scalar lambda, long x)
+poisson_logpmf (
+    const long qnt,
+    const scalar lambda)
 {
-    return (scalar) x * logl (lambda) - lgamma ((scalar) x + 1) - lambda;
+    return (scalar) qnt * logl (lambda) - lgamma ((scalar) qnt + 1) - lambda;
 }
 
 
 scalar
-poisson_pmf (scalar lambda, long x)
+poisson_pmf (
+    const long qnt,
+    const scalar lambda)
 {
-    scalar out = expl (poisson_log_pmf (lambda, x));
-#ifdef warn_nan
-    if (out != out)
-    {
-        fprintf (stderr, "poisson_pmf produced NaN for input (%Lf, %ld).\n", lambda, x);
-    }
-
-    if (isinf (out))
-    {
-        fprintf (stderr, "poisson_pmf produced infinite value for input (%Lf, %ld).\n", lambda, x);
-    }
-#endif
-    return out;
+    return expl (poisson_logpmf (lambda, qnt));
 }
 
 
 void
-ppmf (scalar *lambda, size_t m,  long x, scalar *out)
+v_poisson_logpmf (
+    const long *restrict qnts,
+    const size_t n_qnts,
+    const scalar *restrict means,
+    const size_t m_means,
+    scalar *restrict log_probs)
 {
-    for (size_t i = 0; i < m; i++)
+
+    for (size_t i = 0; i < n_qnts; i++)
     {
-        out[i] = poisson_pmf (lambda[i], x);
+        for (size_t j = 0; j < m_means; j++)
+        {
+            log_probs[i*m_means+j] = poisson_logpmf (qnts[i], means[j]);
+        }
     }
 }
