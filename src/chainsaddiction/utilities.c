@@ -3,12 +3,43 @@
 #define max_len 60
 #define N 10
 
-DataSet *read_dataset(DataSet *X)
+scalar *
+_alloc_block (
+    const size_t n_elem)
+{
+    scalar *block = malloc (sizeof (scalar) * n_elem);
+    CHECK_ALLOC_FAIL (block, "Could not allocate block.");
+    return block;
+}
+
+
+scalar *
+_alloc_block_fill (
+    const size_t n_elem,
+    const scalar val)
+{
+    scalar *block = NULL;
+    if (val == 0.0L)
+    {
+        block = calloc (n_elem, sizeof (scalar));
+        CHECK_ALLOC_FAIL (block, "Could not allocate block.");
+        return block;
+    }
+    block = _alloc_block (n_elem);
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        block[i] = val;
+    }
+    return block;
+}
+
+
+DataSet *read_dataset ()
 {
     char buffer[max_len];
     size_t row_cnt = 0;
 
-    X = malloc (sizeof (*X));
+    DataSet *X = malloc (sizeof (*X));
     if (X == NULL) goto exit_point;
 
     X->data = NULL;

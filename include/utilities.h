@@ -4,12 +4,49 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "scalar.h"
 
+#define OUTER_LOOP for (size_t i = 0; i < n_elem; i++)
+#define INNER_LOOP for (size_t j = 0; j < n_elem; j++)
+
+#define CHECK_ALLOC_FAIL(buffer, msg) \
+do { \
+    if (buffer == NULL) \
+    { \
+        fprintf (stderr, "%s\n", msg); \
+        exit (1); \
+    } \
+} while (0)
 
 typedef struct {
     long   *data;
     size_t size;
 } DataSet;
+
+
+/** Allocate continuous memory block.
+ *
+ * Allocate a continuous block memory for long double values and check
+ * for allocation error.
+ *
+ * @param n_elem - Numnber of block elements.
+ */
+scalar
+*_alloc_block (
+    const size_t n_elem);
+
+
+/** Allocate continuous memory block initialized with value.
+ *
+ * Allocate a continuous block memory for long double values, check
+ * for allocation error and initialize each block element with val. 
+ *
+ * @param n_elem - Numnber of block elements.
+ */
+scalar
+*_alloc_block_fill (
+    const size_t n_elem,
+    const scalar val);
 
 
 /** Read newline-seperated values from the standard input. 
@@ -19,7 +56,8 @@ typedef struct {
  *
  * This function returns NULL on failure.
  */
-DataSet *read_dataset();
+DataSet *
+read_dataset ();
 
 
 /** Frees memory pointed to by an allocated DataSet* pointer.
@@ -33,6 +71,10 @@ void free_dataset(DataSet *X);
  * updated, too. On failure `data` AND the DataSet itselfs are freed, `size`
  * is not updated and NULL is returned.
  */
-DataSet *realloc_dataset(DataSet *X, size_t new_size);
+DataSet *
+realloc_dataset (
+    DataSet *X,
+    size_t new_size);
+
 
 #endif    /* utilities_h */
