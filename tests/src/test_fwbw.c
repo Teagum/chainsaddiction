@@ -1,65 +1,50 @@
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "fwbw.h"
+#include "scalar.h"
 #include "utilities.h"
-#include "hmm.h"
 
-int main(int argc, char *argv[])
+void log_v_inplace (scalar *arr, size_t n_elem);
+
+int main (void)
 {
-    if (argc != 4)
+    const size_t m_states = 3;
+    scalar lambda[] = {10, 20, 30};
+    scalar gamma[] = {.8, .1, .1,
+                      .1, .8, .1,
+                      .1, .1, .8};
+    scalar delta[] = {0.333333, 0.333333, .333333};
+    log_v_inplace (gamma, m_states * m_states);
+    log_v_inplace (delta, m_states);
+
+    DataSet *data = read_dataset ();
+
+    scalar *lpp = _alloc_block (m_states * data->size);
+    scalar *alpha = _alloc_block (m_states * data->size);
+    scalar *beta = _alloc_block (m_states * data->size);
+
+    v_poisson_logpmf (data->data, data->size, lambda, m_states, lpp);
+    log_forward_backward (lpp, gamma, delta, m_states, data->size, alpha, beta);
+    for (size_t i = 0; i < data->size; i++)
     {
-        fprintf (stdout, "Usage: test_fwbw -[abpn] m param_file < dataset\n");
-        return 0;
-    }
-
-    size_t m = atoi (argv[2]);
-    scalar *output = NULL;
-
-    PoisParams *params = PoisHmm_ParamsFromFile(argv[3]);
-    if (params == NULL)
-    {
-        fprintf (stderr, "Error reading parameter file.\n");
-        return  1;
-    }
-
-    DataSet *X = read_dataset();
-    if (X == NULL)
-    {
-        fprintf (stderr, "Error while reading dataset.\n");
-        return 1;
-    }
-
-    scalar *alpha = malloc (X->size * m * sizeof (scalar));
-    scalar *beta  = malloc (X->size * m * sizeof (scalar));
-    scalar *probs = malloc (X->size * m * sizeof (scalar));
-    if (alpha == NULL || beta == NULL || probs == NULL)
-    {
-        fprintf (stderr, "Allocation error.\n");
-        free (alpha); free (beta); free (probs); return 1;
-    }
-
-    if (strcmp(argv[1], "-a") == 0) output = alpha;
-    else if (strcmp(argv[1], "-b") == 0) output = beta;
-    else if (strcmp(argv[1], "-p") == 0) output = probs;
-    else output = alpha;
-
-    PoisHmm_FwBw (X->data, X->size, m, params, alpha, beta, probs);
-
-    for (size_t i = 0; i < X->size; i++)
-    {
-        for (size_t j = 0; j < m; j++)
+        fprintf (stdout, "[%4zu]\t", i);
+        for (size_t j = 0; j < m_states; j++)
         {
-            printf("%40.30Lf", output[i*m+j] );
+            fprintf (stdout, "%10.5Lf\t", alpha[i*m_states+j]);
         }
-        printf("\n");
+        fprintf (stdout, "|\t");
+        for (size_t j = 0; j < m_states; j++)
+        {
+            fprintf (stdout, "%10.5Lf\t", beta[i*m_states+j]);
+        }
+        fprintf (stdout, "\n");
     }
+    return EXIT_SUCCESS;
+}
 
-    free (alpha);
-    free (beta);
-    free (probs);
-    free_dataset (X);
-    PoisHmm_FreeParams (params);
-
-    return 0;
+void log_v_inplace (scalar *arr, size_t n_elem)
+{
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        arr[i] = logl (arr[i]);
+    }
 }

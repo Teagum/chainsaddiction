@@ -1,115 +1,83 @@
 #include "fwbw.h"
 
-int PoisHmm_FwBw(
-        const long *restrict x,
-        const size_t n,
-        const size_t m,
-        PoisParams *restrict params,
-        scalar *restrict alpha,
-        scalar *restrict beta,
-        scalar *restrict pois_pr)
+void
+log_forward (
+    const scalar *restrict lprobs,
+    const scalar *restrict lgamma,
+    const scalar *restrict ldelta,
+    const size_t m_states,
+    const size_t n_obs,
+    scalar *alpha)
 {
-    scalar sum_buff = LDBL_EPSILON;     /* acccumates probabilities */
-    scalar lsf      = 0.0L;             /* log scale factor */
-    int    success  = 1;
-    
-    scalar *pr_x_t   = malloc (m * sizeof (scalar));     /* probabilities at time `t` */
-    scalar *buff     = malloc (m * sizeof (scalar));     /* calculation buffer */
-    scalar *prob_acc = malloc (m * sizeof (scalar));     /* probability accumulator */
+    /* shared buffers */
+    scalar *_cs = _alloc_block (m_states);
+    scalar *_mb = _alloc_block (m_states*m_states);
 
-    if (pr_x_t == NULL || buff == NULL || prob_acc == NULL)
+    /* Init step */
+    for (size_t i = 0; i < m_states; i++)
     {
-        success = 0;
-        goto fail;
+        alpha[i] = ldelta[i] + lprobs[i];
     }
 
-    /*
-     * Forward pass
-     */
-
-    /* Initial step t = 0 */
-    for (size_t i = 0; i < m; i++)
+    /* remaining steps */
+    for (size_t i = 1; i < n_obs; i++)
     {
-        pois_pr[i] = poisson_pmf (params->lambda[i], x[0]);
-        pr_x_t[i]  = pois_pr[i] * params->delta[i];
-        sum_buff  += pr_x_t[i];
+        size_t c_idx = (i-1) * m_states;
+        size_t n_idx = i * m_states;
+        log_vmp (alpha+c_idx, lgamma, m_states, _cs, _mb, alpha+n_idx);
+        vi_add (lprobs+=m_states, alpha+n_idx, m_states);
     }
 
-    lsf = logl (sum_buff);
-    for (size_t i = 0; i < m; i++)
+    free (_cs);
+    free (_mb);
+}
+
+
+void
+log_backward (
+    const scalar *restrict lprobs,
+    const scalar *restrict lgamma,
+    const size_t m_states,
+    const size_t n_obs,
+    scalar *beta)
+{
+    /* shared buffers */
+    scalar *_cs = _alloc_block (m_states);
+    scalar *_mb = _alloc_block (m_states*m_states);
+
+    /* init step */
+    size_t c_idx = (n_obs-1) * m_states;
+    lprobs += c_idx;
+    beta += c_idx;
+
+    for (size_t i = 0; i < m_states; i++)
     {
-        pr_x_t[i] /= sum_buff;
-        alpha[i] = logl (pr_x_t[i]) + lsf;
+        beta[i] = 0.0L;
     }
 
-    /* remaining forward steps */
-    for (size_t t = 1; t < n; t++)
+    for (size_t i = n_obs-1; i > 0; i--)
     {
-        sum_buff = LDBL_EPSILON;
-        for (size_t i = 0; i < m; i++)
-        {
-            buff[i] = 0.0L;
-            for (size_t j = 0; j < m; j++)
-            {
-                buff[i] += pr_x_t[j] * params->gamma[j*m+i];
-            }
-            pois_pr[t*m+i] = poisson_pmf (params->lambda[i], x[t]);
-            buff[i] *= pois_pr[t*m+i];
-            sum_buff += buff[i];
-        }
-
-        lsf += logl (sum_buff);
-
-        for (size_t i = 0; i < m; i++)
-        {
-            pr_x_t[i] = buff[i] / sum_buff;
-            alpha[t*m+i] = logl (pr_x_t[i]) + lsf;
-        }
+        beta -= m_states;
+        v_add (lprobs, beta+m_states, m_states, beta);
+        log_mvp (lgamma, beta, m_states, _cs, _mb, beta);
+        lprobs -= m_states;
     }
 
-    /*
-     * Backward pass
-     */
+    free (_cs);
+    free (_mb);
+}
 
-    /* Initial step */
-    for (size_t i = 0; i < m; i++)
-    {
-        pr_x_t[i] = 1.0L / (scalar) m;
-        beta[(n-1)*m+i] = 0.0L;
-    }
-    lsf = logl (m);
 
-    /* remaining backward steps */
-    for (size_t t = n-1; t > 0; t--)
-    {
-        for (size_t i = 0; i < m; i++)
-        {
-            prob_acc[i] = pois_pr[t*m+i] * pr_x_t[i];
-        }
-
-        sum_buff = LDBL_EPSILON;
-        for (size_t i = 0; i < m; i++)
-        {
-            buff[i] = 0.0L;
-            for (size_t j = 0; j < m; j++)
-            {
-                buff[i] += params->gamma[i*m+j] * prob_acc[j];
-            }
-            sum_buff += buff[i];
-        }
-
-        lsf += logl (sum_buff);
-        for (size_t i = 0; i < m; i++)
-        {
-            pr_x_t[i] = buff[i] / sum_buff;
-            buff[i] = 0.0L;
-            beta[(t-1)*m+i] = logl (pr_x_t[i]) + lsf;
-        }
-    }
-
-fail:
-    free (pr_x_t);
-    free (buff);
-    free (prob_acc);
-    return success;
+void
+log_forward_backward (
+    const scalar *restrict lprobs,
+    const scalar *restrict lgamma,
+    const scalar *restrict ldelta,
+    const size_t m_states,
+    const size_t n_obs,
+    scalar *alpha,
+    scalar *beta)
+{
+    log_forward (lprobs, lgamma, ldelta, m_states, n_obs, alpha);
+    log_backward (lprobs, lgamma, m_states, n_obs, beta);
 }
