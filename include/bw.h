@@ -11,7 +11,10 @@
 #include "utilities.h"
 
 int
-ca_bw_pois_e_step ();
+ca_bw_pois_e_step (
+    const DataSet *restrict _inp,
+    const PoisParams *restrict _params,
+    PoisHmmProbs *restrict probs);
 
 int
 ca_bw_pois_m_step ();
