@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Wfloat-equal -O3 -Werror=vla -I../include -I./include
+CFLAGS = -I../include -I./include -Wall -Wextra -Wfloat-equal -Werror=vla -O3 
 BINDIR = bin/
 
 vpath %.h ../include
