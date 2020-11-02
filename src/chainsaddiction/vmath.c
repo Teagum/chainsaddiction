@@ -68,6 +68,21 @@ vi_log (
 
 
 inline scalar
+v_lse (
+    const scalar *restrict _vx,
+    const size_t n_elem)
+{
+    const scalar max_val = v_max (_vx, n_elem);
+    scalar sum_exp = 0;
+    for (size_t i = 0; i < n_elem; i++, _vx++)
+    {
+        sum_exp += expl (*_vx - max_val);
+    }
+    return logl (sum_exp) + max_val;
+}
+
+
+inline scalar
 v_max (
     const scalar *restrict _vt,
     const size_t n_elem)
@@ -78,6 +93,31 @@ v_max (
         _max = fmaxl (*_vt, _max);
     }
     return _max;
+}
+
+
+inline scalar
+v_sum (
+    const scalar *restric _vt,
+    const size_t n_elem)
+{
+    return vs_sum (_vt, n_elem, 1);
+}
+
+
+inline scalar
+vs_sum (
+    const scalar *restrict _vt,
+    const size_t n_elem,
+    const size_t stride)
+{
+    scalar sum = 0;
+    const scalar *end_iter = _vt + n_elem;
+    while ((_vt+=stride) < end_iter)
+    {
+        sum += *_vt;
+    }
+    return sum;
 }
 
 

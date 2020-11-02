@@ -21,6 +21,24 @@ test_strided_max (void)
 
 
 bool
+test_v_lse (void)
+{
+    const size_t n_elem = 100;
+    scalar vals[n_elem];
+    scalar lvals[n_elem];
+    scalar lsum_vals = 0;
+    scalar lse = 0;
+
+    v_rnd (n_elem, vals);
+    v_log (vals, n_elem, lvals);
+    for (size_t i = 0; i < n_elem; i++) { lsum_vals += vals[i]; }
+    lsum_vals = logl (lsum_vals);
+    lse = v_lse (lvals, n_elem);
+    return ASSERT_EQUAL (lsum_vals, lse);
+}
+
+
+bool
 test_v_max (void)
 {
     scalar max = 2.0L;
@@ -32,6 +50,27 @@ test_v_max (void)
        return true;
     }
    return false;
+}
+
+bool
+test_vs_sum (void)
+{
+    const size_t n_elem = 100;
+    scalar vals[n_elem];
+    size_t stride = rnd_int (0, n_elem);
+    scalar expected = 0;
+    scalar res = 0;
+
+    v_rnd (n_elem, vals);
+    for (size_t i = 0; i < n_elem; i+=stride)
+    {
+        /* printf ("[%3zu] %Lf\n", i, vals[i]); */
+        expected += vals[i];
+    }
+    res = vs_sum (vals, n_elem, stride);
+
+    /* printf ("RES: %Lf\tEXPECTED: %LF\tStride: %zu\n", res, expected, stride); */
+    return ASSERT_EQUAL (res, expected);
 }
 
 
@@ -123,4 +162,42 @@ test_m_col_max (void)
         }
     }
     return true;
+}
+
+bool
+test_log_vmp (void)
+{
+    const size_t n = 3;
+    scalar vt[n] = {1, 2, 3};
+    scalar mt[n*n] = {1, 2, 3, 2, 3, 1, 3, 2, 1};
+    scalar b1[n];
+    scalar b2[n*n];
+    scalar res[n];
+
+    v_rnd (n, vt);
+    v_rnd (n*n, mt);
+    vi_log (vt, n);
+    vi_log (mt, n*n);
+
+    log_vmp (vt, mt, n, b1, b2, res);
+    return false;
+}
+
+bool
+test_log_mvp (void)
+{
+    const size_t n = 3;
+    scalar vt[n] = {1, 2, 3};
+    scalar mt[n*n] = {1, 2, 3, 2, 3, 1, 3, 2, 1};
+    scalar b1[n];
+    scalar b2[n*n];
+    scalar res[n];
+
+    v_rnd (n, vt);
+    v_rnd (n*n, mt);
+    vi_log (vt, n);
+    vi_log (mt, n*n);
+
+    log_mvp (mt, vt, n, b1, b2, res);
+    return false;
 }

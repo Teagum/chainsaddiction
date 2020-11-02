@@ -7,6 +7,14 @@
 #include "scalar.h"
 #include "utilities.h"
 
+/*
+ * Prefixes:
+ * v:   vector operation
+ * m:   matrix operation
+ * i:   inplace operation
+ * s:   strided operation
+ */
+
 #define OUTER_LOOP for (size_t i = 0; i < n_elem; i++)
 #define INNER_LOOP for (size_t j = 0; j < n_elem; j++)
 
@@ -78,6 +86,17 @@ vi_log (
     scalar *restrict _vx,
     const size_t n_elem);
 
+/** Logarithm of the sum of the exponential of the vector elements.
+ *
+ * @param _vx - Pointer to input data.
+ * @param n_elem - Number of vector elements.
+ */
+extern scalar
+v_lse (
+    const scalar *restrict _vx,
+    const size_t n_elem);
+
+
 /** Compute maximum element of vector.
  *
  * @param _vt
@@ -88,7 +107,37 @@ v_max (
     const scalar *restrict _vt,
     const size_t n_elem);
 
-    
+
+/** Compute the sum of the vector elements.
+ *
+ * @param _vt - Pointer to input data.
+ * @param n_elem - Number of elements.
+ */
+extern scalar
+v_sum (
+    const scalar *restrict _vt,
+    const size_t n_elem);
+
+/* === Strided vector interface ==== */
+
+/** Compute the sum of the vector elements given a stride.
+ *
+ * @param _vt - Pointer to input data.
+ * @param n_elem - Number of elements.
+ * @param stride - Stride.
+ */
+extern scalar
+vs_sum (
+    const scalar *restrict _vt,
+    const size_t n_elem,
+    const size_t stride);
+
+
+/* =====================
+ * Matrix interface
+ * ====================
+ */
+
 /** Compute centroid along the rows of _mt.
  *
  * @param _mt 
