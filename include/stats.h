@@ -13,7 +13,7 @@
  */
 scalar
 poisson_logpmf (
-    const long qnt,
+    const unsigned long qnt,
     const scalar lambda);
 
 
@@ -24,7 +24,7 @@ poisson_logpmf (
  */
 scalar
 poisson_pmf (
-    const long qnt,
+    const unsigned long qnt,
     const scalar lambda);
 
 
@@ -38,7 +38,7 @@ poisson_pmf (
  */
 void
 v_poisson_logpmf (
-    const long *restrict qnts,
+    const unsigned long *restrict qnts,
     const size_t n_qnts,
     const scalar *restrict means,
     const size_t m_means,
