@@ -7,7 +7,7 @@ scalar *
 _alloc_block (
     const size_t n_elem)
 {
-    scalar *block = malloc (sizeof (scalar) * n_elem);
+    scalar *block = malloc (n_elem * sizeof *block);
     CHECK_ALLOC_FAIL (block, "Could not allocate block.");
     return block;
 }
@@ -21,7 +21,7 @@ _alloc_block_fill (
     scalar *block = NULL;
     if (val == 0.0L)
     {
-        block = calloc (n_elem, sizeof (scalar));
+        block = calloc (n_elem, sizeof *block);
         CHECK_ALLOC_FAIL (block, "Could not allocate block.");
         return block;
     }
@@ -39,7 +39,7 @@ DataSet *read_dataset ()
     char buffer[max_len];
     size_t row_cnt = 0;
 
-    DataSet *X = malloc (sizeof (*X));
+    DataSet *X = malloc (sizeof *X);
     if (X == NULL) goto exit_point;
 
     X->data = NULL;
