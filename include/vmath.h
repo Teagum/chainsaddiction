@@ -15,6 +15,10 @@
  * s:   strided operation
  */
 
+/*
+ * Postfixes:
+ * s:   scalar
+ */
 #define OUTER_LOOP for (size_t i = 0; i < n_elem; i++)
 #define INNER_LOOP for (size_t j = 0; j < n_elem; j++)
 
@@ -24,6 +28,31 @@
    M_OUTER_LOOP { \
       M_INNER_LOOP { \
 #define END_ITER_MATRIX }}
+
+
+#define def_vi_s_func(name, op)     \
+inline void                         \
+vi_ ## name ##_s (                  \
+    scalar *_vt,                    \
+    const size_t n_elem,            \
+    const scalar _val)              \
+{                                   \
+    OUTER_LOOP {                    \
+        _vt[i] op##= _val;          \
+    }                               \
+}
+
+/** Compute basic math operations on vector elements give constant.
+ *
+ * @param _vt    - Pointer to input data.
+ * @param n_elem - Number of elemets.
+ * @param _val   - Constant value.
+ */
+extern void vi_add_s (scalar *_vt, const size_t n_elem, const scalar _val);
+extern void vi_sub_s (scalar *_vt, const size_t n_elem, const scalar _val);
+extern void vi_mul_s (scalar *_vt, const size_t n_elem, const scalar _val);
+extern void vi_div_s (scalar *_vt, const size_t n_elem, const scalar _val);
+
 
 /** Add two vectors element-wise.
  *
@@ -94,6 +123,13 @@ vi_log (
 extern scalar
 v_lse (
     const scalar *restrict _vx,
+    const size_t n_elem);
+
+
+extern scalar
+v_lse_centroid (
+    const scalar *restrict _vt,
+    const scalar *restrict _weights,
     const size_t n_elem);
 
 

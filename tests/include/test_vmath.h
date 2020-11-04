@@ -10,6 +10,7 @@
 bool test_strided_max (void);
 
 bool test_v_lse (void);
+bool test_v_lse_centroid (void);
 bool test_v_max (void);
 
 bool test_vs_sum (void);

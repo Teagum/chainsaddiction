@@ -39,6 +39,31 @@ test_v_lse (void)
 
 
 bool
+test_v_lse_centroid (void)
+{
+    const size_t n_elem = 3;
+    scalar vals[n_elem] = {2, 3, 4};
+    scalar lvals[n_elem];
+    scalar weights[n_elem] = {5, 4, 6.0};
+    scalar wsum = 0.0L;
+    scalar sum = 0.0L;
+    scalar cent = 0.L;
+    scalar lse_cent = 0.0L;
+
+    //v_rnd (n_elem, weights);
+    //v_rnd (n_elem, vals);
+    v_log (vals, n_elem, lvals);
+    for (size_t i = 0; i < n_elem; i++) {
+        sum += vals[i];
+        wsum += vals[i] * weights[i];
+    }
+    cent = logl (wsum / sum);
+    lse_cent = v_lse_centroid (lvals, weights, n_elem);
+    return ASSERT_EQUAL (cent, lse_cent);
+}
+
+
+bool
 test_v_max (void)
 {
     scalar max = 2.0L;
@@ -52,24 +77,25 @@ test_v_max (void)
    return false;
 }
 
+
 bool
 test_vs_sum (void)
 {
-    const size_t n_elem = 100;
+    const size_t n_elem = 2;
     scalar vals[n_elem];
-    size_t stride = rnd_int (0, n_elem);
+    size_t stride = 1; //rnd_int (0, n_elem);
     scalar expected = 0;
     scalar res = 0;
 
     v_rnd (n_elem, vals);
     for (size_t i = 0; i < n_elem; i+=stride)
     {
-        /* printf ("[%3zu] %Lf\n", i, vals[i]); */
+        //printf ("[%3zu] %Lf\n", i, vals[i]);
         expected += vals[i];
     }
     res = vs_sum (vals, n_elem, stride);
 
-    /* printf ("RES: %Lf\tEXPECTED: %LF\tStride: %zu\n", res, expected, stride); */
+    //printf ("RES: %Lf\tEXPECTED: %LF\tStride: %zu\n", res, expected, stride);
     return ASSERT_EQUAL (res, expected);
 }
 

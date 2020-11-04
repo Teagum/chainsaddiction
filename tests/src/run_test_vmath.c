@@ -9,6 +9,7 @@ int main (void)
 
     FEEDBACK (test_strided_max);
     FEEDBACK (test_v_lse);
+    FEEDBACK (test_v_lse_centroid);
     FEEDBACK (test_v_max);
 
     FEEDBACK (test_vs_sum);
@@ -16,6 +17,7 @@ int main (void)
     FEEDBACK (test_m_max);
     FEEDBACK (test_m_row_max);
     FEEDBACK (test_m_col_max);
+
     FEEDBACK (test_log_vmp);
     FEEDBACK (test_log_mvp);
 
