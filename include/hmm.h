@@ -6,6 +6,7 @@
 #include <math.h>
 #include "restrict.h"
 #include "scalar.h"
+#include "utilities.h"
 #include "vmath.h"
 
 typedef struct {
@@ -15,16 +16,45 @@ typedef struct {
 } PoisParams;
 
 typedef struct {
-    size_t m;
+    size_t m_states;
     size_t n_iter;
     size_t max_iter;
     scalar tol;
     scalar aic;
     scalar bic;
-    scalar nll;
+    scalar llh;
     PoisParams *init;
     PoisParams *params;
 } PoisHmm;
+
+
+/** Computation buffer for HMM estimation.
+ *
+ * Each field is a pointer to continuous memory with
+ * space for n_obs * m_states values.
+ *
+ * lsd    - Log of the state dependent probabilities.
+ * lalpha - Log forward probabilities.
+ * lbeta  - Log backward probabilities.
+ */
+typedef struct {
+    scalar *lsd;
+    scalar *lalpha;
+    scalar *lbeta;
+} HmmProbs;
+
+/** Allocate memory for HmmProbs.
+ *
+ * @params n_obs    - Number of observations in the data set.
+ * @params m_states - Number of HMM states.
+ */
+HmmProbs *
+ca_NewHmmProbs (const size_t n_obs, const size_t m_states);
+
+void
+ca_FreeHmmProbs (HmmProbs *probs);
+
+
 
 /** Allocate a new Params struct. Elements of
  * parameter vectors remain uninitialized.

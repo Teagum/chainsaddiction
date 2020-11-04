@@ -10,18 +10,18 @@
 #include "hmm.h"
 #include "utilities.h"
 
-int
+void
 ca_bw_pois_e_step (
-    const DataSet *restrict _inp,
-    const PoisParams *restrict _params,
-    PoisHmmProbs *restrict probs);
+    const DataSet *restrict inp,
+    PoisHmm *restrict hmm,
+    HmmProbs *restrict probs);
 
-int
+void
 ca_bw_pois_m_step ();
 
-int
+void
 ca_bw_pois (
-    const DataSet *restrict _inp,
-    PoisHmm *restrict _init);
+    const DataSet *restrict inp,
+    PoisHmm *restrict init);
 
 #endif  /* BW_H */

@@ -1,25 +1,39 @@
 #include <string.h>
-#include "em.h"
+#include "bw.h"
 #include "hmm.h"
 
-int
+
+void
 ca_bw_pois_e_step (
-    const DataSet *restrict _inp,
-    const PoisParams *restrict _params,
-    PoisHmmProbs *restrict probs)
+    const DataSet *restrict inp,
+    PoisHmm *restrict hmm,
+    HmmProbs *restrict probs)
 {
-    v_poisson_logpmf (_inp->data, _int->size, _params->lambda,
-        _params->m_states, probs->lpp);
-    log_forward_backward (_probs->lpp, _params->gamma, _params->delta,
-        _params->m_states, data->size, probs->alpha, probs->beta);
+    v_poisson_logpmf (inp->data, inp->size, hmm->init->lambda,
+        hmm->m_states, probs->lsd);
+
+    log_forward_backward (probs->lsd, hmm->init->gamma, hmm->init->delta,
+        hmm->m_states, inp->size, probs->lalpha, probs->lbeta);
+
+    hmm->llh = log_likelihood_fw (probs->lalpha, inp->size, hmm->m_states);
 }
 
-int
+
+void
 ca_bw_pois_m_step ()
 {}
 
-int
+
+void
 ca_bw_pois (
-    const DataSet *restrict _inp,
-    PoisHmm *restrict _init)
-{}
+    const DataSet *restrict inp,
+    PoisHmm *restrict init)
+{
+    HmmProbs *probs = ca_NewHmmProbs (inp->size, init->m_states);
+
+    ca_bw_pois_e_step (inp, init, probs);
+
+    ca_FreeHmmProbs (probs);
+}
+
+

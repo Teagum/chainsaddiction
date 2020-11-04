@@ -1,6 +1,39 @@
 #include <stdio.h>
 #include "hmm.h"
 
+HmmProbs *
+ca_NewHmmProbs (
+    const size_t n_obs,
+    const size_t m_states)
+{
+    HmmProbs *probs = malloc (sizeof *probs);
+    if (probs == NULL)
+    {
+        fprintf (stderr, "Could not allocate probabilitiy buffer.\n");
+        return NULL;
+    }
+    probs->lsd = _alloc_block (n_obs*m_states);
+    probs->lalpha = _alloc_block (n_obs*m_states);
+    probs->lbeta = _alloc_block (n_obs*m_states);
+    if (probs->lsd == NULL ||
+        probs->lalpha == NULL ||
+        probs->lbeta  == NULL)
+    {
+        fprintf (stderr, "Could not allocate probabilitiy subbuffers.\n");
+        return NULL;
+    }
+    return probs;
+}
+
+void
+ca_FreeHmmProbs (HmmProbs *probs)
+{
+    free (probs->lsd);
+    free (probs->lalpha);
+    free (probs->lbeta);
+}
+
+
 PoisParams *PoisHmm_NewEmptyParams (size_t m)
 {
     size_t vector_s = m * sizeof (scalar);
@@ -149,7 +182,7 @@ PoisHmm_FromData (size_t m_states,
     size_t vector_s = m_states * sizeof (scalar);
     size_t matrix_s = m_states * vector_s;
 
-    ph->m        = m_states;
+    ph->m_states = m_states;
     ph->max_iter = max_iter;
     ph->tol      = tol;
     ph->n_iter   = 0L;
@@ -170,7 +203,7 @@ PoisHmm_FromData (size_t m_states,
 
     ph->aic = 0.0L;
     ph->bic = 0.0L;
-    ph->nll = 0.0L;
+    ph->llh = 0.0L;
 
     return ph;
 }
