@@ -195,3 +195,9 @@ compute_bic(scalar nll, size_t m, size_t n)
     return 2.0L * nll + logl ((scalar) n) * (scalar) (2*m + m*m);
 }
 
+scalar
+log_likelihood_fw (scalar *lalpha, size_t n_obs, size_t m_states)
+{
+    const scalar *restrict last_row = lalpha + ((n_obs-1)*m_states);
+    return v_lse (last_row, m_states);
+}
