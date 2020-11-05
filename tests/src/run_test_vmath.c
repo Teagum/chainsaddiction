@@ -9,7 +9,7 @@ int main (void)
 
     FEEDBACK (test_strided_max);
     FEEDBACK (test_v_lse);
-    FEEDBACK (test_v_lse_centroid);
+    FEEDBACK (test_vs_lse_centroid);
     FEEDBACK (test_v_max);
 
     FEEDBACK (test_vs_sum);
@@ -21,6 +21,7 @@ int main (void)
     FEEDBACK (test_log_vmp);
     FEEDBACK (test_log_mvp);
 
+    FEEDBACK (test_m_lse_centroid_rows);
     if (_N_ERRORS == 0)
     {
         fprintf (stdout, "All tests passed.\n");

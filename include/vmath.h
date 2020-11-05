@@ -117,21 +117,25 @@ vi_log (
 
 /** Logarithm of the sum of the exponential of the vector elements.
  *
- * @param _vx - Pointer to input data.
- * @param n_elem - Number of vector elements.
+ * \param vctr   Pointer to input data.
+ * \param n_elem Number of vector elements.
  */
 extern scalar
 v_lse (
-    const scalar *restrict _vx,
+    const scalar *restrict vctr,
     const size_t n_elem);
 
 
 extern scalar
-v_lse_centroid (
-    const scalar *restrict _vt,
-    const scalar *restrict _weights,
+vs_lse_centroid (
+    const scalar *restrict vt,
+    const size_t v_stride,
+    const scalar *restrict weights,
+    const size_t w_stride,
     const size_t n_elem);
 
+#define v_lse_centroid(vt, weights, n_elem) \
+    vs_lse_centroid (vt, 1, weights, 1, n_elem)
 
 /** Compute maximum element of vector.
  *
@@ -176,19 +180,19 @@ vs_sum (
 
 /** Compute centroid along the rows of _mt.
  *
- * @param _mt 
- * @param _weights
- * @param _n_rows
- * @param _n_cols
- * @param _centroids
+ * @param mtrx      Pointer to matrix data. 
+ * @param wght      Pointer to weight data.
+ * @param n_rows    Number of matrix rows.
+ * @param n_cols    Number of matrix columns.
+ * @param centroid  Output buffer.
  */
 extern void
-m_log_centroid (
-        const scalar *restrict _mt,
-        const scalar *restrict _weights,
-        const size_t _n_rows,
-        const size_t _n_cols,
-        scalar _centroids);
+m_lse_centroid_rows (
+        const scalar *restrict mtrx,
+        const scalar *restrict wght,
+        const size_t n_rows,
+        const size_t n_cols,
+        scalar *centroid);
 
 
 /** Compute maximum value.
@@ -209,7 +213,7 @@ m_max (
  * @param _mat
  * @param _n_rows
  * @param _n_cols
- * @paran _col_max
+ * @param _col_max
  */
 extern void
 m_col_max (

@@ -39,7 +39,7 @@ test_v_lse (void)
 
 
 bool
-test_v_lse_centroid (void)
+test_vs_lse_centroid (void)
 {
     const size_t n_elem = 3;
     scalar vals[n_elem] = {2, 3, 4};
@@ -50,6 +50,9 @@ test_v_lse_centroid (void)
     scalar cent = 0.L;
     scalar lse_cent = 0.0L;
 
+    const size_t v_stride = 1;
+    const size_t w_stride = 1;
+
     //v_rnd (n_elem, weights);
     //v_rnd (n_elem, vals);
     v_log (vals, n_elem, lvals);
@@ -58,7 +61,7 @@ test_v_lse_centroid (void)
         wsum += vals[i] * weights[i];
     }
     cent = logl (wsum / sum);
-    lse_cent = v_lse_centroid (lvals, weights, n_elem);
+    lse_cent = vs_lse_centroid (lvals, 1, weights, 1, n_elem);
     return ASSERT_EQUAL (cent, lse_cent);
 }
 
@@ -225,5 +228,24 @@ test_log_mvp (void)
     vi_log (mt, n*n);
 
     log_mvp (mt, vt, n, b1, b2, res);
+    return false;
+}
+
+bool
+test_m_lse_centroid_rows (void)
+{
+    scalar vals[] = {1, 2, 3,
+                    4, 5, 6,
+                    7, 8, 9,
+                    10, 11, 12};
+
+    scalar weights[] = {1, 2, 3, 4};
+    scalar centroid[] = {0, 0, 0};
+
+    m_lse_centroid_rows (vals, weights, 4, 3, centroid);
+
+    for (size_t i = 0; i < 3; i++)
+        printf ("ccc: %Lf\t", centroid[i]);
+    puts("\n");
     return false;
 }

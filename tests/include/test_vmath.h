@@ -10,7 +10,7 @@
 bool test_strided_max (void);
 
 bool test_v_lse (void);
-bool test_v_lse_centroid (void);
+bool test_vs_lse_centroid (void);
 bool test_v_max (void);
 
 bool test_vs_sum (void);
@@ -21,7 +21,7 @@ bool test_m_col_max (void);
 
 bool test_log_vmp (void);
 bool test_log_mvp (void);
-/*bool test_v_log_centroids (void);*/
 
+bool test_m_lse_centroid_rows (void);
 
 #endif  /* TEST_VMATH_H */

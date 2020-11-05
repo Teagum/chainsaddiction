@@ -74,23 +74,25 @@ vi_log (
 
 inline scalar
 v_lse (
-    const scalar *restrict vx,
+    const scalar *restrict vctr,
     const size_t n_elem)
 {
-    const scalar max_val = v_max (vx, n_elem);
+    const scalar max_val = v_max (vctr, n_elem);
     scalar sum_exp = 0;
-    for (size_t i = 0; i < n_elem; i++, vx++)
+    for (size_t i = 0; i < n_elem; i++, vctr++)
     {
-        sum_exp += expl (*vx - max_val);
+        sum_exp += expl (*vctr - max_val);
     }
     return logl (sum_exp) + max_val;
 }
 
 
 inline scalar
-v_lse_centroid (
+vs_lse_centroid (
     const scalar *restrict vt,
-    const scalar *restrict _weights,
+    const size_t v_stride,
+    const scalar *restrict weights,
+    const size_t w_stride,
     const size_t n_elem)
 {
     scalar sum_exp =  0.0L;
@@ -100,7 +102,7 @@ v_lse_centroid (
     {
         scalar _buff = expl (vt[i] - max_val);
         sum_exp += _buff;
-        sum_exp_w += _buff * _weights[i];
+        sum_exp_w += _buff * weights[i];
     }
     return logl (sum_exp_w/sum_exp);
 }
@@ -142,6 +144,41 @@ vs_sum (
         sum += *vt;
     }
     return sum;
+}
+
+/*!*********************************************
+ * Matrix interface
+ */
+
+inline void
+m_lse_centroid_rows (
+    const scalar *restrict mtrx,
+    const scalar *restrict wght,
+    const size_t n_rows,
+    const size_t n_cols,
+    scalar *centroid)
+{
+    scalar *row_sum = _alloc_block_fill (n_cols, 0);
+    scalar *w_row_sum = _alloc_block_fill (n_cols, 0);
+    scalar *row_max = _alloc_block_fill (n_cols, 0);
+
+    m_row_max (mtrx, n_rows, n_cols, row_max);
+    for (size_t i = 0; i < n_rows*n_cols; i++)
+    {
+        size_t idx = i % n_cols;
+        scalar exp_val = expl (mtrx[i] - row_max[idx]);
+        row_sum[idx] += exp_val;
+        w_row_sum[idx] += exp_val * wght[i/n_cols];
+    }
+
+    for (size_t i = 0; i < n_cols; i++)
+    {
+        centroid[i] = logl (w_row_sum[i] / row_sum[i]);
+    }
+
+    free (row_sum);
+    free (w_row_sum);
+    free (row_max);
 }
 
 
