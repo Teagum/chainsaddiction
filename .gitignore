@@ -5,6 +5,7 @@
 *.so
 *.swp
 .venv
+.vimrc
 build/
 dist/
 .eggs/
