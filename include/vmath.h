@@ -42,6 +42,22 @@ vi_ ## name ##_s (                  \
     }                               \
 }
 
+#define def_mm_op_s_func(name, op)          \
+inline void                                 \
+mm_ ## name ##_s (                          \
+    const scalar *mta,                      \
+    const scalar *mtb,                      \
+    const size_t n_elem,                    \
+    const scalar val,                       \
+    scalar *restrict buffer)                \
+{                                           \
+    OUTER_LOOP                              \
+    {                                       \
+        buffer[i] = mta[i] + mtb[i] + val;  \
+    }                                       \
+}
+
+    
 /** Compute basic math operations on vector elements give constant.
  *
  * @param _vt    - Pointer to input data.
@@ -52,6 +68,46 @@ extern void vi_add_s (scalar *_vt, const size_t n_elem, const scalar _val);
 extern void vi_sub_s (scalar *_vt, const size_t n_elem, const scalar _val);
 extern void vi_mul_s (scalar *_vt, const size_t n_elem, const scalar _val);
 extern void vi_div_s (scalar *_vt, const size_t n_elem, const scalar _val);
+
+
+/** Compute basic matrix/matrix operations with added constant.
+ *
+ * \param mat       - Pointer the first matrix data.
+ * \param mtb       - Pointer the second matrix data.
+ * \param n_rows    - Number of rows of each matrix.
+ * \param n_cols    - Numnber of columns in each matrix.
+ * \param val       - Constant value.
+ * \param buffer    - Pointer to output buffer.
+ */
+extern void
+mm_add_s (
+    const scalar *mta,
+    const scalar *mtb,
+    const size_t n_elem,
+    const scalar val,
+    scalar *restrict buffer); 
+
+extern void
+mm_sub_s (
+    const scalar *mta,
+    const scalar *mtb,
+    const size_t n_elem,
+    const scalar val, 
+    scalar *restrict buffer); 
+
+extern void mm_mul_s (
+    const scalar *mta,
+    const scalar *mtb,
+    const size_t n_elem,
+    const scalar val,
+    scalar *restrict buffer); 
+
+extern void mm_div_s (
+    const scalar *mta,
+    const scalar *mtb,
+    const size_t n_elem,
+    const scalar val,
+    scalar *restrict buffer); 
 
 
 /** Add two vectors element-wise.

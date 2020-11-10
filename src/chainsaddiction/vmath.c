@@ -2,8 +2,14 @@
 
 def_vi_s_func(add, +)
 def_vi_s_func(sub, -)
-def_vi_s_func(div, *)
-def_vi_s_func(mul, /)
+def_vi_s_func(mul, *)
+def_vi_s_func(div, /)
+
+def_mm_op_s_func(add, +)
+def_mm_op_s_func(sub, -)
+def_mm_op_s_func(mul, *)
+def_mm_op_s_func(div, /)
+
 
 inline void
 v_add (

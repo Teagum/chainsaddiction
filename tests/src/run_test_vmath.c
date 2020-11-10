@@ -22,6 +22,8 @@ int main (void)
     FEEDBACK (test_log_mvp);
 
     FEEDBACK (test_m_lse_centroid_rows);
+    FEEDBACK (test_mm_add_s);
+
     if (_N_ERRORS == 0)
     {
         fprintf (stdout, "All tests passed.\n");

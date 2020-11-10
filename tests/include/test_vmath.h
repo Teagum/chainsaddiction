@@ -24,4 +24,6 @@ bool test_log_mvp (void);
 
 bool test_m_lse_centroid_rows (void);
 
+bool test_mm_add_s (void);
+
 #endif  /* TEST_VMATH_H */

@@ -249,3 +249,23 @@ test_m_lse_centroid_rows (void)
     puts("\n");
     return false;
 }
+
+bool
+test_mm_add_s (void)
+{
+    const size_t n_elem = 10;
+    scalar vals[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    scalar out[] = { 0,0,0,0,0,0,0,0,0,0 };
+    scalar cval = rnd_int (1, 100);
+    mm_add_s (vals, vals, 10, cval, out);
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        scalar xxx = vals[i] + vals[i] + cval;
+        int a = ASSERT_EQUAL (out[i], xxx);
+        // printf ("\n VAL: %Lf\t OUT: %Lf\t EXPECTED: %LF\t ASSERT: %d", vals[i], out[i], xxx, a);
+        if (!a) {return false;}
+    }
+    return true;
+}
+
+
