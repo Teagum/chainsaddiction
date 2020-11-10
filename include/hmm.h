@@ -15,6 +15,10 @@ typedef struct {
     scalar *restrict delta;
 } PoisParams;
 
+
+/** \struct PoisHmm
+ * \brief HMM with Poisson-distributed states.
+ */
 typedef struct {
     size_t m_states;
     size_t n_iter;
@@ -32,21 +36,18 @@ typedef struct {
  *
  * Each field is a pointer to continuous memory with
  * space for n_obs * m_states values.
- *
- * lsd    - Log of the state dependent probabilities.
- * lalpha - Log forward probabilities.
- * lbeta  - Log backward probabilities.
  */
 typedef struct {
-    scalar *lsd;
-    scalar *lalpha;
-    scalar *lbeta;
+    scalar *lsd;        /**< Log of the state dependent probabilities. */
+    scalar *lalpha;     /**< Log forward probabilities. */
+    scalar *lbeta;      /**< Log backward probabilities. */
 } HmmProbs;
+
 
 /** Allocate memory for HmmProbs.
  *
- * @params n_obs    - Number of observations in the data set.
- * @params m_states - Number of HMM states.
+ * @param n_obs    - Number of observations in the data set.
+ * @param m_states - Number of HMM states.
  */
 HmmProbs *
 ca_NewHmmProbs (const size_t n_obs, const size_t m_states);
@@ -56,12 +57,13 @@ ca_FreeHmmProbs (HmmProbs *probs);
 
 
 
-/** Allocate a new Params struct. Elements of
- * parameter vectors remain uninitialized.
+/** Allocate a new Params struct. 
+ * Elements of parameter vectors remain uninitialized.
  */
 PoisParams *PoisHmm_NewEmptyParams (size_t m);
 
-/** Allocate new PoisParams and init with parameters read from file. */
+/** Allocate new PoisParams and init with parameters read from file.
+ */
 PoisParams *PoisHmm_ParamsFromFile (const char *fname);
 
 /** Print Poisson parameters to stdout. */
