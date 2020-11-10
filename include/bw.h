@@ -22,6 +22,6 @@ ca_bw_pois_m_step ();
 void
 ca_bw_pois (
     const DataSet *restrict inp,
-    PoisHmm *restrict init);
+    PoisHmm *restrict hmm);
 
 #endif  /* BW_H */

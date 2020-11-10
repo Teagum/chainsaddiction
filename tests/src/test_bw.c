@@ -5,7 +5,7 @@ test_ca_bw_pois_e_step (void)
 {
     PoisHmm hmm = {
         3, 100, 1000, 1e-6, 0.0L, 0.0L, 0.0L,
-        PoisHmm_ParamsFromFile ("data/params_3s"),
+        PoisHmm_ParamsFromFile ("tests/data/params_3s"),
         NULL
     };
 
@@ -27,6 +27,8 @@ test_ca_bw_pois_e_step (void)
 
     hmm.llh = log_likelihood_fw (probs->lalpha, inp.size, hmm.m_states);
     */
+
+    /*
     puts("\n");
     for (size_t i = 0; i < inp.size; i++)
     {
@@ -37,10 +39,11 @@ test_ca_bw_pois_e_step (void)
         }
         printf ("\n");
     }
-    printf ("llh: %Lf\n", hmm.llh);
-    PoisHmm_PrintParams (hmm.init, hmm.m_states);
+    */
+
+    //PoisHmm_PrintParams (hmm.init, hmm.m_states);
     PoisHmm_FreeParams (hmm.init);
     ca_FreeHmmProbs (probs);
-    return false;
+    return true;
 }
 

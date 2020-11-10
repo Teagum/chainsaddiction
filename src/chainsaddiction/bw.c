@@ -27,11 +27,12 @@ ca_bw_pois_m_step ()
 void
 ca_bw_pois (
     const DataSet *restrict inp,
-    PoisHmm *restrict init)
+    PoisHmm *restrict hmm)
 {
-    HmmProbs *probs = ca_NewHmmProbs (inp->size, init->m_states);
+    HmmProbs *probs = ca_NewHmmProbs (inp->size, hmm->m_states);
 
-    ca_bw_pois_e_step (inp, init, probs);
+    ca_bw_pois_e_step (inp, hmm, probs);
+    ca_bw_pois_m_step ();
 
     ca_FreeHmmProbs (probs);
 }
