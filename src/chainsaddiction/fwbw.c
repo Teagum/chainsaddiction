@@ -10,8 +10,8 @@ log_forward (
     scalar *alpha)
 {
     /* shared buffers */
-    scalar *_cs = _alloc_block (m_states);
-    scalar *_mb = _alloc_block (m_states*m_states);
+    scalar *_cs = alloc_block (m_states);
+    scalar *_mb = alloc_block (m_states*m_states);
 
     /* Init step */
     for (size_t i = 0; i < m_states; i++)
@@ -42,8 +42,8 @@ log_backward (
     scalar *beta)
 {
     /* shared buffers */
-    scalar *_cs = _alloc_block (m_states);
-    scalar *_mb = _alloc_block (m_states*m_states);
+    scalar *_cs = alloc_block (m_states);
+    scalar *_mb = alloc_block (m_states*m_states);
 
     /* init step */
     size_t c_idx = (n_obs-1) * m_states;

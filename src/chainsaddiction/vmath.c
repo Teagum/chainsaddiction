@@ -164,9 +164,9 @@ m_lse_centroid_rows (
     const size_t n_cols,
     scalar *centroid)
 {
-    scalar *row_sum = _alloc_block_fill (n_cols, 0);
-    scalar *w_row_sum = _alloc_block_fill (n_cols, 0);
-    scalar *row_max = _alloc_block_fill (n_cols, 0);
+    scalar *row_sum = alloc_block_fill (n_cols, 0);
+    scalar *w_row_sum = alloc_block_fill (n_cols, 0);
+    scalar *row_max = alloc_block_fill (n_cols, 0);
 
     m_row_max (mtrx, n_rows, n_cols, row_max);
     for (size_t i = 0; i < n_rows*n_cols; i++)

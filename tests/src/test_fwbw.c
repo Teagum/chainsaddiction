@@ -18,9 +18,9 @@ int main (void)
 
     DataSet *data = read_dataset ();
 
-    scalar *lpp = _alloc_block (m_states * data->size);
-    scalar *alpha = _alloc_block (m_states * data->size);
-    scalar *beta = _alloc_block (m_states * data->size);
+    scalar *lpp = alloc_block (m_states * data->size);
+    scalar *alpha = alloc_block (m_states * data->size);
+    scalar *beta = alloc_block (m_states * data->size);
 
     v_poisson_logpmf (data->data, data->size, lambda, m_states, lpp);
     log_forward_backward (lpp, gamma, delta, m_states, data->size, alpha, beta);

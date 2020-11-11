@@ -32,7 +32,7 @@ typedef struct {
  * @param n_elem - Numnber of block elements.
  */
 scalar
-*_alloc_block (
+*alloc_block (
     const size_t n_elem);
 
 
@@ -44,7 +44,7 @@ scalar
  * @param n_elem - Numnber of block elements.
  */
 scalar
-*_alloc_block_fill (
+*alloc_block_fill (
     const size_t n_elem,
     const scalar val);
 

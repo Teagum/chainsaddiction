@@ -4,7 +4,7 @@
 #define N 10
 
 scalar *
-_alloc_block (
+alloc_block (
     const size_t n_elem)
 {
     scalar *block = malloc (n_elem * sizeof *block);
@@ -14,7 +14,7 @@ _alloc_block (
 
 
 scalar *
-_alloc_block_fill (
+alloc_block_fill (
     const size_t n_elem,
     const scalar val)
 {
@@ -25,7 +25,7 @@ _alloc_block_fill (
         CHECK_ALLOC_FAIL (block, "Could not allocate block.");
         return block;
     }
-    block = _alloc_block (n_elem);
+    block = alloc_block (n_elem);
     for (size_t i = 0; i < n_elem; i++)
     {
         block[i] = val;
