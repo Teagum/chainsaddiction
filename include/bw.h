@@ -24,4 +24,13 @@ ca_bw_pois (
     const DataSet *restrict inp,
     PoisHmm *restrict hmm);
 
+void update_lambda (
+    const DataSet *restrict inp,
+    const scalar *restrict lalpha,
+    const scalar *restrict lbeta,
+    const size_t m_states,
+    const scalar llh,
+    scalar *buffer,
+    scalar *lambda_update);
+
 #endif  /* BW_H */

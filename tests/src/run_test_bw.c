@@ -8,6 +8,7 @@ int main (void)
     srand (time (NULL));
 
     FEEDBACK (test_ca_bw_pois_e_step);
+    FEEDBACK (test_update_lambda);
 
     if (_N_ERRORS == 0)
     {

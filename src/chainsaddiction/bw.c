@@ -1,7 +1,18 @@
 #include <string.h>
 #include "bw.h"
-#include "hmm.h"
 
+void update_lambda (
+    const DataSet *restrict inp,
+    const scalar *restrict lalpha,
+    const scalar *restrict lbeta,
+    const size_t m_states,
+    const scalar llh,
+    scalar *buffer,
+    scalar *lambda_update)
+{
+    mm_add_s (lalpha, lbeta, m_states * inp->size, llh, buffer);
+    m_lse_centroid_rows (buffer, (scalar *) inp->data, inp->size, m_states, lambda_update);
+}
 
 void
 ca_bw_pois_e_step (
