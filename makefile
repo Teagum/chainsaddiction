@@ -53,7 +53,7 @@ test_stats.o : stats.h
 test_utilities.o : utilities.h 
 test_vmath.o : rnd.h vmath.h unittest.h
 
-bw.o : bw.h
+bw.o : bw.h hmm.h
 fwbw.o : restrict.h scalar.h stats.h vmath.h
 hmm.o : restrict.h scalar.h utilities.h vmath.h utilities.c
 rnd.o : restrict.h rnd.h scalar.h
