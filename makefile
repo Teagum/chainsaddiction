@@ -31,7 +31,7 @@ hmm.test : run_test_hmm.o test_hmm.o hmm.o vmath.o
 rnd.test : run_test_rnd.o test_rnd.o rnd.o
 	$(CC) -o $(TEST_BIN_PATH)$@ $?
 
-stats.test : test_stats.o stats.o utilities.o
+stats.test : run_test_stats.o test_stats.o stats.o utilities.o
 	$(CC) -o $(TEST_BIN_PATH)$@ $?
 
 utilities.test : test_utilities.o utilities.o
@@ -44,12 +44,13 @@ run_test_bw.o : test_bw.h
 run_test_hmm.o : test_hmm.h unittest.h 
 run_test_vmath.o : vmath.h test_vmath.h unittest.h
 run_test_rnd.o : rnd.h test_rnd.h unittest.h
+run_test_stats.o : test_stats.h
 
 test_bw.o : test_bw.h bw.h hmm.h unittest.h stats.h
 test_fwbw.o : fwbw.h utilities.h
 test_hmm.o : hmm.h rnd.h unittest.h
 test_rnd.o : test_rnd.h unittest.h
-test_stats.o : stats.h
+test_stats.o : stats.h utilities.h unittest.h
 test_utilities.o : utilities.h 
 test_vmath.o : rnd.h vmath.h unittest.h
 

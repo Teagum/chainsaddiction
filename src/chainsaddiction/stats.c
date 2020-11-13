@@ -3,16 +3,16 @@
 
 scalar
 poisson_logpmf (
-    const unsigned long qnt,
+    const scalar qnt,
     const scalar lambda)
 {
-    return (scalar) qnt * logl (lambda) - lgamma ((scalar) qnt + 1) - lambda;
+    return qnt * logl (lambda) - lgamma (qnt + 1) - lambda;
 }
 
 
 scalar
 poisson_pmf (
-    const unsigned long qnt,
+    const scalar qnt,
     const scalar lambda)
 {
     return expl (poisson_logpmf (lambda, qnt));
@@ -21,7 +21,7 @@ poisson_pmf (
 
 void
 v_poisson_logpmf (
-    const unsigned long *restrict qnts,
+    const scalar *restrict qnts,
     const size_t n_qnts,
     const scalar *restrict means,
     const size_t m_means,

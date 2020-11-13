@@ -53,7 +53,7 @@ DataSet *read_dataset ()
             X = realloc_dataset (X, X->size+20);
             if (X == NULL) goto exit_point;
         }
-        X->data[row_cnt] = strtol (buffer, NULL, 10);
+        X->data[row_cnt] = (scalar) strtol (buffer, NULL, 10);
 
         if (errno != 0)
             fprintf(stderr, "Error reading line %zu. Skipping it.\n", row_cnt);
