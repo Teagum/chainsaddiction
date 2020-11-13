@@ -53,15 +53,15 @@ test_vs_lse_centroid (void)
     const size_t v_stride = 1;
     const size_t w_stride = 1;
 
-    //v_rnd (n_elem, weights);
-    //v_rnd (n_elem, vals);
+    v_rnd (n_elem, weights);
+    v_rnd (n_elem, vals);
     v_log (vals, n_elem, lvals);
     for (size_t i = 0; i < n_elem; i++) {
         sum += vals[i];
         wsum += vals[i] * weights[i];
     }
     cent = logl (wsum / sum);
-    lse_cent = vs_lse_centroid (lvals, 1, weights, 1, n_elem);
+    lse_cent = vs_lse_centroid (lvals, v_stride, weights, w_stride, n_elem);
     return ASSERT_EQUAL (cent, lse_cent);
 }
 

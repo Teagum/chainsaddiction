@@ -104,11 +104,12 @@ vs_lse_centroid (
     scalar sum_exp =  0.0L;
     scalar sum_exp_w = 0.0L;
     scalar max_val = v_max (vt, n_elem);
-    for (size_t i = 0; i < n_elem; i++)
+
+    for (size_t i = 0; i < n_elem; i++, vt+=v_stride, weights+=w_stride)
     {
-        scalar _buff = expl (vt[i] - max_val);
+        scalar _buff = expl (*vt - max_val);
         sum_exp += _buff;
-        sum_exp_w += _buff * weights[i];
+        sum_exp_w += _buff * (*weights);
     }
     return logl (sum_exp_w/sum_exp);
 }
