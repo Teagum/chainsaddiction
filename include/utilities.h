@@ -19,7 +19,7 @@ do { \
 } while (0)
 
 typedef struct {
-    unsigned long *data;
+    scalar *data;
     size_t size;
 } DataSet;
 
