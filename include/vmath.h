@@ -309,6 +309,23 @@ m_col_max (
     scalar *restrict _col_max);
 
 
+/** Compute logarithm of matrix elements.
+ *
+ * \param mat    - Pointer to matrix elements.
+ * \param n_elem - Number of matrix elements.
+ * \param out    - Pointer to output buffer.
+ */
+#define m_log(mat, n_elem, out) v_log ((mat), (n_elem), (out))
+
+
+/** Compute logarithm of matrix elements inplace
+ *
+ * \param mat    - Pointer to matrix elements.
+ * \param n_elem - Number of matrix elements.
+ */
+#define mi_log(mat, n_elem) vi_log ((mat), (n_elem))
+
+
 /** Compute vector/matrix product in log domain.
  *
  * Compute the product of a vector and a square matrix with the same

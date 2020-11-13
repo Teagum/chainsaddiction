@@ -25,7 +25,6 @@ unsigned short _N_ERRORS;
 #define ASSERT_IN_RANGE(_val_, _lb_, _hb_) \
     (ASSERT_GREATER_EQ (_val_, _lb_) && ASSERT_LESS_EQ(_val_, _hb_))
 
-
 #define STV(_str_) #_str_
 
 #define OK(_res_)               \
