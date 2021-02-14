@@ -1,8 +1,8 @@
 CC = cc
 INCLUDES = -I./include/ -I./tests/include/
-WARNINGS = -Wall -Wextra -Wfloat-equal -Werror=vla
+WARNINGS = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
 OPTIMIZE = -O3
-CFLAGS = $(INCLUDES) $(WARNINGS) $(OPTIMIZE) 
+CFLAGS = $(INCLUDES) $(WARNINGS) $(OPTIMIZE) -std=c17
 BIN_PATH = ./bin/
 BUILD_PATH = ./build/
 TEST_BIN_PATH = ./tests/bin/
