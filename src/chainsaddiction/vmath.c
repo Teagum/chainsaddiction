@@ -183,9 +183,9 @@ m_lse_centroid_rows (
         centroid[i] = logl (w_row_sum[i] / row_sum[i]);
     }
 
-    free (row_sum);
-    free (w_row_sum);
-    free (row_max);
+    FREE (row_sum);
+    FREE (w_row_sum);
+    FREE (row_max);
 }
 
 
