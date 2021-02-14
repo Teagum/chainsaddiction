@@ -1,7 +1,5 @@
 #include "utilities.h"
 
-#define max_len 60
-#define N 10
 
 scalar *
 alloc_block (
@@ -36,19 +34,21 @@ alloc_block_fill (
 
 DataSet *read_dataset ()
 {
-    char buffer[max_len];
+#define DATASET_INIT_SIZE 256
+#define DATASET_MEM_INC 100
+    char buffer[DATASET_INIT_SIZE];
     size_t row_cnt = 0;
 
     DataSet *X = malloc (sizeof *X);
     if (X == NULL) goto exit_point;
 
     X->data = NULL;
-    X = realloc_dataset (X, N);
+    X = realloc_dataset (X, DATASET_MEM_INC);
     if (X == NULL) goto exit_point;
 
-    while (fgets (buffer, max_len, stdin))
+    while (fgets (buffer, DATASET_INIT_SIZE, stdin))
     {
-        if (!(row_cnt < N))
+        if (!(row_cnt < DATASET_MEM_INC))
         {
             X = realloc_dataset (X, X->size+20);
             if (X == NULL) goto exit_point;
