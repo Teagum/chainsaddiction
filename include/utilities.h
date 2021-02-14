@@ -9,14 +9,21 @@
 #define OUTER_LOOP for (size_t i = 0; i < n_elem; i++)
 #define INNER_LOOP for (size_t j = 0; j < n_elem; j++)
 
-#define CHECK_ALLOC_FAIL(buffer, msg) \
-do { \
-    if (buffer == NULL) \
-    { \
-        fprintf (stderr, "%s\n", msg); \
-        exit (1); \
-    } \
+#define CHECK_ALLOC_FAIL(buffer, msg)   \
+do {                                    \
+    if (buffer == NULL)                 \
+    {                                   \
+        fprintf (stderr, "%s\n", msg);  \
+        exit (1);                       \
+    }                                   \
 } while (0)
+
+
+#define FREE(ptr) do {                  \
+    free (ptr);                         \
+    ptr = NULL;                         \
+} while (0)
+
 
 typedef struct {
     scalar *data;
@@ -42,6 +49,7 @@ scalar
  * for allocation error and initialize each block element with val. 
  *
  * @param n_elem - Numnber of block elements.
+ * @param val    - Initialize value.
  */
 scalar
 *alloc_block_fill (
