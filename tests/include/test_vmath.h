@@ -2,8 +2,9 @@
 #define TEST_VMATH_H
 
 #include "unittest.h"
-#include "scalar.h"
+#include "libma.h"
 #include "restrict.h"
+#include "scalar.h"
 #include "rnd.h"
 #include "vmath.h"
 
