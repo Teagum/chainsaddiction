@@ -57,6 +57,7 @@ test_vmath.o : rnd.h vmath.h unittest.h
 bw.o : bw.h hmm.h
 fwbw.o : restrict.h scalar.h stats.h vmath.h
 hmm.o : restrict.h scalar.h utilities.h vmath.h utilities.c
+libma.o : libma.h
 rnd.o : restrict.h rnd.h scalar.h
 stats.o : restrict.h scalar.h stats.h
 utilities.o : utilities.h
