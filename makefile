@@ -37,7 +37,7 @@ stats.test : run_test_stats.o test_stats.o stats.o utilities.o
 utilities.test : test_utilities.o utilities.o
 	$(CC) -o $(TEST_BIN_PATH)$@ $?
 
-vmath.test : run_test_vmath.o test_vmath.o vmath.o rnd.o utilities.o
+vmath.test : run_test_vmath.o test_vmath.o vmath.o rnd.o utilities.o libma.o
 	$(CC) -o $(TEST_BIN_PATH)$@ $?
 
 run_test_bw.o : test_bw.h 
