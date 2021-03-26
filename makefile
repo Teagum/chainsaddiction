@@ -67,3 +67,11 @@ vmath.o : restrict.h scalar.h utilities.h vmath.h
 .PHONY:
 clean :
 	rm *.o
+
+.PHONY:
+cleantest :
+	rm tests/bin/*
+
+.PHONY:
+test :
+	for cmd in tests/bin/*.test; do $$cmd; done
