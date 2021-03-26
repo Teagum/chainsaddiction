@@ -14,3 +14,4 @@ tests/playground/
 *.egg-info/
 *.ipynb_checkpoints/
 __pycache__/
+.tox/
