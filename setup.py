@@ -9,7 +9,7 @@ config = read_configuration('setup.cfg')
 
 ext = Extension('chainsaddiction',
         sources = [f'{srcf!s}' for srcf in src_path.glob('*.c')],
-        include_dirs = ['include/', np.get_include()],
+        include_dirs = ['src/chainsaddiction', np.get_include()],
         # extra_compile_args = ['-Werror=vla'],    # not supported by MSVC
         language = 'c')
 

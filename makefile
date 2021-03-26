@@ -1,16 +1,16 @@
 CC = cc
-INCLUDES = -I./include/ -I./tests/include/
 WARNINGS = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
 OPTIMIZE = -O3
+INCLUDES = -Isrc/chainsaddiction/
 CFLAGS = $(INCLUDES) $(WARNINGS) $(OPTIMIZE) -std=c17
 BIN_PATH = ./bin/
 BUILD_PATH = ./build/
 TEST_BIN_PATH = ./tests/bin/
 TEST_BUILD_PATH = ./tests/build/
 
-vpath %.h ./include/
+vpath %.h ./src/chainsaddiction/
 vpath %.c ./src/chainsaddiction/
-vpath %.h ./tests/include/
+vpath %.h ./tests/src/
 vpath %.c ./tests/src/
 vpath %.o $(TEST_BUILD_PATH)
 vpath %.o $(BUILD_PATH)
