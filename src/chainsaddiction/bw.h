@@ -8,7 +8,7 @@
 #include "fwbw.h"
 #include "scalar.h"
 #include "hmm.h"
-#include "utilities.h"
+#include "dataset.h"
 
 void
 ca_bw_pois_e_step (
