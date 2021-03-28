@@ -1,88 +1,71 @@
-#ifndef utilities_h
-#define utilities_h
+#ifndef dataset_h
+#define dataset_h
 
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "restrict.h"
 #include "scalar.h"
+#include "libma.h"
 
-#define OUTER_LOOP for (size_t i = 0; i < n_elem; i++)
-#define INNER_LOOP for (size_t j = 0; j < n_elem; j++)
+#define DATASET_INIT_SIZE 10
+#define DATASET_MEM_INC 100
 
-#define CHECK_ALLOC_FAIL(buffer, msg)   \
-do {                                    \
-    if (buffer == NULL)                 \
-    {                                   \
-        fprintf (stderr, "%s\n", msg);  \
-        exit (1);                       \
-    }                                   \
-} while (0)
-
-
-#define FREE(ptr) do {                  \
-    free (ptr);                         \
-    ptr = NULL;                         \
-} while (0)
+#define OUT_OF_BOUNDS_ERR_MSG     \
+    "ERROR: Index %zu out of bounds for dimension of size %zu.\n"
 
 
 typedef struct {
     scalar *data;
     size_t size;
+    bool err;
 } DataSet;
 
 
-/** Allocate continuous memory block.
- *
- * Allocate a continuous block memory for long double values and check
- * for allocation error.
- *
- * @param n_elem - Numnber of block elements.
+/** Deallocate struct DataSet.
  */
-scalar
-*alloc_block (
-    const size_t n_elem);
+#define CA_FREE_DATASET(pds)            \
+do {                                    \
+    MA_FREE (pds->data);                \
+    MA_FREE (pds);                      \
+} while (0)
 
 
-/** Allocate continuous memory block initialized with value.
- *
- * Allocate a continuous block memory for long double values, check
- * for allocation error and initialize each block element with val. 
- *
- * @param n_elem - Numnber of block elements.
- * @param val    - Initialize value.
- */
-scalar
-*alloc_block_fill (
-    const size_t n_elem,
-    const scalar val);
-
-
-/** Read newline-seperated values from the standard input. 
- * This fucntion allows the programm to read files provided 
- * via output redirection by the command line. The values in
- * the file need to be seperated by newline ("\n"). 
- *
- * This function returns NULL on failure.
+/** Create a new DataSet
  */
 DataSet *
-read_dataset ();
+Ca_NewDataSet (void);
 
 
-/** Frees memory pointed to by an allocated DataSet* pointer.
+/** Set a single element of DataSet.
+ *
+ * Perform bounds checks and set the element.
+ *
+ * Set DataSet.err = false on success.
+ * Set DataSet.err = true on failure.
+ *
+ *\param[in] pds    Pointer to dataset.
+ *\param[in] idx    Element index.
+ *\param[in] val    Value.
  */
-void free_dataset(DataSet *X);
+extern void
+ds_set (DataSet *restrict pds, size_t idx, scalar val);
 
 
-/** Change the size of a DataSet. 
- * Changes the memory area pointed to by the `data` member of a DataSet.
- * The `data` members's size is changed according to `new_size`. `size` is
- * updated, too. On failure `data` AND the DataSet itselfs are freed, `size`
- * is not updated and NULL is returned.
+/** Get a single element of a DataSet.
+ *
+ * Perform bounds checks then read the element and copy
+ * it to the addrees of `out`.
+ *
+ * Set DataSet.err = false on success.
+ * Set DataSet.err = true on failure.
+ *
+ *\param[in]  pds    Pointer to dataset.
+ *\param[in]  idx    Element index.
+ *\param[out] val    Write the value to the adress of `val`.
  */
-DataSet *
-realloc_dataset (
-    DataSet *X,
-    size_t new_size);
+extern void
+ds_get (DataSet *restrict pds, size_t idx, scalar *out);
 
 
-#endif    /* utilities_h */
+#endif    /* dataset_h */

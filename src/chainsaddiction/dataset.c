@@ -1,91 +1,50 @@
-#include "utilities.h"
+#include "dataset.h"
 
 
-scalar *
-alloc_block (
-    const size_t n_elem)
+DataSet *
+Ca_NewDataSet (void)
 {
-    scalar *block = malloc (n_elem * sizeof *block);
-    CHECK_ALLOC_FAIL (block, "Could not allocate block.");
-    return block;
+    DataSet *pds = malloc (sizeof pds);
+    MA_ASSERT_ALLOC (pds, "Could not allocate dataset.");
+    pds->data = MA_SCALAR_ZEROS (DATASET_INIT_SIZE);
+    pds->size = DATASET_INIT_SIZE;
+    return pds;
 }
 
 
-scalar *
-alloc_block_fill (
-    const size_t n_elem,
-    const scalar val)
+inline void
+ds_set (DataSet *pds, size_t idx, scalar val)
 {
-    scalar *block = NULL;
-    if (val == 0.0L)
-    {
-        block = calloc (n_elem, sizeof *block);
-        CHECK_ALLOC_FAIL (block, "Could not allocate block.");
-        return block;
+    bool err = false;
+#ifdef no_bounds_check
+    pds->data[idx] = val;
+#else
+    if (idx >= pds->size) {
+        fprintf (stderr, OUT_OF_BOUNDS_ERR_MSG, idx, pds->size);
+        err = false;
+    } else {
+        pds->data[idx] = val;
+        err = true;
     }
-    block = alloc_block (n_elem);
-    for (size_t i = 0; i < n_elem; i++)
-    {
-        block[i] = val;
-    }
-    return block;
+#endif
+    pds->err = err;
 }
 
 
-DataSet *read_dataset ()
+inline void
+ds_get (DataSet *pds, size_t idx, scalar *out)
 {
-#define DATASET_INIT_SIZE 256
-#define DATASET_MEM_INC 100
-    char buffer[DATASET_INIT_SIZE];
-    size_t row_cnt = 0;
-
-    DataSet *X = malloc (sizeof *X);
-    if (X == NULL) goto exit_point;
-
-    X->data = NULL;
-    X = realloc_dataset (X, DATASET_MEM_INC);
-    if (X == NULL) goto exit_point;
-
-    while (fgets (buffer, DATASET_INIT_SIZE, stdin))
-    {
-        if (!(row_cnt < DATASET_MEM_INC))
-        {
-            X = realloc_dataset (X, X->size+20);
-            if (X == NULL) goto exit_point;
-        }
-        X->data[row_cnt] = (scalar) strtol (buffer, NULL, 10);
-
-        if (errno != 0)
-            fprintf(stderr, "Error reading line %zu. Skipping it.\n", row_cnt);
-
-        row_cnt++;
+    bool err = false;
+#ifdef no_bounds_check
+    *out = pds->data[idx];
+#else
+    if (idx >= pds->size) {
+        fprintf (stderr, OUT_OF_BOUNDS_ERR_MSG, idx, pds->size);
+        err = true;
+    } else {
+        *out = pds->data[idx];
+        err = false;
     }
-
-    X = realloc_dataset (X, row_cnt);
-
-exit_point:
-    return X;
-}
-
-void free_dataset(DataSet *X)
-{
-    free (X->data);
-    free (X);
-}
-
-
-DataSet *realloc_dataset(DataSet *X, size_t new_size)
-{
-    void *mem_buffer = realloc (X->data, new_size * sizeof (*X->data));
-    if (mem_buffer == NULL)
-    {
-        fprintf(stderr, "Error in realloc\n");
-        free_dataset (X);
-        return NULL;
-    }
-
-    X->size = new_size;
-    X->data = mem_buffer;
-
-    return X;
+#endif
+    pds->err = err;
 }
