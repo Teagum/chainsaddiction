@@ -1,25 +1,34 @@
-#include <stdio.h>
-#include "dataset.h"
+#include "test_dataset.h"
+
+
+unsigned short N_ERRORS = 0;
 
 int main (void)
 {
-    DataSet *inp = Ca_NewDataSet ();
+    srand (time (NULL));
 
-    /*
-    for (size_t i=-22; i<17; i++)
+    FEEDBACK (test_Ca_NewDataSet);
+
+    if (N_ERRORS == 0)
     {
-        scalar x;
-        bool status = ds_get (inp, i, &x);
-        if (status)
-            printf ("%zu:\t%Lf\n", i, x);
+        fprintf (stdout, "All tests passed.\n");
+        return EXIT_SUCCESS;
     }
+    else
+    {
+        fprintf (stdout, "FAILURE: %d tests with errors.\n", N_ERRORS);
+        return EXIT_FAILURE;
+    }
+}
 
-    */
 
-    scalar x = 0;
-    ds_get (inp, -3, &x);
-    printf ("Status: %d\tx: %Lf\n", inp->err, x);
-    if (inp->err)
-        puts ("Computation failed.\n");
-    return 0;
+bool
+test_Ca_NewDataSet (void)
+{
+    scalar acc = 0;
+    DataSet *inp = Ca_NewDataSet ();
+    for (size_t i=0; i<inp->size; i++) {
+        acc += inp->data[i];
+    }
+    return ASSERT_EQUAL (0, acc);
 }
