@@ -42,7 +42,7 @@ unsigned short _N_ERRORS;
 
 #define FEEDBACK(_func_)  \
     do {                                    \
-        printf ("\t%-30s ... ", STV(_func_));    \
+        printf ("\t%-50s ... ", STV(_func_));    \
         OK (_func_ ())                      \
     } while (0)
 
