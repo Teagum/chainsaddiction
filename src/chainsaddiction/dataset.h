@@ -68,4 +68,59 @@ extern void
 ds_get (DataSet *restrict pds, size_t idx, scalar *out);
 
 
+/** Set a single element of DataSet.
+ *
+ * Perform bounds checks and set the element.
+ * Set DataSet.err = false on success.
+ * Set DataSet.err = true on failure.
+ * Print error message of failure.
+ *
+ *\param[in] pds    Pointer to dataset.
+ *\param[in] idx    Element index.
+ *\param[in] val    Value.
+ */
+#ifdef no_diagnostics                                               
+#define ds_SET(pds, idx, val)                                       \
+do {                                                                \
+    ds_set (pds, idx, val);                                         \
+} while (0)
+#else
+#define ds_SET(pds, idx, val)                                       \
+do {                                                                \
+    ds_set (pds, idx, val);                                         \
+    if (pds->err) {                                                 \
+        fprintf (stderr, OUT_OF_BOUNDS_ERR_MSG, idx, pds->size);    \
+    }                                                               \
+} while (0)
+#endif 
+
+
+/** Get a single element of a DataSet.
+ *
+ * Perform bounds checks then read the element and copy
+ * it to the addrees of `out`.
+ * Set DataSet.err = false on success.
+ * Set DataSet.err = true on failure.
+ * Print error message of failure.
+ *
+ *\param[in]  pds    Pointer to dataset.
+ *\param[in]  idx    Element index.
+ *\param[out] val    Write the value to the adress of `val`.
+ */
+#ifdef no_diagnostics
+#define ds_GET(pds, idx, val)                                       \
+do {                                                                \
+    ds_get(pds, idx, val);                                          \
+} while (0)
+#else
+#define ds_GET(pds, idx, val)                                       \
+do {                                                                \
+    ds_get(pds, idx, val);                                          \
+    if (pds->err) {                                                 \
+        fprintf (stderr, OUT_OF_BOUNDS_ERR_MSG, idx, pds->size);    \
+    }                                                               \
+} while (0)
+#endif
+
+
 #endif    /* dataset_h */
