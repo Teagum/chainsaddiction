@@ -3,7 +3,7 @@ SRC_DIR := src/chainsaddiction
 BUILD_DIR := build
 BIN_DIR   := $(BUILD_DIR)/bin
 OBJ_DIR   := $(BUILD_DIR)/obj
-OBJS      := $(addprefix $(OBJ_DIR)/, dataset.o libma.o)
+OBJS      := $(addprefix $(OBJ_DIR)/, dataset.o libma.o, rnd.o)
 
 TEST_ROOT_DIR  := tests
 TEST_SRC_DIR   := $(TEST_ROOT_DIR)/src
@@ -37,8 +37,13 @@ all: $(OBJS)
 
 test: $(TEST_OBJS) $(TEST_APPS)
 
-dataset.test : $(TEST_OBJ_DIR)/test_dataset.o $(OBJ_DIR)/dataset.o $(OBJ_DIR)/libma.o | $(TEST_BIN_DIR)
+dataset.test : $(TEST_OBJ_DIR)/test_dataset.o $(OBJ_DIR)/dataset.o $(OBJ_DIR)/libma.o $(OBJ_DIR)/rnd.o | $(TEST_BIN_DIR)
 	$(CC) $(CFLAGS) -o $(TEST_BIN_DIR)/$@ $?
+
+$(OBJ_DIR)/libma.o : libma.h
+$(OBJ_DIR)/rnd.o : rnd.h restrict.h scalar.h
+$(OBJ_DIR)/dataset.o : dataset.h restrict.h scalar.h libma.h
+$(TEST_OBJ_DIR)/test_dataset.o : test_dataset.h dataset.h restrict.h scalar.h rnd.h unittest.h
 
 $(OBJS) : | $(OBJ_DIR)
 
