@@ -20,11 +20,13 @@ ds_set (DataSet *pds, size_t idx, scalar val)
     pds->data[idx] = val;
 #else
     if (idx >= pds->size) {
+#ifndef no_diagnostics
         fprintf (stderr, OUT_OF_BOUNDS_ERR_MSG, idx, pds->size);
-        err = false;
+#endif
+        err = true;
     } else {
         pds->data[idx] = val;
-        err = true;
+        err = false;
     }
 #endif
     pds->err = err;
@@ -39,7 +41,9 @@ ds_get (DataSet *pds, size_t idx, scalar *out)
     *out = pds->data[idx];
 #else
     if (idx >= pds->size) {
+#ifndef no_diagnostics
         fprintf (stderr, OUT_OF_BOUNDS_ERR_MSG, idx, pds->size);
+#endif
         err = true;
     } else {
         *out = pds->data[idx];
