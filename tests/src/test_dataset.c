@@ -1,47 +1,51 @@
 #include "test_dataset.h"
 
 
-unsigned short N_ERRORS = 0;
-
 int main (void)
 {
-    srand (time (NULL));
+    SETUP;
 
-    FEEDBACK (test_Ca_NewDataSet);
-    FEEDBACK (test_ds_set_error_on_idx_out_of_bounds);
-    FEEDBACK (test_ds_set_values);
-    FEEDBACK (test_ds_get_error_on_idx_out_of_bounds);
-    FEEDBACK (test_ds_get_values);
+    RUN_TEST (test_Ca_NewDataSet);
+    RUN_TEST (test_Ca_DataSetFromFile);
+    RUN_TEST (test_ds_set_error_on_idx_out_of_bounds);
+    RUN_TEST (test_ds_set_values);
+    RUN_TEST (test_ds_get_error_on_idx_out_of_bounds);
+    RUN_TEST (test_ds_get_values);
 
-    if (N_ERRORS == 0)
-    {
-        fprintf (stdout, "All tests passed.\n");
-        return EXIT_SUCCESS;
-    }
-    else
-    {
-        fprintf (stdout, "FAILURE: %d tests with errors.\n", N_ERRORS);
-        return EXIT_FAILURE;
-    }
+    EVALUATE;
 }
 
 
 bool
 test_Ca_NewDataSet (void)
 {
-    scalar acc = 0;
-    bool cond = false;
+    scalar acc = 0l;
+    bool err = true;
 
     DataSet *inp = Ca_NewDataSet ();
     for (size_t i=0; i<inp->size; i++) {
         acc += inp->data[i];
     }
-    cond = ASSERT_EQUAL (0, acc);
+    if (ASSERT_EQUAL (0, acc)) {
+        err = false;
+    }
+
     CA_FREE_DATASET (inp);
-    return cond;
+    return err;
 }
 
 
+bool
+test_Ca_DataSetFromFile (void)
+{
+    const char path[] = "tests/data/centroids";
+    DataSet *pds = Ca_DataSetFromFile (path);
+
+    ds_print (pds);
+
+    CA_FREE_DATASET (pds);
+    return false;
+}
 
 
 bool
@@ -57,12 +61,12 @@ test_ds_set_error_on_idx_out_of_bounds (void)
         ds_set (inp, idx, val);
         if (!inp->err) {
             CA_FREE_DATASET (inp);
-            return false;
+            return true;
         }
     }
 
     CA_FREE_DATASET (inp);
-    return true;
+    return false;
 }
 
 
@@ -80,11 +84,11 @@ test_ds_set_values (void)
         ds_set (inp, idx, val);
         if (inp->err || !ASSERT_EQUAL (inp->data[idx], val)) {
             CA_FREE_DATASET (inp);
-            return false;
+            return true;
         }
     }
     CA_FREE_DATASET (inp);
-    return true;
+    return false;
 }
 
 
@@ -102,12 +106,11 @@ test_ds_get_error_on_idx_out_of_bounds (void)
         ds_get (inp, idx, &val);
         if (!inp->err) {
             CA_FREE_DATASET (inp);
-            return false;
+            return true;
         }
     }
-
     CA_FREE_DATASET (inp);
-    return true;
+    return false;
 }
 
 
@@ -127,12 +130,10 @@ test_ds_get_values (void)
         ds_get (inp, idx, &out);
         if (inp->err || !ASSERT_EQUAL (val, out)) {
            CA_FREE_DATASET (inp);
-           return false;
+           return true;
         }
     }
 
     CA_FREE_DATASET (inp);
-    return true;
+    return false;
 }
-
-

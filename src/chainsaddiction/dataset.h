@@ -7,11 +7,12 @@
 #include "restrict.h"
 #include "scalar.h"
 #include "libma.h"
+#include "read.h"
 
-#define DATASET_INIT_SIZE 10
+#define DATASET_INIT_SIZE 1000
 #define DATASET_MEM_INC 100
 
-#define OUT_OF_BOUNDS_ERR_MSG     \
+#define OUT_OF_BOUNDS_ERR_MSG   \
     "ERROR: Index %zu out of bounds for dimension of size %zu.\n"
 
 
@@ -35,6 +36,14 @@ do {                                    \
  */
 DataSet *
 Ca_NewDataSet (void);
+
+
+/** Creat a new DataSet from a data file.
+ *
+ *\param path   Path to data file.
+ */
+DataSet *
+Ca_DataSetFromFile (const char *path);
 
 
 /** Set a single element of DataSet.
@@ -79,7 +88,7 @@ ds_get (DataSet *restrict pds, size_t idx, scalar *out);
  *\param[in] idx    Element index.
  *\param[in] val    Value.
  */
-#ifdef no_diagnostics                                               
+#ifdef no_diagnostics
 #define ds_SET(pds, idx, val)                                       \
 do {                                                                \
     ds_set (pds, idx, val);                                         \
@@ -92,7 +101,7 @@ do {                                                                \
         fprintf (stderr, OUT_OF_BOUNDS_ERR_MSG, idx, pds->size);    \
     }                                                               \
 } while (0)
-#endif 
+#endif
 
 
 /** Get a single element of a DataSet.
@@ -121,6 +130,13 @@ do {                                                                \
     }                                                               \
 } while (0)
 #endif
+
+
+/** Print the contents of a DataSet.
+ *
+ */
+extern void
+ds_print (DataSet *pds);
 
 
 #endif    /* dataset_h */

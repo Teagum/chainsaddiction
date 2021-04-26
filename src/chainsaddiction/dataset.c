@@ -6,8 +6,24 @@ Ca_NewDataSet (void)
 {
     DataSet *pds = malloc (sizeof pds);
     MA_ASSERT_ALLOC (pds, "Could not allocate dataset.");
-    pds->data = MA_SCALAR_ZEROS (DATASET_INIT_SIZE);
-    pds->size = DATASET_INIT_SIZE;
+    pds->data = NULL;
+    pds->size = 0;
+    return pds;
+}
+
+
+DataSet *
+Ca_DataSetFromFile (const char *path)
+{
+    cnt n_elem = 0;
+    cnt r_elem = 0;
+    FILE *file = Ca_OpenFile (path, "r");
+    DataSet *pds = Ca_NewDataSet ();
+
+    Ca_CountLines (file, &n_elem);
+    pds->data = MA_SCALAR_EMPTY (n_elem);
+    pds->size = Ca_ReadDataFile (file, n_elem, pds->data);
+
     return pds;
 }
 
@@ -45,4 +61,22 @@ ds_get (DataSet *pds, size_t idx, scalar *out)
     }
 #endif
     pds->err = err;
+}
+
+
+extern void
+ds_print (DataSet *pds)
+{
+    if (pds->size == 0) {
+        puts ("Empty dataset.");
+    }
+    else
+    {
+        for (size_t i = 0; i < pds->size; i++)
+        {
+            scalar val;
+            ds_get (pds, i, &val);
+            printf ("[%4zu]%12.5Lf\n", i, val);
+        }
+    }
 }

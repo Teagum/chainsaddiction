@@ -15,6 +15,12 @@ bool
 test_Ca_NewDataSet (void);
 
 bool
+test_ds_read (void);
+
+bool
+test_Ca_DataSetFromFile (void);
+
+bool
 test_ds_set_error_on_idx_out_of_bounds (void);
 
 bool
@@ -25,5 +31,6 @@ test_ds_get_error_on_idx_out_of_bounds (void);
 
 bool
 test_ds_get_values (void);
+
 
 #endif  /* TEST_DATASET_H */
