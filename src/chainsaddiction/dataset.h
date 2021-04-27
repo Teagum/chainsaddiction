@@ -9,8 +9,6 @@
 #include "libma.h"
 #include "read.h"
 
-#define DATASET_INIT_SIZE 1000
-#define DATASET_MEM_INC 100
 
 #define OUT_OF_BOUNDS_ERR_MSG   \
     "ERROR: Index %zu out of bounds for dimension of size %zu.\n"
@@ -25,17 +23,30 @@ typedef struct {
 
 /** Deallocate struct DataSet.
  */
-#define CA_FREE_DATASET(pds)            \
-do {                                    \
-    MA_FREE (pds->data);                \
-    MA_FREE (pds);                      \
+#define ds_FREE(pds) do {       \
+    MA_FREE (pds->data);        \
+    MA_FREE (pds);              \
 } while (0)
 
 
-/** Create a new DataSet
+/** Create a new DataSet.
+ *
+ * \return  Pointer to DataSet.
  */
 DataSet *
-Ca_NewDataSet (void);
+ds_NewEmpty (void);
+
+
+/** Create a new DataSet with `n_elem` entries.
+ *
+ * Each entry is initialized with zero.
+ *
+ * \param n_elem    Number of elements in data set.
+ *
+ * \return  Pointer to DataSet.
+ */
+DataSet *
+ds_New (const size_t n_elem);
 
 
 /** Creat a new DataSet from a data file.
@@ -43,7 +54,7 @@ Ca_NewDataSet (void);
  *\param path   Path to data file.
  */
 DataSet *
-Ca_DataSetFromFile (const char *path);
+ds_NewFromFile (const char *path);
 
 
 /** Set a single element of DataSet.
@@ -84,9 +95,9 @@ ds_get (DataSet *restrict pds, size_t idx, scalar *out);
  * Set DataSet.err = true on failure.
  * Print error message of failure.
  *
- *\param[in] pds    Pointer to dataset.
- *\param[in] idx    Element index.
- *\param[in] val    Value.
+ * \param[in] pds    Pointer to dataset.
+ * \param[in] idx    Element index.
+ * \param[in] val    Value.
  */
 #ifdef no_diagnostics
 #define ds_SET(pds, idx, val)                                       \
@@ -112,9 +123,9 @@ do {                                                                \
  * Set DataSet.err = true on failure.
  * Print error message of failure.
  *
- *\param[in]  pds    Pointer to dataset.
- *\param[in]  idx    Element index.
- *\param[out] val    Write the value to the adress of `val`.
+ * \param[in]  pds    Pointer to dataset.
+ * \param[in]  idx    Element index.
+ * \param[out] val    Write the value to the adress of `val`.
  */
 #ifdef no_diagnostics
 #define ds_GET(pds, idx, val)                                       \

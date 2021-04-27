@@ -10,15 +10,21 @@
 #include "restrict.h"
 #include "dataset.h"
 
+#define DS_TEST_INIT_SIZE 1000
+#define DS_TEST_N_ITER 1000
+
 
 bool
-test_Ca_NewDataSet (void);
+test_ds_NewEmpty (void);
+
+bool
+test_ds_New (void);
+
+bool
+test_ds_NewFromFile (void);
 
 bool
 test_ds_read (void);
-
-bool
-test_Ca_DataSetFromFile (void);
 
 bool
 test_ds_set_error_on_idx_out_of_bounds (void);
