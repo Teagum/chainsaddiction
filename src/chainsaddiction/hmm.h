@@ -6,7 +6,7 @@
 #include <math.h>
 #include "restrict.h"
 #include "scalar.h"
-#include "utilities.h"
+#include "dataset.h"
 #include "vmath.h"
 
 typedef struct {

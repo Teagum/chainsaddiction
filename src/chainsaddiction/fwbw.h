@@ -6,7 +6,7 @@
 #include "restrict.h"
 #include "scalar.h"
 #include "stats.h"
-#include "utilities.h"
+#include "dataset.h"
 #include "vmath.h"
 
 
