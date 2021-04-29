@@ -5,6 +5,8 @@ int main (void)
 {
     SETUP;
 
+    printf ("scalar size: %zu\n", sizeof (scalar));
+
     RUN_TEST (test_ds_NewEmpty);
     //RUN_TEST (test_ds_New);
     RUN_TEST (test_ds_set_error_on_idx_out_of_bounds);
@@ -80,7 +82,6 @@ test_ds_set_values (void)
 
         ds_set (inp, idx, val);
         if (inp->err || !ASSERT_EQUAL (inp->data[idx], val)) {
-            printf ("ds: %Lf\n", inp->data[idx]);
             ds_FREE (inp);
             return true;
         }

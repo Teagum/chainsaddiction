@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "scalar.h"
 
 enum ma_types
 {
@@ -11,7 +12,7 @@ enum ma_types
     MA_INT,
     MA_FLOAT,
     MA_DOUBLE,
-    MA_LONG_DOUBLE
+    MA_SCALAR
 };
 
 
@@ -65,9 +66,9 @@ Ma_ArrayMemAlloc (const size_t n_elem, enum ma_types type, bool init);
     (double *) Ma_ArrayMemAlloc (n_elem, MA_DOUBLE, true)
 
 #define MA_SCALAR_EMPTY(n_elem) \
-    (long double *) Ma_ArrayMemAlloc (n_elem, MA_LONG_DOUBLE, false)
+    (scalar *) Ma_ArrayMemAlloc (n_elem, MA_SCALAR, false)
 
 #define MA_SCALAR_ZEROS(n_elem) \
-    (long double *) Ma_ArrayMemAlloc (n_elem, MA_LONG_DOUBLE, true)
+    (scalar *) Ma_ArrayMemAlloc (n_elem, MA_SCALAR, true)
 
 #endif  /* libma_h */

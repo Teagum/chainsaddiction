@@ -28,15 +28,19 @@ WARNINGS = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
 OPTIMIZE = -O3
 STANDARD = -std=c17
 CFLAGS = $(WARNINGS) $(STANDARD) $(OPTIMIZE)
+# Flags
+# LD_MATH           Typedef `scalar' to `long double', otherwise `double'.
+# NO_BOUNDS_CHECK   Do not check boundaries in array setters and getters.
+CPPFLAGS = -D LD_MATH -DNO_BOUNDS_CHECK
 INCLUDES = -I$(SRC_DIR)
 TEST_INCLUDES = $(INCLUDES) -I$(TEST_SRC_DIR)
 
 
 $(TEST_OBJ_DIR)/%.o : %.c
-	$(CC) $(CFLAGS) $(TEST_INCLUDES) -o $@ -c $<
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(TEST_INCLUDES) -o $@ -c $<
 
 $(OBJ_DIR)/%.o : %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -o $@ -c $<
 
 all: $(OBJS)
 
@@ -44,14 +48,14 @@ test: $(TEST_OBJS) $(TEST_APPS)
 
 dataset.test :	$(addprefix $(TEST_OBJ_DIR)/, test_dataset.o) \
 								$(addprefix $(OBJ_DIR)/, dataset.o libma.o read.o rnd.o) | $(TEST_BIN_DIR) $(TEST_OBJS_DIR)
-	$(CC) $(CFLAGS) -o $(TEST_BIN_DIR)/$@ $?
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TEST_BIN_DIR)/$@ $?
 
 read.test : $(TEST_OBJ_DIR)/test_read.o $(OBJ_DIR)/read.o | $(TEST_BIN_DIR) $(TEST_OBJS_DIR)
-	$(CC) $(CFLAGS) -o $(TEST_BIN_DIR)/$@ $?
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TEST_BIN_DIR)/$@ $?
 
 
 $(OBJ_DIR)/dataset.o : dataset.h restrict.h scalar.h libma.h
-$(OBJ_DIR)/libma.o : libma.h
+$(OBJ_DIR)/libma.o : libma.h scalar.h
 $(OBJ_DIR)/rnd.o : rnd.h restrict.h scalar.h
 $(OBJ_DIR)/read.o : read.h scalar.h
 

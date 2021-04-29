@@ -41,7 +41,7 @@ inline void
 ds_set (DataSet *pds, size_t idx, scalar val)
 {
     bool err = false;
-#ifdef no_bounds_check
+#ifdef NO_BOUNDS_CHECK
     pds->data[idx] = val;
 #else
     if (idx >= pds->size) {
@@ -59,7 +59,7 @@ inline void
 ds_get (DataSet *pds, size_t idx, scalar *out)
 {
     bool err = false;
-#ifdef no_bounds_check
+#ifdef NO_BOUNDS_CHECK
     *out = pds->data[idx];
 #else
     if (idx >= pds->size) {
@@ -76,6 +76,11 @@ ds_get (DataSet *pds, size_t idx, scalar *out)
 extern void
 ds_print (DataSet *pds)
 {
+#ifdef LD_MATH
+    const char fmt[] = "[%4zu]%12.5Lf\n";
+#else
+    const char fmt[] = "[%4zu]%12.5f\n";
+#endif
     if (pds->size == 0) {
         puts ("Empty dataset.");
     }
@@ -85,7 +90,7 @@ ds_print (DataSet *pds)
         {
             scalar val;
             ds_get (pds, i, &val);
-            printf ("[%4zu]%12.5Lf\n", i, val);
+            printf (fmt, i, val);
         }
     }
 }

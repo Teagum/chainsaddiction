@@ -22,8 +22,8 @@ Ma_TypeSize (enum ma_types type)
             type_size = sizeof (double);
             break;
 
-        case MA_LONG_DOUBLE:
-            type_size = sizeof (long double);
+        case MA_SCALAR:
+            type_size = sizeof (scalar);
             break;
     }
     return type_size;
