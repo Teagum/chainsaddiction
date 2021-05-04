@@ -31,7 +31,7 @@ CFLAGS = $(WARNINGS) $(STANDARD) $(OPTIMIZE)
 # Flags
 # LD_MATH           Typedef `scalar' to `long double', otherwise `double'.
 # NO_BOUNDS_CHECK   Do not check boundaries in array setters and getters.
-CPPFLAGS = -D LD_MATH -DNO_BOUNDS_CHECK
+CPPFLAGS = -D LD_MATH
 INCLUDES = -I$(SRC_DIR)
 TEST_INCLUDES = $(INCLUDES) -I$(TEST_SRC_DIR)
 
@@ -53,14 +53,20 @@ dataset.test :	$(addprefix $(TEST_OBJ_DIR)/, test_dataset.o) \
 read.test : $(TEST_OBJ_DIR)/test_read.o $(OBJ_DIR)/read.o | $(TEST_BIN_DIR) $(TEST_OBJS_DIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TEST_BIN_DIR)/$@ $?
 
+rnd.test : $(addprefix $(TEST_OBJ_DIR)/, test_rnd.o) \
+					 $(addprefix $(OBJ_DIR)/, rnd.o)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TEST_BIN_DIR)/$@ $?
+
 
 $(OBJ_DIR)/dataset.o : dataset.h restrict.h scalar.h libma.h
 $(OBJ_DIR)/libma.o : libma.h scalar.h
 $(OBJ_DIR)/rnd.o : rnd.h restrict.h scalar.h
 $(OBJ_DIR)/read.o : read.h scalar.h
+$(OBJ_DIR)/rnd.o : rnd.h restrict.h scalar.h
 
 $(TEST_OBJ_DIR)/test_dataset.o : test_dataset.h dataset.h restrict.h scalar.h rnd.h unittest.h
 $(TEST_OBJ_DIR)/test_read.o : test_read.h restrict.h scalar.h rnd.h unittest.h
+$(TEST_OBJ_DIR)/test_rnd.o : test_rnd.h rnd.h
 
 $(OBJS) : | $(OBJ_DIR)
 
