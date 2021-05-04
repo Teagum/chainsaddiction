@@ -8,8 +8,8 @@
 
 /** Log probability mass function of the Poisson distribution.
  *
- * @param qnt    - Qunatile.
- * @param lambda - Expected value. 
+ * \param qnt       Qunatile.
+ * \param lambda    Expected value.
  */
 scalar
 poisson_logpmf (
@@ -19,8 +19,8 @@ poisson_logpmf (
 
 /** Probability mass function of the Poisson distribution.
  *
- * @param qnt    - Qunatile.
- * @param lambda - Expected value. 
+ * \param qnt       Qunatile.
+ * \param lambda    Expected value.
  */
 scalar
 poisson_pmf (
@@ -30,11 +30,11 @@ poisson_pmf (
 
 /** Vectorized log probability mass function of the Poisson distribution.
  *
- * @param qunatiles   - Quantiles.
- * @param n_qnts      - Number of qnts.
- * @param means       - Expected values
- * @param m_means     - Number of means.
- * @param log_probs   - Output buffer.
+ * \param qunatiles    Quantiles.
+ * \param n_qnts       Number of qnts.
+ * \param means        Expected values
+ * \param m_means      Number of means.
+ * \param log_probs    Output buffer.
  */
 void
 v_poisson_logpmf (
