@@ -1,5 +1,17 @@
 #include "test_stats.h"
 
+
+int main (void)
+{
+    SETUP;
+
+    RUN_TEST (test_poisson_pmf);
+    RUN_TEST (test_poisson_logpmf);
+
+    EVALUATE;
+}
+
+
 bool
 test_poisson_pmf (void)
 {
@@ -13,11 +25,11 @@ test_poisson_pmf (void)
             /*printf ("Lambda: %10.Lf\t variate: %10.ld\t pmf: %20.15Lg\n", lambda, variate, res);*/
             if (isinf (res) || isnan (res))
             {
-                return false;
+                return true;
             }
         }
     }
-    return true;
+    return false;
 }
 
 
@@ -34,9 +46,9 @@ test_poisson_logpmf (void)
             /*printf ("Lambda: %10.Lf\t variate: %10.ld\t log_pmf: %20.15Lf\n", lambda, variate, res);*/
             if (isinf (res) || isnan (res))
             {
-                return false;
+                return true;
             }
         }
     }
-    return true;
+    return false;
 }
