@@ -57,16 +57,23 @@ rnd.test : $(addprefix $(TEST_OBJ_DIR)/, test_rnd.o) \
 					 $(addprefix $(OBJ_DIR)/, rnd.o)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TEST_BIN_DIR)/$@ $?
 
+stats.test : $(addprefix $(TEST_OBJ_DIR)/, test_stats.o) \
+						 $(addprefix $(OBJ_DIR)/, stats.o)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TEST_BIN_DIR)/$@ $?
+
+
 
 $(OBJ_DIR)/dataset.o : dataset.h restrict.h scalar.h libma.h
 $(OBJ_DIR)/libma.o : libma.h scalar.h
 $(OBJ_DIR)/rnd.o : rnd.h restrict.h scalar.h
 $(OBJ_DIR)/read.o : read.h scalar.h
 $(OBJ_DIR)/rnd.o : rnd.h restrict.h scalar.h
+$(OBJ_DIR)/stats.o : stats.h restrict.h scalar.h
 
 $(TEST_OBJ_DIR)/test_dataset.o : test_dataset.h dataset.h restrict.h scalar.h rnd.h unittest.h
 $(TEST_OBJ_DIR)/test_read.o : test_read.h restrict.h scalar.h rnd.h unittest.h
 $(TEST_OBJ_DIR)/test_rnd.o : test_rnd.h rnd.h
+$(TEST_OBJ_DIR)/test_stats.o : test_stats.h stats.h
 
 $(OBJS) : | $(OBJ_DIR)
 
@@ -112,6 +119,7 @@ runtest:
 .PHONY: cleantest
 cleantest:
 	rm -f $(TEST_OBJ_DIR)/*.o
+	rm -f $(TEST_BIN_DIR)/*.test
 
 .PHONY: clean
 clean:
