@@ -16,7 +16,7 @@ TEST_BUILD_DIR := $(TEST_ROOT_DIR)/build
 TEST_BIN_DIR   := $(TEST_BUILD_DIR)/bin
 TEST_OBJ_DIR   := $(TEST_BUILD_DIR)/obj
 TEST_OBJS      := $(addprefix $(TEST_OBJ_DIR)/, test_dataset.o, test_read.o)
-TEST_APPS      := dataset.test read.test
+TEST_APPS      := dataset.test read.test rnd.test stats.test
 
 vpath %.c $(TEST_SRC_DIR)
 vpath %.h	$(TEST_SRC_DIR)
@@ -128,3 +128,6 @@ clean:
 .PHONY: distclean
 distclean:
 	rm -rf $(TEST_BUILD_DIR) $(BUILD_DIR)
+
+.PHONY: test
+test: $(TEST_APPS) runtest
