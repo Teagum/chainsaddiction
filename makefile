@@ -16,7 +16,7 @@ TEST_BUILD_DIR := $(TEST_ROOT_DIR)/build
 TEST_BIN_DIR   := $(TEST_BUILD_DIR)/bin
 TEST_OBJ_DIR   := $(TEST_BUILD_DIR)/obj
 TEST_OBJS      := $(addprefix $(TEST_OBJ_DIR)/, test_dataset.o, test_read.o)
-TEST_APPS      := dataset.test read.test rnd.test stats.test
+TEST_APPS      := dataset.test read.test rnd.test stats.test vmath.test
 
 vpath %.c $(TEST_SRC_DIR)
 vpath %.h	$(TEST_SRC_DIR)
@@ -61,7 +61,10 @@ stats.test : $(addprefix $(TEST_OBJ_DIR)/, test_stats.o) \
 						 $(addprefix $(OBJ_DIR)/, stats.o)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TEST_BIN_DIR)/$@ $?
 
-
+vmath.test : $(addprefix $(TEST_OBJ_DIR)/, test_vmath.o) \
+						 $(addprefix $(OBJ_DIR)/, libma.o rnd.o vmath.o)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TEST_BIN_DIR)/$@ $?
+						 
 
 $(OBJ_DIR)/dataset.o : dataset.h restrict.h scalar.h libma.h
 $(OBJ_DIR)/libma.o : libma.h scalar.h
@@ -69,11 +72,13 @@ $(OBJ_DIR)/rnd.o : rnd.h restrict.h scalar.h
 $(OBJ_DIR)/read.o : read.h scalar.h
 $(OBJ_DIR)/rnd.o : rnd.h restrict.h scalar.h
 $(OBJ_DIR)/stats.o : stats.h restrict.h scalar.h
+$(OBJ_DIR)/vmath.o : restrict.h scalar.h  
 
 $(TEST_OBJ_DIR)/test_dataset.o : test_dataset.h dataset.h restrict.h scalar.h rnd.h unittest.h
 $(TEST_OBJ_DIR)/test_read.o : test_read.h restrict.h scalar.h rnd.h unittest.h
-$(TEST_OBJ_DIR)/test_rnd.o : test_rnd.h rnd.h
-$(TEST_OBJ_DIR)/test_stats.o : test_stats.h stats.h
+$(TEST_OBJ_DIR)/test_rnd.o : test_rnd.h rnd.h unittest.h
+$(TEST_OBJ_DIR)/test_stats.o : test_stats.h stats.h unittest.h
+$(TEST_OBJ_DIR)/test_vmath.o: libma.h restrict.h rnd.h scalar.h unittest.h vmath.h 
 
 $(OBJS) : | $(OBJ_DIR)
 
