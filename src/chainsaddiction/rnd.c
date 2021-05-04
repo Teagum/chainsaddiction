@@ -1,43 +1,40 @@
 #include "rnd.h"
 
 inline scalar
-rnd
-    (void)
+rnd (void)
 {
     return (scalar) rand() / RAND_MAX;
 }
 
 
 inline int
-rnd_int (
-    const int _r_min,
-    const int _r_max)
+rnd_int (const int r_min, const int r_max)
 {
-    return _r_min + (rand () % (_r_max - _r_min));
+    return r_min + (rand () % (r_max - r_min));
 }
 
 
 inline void
 v_rnd
-    (const size_t _n_elem,
-     scalar *restrict _buffer)
+    (const size_t n_elem,
+     scalar *restrict buffer)
 {
-    for (size_t i = 0; i < _n_elem; i++, _buffer++)
+    for (size_t i = 0; i < n_elem; i++, buffer++)
     {
-        *_buffer = rnd ();
+        *buffer = rnd ();
     }
 }
 
 
 inline void
 v_rnd_int (
-    const int _r_min,
-    const int _r_max,
-    const size_t _n_elem,
-    int *restrict _buffer)
+    const int r_min,
+    const int r_max,
+    const size_t n_elem,
+    int *restrict buffer)
 {
-    for (size_t i = 0; i < _n_elem; i++, _buffer++)
+    for (size_t i = 0; i < n_elem; i++, buffer++)
     {
-        *_buffer = rnd_int (_r_min, _r_max);
+        *buffer = rnd_int (r_min, r_max);
     }
 }
