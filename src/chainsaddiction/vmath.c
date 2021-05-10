@@ -144,9 +144,8 @@ vs_sum (
     const size_t n_elem,
     const size_t stride)
 {
-    scalar sum = *vt;
-    const scalar *end_iter = vt + n_elem;
-    while ((vt+=stride) < end_iter)
+    scalar sum = 0;
+    for (size_t i = 0; i < n_elem; i+=stride, vt+=stride)
     {
         sum += *vt;
     }
@@ -288,15 +287,14 @@ log_mvp (
  */
 scalar
 _strided_max (
-    const scalar *restrict _buffer,
-    const size_t _n_elem,
-    const size_t _stride)
+    const scalar *restrict buffer,
+    const size_t n_elem,
+    const size_t stride)
 {
-    const scalar *end_iter = _buffer + _n_elem;
-    scalar c_max = *_buffer;
-    while ((_buffer+=_stride) < end_iter)
+    scalar c_max = 0;
+    for (size_t i = 0; i < n_elem; i+=stride, buffer+=stride)
     {
-        c_max = fmaxl (*_buffer, c_max);
+        c_max = fmaxl (*buffer, c_max);
     }
     return c_max;
 }

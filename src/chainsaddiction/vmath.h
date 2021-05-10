@@ -3,9 +3,9 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include "libma.h"
 #include "restrict.h"
 #include "scalar.h"
-#include "dataset.h"
 
 /*
  * Prefixes:
@@ -57,12 +57,12 @@ mm_ ## name ##_s (                          \
     }                                       \
 }
 
-    
+
 /** Compute basic math operations on vector elements give constant.
  *
- * @param _vt    - Pointer to input data.
- * @param n_elem - Number of elemets.
- * @param _val   - Constant value.
+ * \param _vt       Pointer to input data.
+ * \param n_elem    Number of elemets.
+ * \param _val      Constant value.
  */
 extern void vi_add_s (scalar *_vt, const size_t n_elem, const scalar _val);
 extern void vi_sub_s (scalar *_vt, const size_t n_elem, const scalar _val);
@@ -72,12 +72,12 @@ extern void vi_div_s (scalar *_vt, const size_t n_elem, const scalar _val);
 
 /** Compute basic matrix/matrix operations with added constant.
  *
- * \param mat       - Pointer the first matrix data.
- * \param mtb       - Pointer the second matrix data.
- * \param n_rows    - Number of rows of each matrix.
- * \param n_cols    - Numnber of columns in each matrix.
- * \param val       - Constant value.
- * \param buffer    - Pointer to output buffer.
+ * \param mat       Pointer the first matrix data.
+ * \param mtb       Pointer the second matrix data.
+ * \param n_rows    Number of rows of each matrix.
+ * \param n_cols    Numnber of columns in each matrix.
+ * \param val       Constant value.
+ * \param buffer    Pointer to output buffer.
  */
 extern void
 mm_add_s (
@@ -85,37 +85,40 @@ mm_add_s (
     const scalar *mtb,
     const size_t n_elem,
     const scalar val,
-    scalar *restrict buffer); 
+    scalar *restrict buffer);
+
 
 extern void
 mm_sub_s (
     const scalar *mta,
     const scalar *mtb,
     const size_t n_elem,
-    const scalar val, 
-    scalar *restrict buffer); 
+    const scalar val,
+    scalar *restrict buffer);
+
 
 extern void mm_mul_s (
     const scalar *mta,
     const scalar *mtb,
     const size_t n_elem,
     const scalar val,
-    scalar *restrict buffer); 
+    scalar *restrict buffer);
+
 
 extern void mm_div_s (
     const scalar *mta,
     const scalar *mtb,
     const size_t n_elem,
     const scalar val,
-    scalar *restrict buffer); 
+    scalar *restrict buffer);
 
 
 /** Add two vectors element-wise.
  *
- * @param _vx    - Vector of size n_elem.
- * @param _vy    - Vector of size n_elem.
- * @param n_elem - Number of elements in each vector.
- * @param sum    - Output buffer of size n_elem.
+ * \param _vx       Vector of size n_elem.
+ * \param _vy       Vector of size n_elem.
+ * \param n_elem    Number of elements in each vector.
+ * \param sum       Output buffer of size n_elem.
  */
 extern void
 v_add (
@@ -127,9 +130,9 @@ v_add (
 
 /** Add first vector element-wise to second one.
  *
- * @param _vx    - Vector of size n_elem.
- * @param _vy    - Vector of size n_elem.
- * @param n_elem - Number of elements in each vector.
+ * \param _vx       Vector of size n_elem.
+ * \param _vy       Vector of size n_elem.
+ * \param n_elem    Number of elements in each vector.
  */
 extern void
 vi_add (
@@ -173,8 +176,8 @@ vi_log (
 
 /** Logarithm of the sum of the exponential of the vector elements.
  *
- * \param vctr   Pointer to input data.
- * \param n_elem Number of vector elements.
+ * \param vctr      Pointer to input data.
+ * \param n_elem    Number of vector elements.
  */
 extern scalar
 v_lse (
@@ -195,8 +198,8 @@ vs_lse_centroid (
 
 /** Compute maximum element of vector.
  *
- * @param _vt
- * @param n_elem
+ * \param _vt
+ * \param n_elem
  */
 extern scalar
 v_max (
@@ -206,8 +209,8 @@ v_max (
 
 /** Compute the sum of the vector elements.
  *
- * @param _vt - Pointer to input data.
- * @param n_elem - Number of elements.
+ * \param _vt       Pointer to input data.
+ * \param n_elem    Number of elements.
  */
 extern scalar
 v_sum (
@@ -218,9 +221,9 @@ v_sum (
 
 /** Compute the sum of the vector elements given a stride.
  *
- * @param _vt - Pointer to input data.
- * @param n_elem - Number of elements.
- * @param stride - Stride.
+ * \param _vt - Pointer to input data.
+ * \param n_elem - Number of elements.
+ * \param stride - Stride.
  */
 extern scalar
 vs_sum (
@@ -236,11 +239,11 @@ vs_sum (
 
 /** Compute centroid along the rows of _mt.
  *
- * @param mtrx      Pointer to matrix data. 
- * @param wght      Pointer to weight data.
- * @param n_rows    Number of matrix rows.
- * @param n_cols    Number of matrix columns.
- * @param centroid  Output buffer.
+ * \param mtrx      Pointer to matrix data.
+ * \param wght      Pointer to weight data.
+ * \param n_rows    Number of matrix rows.
+ * \param n_cols    Number of matrix columns.
+ * \param centroid  Output buffer.
  */
 extern void
 m_lse_centroid_rows (
@@ -253,9 +256,9 @@ m_lse_centroid_rows (
 
 /** Compute maximum value.
  *
- * @param _mat
- * @param _n_rows
- * @param _n_cols
+ * \param _mat
+ * \param _n_rows
+ * \param _n_cols
  */
 extern scalar
 m_max (
@@ -266,10 +269,10 @@ m_max (
 
 /** Compute maximum along matrix columns.
  *
- * @param _mat
- * @param _n_rows
- * @param _n_cols
- * @param _col_max
+ * \param _mat
+ * \param _n_rows
+ * \param _n_cols
+ * \param _col_max
  */
 extern void
 m_col_max (
@@ -281,10 +284,10 @@ m_col_max (
 
 /** Compute maximum along rows.
  *
- * @param _mat
- * @param _n_rows
- * @param _n_cols
- * @paran _row_max
+ * \param _mat
+ * \param _n_rows
+ * \param _n_cols
+ * \paran _row_max
  */
 extern void
 m_row_max (
@@ -296,10 +299,10 @@ m_row_max (
 
 /** Compute maximum along columns.
  *
- * @param _mat
- * @param _n_rows
- * @param _n_cols
- * @paran _row_max
+ * \param _mat
+ * \param _n_rows
+ * \param _n_cols
+ * \paran _row_max
  */
 extern void
 m_col_max (
@@ -311,17 +314,17 @@ m_col_max (
 
 /** Compute logarithm of matrix elements.
  *
- * \param mat    - Pointer to matrix elements.
- * \param n_elem - Number of matrix elements.
- * \param out    - Pointer to output buffer.
+ * \param mat       Pointer to matrix elements.
+ * \param n_elem    Number of matrix elements.
+ * \param out       Pointer to output buffer.
  */
 #define m_log(mat, n_elem, out) v_log ((mat), (n_elem), (out))
 
 
 /** Compute logarithm of matrix elements inplace
  *
- * \param mat    - Pointer to matrix elements.
- * \param n_elem - Number of matrix elements.
+ * \param mat       Pointer to matrix elements.
+ * \param n_elem    Number of matrix elements.
  */
 #define mi_log(mat, n_elem) vi_log ((mat), (n_elem))
 
@@ -332,14 +335,14 @@ m_col_max (
  * number of elements in each row and column. Computation is performed
  * in log domain by means of LSE.
  *
- * @param _vt    - Pointer to vector elements.
- * @param _mt    - Pointer to matrix elements.
- * @param n_elem - Number of elements in _vt. 
- * @param _cs    - Computation buffer of lenght n_elem.
- * @param _mb    _ Computation buffer of lenght n_elem^2.
- * @param prod   - Output buffer of lenght n_elem.
+ * \param _vt    - Pointer to vector elements.
+ * \param _mt    - Pointer to matrix elements.
+ * \param n_elem - Number of elements in _vt.
+ * \param _cs    - Computation buffer of lenght n_elem.
+ * \param _mb    _ Computation buffer of lenght n_elem^2.
+ * \param prod   - Output buffer of lenght n_elem.
  */
-extern void 
+extern void
 log_vmp (
     const scalar *restrict _vt,
     const scalar *restrict _mat,
@@ -355,12 +358,12 @@ log_vmp (
  * vector with n_elem elements. Computation is performed in log domain by
  * means of LSE.
  *
- * @param _mt    - Pointer to matrix elements.
- * @param _vt    - Pointer to vector elements.
- * @param n_elem - Number of elements in _vt. 
- * @param _cs    - Computation buffer of lenght n_elem.
- * @param _mb    _ Computation buffer of lenght n_elem^2.
- * @param prod   - Output buffer of lenght n_elem.
+ * \param _mt    - Pointer to matrix elements.
+ * \param _vt    - Pointer to vector elements.
+ * \param n_elem - Number of elements in _vt.
+ * \param _cs    - Computation buffer of lenght n_elem.
+ * \param _mb    _ Computation buffer of lenght n_elem^2.
+ * \param prod   - Output buffer of lenght n_elem.
  */
 extern void
 log_mvp (
@@ -377,9 +380,9 @@ log_mvp (
 
 /* Compute the maximum value along a strided buffer
  *
- * @param _buffer - Input buffer;
- * @param _n_elem - Number of elements in buffer.
- * @param _stride - Stride in elements.
+ * \param _buffer - Input buffer;
+ * \param _n_elem - Number of elements in buffer.
+ * \param _stride - Stride in elements.
  */
 extern scalar
 _strided_max (
