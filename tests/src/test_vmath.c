@@ -1,22 +1,23 @@
 #include "test_vmath.h"
+#include <assert.h>
 
 
 int main (void)
 {
     SETUP;
-
-    RUN_TEST (test_strided_max);
+    RUN_TEST (test_strided_max); //
     RUN_TEST (test_v_lse);
     RUN_TEST (test_vs_lse_centroid);
     RUN_TEST (test_v_max);
-    RUN_TEST (test_vs_sum);
+    RUN_TEST (test_vs_sum); //
     RUN_TEST (test_m_max);
-    RUN_TEST (test_m_row_max);
+    RUN_TEST (test_m_row_max); //
+
     RUN_TEST (test_m_col_max);
-    RUN_TEST (test_log_vmp);
+    RUN_TEST (test_log_vmp);   //
+
     RUN_TEST (test_log_mvp);
     RUN_TEST (test_m_lse_centroid_rows);
-    RUN_TEST (test_mm_add_s);
 
     EVALUATE;
 }
@@ -34,6 +35,7 @@ test_strided_max (void)
     v_rnd (n_elem, mat);
     for (size_t i = 0; i < stride; i++)
     {
+        assert (i*stride+i < n_elem);
         mat[i*stride+i] = max_val;
     }
     err = !ASSERT_EQUAL (_strided_max (mat, n_elem, stride), max_val);
@@ -117,19 +119,16 @@ test_vs_sum (void)
     const size_t n_elem = 2;
     const size_t stride = 1; //rnd_int (0, n_elem);
     scalar *vals = MA_SCALAR_EMPTY (n_elem);
-    scalar expected = 0L;
-    scalar vs_sum_res = 0L;
+    scalar expected = 0;
+    scalar vs_sum_res = 0;
     bool err = true;
 
     v_rnd (n_elem, vals);
     for (size_t i = 0; i < n_elem; i+=stride)
     {
-        //printf ("[%3zu] %Lf\n", i, vals[i]);
         expected += vals[i];
     }
     vs_sum_res = vs_sum (vals, n_elem, stride);
-
-    //printf ("Res: %Lf\tExpected: %LF\tStride: %zu\n", vs_sum_res, expected, stride);
     err = !ASSERT_EQUAL (vs_sum_res, expected);
 
     MA_FREE (vals);
@@ -161,11 +160,12 @@ test_m_row_max (void)
     scalar *res_max = MA_SCALAR_EMPTY (rows);
     bool err = true;
 
-    v_rnd_int (10, 100, n_elem, max_val);
+    v_rnd_int (10, 100, rows, max_val);
     v_rnd (n_elem, vals);
 
     for (size_t i = 0; i < rows; i++)
     {
+        assert (i*rows+i < n_elem);
         vals[i*rows+i] = (scalar) max_val[i];
     }
 
@@ -184,8 +184,8 @@ test_m_row_max (void)
 bool
 test_m_col_max (void)
 {
-    const size_t rows = 100;
-    const size_t cols = 255;
+    const size_t rows = 4;
+    const size_t cols = 3;
     const size_t n_elem = rows * cols;
     scalar *vals = MA_SCALAR_EMPTY (n_elem);
     int *max_val = MA_INT_EMPTY (cols);
@@ -194,26 +194,14 @@ test_m_col_max (void)
     bool err = true;
 
     v_rnd_int (0, rows, cols, max_row_idx);
-    v_rnd_int (10, 100, n_elem, max_val);
+    v_rnd_int (10, 100, cols, max_val);
     v_rnd (n_elem, vals);
 
     for (size_t i = 0; i < cols; i++)
     {
         size_t idx = max_row_idx[i] * cols + i;
-        // printf ("MRI: %d\tIDX: %zu -> %d\n", max_row_idx[i], idx, max_val[i]);
         vals[idx] = (scalar) max_val[i];
     }
-
-    /*
-    for (size_t i = 0; i < rows; i++)
-    {
-        for (size_t j = 0; j < cols; j++)
-        {
-            printf ("[%3zu] %7.4Lf  ", i*cols+j, vals[i*cols+j]);
-        }
-        printf("\n");
-    }
-    */
 
     m_col_max (vals, rows, cols, res_max);
     for (size_t i = 0; i < cols; i++)
@@ -233,11 +221,11 @@ bool
 test_log_vmp (void)
 {
     const size_t n_elem = 3;
-    scalar vt[] = {1, 2, 3};
-    scalar mt[] = {1, 2, 3, 2, 3, 1, 3, 2, 1};
+    scalar *vt = MA_SCALAR_EMPTY (n_elem);
+    scalar *mt = MA_SCALAR_EMPTY (n_elem*n_elem);
     scalar *b1 = MA_SCALAR_EMPTY (n_elem);
-    scalar *b2 = MA_SCALAR_EMPTY (n_elem*n_elem);
-    scalar *res = MA_SCALAR_EMPTY (n_elem);
+    scalar *b2 = MA_SCALAR_ZEROS (n_elem*n_elem);
+    scalar *res = MA_SCALAR_ZEROS (n_elem);
 
     v_rnd (n_elem, vt);
     v_rnd (n_elem*n_elem, mt);
@@ -246,6 +234,8 @@ test_log_vmp (void)
 
     log_vmp (vt, mt, n_elem, b1, b2, res);
 
+    MA_FREE (vt);
+    MA_FREE (mt);
     MA_FREE (b1);
     MA_FREE (b2);
     MA_FREE (res);
@@ -321,6 +311,7 @@ test_m_lse_centroid_rows (void)
     return !err;
 }
 
+
 bool
 test_mm_add_s (void)
 {
@@ -339,5 +330,3 @@ test_mm_add_s (void)
     }
     return !err;
 }
-
-
