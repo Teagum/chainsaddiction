@@ -15,8 +15,8 @@ TEST_SRC_DIR   := $(TEST_ROOT_DIR)/src
 TEST_BUILD_DIR := $(TEST_ROOT_DIR)/build
 TEST_BIN_DIR   := $(TEST_BUILD_DIR)/bin
 TEST_OBJ_DIR   := $(TEST_BUILD_DIR)/obj
-TEST_OBJS      := $(addprefix $(TEST_OBJ_DIR)/, test_dataset.o, test_read.o)
-TEST_APPS      := dataset.test read.test rnd.test stats.test
+TEST_OBJS      := test_dataset.o test_read.o test_rnd.o test_stats.o test_vmath.o
+TEST_APPS      := dataset.test read.test rnd.test stats.test vmath.test
 
 vpath %.c $(TEST_SRC_DIR)
 vpath %.h	$(TEST_SRC_DIR)
@@ -36,62 +36,68 @@ INCLUDES = -I$(SRC_DIR)
 TEST_INCLUDES = $(INCLUDES) -I$(TEST_SRC_DIR)
 
 
-$(TEST_OBJ_DIR)/%.o : %.c
+$(TEST_OBJ_DIR)/%.o: %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(TEST_INCLUDES) -o $@ -c $<
 
-$(OBJ_DIR)/%.o : %.c
+$(OBJ_DIR)/%.o: %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -o $@ -c $<
 
 all: $(OBJS)
 
 test: $(TEST_OBJS) $(TEST_APPS)
 
-dataset.test :	$(addprefix $(TEST_OBJ_DIR)/, test_dataset.o) \
-								$(addprefix $(OBJ_DIR)/, dataset.o libma.o read.o rnd.o) | $(TEST_BIN_DIR) $(TEST_OBJS_DIR)
+dataset.test: $(addprefix $(TEST_OBJ_DIR)/, test_dataset.o) \
+              $(addprefix $(OBJ_DIR)/, dataset.o libma.o read.o rnd.o)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TEST_BIN_DIR)/$@ $?
 
-read.test : $(TEST_OBJ_DIR)/test_read.o $(OBJ_DIR)/read.o | $(TEST_BIN_DIR) $(TEST_OBJS_DIR)
+read.test: $(addprefix $(TEST_OBJ_DIR)/, test_read.o) \
+           $(addprefix $(OBJ_DIR)/, read.o)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TEST_BIN_DIR)/$@ $?
 
-rnd.test : $(addprefix $(TEST_OBJ_DIR)/, test_rnd.o) \
-					 $(addprefix $(OBJ_DIR)/, rnd.o)
+rnd.test: $(addprefix $(TEST_OBJ_DIR)/, test_rnd.o) \
+          $(addprefix $(OBJ_DIR)/, rnd.o)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TEST_BIN_DIR)/$@ $?
 
-stats.test : $(addprefix $(TEST_OBJ_DIR)/, test_stats.o) \
-						 $(addprefix $(OBJ_DIR)/, stats.o)
+stats.test: $(addprefix $(TEST_OBJ_DIR)/, test_stats.o) \
+	          $(addprefix $(OBJ_DIR)/, stats.o)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TEST_BIN_DIR)/$@ $?
 
+vmath.test: $(addprefix $(TEST_OBJ_DIR)/, test_vmath.o) \
+            $(addprefix $(OBJ_DIR)/, libma.o rnd.o vmath.o)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TEST_BIN_DIR)/$@ $?
+						 
 
+$(OBJ_DIR)/dataset.o: dataset.h restrict.h scalar.h libma.h
+$(OBJ_DIR)/libma.o: libma.h scalar.h
+$(OBJ_DIR)/rnd.o: rnd.h restrict.h scalar.h
+$(OBJ_DIR)/read.o: read.h scalar.h
+$(OBJ_DIR)/rnd.o: rnd.h restrict.h scalar.h
+$(OBJ_DIR)/stats.o: stats.h restrict.h scalar.h
+$(OBJ_DIR)/vmath.o: restrict.h scalar.h
 
-$(OBJ_DIR)/dataset.o : dataset.h restrict.h scalar.h libma.h
-$(OBJ_DIR)/libma.o : libma.h scalar.h
-$(OBJ_DIR)/rnd.o : rnd.h restrict.h scalar.h
-$(OBJ_DIR)/read.o : read.h scalar.h
-$(OBJ_DIR)/rnd.o : rnd.h restrict.h scalar.h
-$(OBJ_DIR)/stats.o : stats.h restrict.h scalar.h
+$(TEST_OBJ_DIR)/test_dataset.o: test_dataset.h dataset.h restrict.h scalar.h rnd.h unittest.h
+$(TEST_OBJ_DIR)/test_read.o: test_read.h restrict.h scalar.h rnd.h unittest.h
+$(TEST_OBJ_DIR)/test_rnd.o: test_rnd.h rnd.h unittest.h
+$(TEST_OBJ_DIR)/test_stats.o: test_stats.h stats.h unittest.h
+$(TEST_OBJ_DIR)/test_vmath.o: libma.h restrict.h rnd.h scalar.h unittest.h vmath.h 
 
-$(TEST_OBJ_DIR)/test_dataset.o : test_dataset.h dataset.h restrict.h scalar.h rnd.h unittest.h
-$(TEST_OBJ_DIR)/test_read.o : test_read.h restrict.h scalar.h rnd.h unittest.h
-$(TEST_OBJ_DIR)/test_rnd.o : test_rnd.h rnd.h
-$(TEST_OBJ_DIR)/test_stats.o : test_stats.h stats.h
+$(OBJS): | $(OBJ_DIR)
 
-$(OBJS) : | $(OBJ_DIR)
-
-$(OBJ_DIR) : $(BUILD_DIR)
+$(OBJ_DIR): $(BUILD_DIR)
 	mkdir $(OBJ_DIR)
 
 $(BUILD_DIR) :
 	mkdir $(BUILD_DIR)
 
-$(TEST_OBJS) : | $(TEST_OBJ_DIR)
+$(TEST_OBJS): | $(TEST_OBJ_DIR)
 
-$(TEST_OBJ_DIR) : | $(TEST_BUILD_DIR)
+$(TEST_OBJ_DIR): | $(TEST_BUILD_DIR)
 	mkdir $(TEST_OBJ_DIR)
 
-$(TEST_BUILD_DIR) : | $(TEST_BUILD_DIR)
+$(TEST_BUILD_DIR): | $(TEST_BUILD_DIR)
 	mkdir $(TEST_BUILD_DIR)
 
-$(TEST_BIN_DIR) : | $(TEST_BUILD_DIR)
+$(TEST_BIN_DIR): | $(TEST_BUILD_DIR)
 	mkdir $(TEST_BIN_DIR)
 
 $(TEST_ROOT_DIR) :
@@ -99,7 +105,7 @@ $(TEST_ROOT_DIR) :
 
 
 .PHONY: build_env
-build_env :
+build_env:
 	@echo 'SRC_DIR:        $(SRC_DIR)'
 	@echo 'BUILD_DIR:      $(BUILD_DIR)'
 	@echo 'BIN_DIR:        $(BIN_DIR)'
@@ -116,14 +122,11 @@ build_env :
 runtest:
 	@for testapp in $$(ls $(TEST_BIN_DIR)/*.test); do echo "run $$testapp"; $$testapp; echo '\n'; done
 
-.PHONY: cleantest
-cleantest:
-	rm -f $(TEST_OBJ_DIR)/*.o
-	rm -f $(TEST_BIN_DIR)/*.test
-
 .PHONY: clean
 clean:
 	rm -f $(OBJ_DIR)/*.o
+	rm -f $(TEST_OBJ_DIR)/*.o
+	rm -f $(TEST_BIN_DIR)/*.test
 
 .PHONY: distclean
 distclean:

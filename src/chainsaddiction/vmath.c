@@ -144,9 +144,8 @@ vs_sum (
     const size_t n_elem,
     const size_t stride)
 {
-    scalar sum = *vt;
-    const scalar *end_iter = vt + n_elem;
-    while ((vt+=stride) < end_iter)
+    scalar sum = 0;
+    for (size_t i = 0; i < n_elem; i+=stride, vt+=stride)
     {
         sum += *vt;
     }
@@ -165,9 +164,9 @@ m_lse_centroid_rows (
     const size_t n_cols,
     scalar *centroid)
 {
-    scalar *row_sum = alloc_block_fill (n_cols, 0);
-    scalar *w_row_sum = alloc_block_fill (n_cols, 0);
-    scalar *row_max = alloc_block_fill (n_cols, 0);
+    scalar *row_sum = MA_SCALAR_ZEROS (n_cols);
+    scalar *w_row_sum = MA_SCALAR_ZEROS (n_cols);
+    scalar *row_max = MA_SCALAR_ZEROS (n_cols);
 
     m_row_max (mtrx, n_rows, n_cols, row_max);
     for (size_t i = 0; i < n_rows*n_cols; i++)
@@ -183,9 +182,9 @@ m_lse_centroid_rows (
         centroid[i] = logl (w_row_sum[i] / row_sum[i]);
     }
 
-    FREE (row_sum);
-    FREE (w_row_sum);
-    FREE (row_max);
+    MA_FREE (row_sum);
+    MA_FREE (w_row_sum);
+    MA_FREE (row_max);
 }
 
 
@@ -288,15 +287,14 @@ log_mvp (
  */
 scalar
 _strided_max (
-    const scalar *restrict _buffer,
-    const size_t _n_elem,
-    const size_t _stride)
+    const scalar *restrict buffer,
+    const size_t n_elem,
+    const size_t stride)
 {
-    const scalar *end_iter = _buffer + _n_elem;
-    scalar c_max = *_buffer;
-    while ((_buffer+=_stride) < end_iter)
+    scalar c_max = 0;
+    for (size_t i = 0; i < n_elem; i+=stride, buffer+=stride)
     {
-        c_max = fmaxl (*_buffer, c_max);
+        c_max = fmaxl (*buffer, c_max);
     }
     return c_max;
 }
