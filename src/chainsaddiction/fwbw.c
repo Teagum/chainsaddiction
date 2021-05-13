@@ -10,8 +10,8 @@ log_forward (
     scalar *alpha)
 {
     /* shared buffers */
-    scalar *_cs = alloc_block (m_states);
-    scalar *_mb = alloc_block (m_states*m_states);
+    scalar *_cs = MA_SCALAR_EMPTY (m_states);
+    scalar *_mb = MA_SCALAR_EMPTY (m_states*m_states);
 
     /* Init step */
     for (size_t i = 0; i < m_states; i++)
@@ -28,8 +28,8 @@ log_forward (
         vi_add (lprobs+=m_states, alpha+n_idx, m_states);
     }
 
-    free (_cs);
-    free (_mb);
+    MA_FREE (_cs);
+    MA_FREE (_mb);
 }
 
 
@@ -42,8 +42,8 @@ log_backward (
     scalar *beta)
 {
     /* shared buffers */
-    scalar *_cs = alloc_block (m_states);
-    scalar *_mb = alloc_block (m_states*m_states);
+    scalar *_cs = MA_SCALAR_ZEROS (m_states);
+    scalar *_mb = MA_SCALAR_ZEROS (m_states*m_states);
 
     /* init step */
     size_t c_idx = (n_obs-1) * m_states;
@@ -63,8 +63,8 @@ log_backward (
         lprobs -= m_states;
     }
 
-    free (_cs);
-    free (_mb);
+    MA_FREE (_cs);
+    MA_FREE (_mb);
 }
 
 

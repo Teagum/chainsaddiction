@@ -21,7 +21,7 @@
  * @param m_states - Number of HMM states.
  * @param alpha    - Output buffer of size n_vars * m_states.
  */
-void 
+void
 log_forward (
     const scalar *restrict lprobs,
     const scalar *restrict lgamma,
@@ -62,7 +62,7 @@ log_backward (
  * @param alpha    - Output buffer of size n_vars * m_states.
  * @param beta     - Output buffer of size n_vars * m_states.
  */
-void 
+void
 log_forward_backward (
     const scalar *restrict lprobs,
     const scalar *restrict lgamma,
