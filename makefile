@@ -85,6 +85,7 @@ distclean: clean
 	rm -rf $(build_dir)
 
 .PHONY: test runtest
+
 runtest:
 	@for testapp in $$(ls $(bin_dir)/*.test); do echo "run $$testapp"; $$testapp; echo '\n'; done
 
