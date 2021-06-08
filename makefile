@@ -3,105 +3,98 @@ SHELL = /bin/sh
 .SUFFIXES:
 .SUFFIXES: .c .o .test
 
-SRC_DIR := src/chainsaddiction
-BUILD_DIR := build
-BIN_DIR   := $(BUILD_DIR)/bin
-OBJ_DIR   := $(BUILD_DIR)/obj
-OBJS      := dataset.o libma.o rnd.o read.o stats.o vmath.o
+src_dir := src/chainsaddiction
+build_dir := build
+bin_dir   := $(build_dir)/bin
+obj_dir   := $(build_dir)/obj
+objs      := $(addprefix $(obj_dir)/, dataset.o libma.o rnd.o read.o stats.o vmath.o)
 
-TEST_ROOT_DIR  := tests
-TEST_SRC_DIR   := $(TEST_ROOT_DIR)/src
-TEST_OBJS      := test_dataset.o test_read.o test_rnd.o test_stats.o test_vmath.o
-TEST_APPS      := dataset.test read.test rnd.test stats.test vmath.test
+test_root_dir  := tests
+test_src_dir   := $(test_root_dir)/src
+test_objs      := $(addprefix $(obj_dir)/, test_dataset.o test_read.o test_rnd.o test_stats.o test_vmath.o)
+test_apps      := $(addprefix $(bin_dir)/, dataset.test read.test rnd.test stats.test vmath.test)
 
 vpath
-vpath %.c $(SRC_DIR) $(TEST_SRC_DIR)
-vpath %.h	$(SRC_DIR) $(TEST_SRC_DIR)
-vpath %.o $(OBJ_DIR)
-vpath %.test $(BIN_DIR)
-GPATH := $(OBJ_DIR) $(BIN_DIR)
+vpath %.c $(src_dir) $(test_src_dir)
+vpath %.h	$(src_dir) $(test_src_dir)
 
 
-CC = cc
-WARNINGS = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
-OPTIMIZE = -O2
-DEBUG    = -g
-STANDARD = -std=c17
-CFLAGS = $(WARNINGS) $(STANDARD) $(OPTIMIZE) $(DEBUG)
-# Flags
-# LD_MATH           Typedef `scalar' to `long double', otherwise `double'.
-# NO_BOUNDS_CHECK   Do not check boundaries in array setters and getters.
+# Compiler flags
+warnings = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
+optimize = -O2
+debug    = -g
+standard = -std=c17
+CFLAGS = $(warnings) $(standard) $(optimize) $(debug)
+
+# Preprocessor flags
+# 	LD_MATH           Typedef `scalar' to `long double', otherwise `double'.
+# 	NO_BOUNDS_CHECK   Do not check boundaries in array setters and getters.
 CPPFLAGS = -D LD_MATH
-INCLUDES = -I$(SRC_DIR)
-TEST_INCLUDES = $(INCLUDES) -I$(TEST_SRC_DIR)
+INCLUDE = -I$(src_dir) -I$(test_src_dir)
 
+help:
+	@echo 'Usage: make <target>\n\nTargets:'
+	@echo '\ttest -- build all tests.'
+	@echo '\ttest -- build and run all tests.'
 
-%.o: %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(TEST_INCLUDES) -c $< -o $(OBJ_DIR)/$@
+$(obj_dir)/%.o: %.c
+	$(COMPILE.c) $(INCLUDE) $< $(OUTPUT_OPTION)
 
-all: $(OBJS) $(TEST_OBJS)
+$(bin_dir)/%.test: $(obj_dir)/%.o
+	$(LINK.c) $? $(OUTPUT_OPTION) 
 
-dataset.test: test_dataset.o dataset.o libma.o read.o rnd.o
-	$(CC) $(LDFLAGS) $^ -o $(BIN_DIR)/$@
+$(bin_dir)/dataset.test: $(addprefix $(obj_dir)/, test_dataset.o dataset.o libma.o read.o rnd.o)
+$(bin_dir)/read.test: $(addprefix $(obj_dir)/, test_read.o read.o)
+$(bin_dir)/rnd.test: $(addprefix $(obj_dir)/, test_rnd.o rnd.o)
+$(bin_dir)/stats.test: $(addprefix $(obj_dir)/, test_stats.o stats.o)
+$(bin_dir)/vmath.test: $(addprefix $(obj_dir)/, test_vmath.o libma.o rnd.o vmath.o)
 
-read.test: test_read.o read.o
-	$(CC) $(LDFLAGS) -o $(BIN_DIR)/$@ $^
+$(obj_dir)/dataset.o: dataset.h restrict.h scalar.h libma.h
+$(obj_dir)/libma.o: libma.h scalar.h
+$(obj_dir)/rnd.o: rnd.h restrict.h scalar.h
+$(obj_dir)/read.o: read.h scalar.h
+$(obj_dir)/rnd.o: rnd.h restrict.h scalar.h
+$(obj_dir)/stats.o: stats.h restrict.h scalar.h
+$(obj_dir)/vmath.o: restrict.h scalar.h
 
-rnd.test: test_rnd.o rnd.o
-	$(CC) $(LDFLAGS) -o $(BIN_DIR)/$@ $^
+$(obj_dir)/test_dataset.o: test_dataset.h dataset.h restrict.h scalar.h rnd.h unittest.h
+$(obj_dir)/test_read.o: test_read.h restrict.h scalar.h rnd.h unittest.h
+$(obj_dir)/test_rnd.o: test_rnd.h rnd.h unittest.h
+$(obj_dir)/test_stats.o: test_stats.h stats.h unittest.h
+$(obj_dir)/test_vmath.o: libma.h restrict.h rnd.h scalar.h unittest.h vmath.h 
 
-stats.test: test_stats.o stats.o
-	$(CC) $(LDFLAGS) -o $(BIN_DIR)/$@ $^
+$(objs): | $(build_dir)
+$(test_objs): | $(build_dir)
+$(build_dir):
+	mkdir $(build_dir) $(obj_dir) $(bin_dir) 
 
-vmath.test: test_vmath.o libma.o rnd.o vmath.o
-	$(CC) $(LDFLAGS) -o $(BIN_DIR)/$@ $^
-						 
-
-dataset.o: dataset.h restrict.h scalar.h libma.h
-libma.o: libma.h scalar.h
-rnd.o: rnd.h restrict.h scalar.h
-read.o: read.h scalar.h
-rnd.o: rnd.h restrict.h scalar.h
-stats.o: stats.h restrict.h scalar.h
-vmath.o: restrict.h scalar.h
-
-test_dataset.o: test_dataset.h dataset.h restrict.h scalar.h rnd.h unittest.h
-test_read.o: test_read.h restrict.h scalar.h rnd.h unittest.h
-test_rnd.o: test_rnd.h rnd.h unittest.h
-test_stats.o: test_stats.h stats.h unittest.h
-test_vmath.o: libma.h restrict.h rnd.h scalar.h unittest.h vmath.h 
-
-$(OBJS): | $(BUILD_DIR)
-$(TEST_OBJS): | $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR) $(OBJ_DIR) $(BIN_DIR) 
+.PHONY: test
+test: $(test_apps)
 
 .PHONY: clean
 clean:
 	rm -f ./*.o
 	rm -f ./*.test
-	rm -f $(SRC_DIR)/*.o
-	rm -f $(BUILD_DIR)/**/*.o
-	rm -f $(BUILD_DIR)/**/*.test
-	rm -f $(SRC_DIR)/*.out
+	rm -f $(src_dir)/*.o
+	rm -f $(build_dir)/**/*.o
+	rm -f $(build_dir)/**/*.test
+	rm -f $(src_dir)/*.out
 
 .PHONY: distclean
 distclean: clean
-	rm -rf $(BUILD_DIR)
+	rm -rf $(build_dir)
 
-.PHONY: test
-test: $(TEST_APPS)
+.PHONY: test runtest
 
-.PHONY: runtest
 runtest:
-	@for testapp in $$(ls $(BIN_DIR)/*.test); do echo "run $$testapp"; $$testapp; echo '\n'; done
+	@for testapp in $$(ls $(bin_dir)/*.test); do echo "run $$testapp"; $$testapp; echo '\n'; done
 
 .PHONY: build_env
 build_env:
-	@echo 'SRC_DIR:        $(SRC_DIR)'
-	@echo 'BUILD_DIR:      $(BUILD_DIR)'
-	@echo 'BIN_DIR:        $(BIN_DIR)'
-	@echo 'OBJ_DIR:        $(OBJ_DIR)'
-	@echo 'OBJS:           $(OBJS)'
-	@echo 'TEST_ROOT_DIR:  $(TEST_ROOT_DIR)'
-	@echo 'TEST_SRC_DIR:   $(TEST_SRC_DIR)'
+	@echo 'SRC_DIR:        $(src_dir)'
+	@echo 'BUILD_DIR:      $(build_dir)'
+	@echo 'BIN_DIR:        $(bin_dir)'
+	@echo 'OBJ_DIR:        $(obj_dir)'
+	@echo 'OBJS:           $(objs)'
+	@echo 'TEST_ROOT_DIR:  $(test_root_dir)'
+	@echo 'TEST_SRC_DIR:   $(test_src_dir)'
