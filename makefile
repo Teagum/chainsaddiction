@@ -37,8 +37,6 @@ help:
 	@echo '\ttest -- build all tests.'
 	@echo '\ttest -- build and run all tests.'
 
-current: $(bin_dir)/fwbw.test
-
 $(obj_dir)/%.o: %.c
 	$(COMPILE.c) $(INCLUDE) $< $(OUTPUT_OPTION)
 
