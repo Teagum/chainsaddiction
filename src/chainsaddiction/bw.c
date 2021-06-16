@@ -23,7 +23,7 @@ ca_bw_pois_e_step (
     v_poisson_logpmf (inp->data, inp->size, hmm->init->lambda,
         hmm->m_states, probs->lsd);
 
-    log_forward_backward (probs->lsd, hmm->init->gamma, hmm->init->delta,
+    log_fwbw (probs->lsd, hmm->init->gamma, hmm->init->delta,
         hmm->m_states, inp->size, probs->lalpha, probs->lbeta);
 
     hmm->llh = log_likelihood_fw (probs->lalpha, inp->size, hmm->m_states);
