@@ -40,6 +40,8 @@ typedef struct {
  * space for n_obs * m_states values.
  */
 typedef struct {
+    size_t n_obs;
+    size_t m_states;
     scalar *lsd;        /**< Log of the state dependent probabilities. */
     scalar *lalpha;     /**< Log forward probabilities. */
     scalar *lbeta;      /**< Log backward probabilities. */
@@ -48,14 +50,25 @@ typedef struct {
 
 /** Allocate memory for HmmProbs.
  *
- * @param n_obs    - Number of observations in the data set.
- * @param m_states - Number of HMM states.
+ * \param n_obs    - Number of observations in the data set.
+ * \param m_states - Number of HMM states.
+ *
+ * \return  Pointer to HmmProbs object if allocation did not fail; else NULL.
  */
 HmmProbs *
 ca_NewHmmProbs (const size_t n_obs, const size_t m_states);
 
-void
-ca_FreeHmmProbs (HmmProbs *probs);
+
+/** Deallocate HmmProbs
+ *
+ * \param probs    - Pointer to HmmProbs object.
+ */
+#define ca_FREE_HMM_PROBS(probs) do {    \
+    MA_FREE (probs->lsd);                \
+    MA_FREE (probs->lalpha);             \
+    MA_FREE (probs->lbeta);              \
+    MA_FREE (probs);                     \
+} while (false)
 
 
 
