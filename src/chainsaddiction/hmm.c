@@ -12,9 +12,9 @@ ca_NewHmmProbs (
         fprintf (stderr, "Could not allocate probabilitiy buffer.\n");
         return NULL;
     }
-    probs->lsd = alloc_block (n_obs*m_states);
-    probs->lalpha = alloc_block (n_obs*m_states);
-    probs->lbeta = alloc_block (n_obs*m_states);
+    probs->lsd = MA_SCALAR_ZEROS (n_obs*m_states);
+    probs->lalpha = MA_SCALAR_ZEROS (n_obs*m_states);
+    probs->lbeta = MA_SCALAR_ZEROS (n_obs*m_states);
     if (probs->lsd == NULL ||
         probs->lalpha == NULL ||
         probs->lbeta  == NULL)

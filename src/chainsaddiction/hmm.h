@@ -8,6 +8,8 @@
 #include "scalar.h"
 #include "dataset.h"
 #include "vmath.h"
+#include "libma.h"
+
 
 typedef struct {
     scalar *restrict lambda;
@@ -57,7 +59,7 @@ ca_FreeHmmProbs (HmmProbs *probs);
 
 
 
-/** Allocate a new Params struct. 
+/** Allocate a new Params struct.
  * Elements of parameter vectors remain uninitialized.
  */
 PoisParams *PoisHmm_NewEmptyParams (size_t m);
