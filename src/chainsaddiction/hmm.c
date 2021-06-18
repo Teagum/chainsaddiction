@@ -40,35 +40,23 @@ ca_NewHmmProbs (
 }
 
 
-PoisParams *PoisHmm_NewEmptyParams (size_t m)
+PoisParams *ca_ph_NewParams (size_t m_states)
 {
-    size_t vector_s = m * sizeof (scalar);
-    size_t matrix_s = m * vector_s;
-
-    PoisParams *params = malloc (sizeof (*params));
+    PoisParams *params = malloc (sizeof *params);
     if (params == NULL)
     {
-        goto error;
+        fprintf (stderr, "Could not allocate memory for `PoisParams'.\n");
+        return NULL;
     }
 
-    params->lambda = malloc (vector_s);
-    params->gamma  = malloc (matrix_s);
-    params->delta  = malloc (vector_s);
-
-    if (params->lambda == NULL ||
-        params->gamma  == NULL ||
-        params->delta  == NULL)
-    {
-        goto error;
-    }
+    params->lambda   = MA_SCALAR_ZEROS (m_states);
+    params->gamma    = MA_SCALAR_ZEROS (m_states * m_states);
+    params->delta    = MA_SCALAR_ZEROS (m_states);
+    params->m_states = m_states;
 
     return params;
-
-error:
-    fprintf (stderr, "Could not allocate parameters.\n");
-    PoisHmm_FreeParams (params);
-    return NULL;
 }
+
 
 PoisParams *PoisHmm_ParamsFromFile (const char *fname)
 {
@@ -91,7 +79,7 @@ PoisParams *PoisHmm_ParamsFromFile (const char *fname)
         goto error;
     }
 
-    params = PoisHmm_NewEmptyParams (m_states);
+    params = ca_ph_NewParams (m_states);
     if (params == 0)
     {
         fprintf (stderr, "Could not allocate Params.\n");
@@ -193,8 +181,8 @@ PoisHmm_FromData (size_t m_states,
     ph->tol      = tol;
     ph->n_iter   = 0L;
 
-    ph->init   = PoisHmm_NewEmptyParams (m_states);
-    ph->params = PoisHmm_NewEmptyParams (m_states);
+    ph->init   = ca_ph_NewParams (m_states);
+    ph->params = ca_ph_NewParams (m_states);
     if (ph->init == NULL || ph->params == NULL)
     {
         fprintf (stderr, "Could not allocate parameter vectors.\n");

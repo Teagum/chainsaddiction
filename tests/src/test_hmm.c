@@ -7,6 +7,7 @@ main (void)
     SETUP;
 
     RUN_TEST (test_ca_NewHmmProbs);
+    RUN_TEST (test_ca_ph_NewParams);
 
     EVALUATE;
 }
@@ -28,7 +29,7 @@ test_ca_NewHmmProbs (void)
 
         for (size_t i=0; i<3; i++) {
             for (size_t j=0; j<n_elem; j++) {
-                if (dptr[i][j] < 0L || dptr[i][j] > 0L) {
+                if (fpclassify (dptr[i][j]) != FP_ZERO) {
                     ca_FREE_HMM_PROBS (probs);
                     return true;
                 }
@@ -40,6 +41,36 @@ test_ca_NewHmmProbs (void)
 }
 
 
+bool
+test_ca_ph_NewParams (void)
+{
+    enum { n_repeat_test = 100 };
+
+    for (size_t n = 0; n < n_repeat_test; n++)
+    {
+        size_t m_states = (size_t) rnd_int (1, 100);
+        PoisParams *params = ca_ph_NewParams (m_states);
+
+        for (size_t i=0; i<m_states; i++) {
+            if (fpclassify (params->lambda[i]) != FP_ZERO ||
+                fpclassify (params->delta[i]) != FP_ZERO)
+            {
+                ca_ph_FREE_PARAMS (params);
+                return true;
+            }
+        }
+
+        for (size_t i=0; i<m_states*m_states; i++) {
+            if (fpclassify (params->gamma[i]) != FP_ZERO)
+            {
+                ca_ph_FREE_PARAMS (params);
+                return true;
+            }
+        }
+        ca_ph_FREE_PARAMS (params);
+    }
+    return false;
+}
 bool
 test_log_likelihood_fw (void)
 {

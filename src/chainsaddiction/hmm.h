@@ -12,6 +12,7 @@
 
 
 typedef struct {
+    size_t m_states;
     scalar *restrict lambda;
     scalar *restrict gamma;
     scalar *restrict delta;
@@ -48,7 +49,8 @@ typedef struct {
 } HmmProbs;
 
 
-/** Allocate memory for HmmProbs.
+/** Allocate memory for `HmmProbs'. The memory is guaranteed to be initialized
+ * with zeros.
  *
  * \param n_obs    - Number of observations in the data set.
  * \param m_states - Number of HMM states.
@@ -71,14 +73,28 @@ ca_NewHmmProbs (const size_t n_obs, const size_t m_states);
 } while (false)
 
 
-
-/** Allocate a new Params struct.
- * Elements of parameter vectors remain uninitialized.
+/** Allocate a memory for `PoisParams' object. The memory is guarateed to be
+ * initialized with zeros.
+ *
+ * \param m_states    Number of HMM states.
+ *
+ * \return  Pointer to `PoisParams' or `NULL' if allocation fails.
  */
-PoisParams *PoisHmm_NewEmptyParams (size_t m);
+PoisParams*
+ca_ph_NewParams (size_t m_states);
 
-/** Allocate new PoisParams and init with parameters read from file.
+
+/** Deallocate `PoisParams' object.
+ *
+ * \param params    Pointer to `PoisParams' object.
  */
+#define ca_ph_FREE_PARAMS(params) do {    \
+    MA_FREE (params->lambda);             \
+    MA_FREE (params->gamma);              \
+    MA_FREE (params->delta);              \
+} while (false)
+
+
 PoisParams *PoisHmm_ParamsFromFile (const char *fname);
 
 /** Print Poisson parameters to stdout. */
