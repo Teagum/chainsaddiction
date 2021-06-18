@@ -3,7 +3,7 @@
 
 
 HmmProbs *
-ca_NewHmmProbs (
+ca_ph_NewProbs (
     const size_t n_obs,
     const size_t m_states)
 {
@@ -150,13 +150,6 @@ void PoisHmm_PrintParams (PoisParams *params, size_t m_states)
     fprintf (stdout, "\n");
 }
 
-void PoisHmm_FreeParams (PoisParams *params)
-{
-        free (params->lambda);
-        free (params->gamma);
-        free (params->delta);
-        free (params);
-}
 
 PoisHmm *
 PoisHmm_FromData (size_t m_states,

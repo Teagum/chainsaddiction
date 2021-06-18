@@ -58,14 +58,14 @@ typedef struct {
  * \return  Pointer to HmmProbs object if allocation did not fail; else NULL.
  */
 HmmProbs *
-ca_NewHmmProbs (const size_t n_obs, const size_t m_states);
+ca_ph_NewProbs (const size_t n_obs, const size_t m_states);
 
 
 /** Deallocate HmmProbs
  *
  * \param probs    - Pointer to HmmProbs object.
  */
-#define ca_FREE_HMM_PROBS(probs) do {    \
+#define ca_ph_FREE_PROBS(probs) do {     \
     MA_FREE (probs->lsd);                \
     MA_FREE (probs->lalpha);             \
     MA_FREE (probs->lbeta);              \
@@ -100,8 +100,6 @@ PoisParams *PoisHmm_ParamsFromFile (const char *fname);
 /** Print Poisson parameters to stdout. */
 void PoisHmm_PrintParams (PoisParams *params, size_t m_states);
 
-/** Deallocate the Parms struct */
-void PoisHmm_FreeParams (PoisParams *params);
 
 /** Allocate new PoisHmm with init data from compile time constants. */
 PoisHmm *

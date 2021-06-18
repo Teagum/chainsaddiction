@@ -6,7 +6,7 @@ main (void)
 {
     SETUP;
 
-    RUN_TEST (test_ca_NewHmmProbs);
+    RUN_TEST (test_ca_ph_NewProbs);
     RUN_TEST (test_ca_ph_NewParams);
 
     EVALUATE;
@@ -14,7 +14,7 @@ main (void)
 
 
 bool
-test_ca_NewHmmProbs (void)
+test_ca_ph_NewProbs (void)
 {
     enum { n_repeat_test = 10 };
 
@@ -24,18 +24,18 @@ test_ca_NewHmmProbs (void)
         size_t m_states = (size_t) rnd_int (1, 100);
         size_t n_elem = n_obs * m_states;
 
-        HmmProbs *probs = ca_NewHmmProbs (n_obs, m_states);
+        HmmProbs *probs = ca_ph_NewProbs (n_obs, m_states);
         scalar *dptr[] = { probs->lsd, probs->lalpha, probs->lbeta };
 
         for (size_t i=0; i<3; i++) {
             for (size_t j=0; j<n_elem; j++) {
                 if (fpclassify (dptr[i][j]) != FP_ZERO) {
-                    ca_FREE_HMM_PROBS (probs);
+                    ca_ph_FREE_PROBS (probs);
                     return true;
                 }
             }
         }
-        ca_FREE_HMM_PROBS (probs);
+        ca_ph_FREE_PROBS (probs);
     }
     return false;
 }
