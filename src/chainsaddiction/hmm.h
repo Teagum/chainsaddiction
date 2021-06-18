@@ -128,10 +128,13 @@ compute_bic(scalar nll, size_t m, size_t n);
 
 /** Estimate log-likelihood of the HMM given forward probabilities.
  *
- * @parma: lalpha   - Logarithm of the forward probabilities.
- * @param: n_obs    - Number of observations in the data set.
- * @param: n_states - Number of HMM states.  */
-scalar log_likelihood_fw (scalar *lalpha, size_t n_obs, size_t m_states);
+ * \parma lalpha   - Logarithm of the forward probabilities.
+ * \param n_obs    - Number of observations in the data set.
+ * \param n_states - Number of HMM states.
+ *
+ * \return  Model log-likelihood.
+ */
+scalar ca_log_likelihood (scalar *lalpha, size_t n_obs, size_t m_states);
 
 
 #endif  /* HMM_H */

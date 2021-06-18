@@ -121,7 +121,7 @@ PoisParams *PoisHmm_ParamsFromFile (const char *fname)
 
 error:
     fclose (file);
-    PoisHmm_FreeParams (params);
+    ca_ph_FREE_PARAMS (params);
     return NULL;
 }
 
@@ -179,8 +179,8 @@ PoisHmm_FromData (size_t m_states,
     if (ph->init == NULL || ph->params == NULL)
     {
         fprintf (stderr, "Could not allocate parameter vectors.\n");
-        PoisHmm_FreeParams (ph->init);
-        PoisHmm_FreeParams (ph->params);
+        ca_ph_FREE_PARAMS (ph->init);
+        ca_ph_FREE_PARAMS (ph->params);
         return NULL;
     }
 
@@ -198,8 +198,8 @@ PoisHmm_FromData (size_t m_states,
 void
 PoisHmm_DeleteHmm (PoisHmm *ph)
 {
-    PoisHmm_FreeParams (ph->init);
-    PoisHmm_FreeParams (ph->params);
+    ca_ph_FREE_PARAMS (ph->init);
+    ca_ph_FREE_PARAMS (ph->params);
     free (ph);
 }
 
@@ -216,7 +216,7 @@ compute_bic(scalar nll, size_t m, size_t n)
 }
 
 scalar
-log_likelihood_fw (scalar *lalpha, size_t n_obs, size_t m_states)
+ca_log_likelihood (scalar *lalpha, size_t n_obs, size_t m_states)
 {
     const scalar *restrict last_row = lalpha + ((n_obs-1)*m_states);
     return v_lse (last_row, m_states);
