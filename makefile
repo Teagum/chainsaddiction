@@ -7,12 +7,12 @@ src_dir := src/chainsaddiction
 build_dir := build
 bin_dir   := $(build_dir)/bin
 obj_dir   := $(build_dir)/obj
-objs      := $(addprefix $(obj_dir)/, dataset.o fwbw.o libma.o rnd.o read.o stats.o vmath.o)
+objs      := $(addprefix $(obj_dir)/, dataset.o fwbw.o hmm.o libma.o rnd.o read.o stats.o vmath.o)
 
 test_root_dir  := tests
 test_src_dir   := $(test_root_dir)/src
-test_objs      := $(addprefix $(obj_dir)/, test_dataset.o test_fwbw.o test_read.o test_rnd.o test_stats.o test_vmath.o)
-test_apps      := $(addprefix $(bin_dir)/, dataset.test fwbw.test read.test rnd.test stats.test vmath.test)
+test_objs      := $(addprefix $(obj_dir)/, test_dataset.o test_fwbw.o test_hmm.o test_read.o test_rnd.o test_stats.o test_vmath.o)
+test_apps      := $(addprefix $(bin_dir)/, dataset.test fwbw.test hmm.test read.test rnd.test stats.test vmath.test)
 
 vpath
 vpath %.c $(src_dir) $(test_src_dir)
@@ -37,6 +37,8 @@ help:
 	@echo '\ttest -- build all tests.'
 	@echo '\ttest -- build and run all tests.'
 
+current: $(bin_dir)/hmm.test
+
 $(obj_dir)/%.o: %.c
 	$(COMPILE.c) $(INCLUDE) $< $(OUTPUT_OPTION)
 
@@ -45,6 +47,7 @@ $(bin_dir)/%.test: $(obj_dir)/%.o
 
 $(bin_dir)/dataset.test: $(addprefix $(obj_dir)/, test_dataset.o dataset.o libma.o read.o rnd.o)
 $(bin_dir)/fwbw.test: $(addprefix $(obj_dir)/, test_fwbw.o fwbw.o dataset.o libma.o read.o stats.o vmath.o)
+$(bin_dir)/hmm.test: $(addprefix $(obj_dir)/, test_hmm.o hmm.o libma.o rnd.o vmath.o)
 $(bin_dir)/read.test: $(addprefix $(obj_dir)/, test_read.o read.o)
 $(bin_dir)/rnd.test: $(addprefix $(obj_dir)/, test_rnd.o rnd.o)
 $(bin_dir)/stats.test: $(addprefix $(obj_dir)/, test_stats.o stats.o)
@@ -52,6 +55,7 @@ $(bin_dir)/vmath.test: $(addprefix $(obj_dir)/, test_vmath.o libma.o rnd.o vmath
 
 $(obj_dir)/dataset.o: dataset.h restrict.h read.h scalar.h libma.h
 $(obj_dir)/fwbw.o: fwbw.h dataset.h libma.h read.h restrict.h scalar.h stats.h vmath.h
+$(obj_dir)/hmm.o: hmm.h libma.o
 $(obj_dir)/libma.o: libma.h scalar.h
 $(obj_dir)/rnd.o: rnd.h restrict.h scalar.h
 $(obj_dir)/read.o: read.h scalar.h
