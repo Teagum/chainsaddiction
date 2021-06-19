@@ -1,68 +1,88 @@
 #include <stdio.h>
 #include "hmm.h"
 
+
 HmmProbs *
-ca_NewHmmProbs (
+ca_ph_NewProbs (
     const size_t n_obs,
     const size_t m_states)
 {
+    size_t n_elem = n_obs * m_states;
+    if (n_obs == 0)
+    {
+        fprintf (stderr, "`n_obs' must be greater than 0.\n");
+        return NULL;
+    }
+    if (m_states == 0)
+    {
+        fprintf (stderr, "`m_states' must be greater than 0.\n");
+        return NULL;
+    }
+    if (n_elem / n_obs != m_states)
+    {
+        fprintf (stderr, "Integer overflow detected.");
+        return NULL;
+    }
+
     HmmProbs *probs = malloc (sizeof *probs);
     if (probs == NULL)
     {
-        fprintf (stderr, "Could not allocate probabilitiy buffer.\n");
+        fprintf (stderr, "Could not allocate memory for HmmProbs.\n");
         return NULL;
     }
-    probs->lsd = alloc_block (n_obs*m_states);
-    probs->lalpha = alloc_block (n_obs*m_states);
-    probs->lbeta = alloc_block (n_obs*m_states);
-    if (probs->lsd == NULL ||
-        probs->lalpha == NULL ||
-        probs->lbeta  == NULL)
-    {
-        fprintf (stderr, "Could not allocate probabilitiy subbuffers.\n");
-        return NULL;
-    }
+    probs->lsd      = MA_SCALAR_ZEROS (n_elem);
+    probs->lalpha   = MA_SCALAR_ZEROS (n_elem);
+    probs->lbeta    = MA_SCALAR_ZEROS (n_elem);
+    probs->n_obs    = n_obs;
+    probs->m_states = m_states;
+
     return probs;
 }
 
-void
-ca_FreeHmmProbs (HmmProbs *probs)
+
+PoisParams *ca_ph_NewParams (size_t m_states)
 {
-    free (probs->lsd);
-    free (probs->lalpha);
-    free (probs->lbeta);
-}
-
-
-PoisParams *PoisHmm_NewEmptyParams (size_t m)
-{
-    size_t vector_s = m * sizeof (scalar);
-    size_t matrix_s = m * vector_s;
-
-    PoisParams *params = malloc (sizeof (*params));
+    PoisParams *params = malloc (sizeof *params);
     if (params == NULL)
     {
-        goto error;
+        fprintf (stderr, "Could not allocate memory for `PoisParams'.\n");
+        return NULL;
     }
 
-    params->lambda = malloc (vector_s);
-    params->gamma  = malloc (matrix_s);
-    params->delta  = malloc (vector_s);
-
-    if (params->lambda == NULL ||
-        params->gamma  == NULL ||
-        params->delta  == NULL)
-    {
-        goto error;
-    }
+    params->lambda   = MA_SCALAR_ZEROS (m_states);
+    params->gamma    = MA_SCALAR_ZEROS (m_states * m_states);
+    params->delta    = MA_SCALAR_ZEROS (m_states);
+    params->m_states = m_states;
 
     return params;
-
-error:
-    fprintf (stderr, "Could not allocate parameters.\n");
-    PoisHmm_FreeParams (params);
-    return NULL;
 }
+
+
+PoisHmm *ca_ph_NewHmm (const size_t n_obs, const size_t m_states)
+{
+    PoisHmm *phmm = malloc (sizeof *phmm);
+    if (phmm == NULL)
+    {
+        fprintf (stderr, "Could not allocate memory for `PoisHmm' object.\n");
+        exit (1);
+    }
+
+    phmm->init   = ca_ph_NewParams (m_states);
+    phmm->params = ca_ph_NewParams (m_states);
+    phmm->probs  = ca_ph_NewProbs (n_obs, m_states);
+
+    phmm->n_obs    = n_obs;
+    phmm->m_states = m_states;
+    phmm->n_iter   = 0;
+    phmm->max_iter = DEFAULT_MAX_ITER;
+    phmm->tol      = DEFAULT_TOLERANCE;
+    phmm->aic      = 0.0L;
+    phmm->bic      = 0.0L;
+    phmm->llh      = 0.0L;
+
+    return phmm;
+}
+
 
 PoisParams *PoisHmm_ParamsFromFile (const char *fname)
 {
@@ -85,7 +105,7 @@ PoisParams *PoisHmm_ParamsFromFile (const char *fname)
         goto error;
     }
 
-    params = PoisHmm_NewEmptyParams (m_states);
+    params = ca_ph_NewParams (m_states);
     if (params == 0)
     {
         fprintf (stderr, "Could not allocate Params.\n");
@@ -127,7 +147,7 @@ PoisParams *PoisHmm_ParamsFromFile (const char *fname)
 
 error:
     fclose (file);
-    PoisHmm_FreeParams (params);
+    ca_ph_FREE_PARAMS (params);
     return NULL;
 }
 
@@ -156,13 +176,6 @@ void PoisHmm_PrintParams (PoisParams *params, size_t m_states)
     fprintf (stdout, "\n");
 }
 
-void PoisHmm_FreeParams (PoisParams *params)
-{
-        free (params->lambda);
-        free (params->gamma);
-        free (params->delta);
-        free (params);
-}
 
 PoisHmm *
 PoisHmm_FromData (size_t m_states,
@@ -187,13 +200,13 @@ PoisHmm_FromData (size_t m_states,
     ph->tol      = tol;
     ph->n_iter   = 0L;
 
-    ph->init   = PoisHmm_NewEmptyParams (m_states);
-    ph->params = PoisHmm_NewEmptyParams (m_states);
+    ph->init   = ca_ph_NewParams (m_states);
+    ph->params = ca_ph_NewParams (m_states);
     if (ph->init == NULL || ph->params == NULL)
     {
         fprintf (stderr, "Could not allocate parameter vectors.\n");
-        PoisHmm_FreeParams (ph->init);
-        PoisHmm_FreeParams (ph->params);
+        ca_ph_FREE_PARAMS (ph->init);
+        ca_ph_FREE_PARAMS (ph->params);
         return NULL;
     }
 
@@ -208,13 +221,6 @@ PoisHmm_FromData (size_t m_states,
     return ph;
 }
 
-void
-PoisHmm_DeleteHmm (PoisHmm *ph)
-{
-    PoisHmm_FreeParams (ph->init);
-    PoisHmm_FreeParams (ph->params);
-    free (ph);
-}
 
 scalar
 compute_aic(scalar nll, size_t m)
@@ -229,7 +235,7 @@ compute_bic(scalar nll, size_t m, size_t n)
 }
 
 scalar
-log_likelihood_fw (scalar *lalpha, size_t n_obs, size_t m_states)
+ca_log_likelihood (scalar *lalpha, size_t n_obs, size_t m_states)
 {
     const scalar *restrict last_row = lalpha + ((n_obs-1)*m_states);
     return v_lse (last_row, m_states);
