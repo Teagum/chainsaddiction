@@ -10,6 +10,8 @@
 #include "vmath.h"
 #include "libma.h"
 
+#define DEFAULT_MAX_ITER 1000
+#define DEFAULT_TOLERANCE 1e-5
 
 typedef struct {
     size_t m_states;
@@ -17,22 +19,6 @@ typedef struct {
     scalar *restrict gamma;
     scalar *restrict delta;
 } PoisParams;
-
-
-/** \struct PoisHmm
- * \brief HMM with Poisson-distributed states.
- */
-typedef struct {
-    size_t m_states;
-    size_t n_iter;
-    size_t max_iter;
-    scalar tol;
-    scalar aic;
-    scalar bic;
-    scalar llh;
-    PoisParams *init;
-    PoisParams *params;
-} PoisHmm;
 
 
 /** Computation buffer for HMM estimation.
@@ -47,6 +33,26 @@ typedef struct {
     scalar *lalpha;     /**< Log forward probabilities. */
     scalar *lbeta;      /**< Log backward probabilities. */
 } HmmProbs;
+
+
+/** \struct PoisHmm
+ * \brief HMM with Poisson-distributed states.
+ */
+typedef struct {
+    size_t n_obs;
+    size_t m_states;
+    size_t n_iter;
+    size_t max_iter;
+    scalar tol;
+    scalar aic;
+    scalar bic;
+    scalar llh;
+    PoisParams *init;
+    PoisParams *params;
+    HmmProbs *probs;
+} PoisHmm;
+
+
 
 
 /** Allocate memory for `HmmProbs'. The memory is guaranteed to be initialized
@@ -70,6 +76,27 @@ ca_ph_NewProbs (const size_t n_obs, const size_t m_states);
     MA_FREE (probs->lalpha);             \
     MA_FREE (probs->lbeta);              \
     MA_FREE (probs);                     \
+} while (false)
+
+
+/** Allocate memory for `PoisHmm' object.
+ *
+ * \param n_obs       Number of observations.
+ * \param m_states    Number of states.
+ */
+PoisHmm *
+ca_ph_NewHmm (const size_t n_obs, const size_t m_states);
+
+
+/** Deallocate `PoisHmm' object.
+ *
+ * \param phmm    Pointer to `PoisHmm' object.
+ */
+#define ca_ph_FREE_HMM(phmm) do {        \
+    ca_ph_FREE_PARAMS (phmm->init);      \
+    ca_ph_FREE_PARAMS (phmm->params);    \
+    ca_ph_FREE_PROBS (phmm->probs);      \
+    MA_FREE (phmm);                      \
 } while (false)
 
 
@@ -109,11 +136,6 @@ PoisHmm_FromData(size_t  m,
         scalar *restrict init_delta,
         size_t max_iter,
         scalar tol);
-
-
-/** Deallocate a PoisHmm.*/
-void
-PoisHmm_DeleteHmm (PoisHmm *ph);
 
 
 /* Compute Akaine Information criterion. */

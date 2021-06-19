@@ -8,6 +8,7 @@ main (void)
 
     RUN_TEST (test_ca_ph_NewProbs);
     RUN_TEST (test_ca_ph_NewParams);
+    RUN_TEST (test_ca_ph_NewHmm);
     RUN_TEST (test_ca_log_likelihood);
 
     EVALUATE;
@@ -21,7 +22,7 @@ test_ca_ph_NewProbs (void)
 
     for (size_t n = 0; n < n_repeat_test; n++)
     {
-        size_t n_obs = (size_t) rnd_int (1, 1000000);
+        size_t n_obs = (size_t) rnd_int (1, 10000);
         size_t m_states = (size_t) rnd_int (1, 100);
         size_t n_elem = n_obs * m_states;
 
@@ -45,7 +46,7 @@ test_ca_ph_NewProbs (void)
 bool
 test_ca_ph_NewParams (void)
 {
-    enum { n_repeat_test = 100 };
+    enum { n_repeat_test = 10 };
 
     for (size_t n = 0; n < n_repeat_test; n++)
     {
@@ -73,6 +74,22 @@ test_ca_ph_NewParams (void)
     return false;
 }
 
+
+bool
+test_ca_ph_NewHmm (void)
+{
+    enum { n_repeat_test = 100 };
+
+    for (size_t n = 0; n < n_repeat_test; n++)
+    {
+        size_t n_obs = rnd_int (1, 1000);
+        size_t m_states = rnd_int (1, 200);
+        PoisHmm *phmm = ca_ph_NewHmm (n_obs, m_states);
+
+        ca_ph_FREE_HMM (phmm);
+    }
+    return false;
+}
 
 bool
 test_ca_log_likelihood (void)

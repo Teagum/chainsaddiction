@@ -58,6 +58,32 @@ PoisParams *ca_ph_NewParams (size_t m_states)
 }
 
 
+PoisHmm *ca_ph_NewHmm (const size_t n_obs, const size_t m_states)
+{
+    PoisHmm *phmm = malloc (sizeof *phmm);
+    if (phmm == NULL)
+    {
+        fprintf (stderr, "Could not allocate memory for `PoisHmm' object.\n");
+        exit (1);
+    }
+
+    phmm->init   = ca_ph_NewParams (m_states);
+    phmm->params = ca_ph_NewParams (m_states);
+    phmm->probs  = ca_ph_NewProbs (n_obs, m_states);
+
+    phmm->n_obs    = n_obs;
+    phmm->m_states = m_states;
+    phmm->n_iter   = 0;
+    phmm->max_iter = DEFAULT_MAX_ITER;
+    phmm->tol      = DEFAULT_TOLERANCE;
+    phmm->aic      = 0.0L;
+    phmm->bic      = 0.0L;
+    phmm->llh      = 0.0L;
+
+    return phmm;
+}
+
+
 PoisParams *PoisHmm_ParamsFromFile (const char *fname)
 {
     int        success  = 0;
@@ -195,13 +221,6 @@ PoisHmm_FromData (size_t m_states,
     return ph;
 }
 
-void
-PoisHmm_DeleteHmm (PoisHmm *ph)
-{
-    ca_ph_FREE_PARAMS (ph->init);
-    ca_ph_FREE_PARAMS (ph->params);
-    free (ph);
-}
 
 scalar
 compute_aic(scalar nll, size_t m)
