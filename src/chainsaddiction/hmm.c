@@ -167,7 +167,47 @@ void PoisHmm_PrintParams (PoisParams *params, size_t m_states)
             fprintf (stdout, "%20.19Lf\t", params->gamma[i*m_states+j]);
         }
         fprintf (stdout, "\n");
+
+
+void
+ca_ph_InitParams (
+    const PoisHmm *const restrict phmm,
+    const scalar *const restrict lambda,
+    const scalar *const restrict gamma,
+    const scalar *const restrict delta)
+{
+    size_t m_states = phmm->m_states;
+    size_t n_elem_gamma = m_states * m_states;
+    size_t v_size = m_states * sizeof (scalar);
+    size_t m_size = m_states * v_size;
+
+#ifdef __STDC_LIB_EXT1__
+    errno_t err = 0;
+    err = memcpy_s (phmm->init->lambda, v_size, lambda, v_size);
+    if (err != 0) {
+        perror ("Failed to copy initial values of `lambda'.");
+        exit (1)
     }
+    err = memcpy_s (phmm->init->gamma, m_size, gamma, m_size);
+    if (err != 0) {
+        perror ("Failed to copy initial values of `gamma'.");
+        exit (1)
+    }
+    err = memcpy_s (phmm->init->delta, v_size, delta, v_size);
+    if (err != 0) {
+        perror ("Failed to copy initial values of `delta'.");
+        exit (1)
+    }
+#else
+    memcpy (phmm->init->lambda, lambda, v_size);
+    memcpy (phmm->init->gamma, gamma, m_size);
+    memcpy (phmm->init->delta, delta, v_size);
+#endif
+
+    v_log (phmm->init->lambda, phmm->m_states, phmm->params->lambda);
+    v_log (phmm->init->gamma, n_elem_gamma, phmm->params->gamma);
+    v_log (phmm->init->delta, phmm->m_states, phmm->params->delta);
+}
 
     fprintf (stdout, "\nDelta:\n");
     for (size_t i = 0; i < m_states; i++)

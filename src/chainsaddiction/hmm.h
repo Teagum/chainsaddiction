@@ -123,6 +123,14 @@ ca_ph_NewParams (size_t m_states);
 } while (false)
 
 
+void
+ca_ph_InitParams (
+    const PoisHmm *const restrict phmm,
+    const scalar *const restrict lambda,
+    const scalar *const restrict gamma,
+    const scalar *const restrict delta);
+
+
 PoisParams *PoisHmm_ParamsFromFile (const char *fname);
 
 /** Print Poisson parameters to stdout. */
