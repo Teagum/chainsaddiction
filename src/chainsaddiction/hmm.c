@@ -151,22 +151,53 @@ error:
     return NULL;
 }
 
-void PoisHmm_PrintParams (PoisParams *params, size_t m_states)
+
+void PoisHmm_PrintParams (const PoisHmm *const restrict phmm)
 {
-    fprintf (stdout, "\nStates: %zu\n\n", m_states);
+    enum {linewidth=100};
+    char border[] = "====================";
+    char sep[] = "--------------------";
 
-    fprintf (stdout, "Lambda:\n");
+    size_t m_states = phmm->m_states;
+    PoisParams *params = phmm->params;
+
+    printf ("\n\n*%s%s%s*\n\n", border, border, border);
+    printf ("%25s%10zu\n", "m-states:", m_states);
+    printf ("%25s%10.5Lf\n", "-log likelihood:", phmm->llh);
+    printf ("%25s%10.5Lf\n", "AIC:", phmm->aic);
+    printf ("%25s%10.5Lf\n", "BIC:", phmm->bic);
+    printf ("\n\n%s%s%s\n\n", sep, sep, sep);
+
+    printf ("%25s", "State:");
     for (size_t i = 0; i < m_states; i++)
-        fprintf (stdout, "%Lf\t", params->lambda[i]);
+        printf ("%10zu", i+1);
+    puts ("");
+    printf ("%25s", "State dependent means:");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10.5Lf", params->lambda[i]);
+    puts ("");
+    printf ("%25s", "Start distribution:");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10.5Lf", params->delta[i]);
 
-    fprintf (stdout, "\n\nGamma:\n");
+    printf ("\n\n%s%s%s\n\n", sep, sep, sep);
+
+    printf ("%25s", "Transition probability matrix:\n");
+    printf ("%25s", " ");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10zu", i+1);
+    puts ("");
     for (size_t i = 0; i < m_states; i++)
     {
+        printf ("%25zu", i+1);
         for (size_t j = 0; j < m_states; j++)
         {
-            fprintf (stdout, "%20.19Lf\t", params->gamma[i*m_states+j]);
+            printf ("%10.5Lf", params->gamma[i*m_states+j]);
         }
-        fprintf (stdout, "\n");
+        puts ("");
+    }
+    printf ("\n*%s%s%s*\n\n", border, border, border);
+}
 
 
 void

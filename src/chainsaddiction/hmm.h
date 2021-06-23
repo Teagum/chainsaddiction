@@ -134,7 +134,8 @@ ca_ph_InitParams (
 PoisParams *PoisHmm_ParamsFromFile (const char *fname);
 
 /** Print Poisson parameters to stdout. */
-void PoisHmm_PrintParams (PoisParams *params, size_t m_states);
+void PoisHmm_PrintParams (const PoisHmm *const restrict phmm);
+
 
 
 /** Allocate new PoisHmm with init data from compile time constants. */
