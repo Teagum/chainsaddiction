@@ -9,6 +9,7 @@ main (void)
     RUN_TEST (test_ca_ph_NewProbs);
     RUN_TEST (test_ca_ph_NewParams);
     RUN_TEST (test_ca_ph_NewHmm);
+    RUN_TEST (test_ca_ph_InitParams);
     RUN_TEST (test_ca_log_likelihood);
 
     EVALUATE;
@@ -90,6 +91,55 @@ test_ca_ph_NewHmm (void)
     }
     return false;
 }
+
+
+bool
+test_ca_ph_InitParams (void)
+{
+    enum { n_repeat_test = 100 };
+    for (size_t n = 0; n < n_repeat_test; n++)
+    {
+        size_t n_obs = 10; //(size_t) rnd_int (1, 1000);
+        size_t m_states = 3; //(size_t) rnd_int (1, 30);
+        scalar *lambda = MA_SCALAR_ZEROS (m_states);
+        scalar *gamma = MA_SCALAR_ZEROS (m_states*m_states);
+        scalar *delta = MA_SCALAR_ZEROS (m_states);
+        v_rnd (m_states, lambda);
+        v_rnd (m_states*m_states, gamma);
+        v_rnd (m_states, delta);
+        PoisHmm *phmm = ca_ph_NewHmm (n_obs, m_states);
+
+        ca_ph_InitParams (phmm, lambda, gamma, delta);
+
+        for (size_t i = 0; i < m_states; i++)
+        {
+            if (phmm->init->lambda[i] != lambda[i] ||
+                phmm->init->delta[i] != delta[i] ||
+                phmm->params->lambda[i] != logl (lambda[i]) ||
+                phmm->params->delta[i] != logl (delta[i]))
+            {
+                return true;
+            }
+
+            for (size_t j = 0; j < m_states; j++)
+            {
+                size_t idx = i * m_states + j;
+                if (phmm->init->gamma[idx] != gamma[idx] ||
+                    phmm->params->gamma[idx] != logl (gamma[idx]))
+                {
+                    return true;
+                }
+            }
+        }
+
+        MA_FREE (lambda);
+        MA_FREE (gamma);
+        MA_FREE (delta);
+        ca_ph_FREE_HMM (phmm);
+    }
+    return false;
+}
+
 
 bool
 test_ca_log_likelihood (void)

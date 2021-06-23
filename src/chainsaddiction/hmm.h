@@ -1,14 +1,15 @@
 #ifndef HMM_H
 #define HMM_H
 
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 #include <math.h>
 #include "restrict.h"
 #include "scalar.h"
 #include "dataset.h"
-#include "vmath.h"
 #include "libma.h"
+#include "rnd.h"
+#include "vmath.h"
 
 #define DEFAULT_MAX_ITER 1000
 #define DEFAULT_TOLERANCE 1e-5
@@ -122,10 +123,23 @@ ca_ph_NewParams (size_t m_states);
 } while (false)
 
 
+void
+ca_ph_InitParams (
+    const PoisHmm *const restrict phmm,
+    const scalar *const restrict lambda,
+    const scalar *const restrict gamma,
+    const scalar *const restrict delta);
+
+
+void
+ca_ph_InitRandom (PoisHmm *const restrict phmm);
+
+
 PoisParams *PoisHmm_ParamsFromFile (const char *fname);
 
 /** Print Poisson parameters to stdout. */
-void PoisHmm_PrintParams (PoisParams *params, size_t m_states);
+void PoisHmm_PrintParams (const PoisHmm *const restrict phmm);
+
 
 
 /** Allocate new PoisHmm with init data from compile time constants. */
