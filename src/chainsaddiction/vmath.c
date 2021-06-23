@@ -129,6 +129,22 @@ v_max (
 }
 
 
+inline void
+vi_softmax (scalar *buffer, size_t n_elem)
+{
+    scalar total = 0.0L;
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        buffer[i] = expl (buffer[i]);
+        total += buffer[i];
+    }
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        buffer[i] /= total;
+    }
+}
+
+
 inline scalar
 v_sum (
     const scalar *restrict vt,

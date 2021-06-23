@@ -202,9 +202,11 @@ vs_lse_centroid (
  * \param n_elem
  */
 extern scalar
-v_max (
-    const scalar *restrict _vt,
-    const size_t n_elem);
+v_max (const scalar *restrict _vt, const size_t n_elem);
+
+
+extern void
+vi_softmax (scalar *buffer, size_t n_elem);
 
 
 /** Compute the sum of the vector elements.
