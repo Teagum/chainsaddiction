@@ -15,18 +15,21 @@ void update_lambda (
 }
 
 void
-ca_bw_pois_e_step (
+PoisHmm_BaumWelch_EStep (
     const DataSet *restrict inp,
-    PoisHmm *restrict hmm,
-    HmmProbs *restrict probs)
+    PoisHmm *restrict phmm)
 {
-    v_poisson_logpmf (inp->data, inp->size, hmm->init->lambda,
-        hmm->m_states, probs->lsd);
+    const size_t m_states = phmm->m_states;
+    const size_t n_obs = phmm->n_obs;
+    PoisParams *params = phmm->params;
+    HmmProbs *probs = phmm->probs;
 
-    log_fwbw (probs->lsd, hmm->init->gamma, hmm->init->delta,
-        hmm->m_states, inp->size, probs->lalpha, probs->lbeta);
+    v_poisson_logpmf (inp->data, n_obs, params->lambda, m_states, probs->lsd);
 
-    hmm->llh = log_likelihood_fw (probs->lalpha, inp->size, hmm->m_states);
+    log_fwbw (probs->lsd, params->gamma, params->delta,
+        m_states, n_obs, probs->lalpha, probs->lbeta);
+
+    phmm->llh = ca_log_likelihood (probs->lalpha, n_obs, m_states);
 }
 
 

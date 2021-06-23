@@ -11,10 +11,10 @@
 #include "dataset.h"
 
 void
-ca_bw_pois_e_step (
-    const DataSet *restrict inp,
-    PoisHmm *restrict hmm,
-    HmmProbs *restrict probs);
+PoisHmm_BaumWelch_EStep (
+    const DataSet *const restrict inp,
+    PoisHmm *const restrict phmm);
+
 
 void
 ca_bw_pois_m_step ();
