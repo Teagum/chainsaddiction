@@ -6,10 +6,8 @@
 #include "hmm.h"
 #include "unittest.h"
 
-bool
-test_ca_bw_pois_e_step (void);
 
 bool
-test_update_lambda (void);
+test_ph_bw_update_lambda (void);
 
 #endif  /* TEST_BW_H */
