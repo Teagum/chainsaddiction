@@ -131,6 +131,10 @@ ca_ph_InitParams (
     const scalar *const restrict delta);
 
 
+void
+ca_ph_InitRandom (PoisHmm *const restrict phmm);
+
+
 PoisParams *PoisHmm_ParamsFromFile (const char *fname);
 
 /** Print Poisson parameters to stdout. */

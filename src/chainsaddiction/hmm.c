@@ -240,11 +240,30 @@ ca_ph_InitParams (
     v_log (phmm->init->delta, phmm->m_states, phmm->params->delta);
 }
 
-    fprintf (stdout, "\nDelta:\n");
-    for (size_t i = 0; i < m_states; i++)
-        fprintf (stdout, "%Lf\t", params->delta[i]);
 
-    fprintf (stdout, "\n");
+void
+ca_ph_InitRandom (PoisHmm *const restrict phmm)
+{
+    size_t m_states = phmm->m_states;
+    size_t n_elem = m_states * m_states;
+
+    v_rnd (m_states, phmm->init->lambda);
+    for (size_t i = 0; i < m_states; i++)
+    {
+        phmm->init->lambda[i] += (scalar) rnd_int (0, 100);
+    }
+    v_rnd (n_elem, phmm->init->gamma);
+    v_rnd (m_states, phmm->init->delta);
+
+    for (size_t i = 0; i < m_states; i++)
+    {
+        vi_softmax (phmm->init->gamma+i*m_states, m_states);
+    }
+    vi_softmax (phmm->init->delta, m_states);
+
+    v_log (phmm->init->lambda, m_states, phmm->params->lambda);
+    v_log (phmm->init->gamma, n_elem, phmm->params->gamma);
+    v_log (phmm->init->delta, m_states, phmm->params->delta);
 }
 
 
