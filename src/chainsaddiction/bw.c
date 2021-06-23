@@ -33,7 +33,7 @@ ph_bw_e_step (const DataSet *const restrict inp, PoisHmm *const restrict phmm)
 
 
 void
-ca_bw_pois_m_step ()
+ph_bw_m_step ()
 {}
 
 
