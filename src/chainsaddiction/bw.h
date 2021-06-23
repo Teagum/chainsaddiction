@@ -11,9 +11,7 @@
 #include "dataset.h"
 
 void
-PoisHmm_BaumWelch_EStep (
-    const DataSet *const restrict inp,
-    PoisHmm *const restrict phmm);
+ph_bw_e_step (const DataSet *const restrict inp, PoisHmm *const restrict phmm);
 
 
 void

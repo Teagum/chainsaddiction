@@ -16,9 +16,7 @@ void ph_bw_update_lambda (
 
 
 void
-PoisHmm_BaumWelch_EStep (
-    const DataSet *restrict inp,
-    PoisHmm *restrict phmm)
+ph_bw_e_step (const DataSet *const restrict inp, PoisHmm *const restrict phmm)
 {
     const size_t m_states = phmm->m_states;
     const size_t n_obs = phmm->n_obs;
