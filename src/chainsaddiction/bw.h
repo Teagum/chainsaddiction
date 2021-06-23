@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <math.h>
 #include "restrict.h"
-#include "fwbw.h"
 #include "scalar.h"
+#include "fwbw.h"
 #include "hmm.h"
 #include "dataset.h"
 
