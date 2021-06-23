@@ -19,18 +19,19 @@ PoisHmm_BaumWelch_EStep (
 void
 ca_bw_pois_m_step ();
 
+
 void
 ca_bw_pois (
     const DataSet *restrict inp,
     PoisHmm *restrict hmm);
 
-void update_lambda (
-    const DataSet *restrict inp,
-    const scalar *restrict lalpha,
-    const scalar *restrict lbeta,
-    const size_t m_states,
+
+void ph_bw_update_lambda (
+    const DataSet *const restrict inp,
+    const HmmProbs *const restrict probs,
     const scalar llh,
-    scalar *buffer,
-    scalar *lambda_update);
+    scalar *restrict buffer,
+    scalar *restrict lambda_update);
+
 
 #endif  /* BW_H */

@@ -1,18 +1,19 @@
 #include <string.h>
 #include "bw.h"
 
-void update_lambda (
-    const DataSet *restrict inp,
-    const scalar *restrict lalpha,
-    const scalar *restrict lbeta,
-    const size_t m_states,
+void ph_bw_update_lambda (
+    const DataSet *const restrict inp,
+    const HmmProbs *const restrict probs,
     const scalar llh,
-    scalar *buffer,
-    scalar *lambda_update)
+    scalar *restrict buffer,
+    scalar *restrict lambda_update)
 {
-    mm_add_s (lalpha, lbeta, m_states * inp->size, llh, buffer);
-    m_lse_centroid_rows (buffer, (scalar *) inp->data, inp->size, m_states, lambda_update);
+    mm_add_s (probs->lalpha, probs->lbeta, probs->m_states * probs->n_obs,
+            llh, buffer);
+    m_lse_centroid_rows (buffer, inp->data, inp->size, probs->m_states,
+            lambda_update);
 }
+
 
 void
 PoisHmm_BaumWelch_EStep (
