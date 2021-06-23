@@ -20,8 +20,8 @@ ph_bw_m_step ();
 
 
 void
-ca_bw_pois (
-    const DataSet *restrict inp,
+PoisHmm_BaumWelch (
+    const DataSet *const restrict inp,
     PoisHmm *restrict hmm);
 
 
