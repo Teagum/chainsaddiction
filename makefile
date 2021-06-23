@@ -47,7 +47,7 @@ $(bin_dir)/%.test: $(obj_dir)/%.o
 	$(LINK.c) $^ $(OUTPUT_OPTION)
 
 $(bin_dir)/dataset.test: $(addprefix $(obj_dir)/, test_dataset.o dataset.o libma.o read.o rnd.o)
-$(bin_dir)/bw.test: $(addprefix $(obj_dir)/, test_bw.o bw.o dataset.o libma.o read.o stats.o vmath.o)
+$(bin_dir)/bw.test: $(addprefix $(obj_dir)/, test_bw.o bw.o dataset.o fwbw.o hmm.o libma.o read.o rnd.o stats.o vmath.o)
 $(bin_dir)/fwbw.test: $(addprefix $(obj_dir)/, test_fwbw.o fwbw.o dataset.o libma.o read.o stats.o vmath.o)
 $(bin_dir)/hmm.test: $(addprefix $(obj_dir)/, test_hmm.o hmm.o libma.o rnd.o vmath.o)
 $(bin_dir)/read.test: $(addprefix $(obj_dir)/, test_read.o read.o)
@@ -58,7 +58,7 @@ $(bin_dir)/vmath.test: $(addprefix $(obj_dir)/, test_vmath.o libma.o rnd.o vmath
 $(obj_dir)/dataset.o: dataset.h restrict.h read.h scalar.h libma.h
 $(obj_dir)/bw.o: bw.h restrict.h scalar.h vmath.h
 $(obj_dir)/fwbw.o: fwbw.h dataset.h libma.h read.h restrict.h scalar.h stats.h vmath.h
-$(obj_dir)/hmm.o: hmm.h libma.o
+$(obj_dir)/hmm.o: hmm.h libma.h rnd.h vmath.h
 $(obj_dir)/libma.o: libma.h scalar.h
 $(obj_dir)/rnd.o: rnd.h restrict.h scalar.h
 $(obj_dir)/read.o: read.h scalar.h
