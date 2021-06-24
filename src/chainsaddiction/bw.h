@@ -25,12 +25,11 @@ PoisHmm_BaumWelch (
     PoisHmm *restrict hmm);
 
 
-void ph_bw_update_lambda (
+void ph_bw_m_step_lambda (
     const DataSet *const restrict inp,
-    const HmmProbs *const restrict probs,
-    const scalar llh,
-    scalar *restrict buffer,
-    scalar *restrict lambda_update);
+    const scalar *const restrict lstate_pr,
+    const size_t m_states,
+    scalar *restrict out);
 
 
 #endif  /* BW_H */

@@ -1,17 +1,13 @@
 #include <string.h>
 #include "bw.h"
 
-void ph_bw_update_lambda (
+void ph_bw_m_step_lambda (
     const DataSet *const restrict inp,
-    const HmmProbs *const restrict probs,
-    const scalar llh,
-    scalar *restrict buffer,
-    scalar *restrict lambda_update)
+    const scalar *const restrict lstate_pr,
+    const size_t m_states,
+    scalar *restrict out)
 {
-    mm_add_s (probs->lalpha, probs->lbeta, probs->m_states * probs->n_obs,
-            llh, buffer);
-    m_lse_centroid_rows (buffer, inp->data, inp->size, probs->m_states,
-            lambda_update);
+    m_lse_centroid_rows (lstate_pr, inp->data, inp->size, m_states, out);
 }
 
 
