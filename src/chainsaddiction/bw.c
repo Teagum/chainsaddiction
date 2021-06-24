@@ -33,7 +33,13 @@ ph_bw_m_step (
     const DataSet *const restrict inp,
     const HmmProbs *const restrict probs,
     const scalar llh)
-{}
+{
+    size_t n_elem = probs->m_states * probs->n_obs;
+    scalar *lstate_pr = MA_SCALAR_EMPTY (n_elem);
+
+    /* the fourth argument should probably be `-llh'. */
+    mm_add_s (probs->lalpha, probs->lbeta, n_elem, llh, lstate_pr);
+}
 
 
 
