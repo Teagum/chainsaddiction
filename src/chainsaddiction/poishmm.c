@@ -1,4 +1,4 @@
-#include "hmm.h"
+#include "poishmm.h"
 
 
 void

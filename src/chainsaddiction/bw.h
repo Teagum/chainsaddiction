@@ -7,7 +7,7 @@
 #include "restrict.h"
 #include "scalar.h"
 #include "fwbw.h"
-#include "hmm.h"
+#include "poishmm.h"
 #include "dataset.h"
 
 
