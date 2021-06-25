@@ -22,12 +22,6 @@ ph_bw_m_step (
     const scalar llh);
 
 
-void
-PoisHmm_BaumWelch (
-    const DataSet *const restrict inp,
-    PoisHmm *restrict hmm);
-
-
 void ph_bw_m_step_lambda (
     const DataSet *const restrict inp,
     const scalar *const restrict lstate_pr,

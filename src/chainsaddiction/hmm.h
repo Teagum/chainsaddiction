@@ -54,6 +54,17 @@ typedef struct {
 } PoisHmm;
 
 
+void
+PoisHmm_BaumWelch (
+    const DataSet *const restrict inp,
+    PoisHmm *restrict hmm);
+
+
+void
+PoisHmm_LogStateProbs (
+    const HmmProbs *const restrict probs,
+    const scalar llh,
+    scalar *out);
 
 
 /** Allocate memory for `HmmProbs'. The memory is guaranteed to be initialized

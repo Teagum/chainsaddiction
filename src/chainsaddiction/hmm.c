@@ -1,6 +1,25 @@
 #include "hmm.h"
 
 
+void
+PoisHmm_BaumWelch (
+    const DataSet *const restrict inp,
+    PoisHmm *const restrict phmm)
+{}
+
+
+void
+PoisHmm_LogStateProbs (
+    const HmmProbs *const restrict probs,
+    const scalar llh,
+    scalar *out)
+{
+    size_t n_elem = probs->m_states * probs->n_obs;
+    /* the fourth argument should probably be `-llh'. */
+    mm_add_s (probs->lalpha, probs->lbeta, n_elem, llh, out);
+}
+
+
 HmmProbs *
 ca_ph_NewProbs (
     const size_t n_obs,
