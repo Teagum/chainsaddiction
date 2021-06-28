@@ -3,7 +3,7 @@
 
 #include <Python.h>
 #include <numpy/arrayobject.h>
-#include "hmm.h"
+#include "poishmm.h"
 #include "em.h"
 #include "fwbw.h"
 #include "scalar.h"

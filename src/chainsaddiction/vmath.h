@@ -196,15 +196,23 @@ vs_lse_centroid (
 #define v_lse_centroid(vt, weights, n_elem) \
     vs_lse_centroid (vt, 1, weights, 1, n_elem)
 
+
 /** Compute maximum element of vector.
  *
  * \param _vt
  * \param n_elem
  */
 extern scalar
-v_max (
-    const scalar *restrict _vt,
-    const size_t n_elem);
+v_max (const scalar *restrict _vt, const size_t n_elem);
+
+
+/** Compute softmax o `buffer' inplace.
+ *
+ * \param buffer    Pointer to object.
+ * \param n_elem    Number of elements in object.
+ */
+extern void
+vi_softmax (scalar *buffer, size_t n_elem);
 
 
 /** Compute the sum of the vector elements.

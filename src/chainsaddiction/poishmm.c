@@ -1,9 +1,27 @@
-#include <stdio.h>
-#include "hmm.h"
+#include "poishmm.h"
+
+
+void
+PoisHmm_BaumWelch (
+    const DataSet *const restrict inp,
+    PoisHmm *const restrict phmm)
+{}
+
+
+void
+PoisHmm_LogStateProbs (
+    const HmmProbs *const restrict probs,
+    const scalar llh,
+    scalar *out)
+{
+    size_t n_elem = probs->m_states * probs->n_obs;
+    /* the fourth argument should probably be `-llh'. */
+    mm_add_s (probs->lalpha, probs->lbeta, n_elem, llh, out);
+}
 
 
 HmmProbs *
-ca_ph_NewProbs (
+PoisHmm_NewProbs (
     const size_t n_obs,
     const size_t m_states)
 {
@@ -40,7 +58,7 @@ ca_ph_NewProbs (
 }
 
 
-PoisParams *ca_ph_NewParams (size_t m_states)
+PoisParams *PoisHmm_NewParams (size_t m_states)
 {
     PoisParams *params = malloc (sizeof *params);
     if (params == NULL)
@@ -58,7 +76,7 @@ PoisParams *ca_ph_NewParams (size_t m_states)
 }
 
 
-PoisHmm *ca_ph_NewHmm (const size_t n_obs, const size_t m_states)
+PoisHmm *PoisHmm_New (const size_t n_obs, const size_t m_states)
 {
     PoisHmm *phmm = malloc (sizeof *phmm);
     if (phmm == NULL)
@@ -67,9 +85,9 @@ PoisHmm *ca_ph_NewHmm (const size_t n_obs, const size_t m_states)
         exit (1);
     }
 
-    phmm->init   = ca_ph_NewParams (m_states);
-    phmm->params = ca_ph_NewParams (m_states);
-    phmm->probs  = ca_ph_NewProbs (n_obs, m_states);
+    phmm->init   = PoisHmm_NewParams (m_states);
+    phmm->params = PoisHmm_NewParams (m_states);
+    phmm->probs  = PoisHmm_NewProbs (n_obs, m_states);
 
     phmm->n_obs    = n_obs;
     phmm->m_states = m_states;
@@ -105,7 +123,7 @@ PoisParams *PoisHmm_ParamsFromFile (const char *fname)
         goto error;
     }
 
-    params = ca_ph_NewParams (m_states);
+    params = PoisHmm_NewParams (m_states);
     if (params == 0)
     {
         fprintf (stderr, "Could not allocate Params.\n");
@@ -147,33 +165,123 @@ PoisParams *PoisHmm_ParamsFromFile (const char *fname)
 
 error:
     fclose (file);
-    ca_ph_FREE_PARAMS (params);
+    PoisHmm_DeleteParams (params);
     return NULL;
 }
 
-void PoisHmm_PrintParams (PoisParams *params, size_t m_states)
+
+void PoisHmm_PrintParams (const PoisHmm *const restrict phmm)
 {
-    fprintf (stdout, "\nStates: %zu\n\n", m_states);
+    enum {linewidth=100};
+    char border[] = "====================";
+    char sep[] = "--------------------";
 
-    fprintf (stdout, "Lambda:\n");
+    size_t m_states = phmm->m_states;
+    PoisParams *params = phmm->params;
+
+    printf ("\n\n*%s%s%s*\n\n", border, border, border);
+    printf ("%25s%10zu\n", "m-states:", m_states);
+    printf ("%25s%10.5Lf\n", "-log likelihood:", phmm->llh);
+    printf ("%25s%10.5Lf\n", "AIC:", phmm->aic);
+    printf ("%25s%10.5Lf\n", "BIC:", phmm->bic);
+    printf ("\n\n%s%s%s\n\n", sep, sep, sep);
+
+    printf ("%25s", "State:");
     for (size_t i = 0; i < m_states; i++)
-        fprintf (stdout, "%Lf\t", params->lambda[i]);
+        printf ("%10zu", i+1);
+    puts ("");
+    printf ("%25s", "State dependent means:");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10.5Lf", params->lambda[i]);
+    puts ("");
+    printf ("%25s", "Start distribution:");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10.5Lf", params->delta[i]);
 
-    fprintf (stdout, "\n\nGamma:\n");
+    printf ("\n\n%s%s%s\n\n", sep, sep, sep);
+
+    printf ("%25s", "Transition probability matrix:\n");
+    printf ("%25s", " ");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10zu", i+1);
+    puts ("");
     for (size_t i = 0; i < m_states; i++)
     {
+        printf ("%25zu", i+1);
         for (size_t j = 0; j < m_states; j++)
         {
-            fprintf (stdout, "%20.19Lf\t", params->gamma[i*m_states+j]);
+            printf ("%10.5Lf", params->gamma[i*m_states+j]);
         }
-        fprintf (stdout, "\n");
+        puts ("");
     }
+    printf ("\n*%s%s%s*\n\n", border, border, border);
+}
 
-    fprintf (stdout, "\nDelta:\n");
+
+void
+PoisHmm_Init (
+    const PoisHmm *const restrict phmm,
+    const scalar *const restrict lambda,
+    const scalar *const restrict gamma,
+    const scalar *const restrict delta)
+{
+    size_t m_states = phmm->m_states;
+    size_t n_elem_gamma = m_states * m_states;
+    size_t v_size = m_states * sizeof (scalar);
+    size_t m_size = m_states * v_size;
+
+#ifdef __STDC_LIB_EXT1__
+    errno_t err = 0;
+    err = memcpy_s (phmm->init->lambda, v_size, lambda, v_size);
+    if (err != 0) {
+        perror ("Failed to copy initial values of `lambda'.");
+        exit (1)
+    }
+    err = memcpy_s (phmm->init->gamma, m_size, gamma, m_size);
+    if (err != 0) {
+        perror ("Failed to copy initial values of `gamma'.");
+        exit (1)
+    }
+    err = memcpy_s (phmm->init->delta, v_size, delta, v_size);
+    if (err != 0) {
+        perror ("Failed to copy initial values of `delta'.");
+        exit (1)
+    }
+#else
+    memcpy (phmm->init->lambda, lambda, v_size);
+    memcpy (phmm->init->gamma, gamma, m_size);
+    memcpy (phmm->init->delta, delta, v_size);
+#endif
+
+    v_log (phmm->init->lambda, phmm->m_states, phmm->params->lambda);
+    v_log (phmm->init->gamma, n_elem_gamma, phmm->params->gamma);
+    v_log (phmm->init->delta, phmm->m_states, phmm->params->delta);
+}
+
+
+void
+ca_ph_InitRandom (PoisHmm *const restrict phmm)
+{
+    size_t m_states = phmm->m_states;
+    size_t n_elem = m_states * m_states;
+
+    v_rnd (m_states, phmm->init->lambda);
     for (size_t i = 0; i < m_states; i++)
-        fprintf (stdout, "%Lf\t", params->delta[i]);
+    {
+        phmm->init->lambda[i] += (scalar) rnd_int (0, 100);
+    }
+    v_rnd (n_elem, phmm->init->gamma);
+    v_rnd (m_states, phmm->init->delta);
 
-    fprintf (stdout, "\n");
+    for (size_t i = 0; i < m_states; i++)
+    {
+        vi_softmax (phmm->init->gamma+i*m_states, m_states);
+    }
+    vi_softmax (phmm->init->delta, m_states);
+
+    v_log (phmm->init->lambda, m_states, phmm->params->lambda);
+    v_log (phmm->init->gamma, n_elem, phmm->params->gamma);
+    v_log (phmm->init->delta, m_states, phmm->params->delta);
 }
 
 
@@ -200,13 +308,13 @@ PoisHmm_FromData (size_t m_states,
     ph->tol      = tol;
     ph->n_iter   = 0L;
 
-    ph->init   = ca_ph_NewParams (m_states);
-    ph->params = ca_ph_NewParams (m_states);
+    ph->init   = PoisHmm_NewParams (m_states);
+    ph->params = PoisHmm_NewParams (m_states);
     if (ph->init == NULL || ph->params == NULL)
     {
         fprintf (stderr, "Could not allocate parameter vectors.\n");
-        ca_ph_FREE_PARAMS (ph->init);
-        ca_ph_FREE_PARAMS (ph->params);
+        PoisHmm_DeleteParams (ph->init);
+        PoisHmm_DeleteParams (ph->params);
         return NULL;
     }
 
@@ -235,7 +343,7 @@ compute_bic(scalar nll, size_t m, size_t n)
 }
 
 scalar
-ca_log_likelihood (scalar *lalpha, size_t n_obs, size_t m_states)
+PoisHmm_LogLikelihood (scalar *lalpha, size_t n_obs, size_t m_states)
 {
     const scalar *restrict last_row = lalpha + ((n_obs-1)*m_states);
     return v_lse (last_row, m_states);

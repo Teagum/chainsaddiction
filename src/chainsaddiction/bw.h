@@ -5,32 +5,28 @@
 #include <stdio.h>
 #include <math.h>
 #include "restrict.h"
-#include "fwbw.h"
 #include "scalar.h"
-#include "hmm.h"
+#include "fwbw.h"
+#include "poishmm.h"
 #include "dataset.h"
 
-void
-ca_bw_pois_e_step (
-    const DataSet *restrict inp,
-    PoisHmm *restrict hmm,
-    HmmProbs *restrict probs);
 
 void
-ca_bw_pois_m_step ();
+ph_bw_e_step (const DataSet *const restrict inp, PoisHmm *const restrict phmm);
+
 
 void
-ca_bw_pois (
-    const DataSet *restrict inp,
-    PoisHmm *restrict hmm);
+ph_bw_m_step (
+    const DataSet *const restrict inp,
+    const HmmProbs *const restrict probs,
+    const scalar llh);
 
-void update_lambda (
-    const DataSet *restrict inp,
-    const scalar *restrict lalpha,
-    const scalar *restrict lbeta,
+
+void ph_bw_m_step_lambda (
+    const DataSet *const restrict inp,
+    const scalar *const restrict lstate_pr,
     const size_t m_states,
-    const scalar llh,
-    scalar *buffer,
-    scalar *lambda_update);
+    scalar *restrict out);
+
 
 #endif  /* BW_H */
