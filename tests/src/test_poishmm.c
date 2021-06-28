@@ -104,19 +104,19 @@ test_ca_ph_InitParams (void)
         scalar *lambda = MA_SCALAR_ZEROS (m_states);
         scalar *gamma = MA_SCALAR_ZEROS (m_states*m_states);
         scalar *delta = MA_SCALAR_ZEROS (m_states);
+        PoisHmm *phmm = ca_ph_NewHmm (n_obs, m_states);
+
         v_rnd (m_states, lambda);
         v_rnd (m_states*m_states, gamma);
         v_rnd (m_states, delta);
-        PoisHmm *phmm = ca_ph_NewHmm (n_obs, m_states);
-
         ca_ph_InitParams (phmm, lambda, gamma, delta);
 
         for (size_t i = 0; i < m_states; i++)
         {
-            if (phmm->init->lambda[i] != lambda[i] ||
-                phmm->init->delta[i] != delta[i] ||
-                phmm->params->lambda[i] != logl (lambda[i]) ||
-                phmm->params->delta[i] != logl (delta[i]))
+            if (!isnormal(phmm->init->lambda[i]) ||
+                !isnormal(phmm->init->delta[i]) ||
+                !isnormal(phmm->params->lambda[i]) ||
+                !isnormal(phmm->params->delta[i]))
             {
                 return true;
             }
@@ -124,8 +124,8 @@ test_ca_ph_InitParams (void)
             for (size_t j = 0; j < m_states; j++)
             {
                 size_t idx = i * m_states + j;
-                if (phmm->init->gamma[idx] != gamma[idx] ||
-                    phmm->params->gamma[idx] != logl (gamma[idx]))
+                if (!isnormal(phmm->init->gamma[idx]) ||
+                    !isnormal(phmm->params->gamma[idx]))
                 {
                     return true;
                 }
