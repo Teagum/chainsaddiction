@@ -7,7 +7,7 @@ main (void)
     SETUP;
 
     RUN_TEST (test__PoisHmm_NewProbs);
-    RUN_TEST (test_ca_ph_NewParams);
+    RUN_TEST (test__PoisHmm_NewParams);
     RUN_TEST (test_ca_ph_NewHmm);
     RUN_TEST (test_ca_ph_InitParams);
     RUN_TEST (test_ca_log_likelihood);
@@ -45,14 +45,14 @@ test__PoisHmm_NewProbs (void)
 
 
 bool
-test_ca_ph_NewParams (void)
+test__PoisHmm_NewParams (void)
 {
     enum { n_repeat_test = 10 };
 
     for (size_t n = 0; n < n_repeat_test; n++)
     {
         size_t m_states = (size_t) rnd_int (1, 100);
-        PoisParams *params = ca_ph_NewParams (m_states);
+        PoisParams *params = PoisHmm_NewParams (m_states);
 
         for (size_t i=0; i<m_states; i++) {
             if (fpclassify (params->lambda[i]) != FP_ZERO ||

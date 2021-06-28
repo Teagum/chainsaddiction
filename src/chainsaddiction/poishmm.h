@@ -120,7 +120,7 @@ ca_ph_NewHmm (const size_t n_obs, const size_t m_states);
  * \return  Pointer to `PoisParams' or `NULL' if allocation fails.
  */
 PoisParams*
-ca_ph_NewParams (size_t m_states);
+PoisHmm_NewParams (size_t m_states);
 
 
 /** Deallocate `PoisParams' object.

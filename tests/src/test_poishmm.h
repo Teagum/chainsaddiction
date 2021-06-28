@@ -7,7 +7,7 @@
 #include "poishmm.h"
 
 bool test__PoisHmm_NewProbs (void);
-bool test_ca_ph_NewParams (void);
+bool test__PoisHmm_NewParams (void);
 bool test_ca_ph_NewHmm (void);
 bool test_ca_ph_InitParams (void);
 bool test_ca_log_likelihood (void);

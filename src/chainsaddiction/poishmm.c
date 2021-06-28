@@ -58,7 +58,7 @@ PoisHmm_NewProbs (
 }
 
 
-PoisParams *ca_ph_NewParams (size_t m_states)
+PoisParams *PoisHmm_NewParams (size_t m_states)
 {
     PoisParams *params = malloc (sizeof *params);
     if (params == NULL)
@@ -85,8 +85,8 @@ PoisHmm *ca_ph_NewHmm (const size_t n_obs, const size_t m_states)
         exit (1);
     }
 
-    phmm->init   = ca_ph_NewParams (m_states);
-    phmm->params = ca_ph_NewParams (m_states);
+    phmm->init   = PoisHmm_NewParams (m_states);
+    phmm->params = PoisHmm_NewParams (m_states);
     phmm->probs  = PoisHmm_NewProbs (n_obs, m_states);
 
     phmm->n_obs    = n_obs;
@@ -123,7 +123,7 @@ PoisParams *PoisHmm_ParamsFromFile (const char *fname)
         goto error;
     }
 
-    params = ca_ph_NewParams (m_states);
+    params = PoisHmm_NewParams (m_states);
     if (params == 0)
     {
         fprintf (stderr, "Could not allocate Params.\n");
@@ -308,8 +308,8 @@ PoisHmm_FromData (size_t m_states,
     ph->tol      = tol;
     ph->n_iter   = 0L;
 
-    ph->init   = ca_ph_NewParams (m_states);
-    ph->params = ca_ph_NewParams (m_states);
+    ph->init   = PoisHmm_NewParams (m_states);
+    ph->params = PoisHmm_NewParams (m_states);
     if (ph->init == NULL || ph->params == NULL)
     {
         fprintf (stderr, "Could not allocate parameter vectors.\n");
