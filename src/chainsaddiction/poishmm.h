@@ -136,7 +136,7 @@ PoisHmm_NewParams (size_t m_states);
 
 
 void
-ca_ph_InitParams (
+PoisHmm_Init (
     const PoisHmm *const restrict phmm,
     const scalar *const restrict lambda,
     const scalar *const restrict gamma,

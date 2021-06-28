@@ -9,7 +9,7 @@ main (void)
     RUN_TEST (test__PoisHmm_NewProbs);
     RUN_TEST (test__PoisHmm_NewParams);
     RUN_TEST (test__PoisHmm_New);
-    RUN_TEST (test_ca_ph_InitParams);
+    RUN_TEST (test__PoisHmm_Init);
     RUN_TEST (test_ca_log_likelihood);
 
     EVALUATE;
@@ -94,7 +94,7 @@ test__PoisHmm_New (void)
 
 
 bool
-test_ca_ph_InitParams (void)
+test__PoisHmm_Init (void)
 {
     enum { n_repeat_test = 100 };
     for (size_t n = 0; n < n_repeat_test; n++)
@@ -109,7 +109,7 @@ test_ca_ph_InitParams (void)
         v_rnd (m_states, lambda);
         v_rnd (m_states*m_states, gamma);
         v_rnd (m_states, delta);
-        ca_ph_InitParams (phmm, lambda, gamma, delta);
+        PoisHmm_Init (phmm, lambda, gamma, delta);
 
         for (size_t i = 0; i < m_states; i++)
         {

@@ -219,7 +219,7 @@ void PoisHmm_PrintParams (const PoisHmm *const restrict phmm)
 
 
 void
-ca_ph_InitParams (
+PoisHmm_Init (
     const PoisHmm *const restrict phmm,
     const scalar *const restrict lambda,
     const scalar *const restrict gamma,
