@@ -105,8 +105,8 @@ ca_ph_NewHmm (const size_t n_obs, const size_t m_states);
  * \param phmm    Pointer to `PoisHmm' object.
  */
 #define ca_ph_FREE_HMM(phmm) do {           \
-    ca_ph_FREE_PARAMS (phmm->init);         \
-    ca_ph_FREE_PARAMS (phmm->params);       \
+    PoisHmm_DeleteParams (phmm->init);      \
+    PoisHmm_DeleteParams (phmm->params);    \
     PoisHmm_DeleteProbs (phmm->probs);      \
     MA_FREE (phmm);                         \
 } while (false)
@@ -127,10 +127,11 @@ PoisHmm_NewParams (size_t m_states);
  *
  * \param params    Pointer to `PoisParams' object.
  */
-#define ca_ph_FREE_PARAMS(params) do {    \
-    MA_FREE (params->lambda);             \
-    MA_FREE (params->gamma);              \
-    MA_FREE (params->delta);              \
+#define PoisHmm_DeleteParams(params) do {   \
+    MA_FREE (params->lambda);               \
+    MA_FREE (params->gamma);                \
+    MA_FREE (params->delta);                \
+    MA_FREE (params);                       \
 } while (false)
 
 

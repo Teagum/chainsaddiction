@@ -58,7 +58,7 @@ test__PoisHmm_NewParams (void)
             if (fpclassify (params->lambda[i]) != FP_ZERO ||
                 fpclassify (params->delta[i]) != FP_ZERO)
             {
-                ca_ph_FREE_PARAMS (params);
+                PoisHmm_DeleteParams (params);
                 return true;
             }
         }
@@ -66,11 +66,11 @@ test__PoisHmm_NewParams (void)
         for (size_t i=0; i<m_states*m_states; i++) {
             if (fpclassify (params->gamma[i]) != FP_ZERO)
             {
-                ca_ph_FREE_PARAMS (params);
+                PoisHmm_DeleteParams (params);
                 return true;
             }
         }
-        ca_ph_FREE_PARAMS (params);
+        PoisHmm_DeleteParams (params);
     }
     return false;
 }

@@ -165,7 +165,7 @@ PoisParams *PoisHmm_ParamsFromFile (const char *fname)
 
 error:
     fclose (file);
-    ca_ph_FREE_PARAMS (params);
+    PoisHmm_DeleteParams (params);
     return NULL;
 }
 
@@ -313,8 +313,8 @@ PoisHmm_FromData (size_t m_states,
     if (ph->init == NULL || ph->params == NULL)
     {
         fprintf (stderr, "Could not allocate parameter vectors.\n");
-        ca_ph_FREE_PARAMS (ph->init);
-        ca_ph_FREE_PARAMS (ph->params);
+        PoisHmm_DeleteParams (ph->init);
+        PoisHmm_DeleteParams (ph->params);
         return NULL;
     }
 
