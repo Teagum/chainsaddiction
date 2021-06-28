@@ -54,6 +54,17 @@ typedef struct {
 } PoisHmm;
 
 
+void
+PoisHmm_BaumWelch (
+    const DataSet *const restrict inp,
+    PoisHmm *restrict hmm);
+
+
+void
+PoisHmm_LogStateProbs (
+    const HmmProbs *const restrict probs,
+    const scalar llh,
+    scalar *out);
 
 
 /** Allocate memory for `HmmProbs'. The memory is guaranteed to be initialized
@@ -65,18 +76,18 @@ typedef struct {
  * \return  Pointer to HmmProbs object if allocation did not fail; else NULL.
  */
 HmmProbs *
-ca_ph_NewProbs (const size_t n_obs, const size_t m_states);
+PoisHmm_NewProbs (const size_t n_obs, const size_t m_states);
 
 
 /** Deallocate HmmProbs
  *
  * \param probs    - Pointer to HmmProbs object.
  */
-#define ca_ph_FREE_PROBS(probs) do {     \
-    MA_FREE (probs->lsd);                \
-    MA_FREE (probs->lalpha);             \
-    MA_FREE (probs->lbeta);              \
-    MA_FREE (probs);                     \
+#define PoisHmm_DeleteProbs(probs) do {     \
+    MA_FREE (probs->lsd);                   \
+    MA_FREE (probs->lalpha);                \
+    MA_FREE (probs->lbeta);                 \
+    MA_FREE (probs);                        \
 } while (false)
 
 
@@ -86,18 +97,18 @@ ca_ph_NewProbs (const size_t n_obs, const size_t m_states);
  * \param m_states    Number of states.
  */
 PoisHmm *
-ca_ph_NewHmm (const size_t n_obs, const size_t m_states);
+PoisHmm_New (const size_t n_obs, const size_t m_states);
 
 
 /** Deallocate `PoisHmm' object.
  *
  * \param phmm    Pointer to `PoisHmm' object.
  */
-#define ca_ph_FREE_HMM(phmm) do {        \
-    ca_ph_FREE_PARAMS (phmm->init);      \
-    ca_ph_FREE_PARAMS (phmm->params);    \
-    ca_ph_FREE_PROBS (phmm->probs);      \
-    MA_FREE (phmm);                      \
+#define PoisHmm_Delete(phmm) do {           \
+    PoisHmm_DeleteParams (phmm->init);      \
+    PoisHmm_DeleteParams (phmm->params);    \
+    PoisHmm_DeleteProbs (phmm->probs);      \
+    MA_FREE (phmm);                         \
 } while (false)
 
 
@@ -109,22 +120,23 @@ ca_ph_NewHmm (const size_t n_obs, const size_t m_states);
  * \return  Pointer to `PoisParams' or `NULL' if allocation fails.
  */
 PoisParams*
-ca_ph_NewParams (size_t m_states);
+PoisHmm_NewParams (size_t m_states);
 
 
 /** Deallocate `PoisParams' object.
  *
  * \param params    Pointer to `PoisParams' object.
  */
-#define ca_ph_FREE_PARAMS(params) do {    \
-    MA_FREE (params->lambda);             \
-    MA_FREE (params->gamma);              \
-    MA_FREE (params->delta);              \
+#define PoisHmm_DeleteParams(params) do {   \
+    MA_FREE (params->lambda);               \
+    MA_FREE (params->gamma);                \
+    MA_FREE (params->delta);                \
+    MA_FREE (params);                       \
 } while (false)
 
 
 void
-ca_ph_InitParams (
+PoisHmm_Init (
     const PoisHmm *const restrict phmm,
     const scalar *const restrict lambda,
     const scalar *const restrict gamma,
@@ -170,7 +182,7 @@ compute_bic(scalar nll, size_t m, size_t n);
  *
  * \return  Model log-likelihood.
  */
-scalar ca_log_likelihood (scalar *lalpha, size_t n_obs, size_t m_states);
+scalar PoisHmm_LogLikelihood (scalar *lalpha, size_t n_obs, size_t m_states);
 
 
 #endif  /* HMM_H */

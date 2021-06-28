@@ -7,7 +7,7 @@
 #include "restrict.h"
 #include "scalar.h"
 #include "fwbw.h"
-#include "hmm.h"
+#include "poishmm.h"
 #include "dataset.h"
 
 
@@ -20,12 +20,6 @@ ph_bw_m_step (
     const DataSet *const restrict inp,
     const HmmProbs *const restrict probs,
     const scalar llh);
-
-
-void
-PoisHmm_BaumWelch (
-    const DataSet *const restrict inp,
-    PoisHmm *restrict hmm);
 
 
 void ph_bw_m_step_lambda (

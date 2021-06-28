@@ -1,15 +1,6 @@
 #include <string.h>
 #include "bw.h"
 
-void ph_bw_m_step_lambda (
-    const DataSet *const restrict inp,
-    const scalar *const restrict lstate_pr,
-    const size_t m_states,
-    scalar *restrict out)
-{
-    m_lse_centroid_rows (lstate_pr, inp->data, inp->size, m_states, out);
-}
-
 
 void
 ph_bw_e_step (const DataSet *const restrict inp, PoisHmm *const restrict phmm)
@@ -36,17 +27,15 @@ ph_bw_m_step (
 {
     size_t n_elem = probs->m_states * probs->n_obs;
     scalar *lstate_pr = MA_SCALAR_EMPTY (n_elem);
-
-    /* the fourth argument should probably be `-llh'. */
-    mm_add_s (probs->lalpha, probs->lbeta, n_elem, llh, lstate_pr);
+    PoisHmm_LogStateProbs (probs, llh, lstate_pr);
 }
 
 
-
-void
-PoisHmm_BaumWelch (
+void ph_bw_m_step_lambda (
     const DataSet *const restrict inp,
-    PoisHmm *const restrict phmm)
-{}
-
-
+    const scalar *const restrict lstate_pr,
+    const size_t m_states,
+    scalar *restrict out)
+{
+    m_lse_centroid_rows (lstate_pr, inp->data, inp->size, m_states, out);
+}
