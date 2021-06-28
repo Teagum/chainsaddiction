@@ -343,7 +343,7 @@ compute_bic(scalar nll, size_t m, size_t n)
 }
 
 scalar
-ca_log_likelihood (scalar *lalpha, size_t n_obs, size_t m_states)
+PoisHmm_LogLikelihood (scalar *lalpha, size_t n_obs, size_t m_states)
 {
     const scalar *restrict last_row = lalpha + ((n_obs-1)*m_states);
     return v_lse (last_row, m_states);

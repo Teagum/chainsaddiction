@@ -182,7 +182,7 @@ compute_bic(scalar nll, size_t m, size_t n);
  *
  * \return  Model log-likelihood.
  */
-scalar ca_log_likelihood (scalar *lalpha, size_t n_obs, size_t m_states);
+scalar PoisHmm_LogLikelihood (scalar *lalpha, size_t n_obs, size_t m_states);
 
 
 #endif  /* HMM_H */

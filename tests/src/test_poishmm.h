@@ -10,6 +10,6 @@ bool test__PoisHmm_NewProbs (void);
 bool test__PoisHmm_NewParams (void);
 bool test__PoisHmm_New (void);
 bool test__PoisHmm_Init (void);
-bool test_ca_log_likelihood (void);
+bool test__PoisHmm_LogLikelihood (void);
 
 #endif  /* TEST_HMM_H */

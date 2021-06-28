@@ -10,7 +10,7 @@ main (void)
     RUN_TEST (test__PoisHmm_NewParams);
     RUN_TEST (test__PoisHmm_New);
     RUN_TEST (test__PoisHmm_Init);
-    RUN_TEST (test_ca_log_likelihood);
+    RUN_TEST (test__PoisHmm_LogLikelihood);
 
     EVALUATE;
 }
@@ -142,10 +142,10 @@ test__PoisHmm_Init (void)
 
 
 bool
-test_ca_log_likelihood (void)
+test__PoisHmm_LogLikelihood (void)
 {
     const scalar expected = 11.4076059644443803L;
     scalar a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8 ,9, 10, 11};
-    scalar res = ca_log_likelihood (a, 4, 3);
+    scalar res = PoisHmm_LogLikelihood (a, 4, 3);
     return !ASSERT_EQUAL (res, expected);
 }
