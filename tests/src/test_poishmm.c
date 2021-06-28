@@ -8,7 +8,7 @@ main (void)
 
     RUN_TEST (test__PoisHmm_NewProbs);
     RUN_TEST (test__PoisHmm_NewParams);
-    RUN_TEST (test_ca_ph_NewHmm);
+    RUN_TEST (test__PoisHmm_New);
     RUN_TEST (test_ca_ph_InitParams);
     RUN_TEST (test_ca_log_likelihood);
 
@@ -77,7 +77,7 @@ test__PoisHmm_NewParams (void)
 
 
 bool
-test_ca_ph_NewHmm (void)
+test__PoisHmm_New (void)
 {
     enum { n_repeat_test = 100 };
 
@@ -85,7 +85,7 @@ test_ca_ph_NewHmm (void)
     {
         size_t n_obs = rnd_int (1, 1000);
         size_t m_states = rnd_int (1, 200);
-        PoisHmm *phmm = ca_ph_NewHmm (n_obs, m_states);
+        PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
         ca_ph_FREE_HMM (phmm);
     }
@@ -104,7 +104,7 @@ test_ca_ph_InitParams (void)
         scalar *lambda = MA_SCALAR_ZEROS (m_states);
         scalar *gamma = MA_SCALAR_ZEROS (m_states*m_states);
         scalar *delta = MA_SCALAR_ZEROS (m_states);
-        PoisHmm *phmm = ca_ph_NewHmm (n_obs, m_states);
+        PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
         v_rnd (m_states, lambda);
         v_rnd (m_states*m_states, gamma);

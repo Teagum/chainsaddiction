@@ -76,7 +76,7 @@ PoisParams *PoisHmm_NewParams (size_t m_states)
 }
 
 
-PoisHmm *ca_ph_NewHmm (const size_t n_obs, const size_t m_states)
+PoisHmm *PoisHmm_New (const size_t n_obs, const size_t m_states)
 {
     PoisHmm *phmm = malloc (sizeof *phmm);
     if (phmm == NULL)

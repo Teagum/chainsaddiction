@@ -97,7 +97,7 @@ PoisHmm_NewProbs (const size_t n_obs, const size_t m_states);
  * \param m_states    Number of states.
  */
 PoisHmm *
-ca_ph_NewHmm (const size_t n_obs, const size_t m_states);
+PoisHmm_New (const size_t n_obs, const size_t m_states);
 
 
 /** Deallocate `PoisHmm' object.
