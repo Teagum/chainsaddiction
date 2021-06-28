@@ -104,7 +104,7 @@ PoisHmm_New (const size_t n_obs, const size_t m_states);
  *
  * \param phmm    Pointer to `PoisHmm' object.
  */
-#define ca_ph_FREE_HMM(phmm) do {           \
+#define PoisHmm_Delete(phmm) do {           \
     PoisHmm_DeleteParams (phmm->init);      \
     PoisHmm_DeleteParams (phmm->params);    \
     PoisHmm_DeleteProbs (phmm->probs);      \

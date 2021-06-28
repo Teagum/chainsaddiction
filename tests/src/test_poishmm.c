@@ -87,7 +87,7 @@ test__PoisHmm_New (void)
         size_t m_states = rnd_int (1, 200);
         PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
-        ca_ph_FREE_HMM (phmm);
+        PoisHmm_Delete (phmm);
     }
     return false;
 }
@@ -135,7 +135,7 @@ test_ca_ph_InitParams (void)
         MA_FREE (lambda);
         MA_FREE (gamma);
         MA_FREE (delta);
-        ca_ph_FREE_HMM (phmm);
+        PoisHmm_Delete (phmm);
     }
     return false;
 }
