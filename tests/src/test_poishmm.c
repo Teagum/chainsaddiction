@@ -1,4 +1,4 @@
-#include "test_hmm.h"
+#include "test_poishmm.h"
 
 
 int
@@ -6,7 +6,7 @@ main (void)
 {
     SETUP;
 
-    RUN_TEST (test_ca_ph_NewProbs);
+    RUN_TEST (test__PoisHmm_NewProbs);
     RUN_TEST (test_ca_ph_NewParams);
     RUN_TEST (test_ca_ph_NewHmm);
     RUN_TEST (test_ca_ph_InitParams);
@@ -17,7 +17,7 @@ main (void)
 
 
 bool
-test_ca_ph_NewProbs (void)
+test__PoisHmm_NewProbs (void)
 {
     enum { n_repeat_test = 10 };
 
@@ -27,18 +27,18 @@ test_ca_ph_NewProbs (void)
         size_t m_states = (size_t) rnd_int (1, 100);
         size_t n_elem = n_obs * m_states;
 
-        HmmProbs *probs = ca_ph_NewProbs (n_obs, m_states);
+        HmmProbs *probs = PoisHmm_NewProbs (n_obs, m_states);
         scalar *dptr[] = { probs->lsd, probs->lalpha, probs->lbeta };
 
         for (size_t i=0; i<3; i++) {
             for (size_t j=0; j<n_elem; j++) {
                 if (fpclassify (dptr[i][j]) != FP_ZERO) {
-                    ca_ph_FREE_PROBS (probs);
+                    PoisHmm_DeleteProbs (probs);
                     return true;
                 }
             }
         }
-        ca_ph_FREE_PROBS (probs);
+        PoisHmm_DeleteProbs (probs);
     }
     return false;
 }

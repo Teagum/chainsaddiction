@@ -21,7 +21,7 @@ PoisHmm_LogStateProbs (
 
 
 HmmProbs *
-ca_ph_NewProbs (
+PoisHmm_NewProbs (
     const size_t n_obs,
     const size_t m_states)
 {
@@ -87,7 +87,7 @@ PoisHmm *ca_ph_NewHmm (const size_t n_obs, const size_t m_states)
 
     phmm->init   = ca_ph_NewParams (m_states);
     phmm->params = ca_ph_NewParams (m_states);
-    phmm->probs  = ca_ph_NewProbs (n_obs, m_states);
+    phmm->probs  = PoisHmm_NewProbs (n_obs, m_states);
 
     phmm->n_obs    = n_obs;
     phmm->m_states = m_states;

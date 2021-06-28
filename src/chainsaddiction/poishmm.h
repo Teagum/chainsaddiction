@@ -76,18 +76,18 @@ PoisHmm_LogStateProbs (
  * \return  Pointer to HmmProbs object if allocation did not fail; else NULL.
  */
 HmmProbs *
-ca_ph_NewProbs (const size_t n_obs, const size_t m_states);
+PoisHmm_NewProbs (const size_t n_obs, const size_t m_states);
 
 
 /** Deallocate HmmProbs
  *
  * \param probs    - Pointer to HmmProbs object.
  */
-#define ca_ph_FREE_PROBS(probs) do {     \
-    MA_FREE (probs->lsd);                \
-    MA_FREE (probs->lalpha);             \
-    MA_FREE (probs->lbeta);              \
-    MA_FREE (probs);                     \
+#define PoisHmm_DeleteProbs(probs) do {     \
+    MA_FREE (probs->lsd);                   \
+    MA_FREE (probs->lalpha);                \
+    MA_FREE (probs->lbeta);                 \
+    MA_FREE (probs);                        \
 } while (false)
 
 
@@ -104,11 +104,11 @@ ca_ph_NewHmm (const size_t n_obs, const size_t m_states);
  *
  * \param phmm    Pointer to `PoisHmm' object.
  */
-#define ca_ph_FREE_HMM(phmm) do {        \
-    ca_ph_FREE_PARAMS (phmm->init);      \
-    ca_ph_FREE_PARAMS (phmm->params);    \
-    ca_ph_FREE_PROBS (phmm->probs);      \
-    MA_FREE (phmm);                      \
+#define ca_ph_FREE_HMM(phmm) do {           \
+    ca_ph_FREE_PARAMS (phmm->init);         \
+    ca_ph_FREE_PARAMS (phmm->params);       \
+    PoisHmm_DeleteProbs (phmm->probs);      \
+    MA_FREE (phmm);                         \
 } while (false)
 
 
