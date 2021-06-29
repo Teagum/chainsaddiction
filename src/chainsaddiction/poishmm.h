@@ -60,56 +60,26 @@ PoisHmm_BaumWelch (
     PoisHmm *restrict hmm);
 
 
+/** Estimate log-likelihood of the HMM given forward probabilities.
+ *
+ * \parma lalpha    Logarithm of the forward probabilities.
+ * \param n_obs     Number of observations in the data set.
+ * \param n_states  Number of HMM states.
+ *
+ * \return  Model log-likelihood.
+ */
+scalar
+PoisHmm_LogLikelihood (
+    scalar *lalpha,
+    size_t n_obs,
+    size_t m_states);
+
+
 void
 PoisHmm_LogStateProbs (
     const HmmProbs *const restrict probs,
     const scalar llh,
     scalar *out);
-
-
-/** Allocate memory for `HmmProbs'. The memory is guaranteed to be initialized
- * with zeros.
- *
- * \param n_obs    - Number of observations in the data set.
- * \param m_states - Number of HMM states.
- *
- * \return  Pointer to HmmProbs object if allocation did not fail; else NULL.
- */
-HmmProbs *
-PoisHmm_NewProbs (const size_t n_obs, const size_t m_states);
-
-
-/** Deallocate HmmProbs
- *
- * \param probs    - Pointer to HmmProbs object.
- */
-#define PoisHmm_DeleteProbs(probs) do {     \
-    MA_FREE (probs->lsd);                   \
-    MA_FREE (probs->lalpha);                \
-    MA_FREE (probs->lbeta);                 \
-    MA_FREE (probs);                        \
-} while (false)
-
-
-/** Allocate memory for `PoisHmm' object.
- *
- * \param n_obs       Number of observations.
- * \param m_states    Number of states.
- */
-PoisHmm *
-PoisHmm_New (const size_t n_obs, const size_t m_states);
-
-
-/** Deallocate `PoisHmm' object.
- *
- * \param phmm    Pointer to `PoisHmm' object.
- */
-#define PoisHmm_Delete(phmm) do {           \
-    PoisHmm_DeleteParams (phmm->init);      \
-    PoisHmm_DeleteParams (phmm->params);    \
-    PoisHmm_DeleteProbs (phmm->probs);      \
-    MA_FREE (phmm);                         \
-} while (false)
 
 
 /** Allocate a memory for `PoisParams' object. The memory is guarateed to be
@@ -135,6 +105,55 @@ PoisHmm_NewParams (size_t m_states);
 } while (false)
 
 
+/** Allocate memory for `HmmProbs'. The memory is guaranteed to be initialized
+ * with zeros.
+ *
+ * \param n_obs     Number of observations in the data set.
+ * \param m_states  Number of HMM states.
+ *
+ * \return  Pointer to HmmProbs object if allocation did not fail; else NULL.
+ */
+HmmProbs *
+PoisHmm_NewProbs (
+    const size_t n_obs,
+    const size_t m_states);
+
+
+/** Deallocate HmmProbs
+ *
+ * \param probs     Pointer to HmmProbs object.
+ */
+#define PoisHmm_DeleteProbs(probs) do {     \
+    MA_FREE (probs->lsd);                   \
+    MA_FREE (probs->lalpha);                \
+    MA_FREE (probs->lbeta);                 \
+    MA_FREE (probs);                        \
+} while (false)
+
+
+/** Allocate memory for `PoisHmm' object.
+ *
+ * \param n_obs     Number of observations.
+ * \param m_states  Number of states.
+ */
+PoisHmm *
+PoisHmm_New (
+    const size_t n_obs,
+    const size_t m_states);
+
+
+/** Deallocate `PoisHmm' object.
+ *
+ * \param phmm  Pointer to `PoisHmm' object.
+ */
+#define PoisHmm_Delete(phmm) do {           \
+    PoisHmm_DeleteParams (phmm->init);      \
+    PoisHmm_DeleteParams (phmm->params);    \
+    PoisHmm_DeleteProbs (phmm->probs);      \
+    MA_FREE (phmm);                         \
+} while (false)
+
+
 void
 PoisHmm_Init (
     const PoisHmm *const restrict phmm,
@@ -144,24 +163,25 @@ PoisHmm_Init (
 
 
 void
-PoisHmm_InitRandom (PoisHmm *const restrict phmm);
+PoisHmm_InitRandom (
+    PoisHmm *const restrict phmm);
 
 
 PoisParams *PoisHmm_ParamsFromFile (const char *fname);
+
 
 /** Print Poisson parameters to stdout. */
 void PoisHmm_PrintParams (const PoisHmm *const restrict phmm);
 
 
-
 /** Allocate new PoisHmm with init data from compile time constants. */
 PoisHmm *
 PoisHmm_FromData(size_t  m,
-        scalar *restrict init_lambda,
-        scalar *restrict init_gamma,
-        scalar *restrict init_delta,
-        size_t max_iter,
-        scalar tol);
+    scalar *restrict init_lambda,
+    scalar *restrict init_gamma,
+    scalar *restrict init_delta,
+    size_t max_iter,
+    scalar tol);
 
 
 /* Compute Akaine Information criterion. */
@@ -172,17 +192,6 @@ compute_aic(scalar nll, size_t m);
 /* Compute Bayes Information criterion. */
 scalar
 compute_bic(scalar nll, size_t m, size_t n);
-
-
-/** Estimate log-likelihood of the HMM given forward probabilities.
- *
- * \parma lalpha   - Logarithm of the forward probabilities.
- * \param n_obs    - Number of observations in the data set.
- * \param n_states - Number of HMM states.
- *
- * \return  Model log-likelihood.
- */
-scalar PoisHmm_LogLikelihood (scalar *lalpha, size_t n_obs, size_t m_states);
 
 
 #endif  /* HMM_H */
