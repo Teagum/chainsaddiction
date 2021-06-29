@@ -60,7 +60,11 @@ PoisHmm_BaumWelch (
     PoisHmm *restrict hmm);
 
 
-/** Estimate log-likelihood of the HMM given forward probabilities.
+void
+PoisHmm_LogLikelihood (PoisHmm *phmm);
+
+
+/** Estimate log-likelihood given forward probabilities.
  *
  * \parma lalpha    Logarithm of the forward probabilities.
  * \param n_obs     Number of observations in the data set.
@@ -69,7 +73,7 @@ PoisHmm_BaumWelch (
  * \return  Model log-likelihood.
  */
 scalar
-PoisHmm_LogLikelihood (
+compute_log_likelihood (
     scalar *lalpha,
     size_t n_obs,
     size_t m_states);
