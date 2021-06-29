@@ -56,7 +56,7 @@ $(bin_dir)/stats.test: $(addprefix $(obj_dir)/, test_stats.o stats.o)
 $(bin_dir)/vmath.test: $(addprefix $(obj_dir)/, test_vmath.o libma.o rnd.o vmath.o)
 
 $(obj_dir)/dataset.o: dataset.h restrict.h read.h scalar.h libma.h
-$(obj_dir)/bw.o: bw.h restrict.h scalar.h vmath.h
+$(obj_dir)/bw.o: bw.h poishmm.h restrict.h scalar.h vmath.h
 $(obj_dir)/fwbw.o: fwbw.h dataset.h libma.h read.h restrict.h scalar.h stats.h vmath.h
 $(obj_dir)/poishmm.o: poishmm.h libma.h rnd.h vmath.h
 $(obj_dir)/libma.o: libma.h scalar.h
@@ -66,7 +66,7 @@ $(obj_dir)/stats.o: stats.h restrict.h scalar.h
 $(obj_dir)/vmath.o: restrict.h scalar.h
 
 $(obj_dir)/test_dataset.o: test_dataset.h dataset.h restrict.h scalar.h rnd.h unittest.h
-$(obj_dir)/test_bw.o: test_bw.h dataset.h restrict.h scalar.h rnd.h unittest.h
+$(obj_dir)/test_bw.o: test_bw.h dataset.h poishmm.h restrict.h scalar.h rnd.h unittest.h
 $(obj_dir)/test_fwbw.o: test_fwbw.h fwbw.h dataset.h restrict.h scalar.h stats.h unittest.h vmath.h
 $(obj_dir)/test_read.o: test_read.h restrict.h scalar.h rnd.h unittest.h
 $(obj_dir)/test_rnd.o: test_rnd.h rnd.h unittest.h

@@ -15,7 +15,7 @@ ph_bw_e_step (const DataSet *const restrict inp, PoisHmm *const restrict phmm)
     log_fwbw (probs->lsd, params->gamma, params->delta,
         m_states, n_obs, probs->lalpha, probs->lbeta);
 
-    phmm->llh = ca_log_likelihood (probs->lalpha, n_obs, m_states);
+    phmm->llh = PoisHmm_LogLikelihood (probs->lalpha, n_obs, m_states);
 }
 
 

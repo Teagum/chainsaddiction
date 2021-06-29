@@ -2,12 +2,13 @@
 #define TEST_BW_H
 
 #include <time.h>
-#include "bw.h"
-#include "hmm.h"
 #include "unittest.h"
+#include "poishmm.h"
+#include "bw.h"
 
 
 bool
-test_ph_bw_update_lambda (void);
+test__ph_bw_m_step_lambda (void);
+
 
 #endif  /* TEST_BW_H */

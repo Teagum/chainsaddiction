@@ -260,7 +260,7 @@ PoisHmm_Init (
 
 
 void
-ca_ph_InitRandom (PoisHmm *const restrict phmm)
+PoisHmm_InitRandom (PoisHmm *const restrict phmm)
 {
     size_t m_states = phmm->m_states;
     size_t n_elem = m_states * m_states;
@@ -268,7 +268,7 @@ ca_ph_InitRandom (PoisHmm *const restrict phmm)
     v_rnd (m_states, phmm->init->lambda);
     for (size_t i = 0; i < m_states; i++)
     {
-        phmm->init->lambda[i] += (scalar) rnd_int (0, 100);
+        phmm->init->lambda[i] += (scalar) rnd_int (1, 100);
     }
     v_rnd (n_elem, phmm->init->gamma);
     v_rnd (m_states, phmm->init->delta);
