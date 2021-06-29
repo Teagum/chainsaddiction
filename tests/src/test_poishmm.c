@@ -10,6 +10,7 @@ main (void)
     RUN_TEST (test__PoisHmm_NewParams);
     RUN_TEST (test__PoisHmm_New);
     RUN_TEST (test__PoisHmm_Init);
+    RUN_TEST (test__PoisHmm_InitRandom);
     RUN_TEST (test__PoisHmm_LogLikelihood);
 
     EVALUATE;
@@ -135,6 +136,39 @@ test__PoisHmm_Init (void)
         MA_FREE (lambda);
         MA_FREE (gamma);
         MA_FREE (delta);
+
+
+bool
+test__PoisHmm_InitRandom (void)
+{
+    enum { n_repeat_test = 100 };
+    for (size_t n = 0; n < n_repeat_test; n++)
+    {
+        size_t n_obs = (size_t) rnd_int (1, 1000);
+        size_t m_states = (size_t) rnd_int (1, 30);
+        PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
+
+        PoisHmm_InitRandom (phmm);
+        for (size_t i = 0; i < m_states; i++)
+        {
+            if (!isnormal(phmm->init->lambda[i]) ||
+                !isnormal(phmm->init->delta[i]) ||
+                !isnormal(phmm->params->lambda[i]) ||
+                !isnormal(phmm->params->delta[i]))
+            {
+                return true;
+            }
+
+            for (size_t j = 0; j < m_states; j++)
+            {
+                size_t idx = i * m_states + j;
+                if (!isnormal(phmm->init->gamma[idx]) ||
+                    !isnormal(phmm->params->gamma[idx]))
+                {
+                    return true;
+                }
+            }
+        }
         PoisHmm_Delete (phmm);
     }
     return false;

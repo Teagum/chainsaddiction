@@ -144,7 +144,7 @@ PoisHmm_Init (
 
 
 void
-ca_ph_InitRandom (PoisHmm *const restrict phmm);
+PoisHmm_InitRandom (PoisHmm *const restrict phmm);
 
 
 PoisParams *PoisHmm_ParamsFromFile (const char *fname);

@@ -260,7 +260,7 @@ PoisHmm_Init (
 
 
 void
-ca_ph_InitRandom (PoisHmm *const restrict phmm)
+PoisHmm_InitRandom (PoisHmm *const restrict phmm)
 {
     size_t m_states = phmm->m_states;
     size_t n_elem = m_states * m_states;
