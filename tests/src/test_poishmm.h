@@ -2,6 +2,7 @@
 #define TEST_HMM_H
 
 #include <math.h>
+#include <string.h>
 #include "unittest.h"
 #include "rnd.h"
 #include "poishmm.h"

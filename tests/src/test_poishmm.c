@@ -178,8 +178,14 @@ test__PoisHmm_InitRandom (void)
 bool
 test__PoisHmm_LogLikelihood (void)
 {
+    const size_t n_obs = 4;
+    const size_t m_states = 3;
     const scalar expected = 11.4076059644443803L;
-    scalar a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8 ,9, 10, 11};
-    scalar res = PoisHmm_LogLikelihood (a, 4, 3);
-    return !ASSERT_EQUAL (res, expected);
+    scalar lalpha[] = {0, 1, 2, 3, 4, 5, 6, 7, 8 ,9, 10, 11};
+
+    PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
+    memcpy ((void *) phmm->probs->lalpha, (void *) lalpha, sizeof (scalar) * n_obs * m_states);
+    PoisHmm_LogLikelihood (phmm);
+
+    return !ASSERT_EQUAL (phmm->llh, expected);
 }

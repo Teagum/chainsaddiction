@@ -342,8 +342,17 @@ compute_bic(scalar nll, size_t m, size_t n)
     return 2.0L * nll + logl ((scalar) n) * (scalar) (2*m + m*m);
 }
 
+
+void
+PoisHmm_LogLikelihood (PoisHmm *phmm)
+{
+    phmm->llh = compute_log_likelihood (
+            phmm->probs->lalpha, phmm->n_obs, phmm->m_states);
+}
+
+
 scalar
-PoisHmm_LogLikelihood (scalar *lalpha, size_t n_obs, size_t m_states)
+compute_log_likelihood (scalar *lalpha, size_t n_obs, size_t m_states)
 {
     const scalar *restrict last_row = lalpha + ((n_obs-1)*m_states);
     return v_lse (last_row, m_states);
