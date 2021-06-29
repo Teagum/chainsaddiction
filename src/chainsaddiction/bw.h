@@ -12,7 +12,9 @@
 
 
 void
-ph_bw_e_step (const DataSet *const restrict inp, PoisHmm *const restrict phmm);
+ph_bw_e_step (
+    const DataSet *const restrict inp,
+    PoisHmm *const restrict phmm);
 
 
 void
