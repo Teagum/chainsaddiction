@@ -151,10 +151,10 @@ test__PoisHmm_InitRandom (void)
         PoisHmm_InitRandom (phmm);
         for (size_t i = 0; i < m_states; i++)
         {
-            if (!isnormal(phmm->init->lambda[i]) ||
-                !isnormal(phmm->init->delta[i]) ||
-                !isnormal(phmm->params->lambda[i]) ||
-                !isnormal(phmm->params->delta[i]))
+            if (!isfinite(phmm->init->lambda[i]) ||
+                !isfinite(phmm->init->delta[i]) ||
+                !isfinite(phmm->params->lambda[i]) ||
+                !isfinite(phmm->params->delta[i]))
             {
                 return true;
             }
@@ -162,8 +162,8 @@ test__PoisHmm_InitRandom (void)
             for (size_t j = 0; j < m_states; j++)
             {
                 size_t idx = i * m_states + j;
-                if (!isnormal(phmm->init->gamma[idx]) ||
-                    !isnormal(phmm->params->gamma[idx]))
+                if (!isfinite(phmm->init->gamma[idx]) ||
+                    !isfinite(phmm->params->gamma[idx]))
                 {
                     return true;
                 }
