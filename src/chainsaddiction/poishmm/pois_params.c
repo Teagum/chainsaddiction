@@ -19,7 +19,7 @@ PoisParams_SetLambda (
 inline void
 PoisParams_SetGamma (
     PoisParams *const restrict params,
-    const scalar *const restrict lambda)
+    const scalar *const restrict gamma)
 {
     size_t size = params->m_states * params->m_states * sizeof (scalar);
     memcpy (params->gamma, gamma, size);
