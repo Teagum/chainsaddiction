@@ -9,9 +9,9 @@
 
 typedef struct {
     size_t m_states;
-    scalar *restrict lambda;
-    scalar *restrict gamma;
-    scalar *restrict delta;
+    scalar *lambda;
+    scalar *gamma;
+    scalar *delta;
 } PoisParams;
 
 
