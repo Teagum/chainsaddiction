@@ -26,7 +26,7 @@ typedef struct {
 } while (false)
 
 
-void
+PoisParams *
 PoisParams_New (
     const size_t m_states);
 

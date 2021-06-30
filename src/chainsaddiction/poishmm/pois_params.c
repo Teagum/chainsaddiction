@@ -1,7 +1,7 @@
 #include "pois_params.h"
 
 
-void
+PoisParams *
 PoisParams_New (
     const size_t m_states)
 {}
