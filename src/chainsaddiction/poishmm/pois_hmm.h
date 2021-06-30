@@ -15,9 +15,6 @@
 #define DEFAULT_TOLERANCE 1e-5
 
 
-
-
-
 /** \struct PoisHmm
  * \brief HMM with Poisson-distributed states.
  */
@@ -32,8 +29,44 @@ typedef struct {
     scalar llh;
     PoisParams *init;
     PoisParams *params;
-    HmmProbs *probs;
+    PoisProbs *probs;
 } PoisHmm;
+
+
+/** Deallocate `PoisHmm' object.
+ *
+ * \param phmm  Pointer to `PoisHmm' object.
+ */
+#define PoisHmm_Delete(phmm) do {           \
+    PoisHmm_DeleteParams (phmm->init);      \
+    PoisHmm_DeleteParams (phmm->params);    \
+    PoisHmm_DeleteProbs (phmm->probs);      \
+    MA_FREE (phmm);                         \
+} while (false)
+
+
+/** Allocate memory for `PoisHmm' object.
+ *
+ * \param n_obs     Number of observations.
+ * \param m_states  Number of states.
+ */
+PoisHmm *
+PoisHmm_New (
+    const size_t n_obs,
+    const size_t m_states);
+
+
+void
+PoisHmm_Init (
+    const PoisHmm *const restrict phmm,
+    const scalar *const restrict lambda,
+    const scalar *const restrict gamma,
+    const scalar *const restrict delta);
+
+
+void
+PoisHmm_InitRandom (
+    PoisHmm *const restrict phmm);
 
 
 void
@@ -44,6 +77,12 @@ PoisHmm_BaumWelch (
 
 void
 PoisHmm_LogLikelihood (PoisHmm *phmm);
+
+
+#define PoisHmm_LogConditionalExpectation(phmm) do {                        \
+    log_cond_expect (phmm->n_obs, phmm->m_states, phmm->probs->lalpha,      \
+            phmm->probs->lbeta, phmm->llh, phmm->probs->lcexpt);            \
+} while (false)
 
 
 /** Estimate log-likelihood given forward probabilities.
@@ -61,53 +100,12 @@ compute_log_likelihood (
     size_t m_states);
 
 
-/** Allocate memory for `PoisHmm' object.
- *
- * \param n_obs     Number of observations.
- * \param m_states  Number of states.
- */
-PoisHmm *
-PoisHmm_New (
-    const size_t n_obs,
-    const size_t m_states);
-
-
-/** Deallocate `PoisHmm' object.
- *
- * \param phmm  Pointer to `PoisHmm' object.
- */
-#define PoisHmm_Delete(phmm) do {           \
-    PoisHmm_DeleteParams (phmm->init);      \
-    PoisHmm_DeleteParams (phmm->params);    \
-    PoisHmm_DeleteProbs (phmm->probs);      \
-    MA_FREE (phmm);                         \
-} while (false)
-
-
-void
-PoisHmm_Init (
-    const PoisHmm *const restrict phmm,
-    const scalar *const restrict lambda,
-    const scalar *const restrict gamma,
-    const scalar *const restrict delta);
-
-
-void
-PoisHmm_InitRandom (
-    PoisHmm *const restrict phmm);
-
-
-#define PoisHmm_LogConditionalExpectation(phmm) do {                        \
-    log_cond_expect (phmm->n_obs, phmm->m_states, phmm->probs->lalpha,      \
-            phmm->probs->lbeta, phmm->llh, phmm->probs->lcexpt);            \
-} while (false)
-
-
 PoisParams *PoisHmm_ParamsFromFile (const char *fname);
 
 
 /** Print Poisson parameters to stdout. */
-void PoisHmm_PrintParams (const PoisHmm *const restrict phmm);
+void PoisHmm_PrintParams (
+    const PoisHmm *const restrict phmm);
 
 
 /** Allocate new PoisHmm with init data from compile time constants. */
