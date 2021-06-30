@@ -119,11 +119,6 @@ PoisHmm_FromData(size_t  m,
     scalar tol);
 
 
-/* Compute Bayes Information criterion. */
-scalar
-compute_bic(scalar nll, size_t m, size_t n);
-
-
 /** Compute the conditional expectations. */
 extern void
 log_cond_expect (
