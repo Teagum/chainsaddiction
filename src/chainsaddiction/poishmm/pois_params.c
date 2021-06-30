@@ -28,5 +28,8 @@ PoisParams_SetGamma (
 
 inline void
 PoisParams_SetDelta (
-    PoisParams *const restrict params)
-{}
+    PoisParams *const restrict params,
+    const scalar *const restrict delta)
+{
+    memcpy (params->delta, delta, params->m_states * sizeof (scalar));
+}
