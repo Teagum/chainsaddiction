@@ -37,11 +37,12 @@ typedef struct {
  *
  * \param phmm  Pointer to `PoisHmm' object.
  */
-#define PoisHmm_Delete(phmm) do {           \
-    PoisHmm_DeleteParams (phmm->init);      \
-    PoisHmm_DeleteParams (phmm->params);    \
-    PoisHmm_DeleteProbs (phmm->probs);      \
-    MA_FREE (phmm);                         \
+#define PoisHmm_Delete(phmm) do {       \
+    PoisParams_Delete (phmm->init);     \
+    PoisParams_Delete (phmm->params);   \
+    PoisProbs_Delete  (phmm->probs);    \
+    free (phmm);                        \
+    phmm = NULL;                        \
 } while (false)
 
 
