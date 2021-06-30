@@ -2,6 +2,7 @@
 #define pois_params_h
 
 #include <stdlib.h>
+#include <string.h>
 #include "../restrict.h"
 #include "../scalar.h"
 
@@ -30,17 +31,20 @@ PoisParams_New (
 
 extern void
 PoisParams_SetLambda (
-    PoisParams *const restrict params);
+    PoisParams *const restrict params,
+    const scalar *const restrict lambda);
 
 
 extern void
 PoisParams_SetGamma (
-    PoisParams *const restrict params);
+    PoisParams *const restrict params,
+    const scalar *const restrict gamma);
 
 
 extern void
 PoisParams_SetDelta (
-    PoisParams *const restrict params);
+    PoisParams *const restrict params,
+    const scalar *const restrict delta);
 
 
 #endif  /* pois_params_h */
