@@ -61,31 +61,6 @@ compute_log_likelihood (
     size_t m_states);
 
 
-
-
-/** Allocate a memory for `PoisParams' object. The memory is guarateed to be
- * initialized with zeros.
- *
- * \param m_states    Number of HMM states.
- *
- * \return  Pointer to `PoisParams' or `NULL' if allocation fails.
- */
-PoisParams*
-PoisHmm_NewParams (size_t m_states);
-
-
-/** Deallocate `PoisParams' object.
- *
- * \param params    Pointer to `PoisParams' object.
- */
-#define PoisHmm_DeleteParams(params) do {   \
-    MA_FREE (params->lambda);               \
-    MA_FREE (params->gamma);                \
-    MA_FREE (params->delta);                \
-    MA_FREE (params);                       \
-} while (false)
-
-
 /** Allocate memory for `PoisHmm' object.
  *
  * \param n_obs     Number of observations.
