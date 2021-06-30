@@ -2,6 +2,8 @@
 #define pois_probs_h
 
 #include <stdlib.h>
+#include <string.h>
+#include "../libma.h"
 #include "../restrict.h"
 #include "../scalar.h"
 
