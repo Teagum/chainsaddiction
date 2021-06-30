@@ -1,6 +1,10 @@
 #ifndef pois_utils_h
 #define pois_utils_h
 
+#include <math.h>
+#include <stdlib.h>
+#include "../scalar.h"
+
 
 /* Compute Akaine Information criterion. */
 scalar
