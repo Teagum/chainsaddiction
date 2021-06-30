@@ -86,32 +86,6 @@ PoisHmm_NewParams (size_t m_states);
 } while (false)
 
 
-/** Allocate memory for `HmmProbs'. The memory is guaranteed to be initialized
- * with zeros.
- *
- * \param n_obs     Number of observations in the data set.
- * \param m_states  Number of HMM states.
- *
- * \return  Pointer to HmmProbs object if allocation did not fail; else NULL.
- */
-HmmProbs *
-PoisHmm_NewProbs (
-    const size_t n_obs,
-    const size_t m_states);
-
-
-/** Deallocate HmmProbs
- *
- * \param probs     Pointer to HmmProbs object.
- */
-#define PoisHmm_DeleteProbs(probs) do {     \
-    MA_FREE (probs->lsd);                   \
-    MA_FREE (probs->lalpha);                \
-    MA_FREE (probs->lbeta);                 \
-    MA_FREE (probs);                        \
-} while (false)
-
-
 /** Allocate memory for `PoisHmm' object.
  *
  * \param n_obs     Number of observations.
