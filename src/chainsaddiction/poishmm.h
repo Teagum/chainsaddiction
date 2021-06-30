@@ -79,11 +79,6 @@ compute_log_likelihood (
     size_t m_states);
 
 
-void
-PoisHmm_LogStateProbs (
-    const HmmProbs *const restrict probs,
-    const scalar llh,
-    scalar *out);
 
 
 /** Allocate a memory for `PoisParams' object. The memory is guarateed to be
@@ -171,6 +166,12 @@ PoisHmm_InitRandom (
     PoisHmm *const restrict phmm);
 
 
+#define PoisHmm_LogConditionalExpectation(phmm) do {                        \
+    log_cond_expect (phmm->n_obs, phmm->m_states, phmm->probs->lalpha,      \
+            phmm->probs->lbeta, phmm->llh, phmm->probs->lcexpt);            \
+} while (false)
+
+
 PoisParams *PoisHmm_ParamsFromFile (const char *fname);
 
 
@@ -196,6 +197,17 @@ compute_aic(scalar nll, size_t m);
 /* Compute Bayes Information criterion. */
 scalar
 compute_bic(scalar nll, size_t m, size_t n);
+
+
+/** Compute the conditional expectations. */
+extern void
+log_cond_expect (
+    const size_t n_obs,
+    const size_t m_states,
+    const scalar *const restrict lalpha,
+    const scalar *const restrict lbeta,
+    const scalar llh,
+    scalar *lcexpt);
 
 
 #endif  /* HMM_H */

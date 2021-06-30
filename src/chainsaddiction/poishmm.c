@@ -8,15 +8,17 @@ PoisHmm_BaumWelch (
 {}
 
 
-void
-PoisHmm_LogStateProbs (
-    const HmmProbs *const restrict probs,
+inline void
+log_cond_expect (
+    const size_t n_obs,
+    const size_t m_states,
+    const scalar *const restrict lalpha,
+    const scalar *const restrict lbeta,
     const scalar llh,
-    scalar *out)
+    scalar *lcexpt)
 {
-    size_t n_elem = probs->m_states * probs->n_obs;
-    /* the fourth argument should probably be `-llh'. */
-    mm_add_s (probs->lalpha, probs->lbeta, n_elem, llh, out);
+    size_t n_elem = n_obs * m_states;
+    mm_add_s (lalpha, lbeta, n_elem, llh, lcexpt);
 }
 
 
