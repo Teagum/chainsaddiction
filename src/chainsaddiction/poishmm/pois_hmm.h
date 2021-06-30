@@ -119,11 +119,6 @@ PoisHmm_FromData(size_t  m,
     scalar tol);
 
 
-/* Compute Akaine Information criterion. */
-scalar
-compute_aic(scalar nll, size_t m);
-
-
 /* Compute Bayes Information criterion. */
 scalar
 compute_bic(scalar nll, size_t m, size_t n);
