@@ -4,7 +4,21 @@
 PoisParams *
 PoisParams_New (
     const size_t m_states)
-{}
+{
+    PoisParams *params = malloc (sizeof *params);
+    if (params == NULL)
+    {
+        fprintf (stderr, "Could not allocate memory for `PoisParams'.\n");
+        return NULL;
+    }
+
+    params->lambda   = MA_SCALAR_ZEROS (m_states);
+    params->gamma    = MA_SCALAR_ZEROS (m_states * m_states);
+    params->delta    = MA_SCALAR_ZEROS (m_states);
+    params->m_states = m_states;
+
+    return params;
+}
 
 
 inline void
