@@ -16,18 +16,6 @@
 
 
 
-/** Computation buffer for HMM estimation.
- *
- * Each field is a pointer to continuous memory with
- * space for n_obs * m_states values.
- */
-typedef struct {
-    size_t n_obs;
-    size_t m_states;
-    scalar *lsd;        /**< Log of the state dependent probabilities. */
-    scalar *lalpha;     /**< Log forward probabilities. */
-    scalar *lbeta;      /**< Log backward probabilities. */
-} HmmProbs;
 
 
 /** \struct PoisHmm
