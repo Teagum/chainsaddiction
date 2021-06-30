@@ -14,12 +14,6 @@
 #define DEFAULT_MAX_ITER 1000
 #define DEFAULT_TOLERANCE 1e-5
 
-typedef struct {
-    size_t m_states;
-    scalar *restrict lambda;
-    scalar *restrict gamma;
-    scalar *restrict delta;
-} PoisParams;
 
 
 /** Computation buffer for HMM estimation.
