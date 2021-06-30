@@ -2,14 +2,15 @@
 
 
 scalar
-compute_aic(scalar nll, size_t m)
+compute_aic (scalar llh, size_t m_states)
 {
-    return 2.0L * (scalar) (nll + 2*m + m*m);
+    return 2.0L * llh + (scalar) (2 * m_states + m_states * m_states);
 }
 
 
 scalar
-compute_bic(scalar nll, size_t m, size_t n)
+compute_bic (scalar llh, size_t n_obs, size_t m_states)
 {
-    return 2.0L * nll + logl ((scalar) n) * (scalar) (2*m + m*m);
+    size_t n_params = 2 * m_states + m_states * m_states;
+    return 2.0L * llh + logl ((scalar) n_obs) * (scalar) (n_params);
 }

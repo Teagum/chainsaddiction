@@ -8,12 +8,17 @@
 
 /* Compute Akaine Information criterion. */
 scalar
-compute_aic(scalar nll, size_t m);
+compute_aic (
+    scalar llh,
+    size_t m_states);
 
 
 /* Compute Bayes Information criterion. */
 scalar
-compute_bic(scalar nll, size_t m, size_t n);
+compute_bic (
+    scalar llh,
+    size_t n_obs,
+    size_t m_states);
 
 
 #endif  /* pois_utils.h */
