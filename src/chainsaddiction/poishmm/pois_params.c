@@ -9,8 +9,11 @@ PoisParams_New (
 
 inline void
 PoisParams_SetLambda (
-    PoisParams *const restrict params)
-{}
+    PoisParams *const restrict params,
+    const scalar *const restrict lambda)
+{
+    memcpy (params->lambda, lambda, params->m_states * sizeof (scalar));
+}
 
 
 inline void
