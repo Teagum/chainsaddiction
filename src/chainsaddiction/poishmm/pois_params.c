@@ -1,4 +1,4 @@
-#include "poisparams.h"
+#include "pois_params.h"
 
 
 void

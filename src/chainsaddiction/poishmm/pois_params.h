@@ -1,5 +1,5 @@
-#ifndef poisparams_h
-#define poisparams_h
+#ifndef pois_params_h
+#define pois_params_h
 
 #include <stdlib.h>
 #include "../restrict.h"
@@ -43,4 +43,4 @@ PoisParams_SetDelta (
     PoisParams *const restrict params);
 
 
-#endif  /* poisparams_h */
+#endif  /* pois_params_h */
