@@ -1,8 +1,10 @@
 #ifndef pois_params_h
 #define pois_params_h
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../libma.h"
 #include "../restrict.h"
 #include "../scalar.h"
 
