@@ -1,4 +1,4 @@
-#include "test_poishmm.h"
+#include "test_pois_hmm.h"
 
 
 int
