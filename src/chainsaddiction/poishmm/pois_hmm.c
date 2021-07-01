@@ -148,10 +148,3 @@ void PoisHmm_PrintParams (const PoisHmm *const restrict phmm)
     }
     printf ("\n*%s%s%s*\n\n", border, border, border);
 }
-
-
-void
-PoisHmm_BaumWelch (
-    const DataSet *const restrict inp,
-    PoisHmm *const restrict phmm)
-{}
