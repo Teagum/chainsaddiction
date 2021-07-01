@@ -10,9 +10,9 @@ PoisHmm *PoisHmm_New (const size_t n_obs, const size_t m_states)
         exit (1);
     }
 
-    phmm->init   = PoisHmm_NewParams (m_states);
-    phmm->params = PoisHmm_NewParams (m_states);
-    phmm->probs  = PoisHmm_NewProbs (n_obs, m_states);
+    phmm->init   = PoisParams_New (m_states);
+    phmm->params = PoisParams_New (m_states);
+    phmm->probs  = PoisProbs_New (n_obs, m_states);
 
     phmm->n_obs    = n_obs;
     phmm->m_states = m_states;
