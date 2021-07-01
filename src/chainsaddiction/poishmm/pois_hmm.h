@@ -4,12 +4,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include "restrict.h"
-#include "scalar.h"
-#include "dataset.h"
-#include "libma.h"
-#include "rnd.h"
-#include "vmath.h"
+#include "pois_params.h"
+#include "pois_probs.h"
+#include "pois_utils.h"
+#include "../dataset.h"
+#include "../restrict.h"
+#include "../rnd.h"
+#include "../scalar.h"
+#include "../vmath.h"
 
 #define DEFAULT_MAX_ITER 1000
 #define DEFAULT_TOLERANCE 1e-5
