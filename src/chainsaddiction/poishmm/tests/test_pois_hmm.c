@@ -7,7 +7,6 @@ main (void)
     SETUP;
 
     RUN_TEST (test__PoisHmm_NewProbs);
-    RUN_TEST (test__PoisHmm_NewParams);
     RUN_TEST (test__PoisHmm_New);
     RUN_TEST (test__PoisHmm_Init);
     RUN_TEST (test__PoisHmm_InitRandom);
@@ -40,38 +39,6 @@ test__PoisHmm_NewProbs (void)
             }
         }
         PoisHmm_DeleteProbs (probs);
-    }
-    return false;
-}
-
-
-bool
-test__PoisHmm_NewParams (void)
-{
-    enum { n_repeat_test = 10 };
-
-    for (size_t n = 0; n < n_repeat_test; n++)
-    {
-        size_t m_states = (size_t) rnd_int (1, 100);
-        PoisParams *params = PoisHmm_NewParams (m_states);
-
-        for (size_t i=0; i<m_states; i++) {
-            if (fpclassify (params->lambda[i]) != FP_ZERO ||
-                fpclassify (params->delta[i]) != FP_ZERO)
-            {
-                PoisHmm_DeleteParams (params);
-                return true;
-            }
-        }
-
-        for (size_t i=0; i<m_states*m_states; i++) {
-            if (fpclassify (params->gamma[i]) != FP_ZERO)
-            {
-                PoisHmm_DeleteParams (params);
-                return true;
-            }
-        }
-        PoisHmm_DeleteParams (params);
     }
     return false;
 }
