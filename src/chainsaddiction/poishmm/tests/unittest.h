@@ -19,7 +19,7 @@ unsigned short n_fails;
      ? true : false)
 
 #define RAND_INT(lower, upper) (lower) + rand () / ((RAND_MAX + 1u) / (upper))
-
+#define IS_ZERO(val) (fpclassify (val) == FP_ZERO)
 /*
  * Assertions
  */
