@@ -149,51 +149,6 @@ PoisHmm_InitRandom (PoisHmm *const restrict phmm)
 }
 
 
-PoisHmm *
-PoisHmm_FromData (size_t m_states,
-             scalar *restrict init_lambda,
-             scalar *restrict init_gamma,
-             scalar *restrict init_delta,
-             size_t max_iter,
-             scalar tol)
-{
-    PoisHmm *ph = malloc (sizeof (*ph));
-    if (ph == NULL)
-    {
-        fprintf (stderr, "Could not allocate PoissonHMM.\n");
-        return NULL;
-    }
-
-    size_t vector_s = m_states * sizeof (scalar);
-    size_t matrix_s = m_states * vector_s;
-
-    ph->m_states = m_states;
-    ph->max_iter = max_iter;
-    ph->tol      = tol;
-    ph->n_iter   = 0L;
-
-    ph->init   = PoisHmm_NewParams (m_states);
-    ph->params = PoisHmm_NewParams (m_states);
-    if (ph->init == NULL || ph->params == NULL)
-    {
-        fprintf (stderr, "Could not allocate parameter vectors.\n");
-        PoisHmm_DeleteParams (ph->init);
-        PoisHmm_DeleteParams (ph->params);
-        return NULL;
-    }
-
-    memcpy (ph->init->lambda, init_lambda, vector_s);
-    memcpy (ph->init->gamma,  init_gamma,  matrix_s);
-    memcpy (ph->init->delta,  init_delta,  vector_s);
-
-    ph->aic = 0.0L;
-    ph->bic = 0.0L;
-    ph->llh = 0.0L;
-
-    return ph;
-}
-
-
 void
 PoisHmm_LogLikelihood (PoisHmm *phmm)
 {

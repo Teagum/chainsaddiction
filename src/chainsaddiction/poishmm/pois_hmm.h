@@ -91,14 +91,4 @@ void PoisHmm_PrintParams (
     const PoisHmm *const restrict phmm);
 
 
-/** Allocate new PoisHmm with init data from compile time constants. */
-PoisHmm *
-PoisHmm_FromData(size_t  m,
-    scalar *restrict init_lambda,
-    scalar *restrict init_gamma,
-    scalar *restrict init_delta,
-    size_t max_iter,
-    scalar tol);
-
-
 #endif  /* HMM_H */
