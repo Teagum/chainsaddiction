@@ -22,8 +22,8 @@ test__PoisHmm_New (void)
 
     for (size_t n = 0; n < n_repeat_test; n++)
     {
-        size_t n_obs = rnd_int (1, 1000);
-        size_t m_states = rnd_int (1, 200);
+        size_t n_obs = RAND_INT (1, 1000);
+        size_t m_states = RAND_INT (1, 200);
         PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
         PoisHmm_Delete (phmm);
@@ -38,8 +38,8 @@ test__PoisHmm_Init (void)
     enum { n_repeat_test = 100 };
     for (size_t n = 0; n < n_repeat_test; n++)
     {
-        size_t n_obs = (size_t) rnd_int (1, 1000);
-        size_t m_states = (size_t) rnd_int (1, 30);
+        size_t n_obs = (size_t) RAND_INT (1, 1000);
+        size_t m_states = (size_t) RAND_INT (1, 30);
         PoisParams *params = PoisHmm_NewParams (m_states);
         PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
@@ -82,8 +82,8 @@ test__PoisHmm_InitRandom (void)
     enum { n_repeat_test = 100 };
     for (size_t n = 0; n < n_repeat_test; n++)
     {
-        size_t n_obs = (size_t) rnd_int (1, 1000);
-        size_t m_states = (size_t) rnd_int (1, 30);
+        size_t n_obs = (size_t) RAND_INT (1, 1000);
+        size_t m_states = (size_t) RAND_INT (1, 30);
         PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
         PoisHmm_InitRandom (phmm);
