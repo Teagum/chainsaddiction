@@ -8,20 +8,6 @@ PoisHmm_BaumWelch (
 {}
 
 
-inline void
-log_cond_expect (
-    const size_t n_obs,
-    const size_t m_states,
-    const scalar *const restrict lalpha,
-    const scalar *const restrict lbeta,
-    const scalar llh,
-    scalar *lcexpt)
-{
-    size_t n_elem = n_obs * m_states;
-    mm_add_s (lalpha, lbeta, n_elem, llh, lcexpt);
-}
-
-
 PoisHmm *PoisHmm_New (const size_t n_obs, const size_t m_states)
 {
     PoisHmm *phmm = malloc (sizeof *phmm);

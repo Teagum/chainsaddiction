@@ -37,4 +37,15 @@ compute_log_likelihood (
     size_t m_states);
 
 
+/** Compute the conditional expectations. */
+extern void
+log_cond_expect (
+    const size_t n_obs,
+    const size_t m_states,
+    const scalar *const restrict lalpha,
+    const scalar *const restrict lbeta,
+    const scalar llh,
+    scalar *lcexpt);
+
+
 #endif  /* pois_utils.h */
