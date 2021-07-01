@@ -17,3 +17,4 @@ __pycache__/
 .tox/
 .python-version
 Session.vim
+*.test
