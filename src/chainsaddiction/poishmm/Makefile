@@ -14,12 +14,12 @@ warnings = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
 optimize = -O2
 debug    = -g
 standard = -std=c17
-CFLAGS = $(warnings) $(standard) $(optimize)
+export CFLAGS = $(warnings) $(standard) $(optimize)
 
 # Preprocessor flags
 # 	LD_MATH           Typedef `scalar' to `long double', otherwise `double'.
 # 	NO_BOUNDS_CHECK   Do not check boundaries in array setters and getters.
-CPPFLAGS = -D LD_MATH
+export CPPFLAGS = -D LD_MATH
 
 all: $(objs)
 
