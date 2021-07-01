@@ -282,11 +282,3 @@ PoisHmm_LogLikelihood (PoisHmm *phmm)
     phmm->llh = compute_log_likelihood (
             phmm->probs->lalpha, phmm->n_obs, phmm->m_states);
 }
-
-
-scalar
-compute_log_likelihood (scalar *lalpha, size_t n_obs, size_t m_states)
-{
-    const scalar *restrict last_row = lalpha + ((n_obs-1)*m_states);
-    return v_lse (last_row, m_states);
-}

@@ -86,21 +86,6 @@ PoisHmm_LogLikelihood (PoisHmm *phmm);
 } while (false)
 
 
-/** Estimate log-likelihood given forward probabilities.
- *
- * \parma lalpha    Logarithm of the forward probabilities.
- * \param n_obs     Number of observations in the data set.
- * \param n_states  Number of HMM states.
- *
- * \return  Model log-likelihood.
- */
-scalar
-compute_log_likelihood (
-    scalar *lalpha,
-    size_t n_obs,
-    size_t m_states);
-
-
 PoisParams *PoisHmm_ParamsFromFile (const char *fname);
 
 
