@@ -3,8 +3,8 @@
 
 PoisProbs *
 PoisProbs_New (
-    const scalar n_obs,
-    const scalar m_states)
+    const size_t n_obs,
+    const size_t m_states)
 {
     size_t n_elem = n_obs * m_states;
     if (n_obs == 0)

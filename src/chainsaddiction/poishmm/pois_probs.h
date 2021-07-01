@@ -35,8 +35,8 @@ typedef struct {
 
 PoisProbs *
 PoisProbs_New (
-    const scalar n_obs,
-    const scalar m_states);
+    const size_t n_obs,
+    const size_t m_states);
 
 
 #endif  /* pois_probs_h */
