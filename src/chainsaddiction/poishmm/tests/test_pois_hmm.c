@@ -40,7 +40,7 @@ test__PoisHmm_Init (void)
     {
         size_t n_obs = (size_t) RAND_INT (1, 1000);
         size_t m_states = (size_t) RAND_INT (1, 30);
-        PoisParams *params = PoisHmm_NewParams (m_states);
+        PoisParams *params = PoisParams_New (m_states);
         PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
         v_rnd (m_states, params->lambda);
@@ -68,8 +68,7 @@ test__PoisHmm_Init (void)
                 }
             }
         }
-
-        PoisHmm_DeleteParams (params);
+        PoisParams_Delete (params);
         PoisHmm_Delete (phmm);
     }
     return false;
