@@ -1,3 +1,10 @@
+SHELL = /bin/sh
+objs = test_pois_params test_pois_probs
+
+.SUFFIXES: .h .c .o
+
+all: $(objs)
+
 test_pois_params: test_pois_params.o ../pois_params.o ../../libma.o
 test_pois_probs: test_pois_probs.o ../pois_probs.o ../../libma.o
 
