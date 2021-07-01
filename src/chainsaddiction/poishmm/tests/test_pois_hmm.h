@@ -7,7 +7,6 @@
 #include "../../rnd.h"
 #include "pois_hmm.h"
 
-bool test__PoisHmm_NewProbs (void);
 bool test__PoisHmm_New (void);
 bool test__PoisHmm_Init (void);
 bool test__PoisHmm_InitRandom (void);

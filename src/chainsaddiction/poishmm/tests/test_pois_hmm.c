@@ -6,41 +6,12 @@ main (void)
 {
     SETUP;
 
-    RUN_TEST (test__PoisHmm_NewProbs);
     RUN_TEST (test__PoisHmm_New);
     RUN_TEST (test__PoisHmm_Init);
     RUN_TEST (test__PoisHmm_InitRandom);
     RUN_TEST (test__PoisHmm_LogLikelihood);
 
     EVALUATE;
-}
-
-
-bool
-test__PoisHmm_NewProbs (void)
-{
-    enum { n_repeat_test = 10 };
-
-    for (size_t n = 0; n < n_repeat_test; n++)
-    {
-        size_t n_obs = (size_t) rnd_int (1, 10000);
-        size_t m_states = (size_t) rnd_int (1, 100);
-        size_t n_elem = n_obs * m_states;
-
-        HmmProbs *probs = PoisHmm_NewProbs (n_obs, m_states);
-        scalar *dptr[] = { probs->lsd, probs->lalpha, probs->lbeta };
-
-        for (size_t i=0; i<3; i++) {
-            for (size_t j=0; j<n_elem; j++) {
-                if (fpclassify (dptr[i][j]) != FP_ZERO) {
-                    PoisHmm_DeleteProbs (probs);
-                    return true;
-                }
-            }
-        }
-        PoisHmm_DeleteProbs (probs);
-    }
-    return false;
 }
 
 
