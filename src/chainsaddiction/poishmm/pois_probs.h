@@ -27,7 +27,7 @@ typedef struct {
     free (probs->lsdp);                 \
     free (probs->lalpha);               \
     free (probs->lbeta);                \
-    free (probs->lcexpt);               \
+    free (probs->lcxpt);                \
     free (probs)                        \
     probs = NULL;                       \
 } while (false)
