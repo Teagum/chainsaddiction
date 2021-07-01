@@ -1,13 +1,6 @@
 #include "pois_hmm.h"
 
 
-void
-PoisHmm_BaumWelch (
-    const DataSet *const restrict inp,
-    PoisHmm *const restrict phmm)
-{}
-
-
 PoisHmm *PoisHmm_New (const size_t n_obs, const size_t m_states)
 {
     PoisHmm *phmm = malloc (sizeof *phmm);
@@ -31,54 +24,6 @@ PoisHmm *PoisHmm_New (const size_t n_obs, const size_t m_states)
     phmm->llh      = 0.0L;
 
     return phmm;
-}
-
-
-void PoisHmm_PrintParams (const PoisHmm *const restrict phmm)
-{
-    enum {linewidth=100};
-    char border[] = "====================";
-    char sep[] = "--------------------";
-
-    size_t m_states = phmm->m_states;
-    PoisParams *params = phmm->params;
-
-    printf ("\n\n*%s%s%s*\n\n", border, border, border);
-    printf ("%25s%10zu\n", "m-states:", m_states);
-    printf ("%25s%10.5Lf\n", "-log likelihood:", phmm->llh);
-    printf ("%25s%10.5Lf\n", "AIC:", phmm->aic);
-    printf ("%25s%10.5Lf\n", "BIC:", phmm->bic);
-    printf ("\n\n%s%s%s\n\n", sep, sep, sep);
-
-    printf ("%25s", "State:");
-    for (size_t i = 0; i < m_states; i++)
-        printf ("%10zu", i+1);
-    puts ("");
-    printf ("%25s", "State dependent means:");
-    for (size_t i = 0; i < m_states; i++)
-        printf ("%10.5Lf", params->lambda[i]);
-    puts ("");
-    printf ("%25s", "Start distribution:");
-    for (size_t i = 0; i < m_states; i++)
-        printf ("%10.5Lf", params->delta[i]);
-
-    printf ("\n\n%s%s%s\n\n", sep, sep, sep);
-
-    printf ("%25s", "Transition probability matrix:\n");
-    printf ("%25s", " ");
-    for (size_t i = 0; i < m_states; i++)
-        printf ("%10zu", i+1);
-    puts ("");
-    for (size_t i = 0; i < m_states; i++)
-    {
-        printf ("%25zu", i+1);
-        for (size_t j = 0; j < m_states; j++)
-        {
-            printf ("%10.5Lf", params->gamma[i*m_states+j]);
-        }
-        puts ("");
-    }
-    printf ("\n*%s%s%s*\n\n", border, border, border);
 }
 
 
@@ -155,3 +100,58 @@ PoisHmm_LogLikelihood (PoisHmm *phmm)
     phmm->llh = compute_log_likelihood (
             phmm->probs->lalpha, phmm->n_obs, phmm->m_states);
 }
+
+
+void PoisHmm_PrintParams (const PoisHmm *const restrict phmm)
+{
+    enum {linewidth=100};
+    char border[] = "====================";
+    char sep[] = "--------------------";
+
+    size_t m_states = phmm->m_states;
+    PoisParams *params = phmm->params;
+
+    printf ("\n\n*%s%s%s*\n\n", border, border, border);
+    printf ("%25s%10zu\n", "m-states:", m_states);
+    printf ("%25s%10.5Lf\n", "-log likelihood:", phmm->llh);
+    printf ("%25s%10.5Lf\n", "AIC:", phmm->aic);
+    printf ("%25s%10.5Lf\n", "BIC:", phmm->bic);
+    printf ("\n\n%s%s%s\n\n", sep, sep, sep);
+
+    printf ("%25s", "State:");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10zu", i+1);
+    puts ("");
+    printf ("%25s", "State dependent means:");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10.5Lf", params->lambda[i]);
+    puts ("");
+    printf ("%25s", "Start distribution:");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10.5Lf", params->delta[i]);
+
+    printf ("\n\n%s%s%s\n\n", sep, sep, sep);
+
+    printf ("%25s", "Transition probability matrix:\n");
+    printf ("%25s", " ");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10zu", i+1);
+    puts ("");
+    for (size_t i = 0; i < m_states; i++)
+    {
+        printf ("%25zu", i+1);
+        for (size_t j = 0; j < m_states; j++)
+        {
+            printf ("%10.5Lf", params->gamma[i*m_states+j]);
+        }
+        puts ("");
+    }
+    printf ("\n*%s%s%s*\n\n", border, border, border);
+}
+
+
+void
+PoisHmm_BaumWelch (
+    const DataSet *const restrict inp,
+    PoisHmm *const restrict phmm)
+{}

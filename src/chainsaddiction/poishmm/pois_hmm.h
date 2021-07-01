@@ -71,12 +71,6 @@ PoisHmm_InitRandom (
 
 
 void
-PoisHmm_BaumWelch (
-    const DataSet *const restrict inp,
-    PoisHmm *restrict hmm);
-
-
-void
 PoisHmm_LogLikelihood (PoisHmm *phmm);
 
 
@@ -89,6 +83,12 @@ PoisHmm_LogLikelihood (PoisHmm *phmm);
 /** Print Poisson parameters to stdout. */
 void PoisHmm_PrintParams (
     const PoisHmm *const restrict phmm);
+
+
+void
+PoisHmm_BaumWelch (
+    const DataSet *const restrict inp,
+    PoisHmm *restrict hmm);
 
 
 #endif  /* HMM_H */
