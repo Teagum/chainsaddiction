@@ -18,4 +18,4 @@ check: $(objs)
 .PHONY: clean
 clean:
 	rm -f *.o
-	rm -f *.test
+	rm -f $(objs) 
