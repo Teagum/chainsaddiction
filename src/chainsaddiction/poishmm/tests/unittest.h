@@ -18,6 +18,8 @@ unsigned short n_fails;
     ((fabsl ((long double) _x_ - (long double) _y_) < EPSILON) \
      ? true : false)
 
+#define RAND_INT(lower, upper) (lower) + rand () / ((RAND_MAX + 1u) / (upper))
+
 /*
  * Assertions
  */
