@@ -1,23 +1,34 @@
 SHELL = /bin/sh
-objs = test_pois_params test_pois_probs
 
 .SUFFIXES: .h .c .o
 
-all: $(objs)
+test_srcs = $(wildcard test_pois_*.c)
+test_objs = $(test_srcs:.c=.o)
+objs = $(addprefix ../, $(subst test_,,$(test_objs)))
+libs = $(addprefix ../, libma.o vmath.o rnd.o)
+test_runner = run
 
-test_pois_params: test_pois_params.o ../pois_params.o ../../libma.o
-test_pois_probs: test_pois_probs.o ../pois_probs.o ../../libma.o
-test_pois_hmm: test_pois_hmm.o ../pois_hmm ../pois_params ../pois_probs
+all: pois_hmm.test
 
-test_pois_params.o: test_pois_params.h ../pois_params.h unittest.h
-test_pois_probs.o: test_pois_probs.h ../pois_probs.h unittest.h
-test_pois_hmm.o: test_pois_hmm.h ../pois_hmm.h ../pois_params.h ../pois_probs.h unittest.h
+pois_hmm.test: $(test_runner).o $(test_objs) $(objs) $(addprefix ../, $(libs) pois_utils.o)
+	$(LINK.c) $^ -o $@
+
+$(test_runner).o: $(test_objs) $(objs) unittest.h \
+                  $(addprefix ../../, dataset.h read.h rnd.h vmath.h)
+
+test_pois_hmm.o: $(test_objs) $(objs) unittest.h \
+								 $(addprefix ../../, dataset.h read.h rnd.h vmath.h)
+
+test_pois_params.o: test_pois_params.h ../pois_params.h ../../libma.h unittest.h
+test_pois_probs.o: test_pois_probs.h ../pois_probs.h ../../libma.h unittest.h
+
+$(test_objs): $(addprefix ../../, scalar.h restrict.h)
 
 .PHONY: check
-check: $(objs)
-	@for app in $(objs); do ./$$app; done
+check: pois_hmm.test
+	./pois_hmm.test
 
 .PHONY: clean
 clean:
-	rm -f *.o
-	rm -f $(objs) 
+	$(RM) *.o
+	$(RM) *.test
