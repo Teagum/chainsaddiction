@@ -1,14 +1,5 @@
 #include "test_pois_probs.h"
 
-int main (void)
-{
-    SETUP;
-
-    RUN_TEST (test__PoisProbs_New);
-
-    EVALUATE;
-}
-
 
 bool
 test__PoisProbs_New (void)

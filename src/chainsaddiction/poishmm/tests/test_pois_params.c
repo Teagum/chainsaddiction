@@ -1,16 +1,6 @@
 #include "test_pois_params.h"
 
 
-int main (void)
-{
-    SETUP;
-
-    RUN_TEST (test__PoisParams_New);
-
-    EVALUATE;
-}
-
-
 bool
 test__PoisParams_New (void)
 {
