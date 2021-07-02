@@ -28,11 +28,16 @@ pois_params.o: pois_params.h libma.h restrict.h scalar.h
 pois_probs.o: pois_probs.h libma.h restrict.h scalar.h
 pois_utils.o: pois_utils.h libma.h restrict.h scalar.h vmath.h
 
-.PHONY: test
-test: all
-	@$(MAKE) -C tests
 
-.PHONY: clean
+test: all
+	@$(MAKE) -C tests/
+
+.PHONY: check
+check: test
+	tests/pois_hmm.test
+
 clean:
 	rm -f *.o
-	rm -f tests/*.o
+	@$(MAKE) clean -C tests/
+
+.PHONY: test clean
