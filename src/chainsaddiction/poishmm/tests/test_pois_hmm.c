@@ -67,10 +67,11 @@ test__PoisHmm_InitRandom (void)
     for (size_t n = 0; n < n_repeat_test; n++)
     {
         size_t n_obs = (size_t) RAND_INT (1, 1000);
-        size_t m_states = (size_t) RAND_INT (1, 30);
+        size_t m_states = (size_t) RAND_INT (1, 50);
         PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
         PoisHmm_InitRandom (phmm);
+
         for (size_t i = 0; i < m_states; i++)
         {
             if (!isfinite(phmm->init->lambda[i]) ||
