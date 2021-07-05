@@ -62,7 +62,6 @@ PoisHmm_Init (
     memcpy (phmm->init->delta, delta, v_size);
 #endif
 
-    v_log (phmm->init->lambda, phmm->m_states, phmm->params->lambda);
     v_log (phmm->init->gamma, n_elem_gamma, phmm->params->gamma);
     v_log (phmm->init->delta, phmm->m_states, phmm->params->delta);
 }
