@@ -85,7 +85,6 @@ PoisHmm_InitRandom (PoisHmm *const restrict phmm)
     }
     vi_softmax (phmm->init->delta, m_states);
 
-    v_log (phmm->init->lambda, m_states, phmm->params->lambda);
     v_log (phmm->init->gamma, n_elem, phmm->params->gamma);
     v_log (phmm->init->delta, m_states, phmm->params->delta);
 }
