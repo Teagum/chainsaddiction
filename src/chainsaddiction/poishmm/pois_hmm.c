@@ -101,6 +101,22 @@ PoisHmm_LogLikelihood (PoisHmm *phmm)
             phmm->probs->lalpha, phmm->n_obs, phmm->m_states);
 }
 
+void
+PoisHmm_PrintInit (const PoisHmm *phmm)
+{
+    size_t m_states = phmm->m_states;
+    PoisParams *p = phmm->init;
+
+    puts ("");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10.5Lf", p->lambda[i]);
+
+    puts ("");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10.5Lf", p->delta[i]);
+
+    puts ("");
+}
 
 void PoisHmm_PrintParams (const PoisHmm *const restrict phmm)
 {
