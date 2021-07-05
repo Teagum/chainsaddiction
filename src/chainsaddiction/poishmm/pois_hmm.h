@@ -61,7 +61,7 @@ PoisHmm_New (
 
 void
 PoisHmm_Init (
-    const PoisHmm *const restrict phmm,
+    PoisHmm *const restrict phmm,
     const scalar *const restrict lambda,
     const scalar *const restrict gamma,
     const scalar *const restrict delta);

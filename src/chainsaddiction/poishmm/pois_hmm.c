@@ -29,7 +29,7 @@ PoisHmm *PoisHmm_New (const size_t n_obs, const size_t m_states)
 
 void
 PoisHmm_Init (
-    const PoisHmm *const restrict phmm,
+    PoisHmm *const restrict phmm,
     const scalar *const restrict lambda,
     const scalar *const restrict gamma,
     const scalar *const restrict delta)
