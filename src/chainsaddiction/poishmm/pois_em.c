@@ -1,9 +1,9 @@
 #include <string.h>
-#include "bw.h"
+#include "pois_em.h"
 
 
 void
-ph_bw_e_step (const DataSet *const restrict inp, PoisHmm *const restrict phmm)
+pois_e_step (const DataSet *const restrict inp, PoisHmm *const restrict phmm)
 {
     const size_t m_states = phmm->m_states;
     const size_t n_obs = phmm->n_obs;
@@ -20,7 +20,7 @@ ph_bw_e_step (const DataSet *const restrict inp, PoisHmm *const restrict phmm)
 
 
 void
-ph_bw_m_step (
+pois_m_step (
     const DataSet *const restrict inp,
     const HmmProbs *const restrict probs,
     const scalar llh)
@@ -31,7 +31,7 @@ ph_bw_m_step (
 }
 
 
-void ph_bw_m_step_lambda (
+void pois_m_step_lambda (
     const DataSet *const restrict inp,
     const scalar *const restrict lstate_pr,
     const size_t m_states,
