@@ -1,14 +1,14 @@
 #ifndef pois_em_h
 #define pois_em_h
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
-#include "restrict.h"
-#include "scalar.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "../dataset.h"
+#include "../restrict.h"
+#include "../scalar.h"
 #include "fwbw.h"
-#include "poishmm.h"
-#include "dataset.h"
+#include "pois_hmm.h"
 
 
 void
