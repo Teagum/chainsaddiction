@@ -1,17 +1,14 @@
-#ifndef TEST_HMM_H
-#define TEST_HMM_H
+#ifndef test_pois_hmm_h
+#define test_pois_hmm_h
 
 #include <math.h>
 #include <string.h>
 #include "unittest.h"
-#include "rnd.h"
-#include "poishmm.h"
+#include "../pois_hmm.h"
 
-bool test__PoisHmm_NewProbs (void);
-bool test__PoisHmm_NewParams (void);
 bool test__PoisHmm_New (void);
 bool test__PoisHmm_Init (void);
 bool test__PoisHmm_InitRandom (void);
 bool test__PoisHmm_LogLikelihood (void);
 
-#endif  /* TEST_HMM_H */
+#endif  /* test_pois_hmm_h */
