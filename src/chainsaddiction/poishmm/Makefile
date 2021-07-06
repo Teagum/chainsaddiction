@@ -23,6 +23,8 @@ export CPPFLAGS = -D LD_MATH
 
 all: $(objs)
 
+pois_em.o: pois_em.h pois_params.h pois_probs.h pois_utils.h pois_fwbw.h \
+           $(addprefix ../, dataset.h libma.h read.h restrict.h rnd.h scalar.h stats.h vmath.h)
 pois_fwbw.o: pois_fwbw.h $(addprefix ../, dataset.h libma.h read.h restrict.h scalar.h stats.h vmath.h)
 pois_hmm.o: pois_hmm.h pois_params.h pois_probs.h pois_utils.o restrict.h scalar.h
 pois_params.o: pois_params.h libma.h restrict.h scalar.h
@@ -42,5 +44,3 @@ clean:
 	@$(MAKE) clean -C tests/
 
 .PHONY: test clean
-
-
