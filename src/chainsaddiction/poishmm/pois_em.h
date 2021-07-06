@@ -7,8 +7,8 @@
 #include "../dataset.h"
 #include "../restrict.h"
 #include "../scalar.h"
-#include "fwbw.h"
 #include "pois_hmm.h"
+#include "pois_fwbw.h"
 
 
 void
@@ -20,7 +20,7 @@ pois_e_step (
 void
 pois_m_step (
     const DataSet *const restrict inp,
-    const HmmProbs *const restrict probs,
+    const PoisProbs *const restrict probs,
     const scalar llh);
 
 
