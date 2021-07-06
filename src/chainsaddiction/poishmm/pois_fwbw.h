@@ -1,14 +1,14 @@
-#ifndef FWBW_H
-#define FWBW_H
+#ifndef fwbw_h
+#define fwbw_h
 
 #include <math.h>
 #include <stdlib.h>
-#include "dataset.h"
-#include "libma.h"
-#include "restrict.h"
-#include "scalar.h"
-#include "stats.h"
-#include "vmath.h"
+#include "../dataset.h"
+#include "../libma.h"
+#include "../restrict.h"
+#include "../scalar.h"
+#include "../stats.h"
+#include "../vmath.h"
 
 /** Forward algorithm in log domain.
  *
@@ -73,4 +73,4 @@ log_fwbw (
     scalar *lbeta);
 
 
-#endif  /* FWBW_H */
+#endif  /* fwbw_h */
