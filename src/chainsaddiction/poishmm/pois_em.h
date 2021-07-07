@@ -61,4 +61,11 @@ pois_m_step_gamma (
     scalar *const restrict new_lgamma);
 
 
+void
+pois_m_step_delta (
+    const size_t m_states,
+    const scalar *const restrict lcxpt,
+    scalar *const restrict new_ldelta);
+
+
 #endif  /* pois_em */

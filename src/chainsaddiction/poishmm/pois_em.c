@@ -81,3 +81,13 @@ pois_m_step_gamma (
     }
     MA_FREE (pr_buff);
 }
+
+
+void
+pois_m_step_delta (
+    const size_t m_states,
+    const scalar *const restrict lcxpt,
+    scalar *const restrict new_ldelta)
+{
+    v_log_normalize (m_states, lcxpt, new_ldelta);
+}
