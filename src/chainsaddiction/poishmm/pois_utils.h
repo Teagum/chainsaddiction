@@ -50,7 +50,17 @@ log_cond_expect (
 
 /** Normalize buffer inplace in log domain. */
 extern void
-log_normalize (size_t n_elem, scalar *restrict buffer);
+vi_log_normalize (
+    size_t n_elem,
+    scalar *const restrict buffer);
+
+
+/** Normalize buffer in log domain. */
+extern void
+v_log_normalize (
+    size_t n_elem,
+    const scalar *const restrict src,
+    scalar *const restrict dest);
 
 
 #endif  /* pois_utils.h */

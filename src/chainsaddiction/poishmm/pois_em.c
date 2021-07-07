@@ -77,7 +77,7 @@ pois_m_step_gamma (
             }
             new_lgamma[idx] = v_lse (pr_buff, n_obs-1) + lgamma[idx];
         }
-        log_normalize (m_states, new_lgamma+i*m_states);
+        vi_log_normalize (m_states, new_lgamma+i*m_states);
     }
     MA_FREE (pr_buff);
 }
