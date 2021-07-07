@@ -35,7 +35,6 @@ pois_utils.o: pois_utils.h libma.h restrict.h scalar.h vmath.h
 test: all
 	@$(MAKE) -C tests/
 
-.PHONY: check
 check: test
 	tests/pois_hmm.test
 
