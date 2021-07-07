@@ -27,7 +27,7 @@
 
 
 bool
-test__ph_bw_m_step_lambda (void);
+test__pois_e_step (void);
 
 
 #endif  /* test_bw_h */

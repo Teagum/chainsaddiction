@@ -1,6 +1,7 @@
 #include "test_pois_probs.h"
 #include "test_pois_params.h"
 #include "test_pois_hmm.h"
+#include "test_pois_em.h"
 
 int
 main (void)
@@ -15,6 +16,7 @@ main (void)
     RUN_TEST (test__PoisHmm_Init);
     RUN_TEST (test__PoisHmm_InitRandom);
     RUN_TEST (test__PoisHmm_LogLikelihood);
+    RUN_TEST (test__pois_e_step);
 
     EVALUATE;
 }
