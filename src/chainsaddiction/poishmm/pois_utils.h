@@ -48,4 +48,9 @@ log_cond_expect (
     scalar *lcexpt);
 
 
+/** Normalize buffer inplace in log domain. */
+extern void
+log_normalize (size_t n_elem, scalar *restrict buffer);
+
+
 #endif  /* pois_utils.h */

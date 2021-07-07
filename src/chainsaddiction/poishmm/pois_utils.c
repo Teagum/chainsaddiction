@@ -36,3 +36,14 @@ log_cond_expect (
     size_t n_elem = n_obs * m_states;
     mm_add_s (lalpha, lbeta, n_elem, llh, lcexpt);
 }
+
+
+inline void
+log_normalize (size_t n_elem, scalar *restrict buffer)
+{
+    scalar lsum = v_lse (buffer, n_elem);
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        buffer[i] -= lsum;
+    }
+}
