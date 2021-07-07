@@ -49,4 +49,16 @@ pois_m_step_lambda (
     scalar *const restrict new_lambda);
 
 
+void
+pois_m_step_gamma (
+    const size_t n_obs,
+    const size_t m_states,
+    const scalar llh,
+    const scalar *const restrict lsdp,
+    const scalar *const restrict lalpha,
+    const scalar *const restrict lbeta,
+    const scalar *const restrict lgamma,
+    scalar *const restrict new_lgamma);
+
+
 #endif  /* pois_em */
