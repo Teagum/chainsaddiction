@@ -25,12 +25,6 @@ pois_e_step (
     scalar *const restrict lcxpt,
     scalar *const restrict llh);
 
-/*
-void
-pois_e_step (
-    const DataSet *const restrict inp,
-    PoisHmm *const restrict phmm);
-*/
 
 void
 pois_m_step (
