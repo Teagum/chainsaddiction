@@ -41,12 +41,18 @@ pois_e_step (const DataSet *const restrict inp, PoisHmm *const restrict phmm)
 
 void
 pois_m_step (
-    const DataSet *const restrict inp,
-    const PoisProbs *const restrict probs,
-    const scalar llh)
+    const size_t n_obs,
+    const size_t m_states,
+    const scalar llh,
+    const scalar *const restrict input_data,
+    const scalar *const restrict lalpha,
+    const scalar *const restrict lbeta,
+    const scalar *const restrict lgamma,
+    scalar *const restrict new_lambda,
+    scalar *const restrict new_lgamma,
+    scalar *const restrict new_ldelta)
 {
-    size_t n_elem = probs->m_states * probs->n_obs;
-    scalar *lstate_pr = MA_SCALAR_EMPTY (n_elem);
+
 }
 
 

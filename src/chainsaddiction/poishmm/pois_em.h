@@ -34,9 +34,16 @@ pois_e_step (
 
 void
 pois_m_step (
-    const DataSet *const restrict inp,
-    const PoisProbs *const restrict probs,
-    const scalar llh);
+    const size_t n_obs,
+    const size_t m_states,
+    const scalar llh,
+    const scalar *const restrict input_data,
+    const scalar *const restrict lalpha,
+    const scalar *const restrict lbeta,
+    const scalar *const restrict lgamma,
+    scalar *const restrict new_lambda,
+    scalar *const restrict new_lgamma,
+    scalar *const restrict new_ldelta);
 
 
 void
