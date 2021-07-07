@@ -10,15 +10,16 @@ pois_e_step (
     const scalar *const restrict lambda,
     const scalar *const restrict lgamma,
     const scalar *const restrict ldelta,
+    scalar *const restrict lsdp,
     scalar *const restrict lalpha,
     scalar *const restrict lbeta,
-    scalar *const restrict lsdp,
+    scalar *const restrict lcxpt,
     scalar *const restrict llh)
-
 {
     v_poisson_logpmf (input_data, n_obs, lambda, m_states, lsdp);
     log_fwbw (lsdp, lgamma, ldelta, m_states, n_obs, lalpha, lbeta);
     *llh = compute_log_likelihood (lalpha, n_obs, m_states);
+    log_cond_expect (n_obs, m_states, lalpha, lbeta, *llh, lcxpt);
 }
 /*
 void

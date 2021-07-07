@@ -18,18 +18,20 @@ test__pois_e_step (void)
         const size_t n_elem   = m_states * n_obs;
 
         //scalar *input  = MA_SCALAR_EMPTY (n_obs);
+        scalar *lsdp   = MA_SCALAR_EMPTY (n_elem);
         scalar *lalpha = MA_SCALAR_EMPTY (n_elem);
         scalar *lbeta  = MA_SCALAR_EMPTY (n_elem);
-        scalar *lsdp   = MA_SCALAR_EMPTY (n_elem);
+        scalar *lcxpt  = MA_SCALAR_EMPTY (n_elem);
         scalar llh     = 0;
 
         pois_e_step (n_obs, m_states, input, lambda, lgamma, ldelta,
-                lalpha, lbeta, lsdp, &llh);
+                lsdp, lalpha, lbeta, lcxpt, &llh);
 
         //MA_FREE (input);
+        MA_FREE (lsdp);
         MA_FREE (lalpha);
         MA_FREE (lbeta);
-        MA_FREE (lsdp);
+        MA_FREE (lcxpt);
     }
     return false;
 }

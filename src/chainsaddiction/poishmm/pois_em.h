@@ -19,9 +19,10 @@ pois_e_step (
     const scalar *const restrict lambda,
     const scalar *const restrict lgamma,
     const scalar *const restrict ldelta,
+    scalar *const restrict lsdp,
     scalar *const restrict lalpha,
     scalar *const restrict lbeta,
-    scalar *const restrict lsdp,
+    scalar *const restrict lcxpt,
     scalar *const restrict llh);
 
 /*
