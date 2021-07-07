@@ -1,14 +1,12 @@
-#ifndef TEST_BW_H
-#define TEST_BW_H
+#ifndef test_bw_h
+#define test_bw_h
 
-#include <time.h>
 #include "unittest.h"
-#include "poishmm.h"
-#include "bw.h"
+#include "../pois_em.h"
 
 
 bool
 test__ph_bw_m_step_lambda (void);
 
 
-#endif  /* TEST_BW_H */
+#endif  /* test_bw_h */
