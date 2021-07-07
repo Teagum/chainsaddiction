@@ -41,10 +41,11 @@ pois_m_step (
 
 void
 pois_m_step_lambda (
-    const DataSet *const restrict inp,
-    const scalar *const restrict lstate_pr,
+    const size_t n_obs,
     const size_t m_states,
-    scalar *restrict out);
+    const scalar *const restrict data,
+    const scalar *const restrict lcxpt,
+    scalar *const restrict new_lambda);
 
 
 #endif  /* pois_em */
