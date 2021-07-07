@@ -17,6 +17,7 @@ main (void)
     RUN_TEST (test__PoisHmm_InitRandom);
     RUN_TEST (test__PoisHmm_LogLikelihood);
     RUN_TEST (test__pois_e_step);
+    RUN_TEST (test__pois_m_step_gamma);
 
     EVALUATE;
 }

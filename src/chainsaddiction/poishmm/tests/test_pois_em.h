@@ -29,5 +29,8 @@
 bool
 test__pois_e_step (void);
 
+bool
+test__pois_m_step_gamma (void);
+
 
 #endif  /* test_bw_h */
