@@ -42,23 +42,27 @@ pois_e_step (
     log_cond_expect (n_obs, m_states, lalpha, lbeta, *llh, lcxpt);
 }
 
-/*
+
 void
 pois_m_step (
     const size_t n_obs,
     const size_t m_states,
     const scalar llh,
-    const scalar *const restrict input_data,
+    const scalar *const restrict data,
+    const scalar *const restrict lsdp,
     const scalar *const restrict lalpha,
     const scalar *const restrict lbeta,
     const scalar *const restrict lgamma,
+    const scalar *const restrict lcxpt,
     scalar *const restrict new_lambda,
     scalar *const restrict new_lgamma,
     scalar *const restrict new_ldelta)
 {
-
+    pois_m_step_lambda (n_obs, m_states, data, lcxpt, new_lambda);
+    pois_m_step_gamma  (n_obs, m_states, llh, lsdp, lalpha, lbeta, lgamma, new_lgamma);
+    pois_m_step_delta  (m_states, lcxpt, new_ldelta);
 }
-*/
+
 
 void
 pois_m_step_lambda (
