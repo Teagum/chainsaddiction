@@ -68,4 +68,10 @@ pois_m_step_delta (
     scalar *const restrict new_ldelta);
 
 
+scalar
+score_update (
+    const PoisParams *const restrict new,
+    const PoisParams *const restrict old);
+
+
 #endif  /* pois_em */

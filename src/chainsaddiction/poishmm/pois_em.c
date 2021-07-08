@@ -2,6 +2,26 @@
 #include "pois_em.h"
 
 
+scalar
+score_update (
+    const PoisParams *const restrict new,
+    const PoisParams *const restrict old)
+{
+    scalar score = 0L;
+    for (size_t i = 0; i < new->m_states; i++)
+    {
+        score += fabsl (old->lambda[i] - new->lambda[i]);
+        score += fabsl (old->delta[i] - new->delta[i]);
+        for (size_t j = 0; j < new->m_states; j++)
+        {
+            size_t idx = i * new->m_states + j;
+            score += fabsl (expl (old->gamma[idx]) - expl (new->gamma[idx]));
+        }
+    }
+    return score;
+}
+
+
 void
 pois_e_step (
     const size_t n_obs,
