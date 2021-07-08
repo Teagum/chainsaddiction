@@ -7,7 +7,7 @@
 #include "../dataset.h"
 #include "../restrict.h"
 #include "../scalar.h"
-#include "pois_hmm.h"
+#include "pois_em.h"
 #include "pois_fwbw.h"
 
 
