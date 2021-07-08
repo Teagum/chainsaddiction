@@ -32,6 +32,12 @@ PoisParams_New (
 
 
 extern void
+PoisParams_Copy (
+    const PoisParams *const restrict this,
+    PoisParams *const restrict other);
+
+
+extern void
 PoisParams_SetLambda (
     PoisParams *const restrict params,
     const scalar *const restrict lambda);

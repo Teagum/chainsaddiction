@@ -22,6 +22,17 @@ PoisParams_New (
 
 
 inline void
+PoisParams_Copy (
+    const PoisParams *const restrict this,
+    PoisParams *const restrict other)
+{
+    PoisParams_SetLambda (other, this->lambda);
+    PoisParams_SetGamma  (other, this->gamma);
+    PoisParams_SetDelta  (other, this->delta);
+}
+
+
+inline void
 PoisParams_SetLambda (
     PoisParams *const restrict params,
     const scalar *const restrict lambda)
