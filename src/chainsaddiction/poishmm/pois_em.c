@@ -23,7 +23,13 @@ pois_em (
         pois_m_step (n_obs, m_states, *llh, data, probs->lsdp, probs->lalpha,
                 probs->lbeta, probs->lcxpt, params->gamma, nlp->lambda,
                 nlp->gamma, nlp->delta);
+
+        if (score_update (nlp, params) >= tol)
+        {
+            PoisParams_Copy (nlp, params);
+        }
     }
+    fputs ("Warning: no convergence.\n", stderr);
 }
 
 
