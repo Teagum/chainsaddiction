@@ -6,7 +6,9 @@
 #include <string.h>
 #include "../libma.h"
 #include "../restrict.h"
+#include "../rnd.h"
 #include "../scalar.h"
+#include "../vmath.h"
 
 
 typedef struct {
@@ -28,6 +30,11 @@ typedef struct {
 
 PoisParams *
 PoisParams_New (
+    const size_t m_states);
+
+
+PoisParams *
+PoisParams_NewRandom (
     const size_t m_states);
 
 
@@ -53,6 +60,39 @@ extern void
 PoisParams_SetDelta (
     PoisParams *const restrict params,
     const scalar *const restrict delta);
+
+
+extern void
+PoisParams_SetLambdaRnd (
+    PoisParams *const restrict this);
+
+
+extern void
+PoisParams_SetGammaRnd (
+    PoisParams *const restrict this);
+
+
+extern void
+PoisParams_SetDeltaRnd (
+    PoisParams *const restrict this);
+
+
+void
+pp_rnd_lambda (
+    const size_t m_states,
+    scalar *const restrict buffer);
+
+
+void
+pp_rnd_gamma (
+    const size_t m_states,
+    scalar *const restrict buffer);
+
+
+void
+pp_rnd_delta (
+    const size_t m_states,
+    scalar *const restrict buffer);
 
 
 #endif  /* pois_params_h */

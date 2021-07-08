@@ -21,6 +21,19 @@ PoisParams_New (
 }
 
 
+PoisParams *
+PoisParams_NewRandom (
+    const size_t m_states)
+{
+    PoisParams *this = PoisParams_New (m_states);
+    PoisParams_SetLambdaRnd (this);
+    PoisParams_SetGammaRnd  (this);
+    PoisParams_SetDeltaRnd  (this);
+
+    return this;
+}
+
+
 inline void
 PoisParams_Copy (
     const PoisParams *const restrict this,
@@ -57,4 +70,66 @@ PoisParams_SetDelta (
     const scalar *const restrict delta)
 {
     memcpy (params->delta, delta, params->m_states * sizeof (scalar));
+}
+
+
+inline void
+PoisParams_SetLambdaRnd (
+    PoisParams *const restrict this)
+{
+    pp_rnd_lambda (this->m_states, this->lambda);
+}
+
+
+inline void
+PoisParams_SetGammaRnd (
+    PoisParams *const restrict this)
+{
+    pp_rnd_gamma (this->m_states, this->gamma);
+}
+
+
+inline void
+PoisParams_SetDeltaRnd (
+    PoisParams *const restrict this)
+{
+    pp_rnd_delta (this->m_states, this->delta);
+}
+
+
+void
+pp_rnd_lambda (
+    const size_t m_states,
+    scalar *const restrict buffer)
+{
+    v_rnd (m_states, buffer);
+    for (size_t i = 0; i < m_states; i++)
+    {
+        buffer[i] += (scalar) rnd_int (1, 100);
+    }
+}
+
+
+void
+pp_rnd_gamma (
+    const size_t m_states,
+    scalar *const restrict buffer)
+{
+    const size_t g_elem = m_states * m_states;
+
+    v_rnd (g_elem, buffer);
+    for (size_t i = 0; i < m_states; i++)
+    {
+        vi_softmax (buffer+i*m_states, m_states);
+    }
+}
+
+
+void
+pp_rnd_delta (
+    const size_t m_states,
+    scalar *const restrict buffer)
+{
+    v_rnd (m_states, buffer);
+    vi_softmax (buffer, m_states);
 }
