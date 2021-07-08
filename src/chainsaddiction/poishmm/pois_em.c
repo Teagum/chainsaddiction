@@ -1,6 +1,32 @@
 #include "pois_em.h"
 
 
+void
+pois_em (
+    const size_t n_obs,
+    const size_t m_states,
+    const size_t iter_max,
+    const scalar tol,
+    const scalar *const restrict data,
+    scalar *const restrict llh,
+    PoisProbs *const restrict probs,
+    PoisParams *const restrict params)
+{
+    PoisParams *nlp = PoisParams_New (m_states);
+
+    for (size_t i = 0; i < iter_max; i++)
+    {
+        pois_e_step (n_obs, m_states, data, params->lambda, params->gamma,
+                params->delta, probs->lsdp, probs->lalpha, probs->lbeta,
+                probs->lcxpt, llh);
+
+        pois_m_step (n_obs, m_states, *llh, data, probs->lsdp, probs->lalpha,
+                probs->lbeta, probs->lcxpt, params->gamma, nlp->lambda,
+                nlp->gamma, nlp->delta);
+    }
+}
+
+
 scalar
 score_update (
     const PoisParams *const restrict new,

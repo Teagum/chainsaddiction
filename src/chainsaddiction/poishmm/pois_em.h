@@ -9,6 +9,20 @@
 #include "../scalar.h"
 #include "pois_em.h"
 #include "pois_fwbw.h"
+#include "pois_hmm.h"
+#include "pois_probs.h"
+
+
+void
+pois_em (
+    const size_t n_obs,
+    const size_t m_states,
+    const size_t iter_max,
+    const scalar tol,
+    const scalar *const restrict data,
+    scalar *const restrict llh,
+    PoisProbs *const restrict probs,
+    PoisParams *const restrict params);
 
 
 void
