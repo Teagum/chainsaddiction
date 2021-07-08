@@ -35,5 +35,8 @@ test__pois_m_step_gamma (void);
 bool
 test__pois_m_step_delta (void);
 
+bool
+test__score_update (void);
+
 
 #endif  /* test_bw_h */

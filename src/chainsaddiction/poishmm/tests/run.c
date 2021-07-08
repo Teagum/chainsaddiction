@@ -19,6 +19,7 @@ main (void)
     RUN_TEST (test__pois_e_step);
     RUN_TEST (test__pois_m_step_gamma);
     RUN_TEST (test__pois_m_step_delta);
+    RUN_TEST (test__score_update);
 
     EVALUATE;
 }
