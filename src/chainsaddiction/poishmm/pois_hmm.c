@@ -115,7 +115,7 @@ PoisHmm_PrintInit (const PoisHmm *phmm)
     puts ("");
 }
 
-void PoisHmm_PrintParams (const PoisHmm *const restrict phmm)
+void PoisHmm_PrintParams (const PoisHmm *const phmm)
 {
     enum {linewidth=100};
     char border[] = "====================";
@@ -141,7 +141,7 @@ void PoisHmm_PrintParams (const PoisHmm *const restrict phmm)
     puts ("");
     printf ("%25s", "Start distribution:");
     for (size_t i = 0; i < m_states; i++)
-        printf ("%10.5Lf", params->delta[i]);
+        printf ("%10.5Lf", expl (params->delta[i]));
 
     printf ("\n\n%s%s%s\n\n", sep, sep, sep);
 
@@ -155,7 +155,7 @@ void PoisHmm_PrintParams (const PoisHmm *const restrict phmm)
         printf ("%25zu", i+1);
         for (size_t j = 0; j < m_states; j++)
         {
-            printf ("%10.5Lf", params->gamma[i*m_states+j]);
+            printf ("%10.5Lf", expl (params->gamma[i*m_states+j]));
         }
         puts ("");
     }
