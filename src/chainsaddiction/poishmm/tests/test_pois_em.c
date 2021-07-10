@@ -38,6 +38,41 @@ test__pois_e_step (void)
 
 
 bool
+test__pois_m_step_lambda (void)
+{
+
+    enum { n_repeat_test = 10, m_states = 3, n_obs = 15, n_elem = m_states * n_obs};
+    bool err = true;
+
+    SET_EARTHQUAKES_SHORT;
+    SET_LAMBDA;
+    SET_LOG_GAMMA;
+    SET_LOG_DELTA;
+
+    scalar new_lambda[m_states] = { 0L };
+
+    scalar *lsdp   = MA_SCALAR_ZEROS (n_elem);
+    scalar *lalpha = MA_SCALAR_ZEROS (n_elem);
+    scalar *lbeta  = MA_SCALAR_ZEROS (n_elem);
+    scalar *lcxpt  = MA_SCALAR_ZEROS (n_elem);
+    scalar llh     = 0L;
+
+    pois_e_step (n_obs, m_states, input, lambda, lgamma, ldelta,
+            lsdp, lalpha, lbeta, lcxpt, &llh);
+
+    pois_m_step_lambda (n_obs, m_states, input, lcxpt, new_lambda);
+
+    for (size_t i = 0; i < m_states; i++) {
+        if (!isnormal (new_lambda[i])) {
+            return err;
+        }
+    }
+    err = false;
+    return err;
+}
+
+
+bool
 test__pois_m_step_gamma (void)
 {
     enum { n_repeat_test = 10, m_states = 3, n_obs = 15, n_elem = m_states * n_obs};

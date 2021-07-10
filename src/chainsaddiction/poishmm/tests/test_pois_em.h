@@ -30,6 +30,9 @@ bool
 test__pois_e_step (void);
 
 bool
+test__pois_m_step_lambda (void);
+
+bool
 test__pois_m_step_gamma (void);
 
 bool
