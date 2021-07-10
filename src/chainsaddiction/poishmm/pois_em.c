@@ -24,10 +24,8 @@ pois_em (
                 probs->lbeta, probs->lcxpt, params->gamma, nlp->lambda,
                 nlp->gamma, nlp->delta);
 
-        if (score_update (nlp, params) >= tol)
-        {
-            PoisParams_Copy (nlp, params);
-        }
+        if (score_update (nlp, params) < tol) return;
+        PoisParams_Copy (nlp, params);
     }
     fputs ("Warning: no convergence.\n", stderr);
 }
