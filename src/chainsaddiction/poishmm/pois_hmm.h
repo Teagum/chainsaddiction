@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include "pois_em.h"
 #include "pois_params.h"
 #include "pois_probs.h"
 #include "pois_utils.h"
