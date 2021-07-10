@@ -40,7 +40,7 @@ score_update (
     for (size_t i = 0; i < new->m_states; i++)
     {
         score += fabsl (old->lambda[i] - new->lambda[i]);
-        score += fabsl (old->delta[i] - new->delta[i]);
+        score += fabsl (expl (old->delta[i]) - expl (new->delta[i]));
         for (size_t j = 0; j < new->m_states; j++)
         {
             size_t idx = i * new->m_states + j;
