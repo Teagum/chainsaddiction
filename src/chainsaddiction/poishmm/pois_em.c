@@ -102,6 +102,7 @@ pois_m_step_lambda (
     scalar *const restrict new_lambda)
 {
     m_lse_centroid_rows (lcxpt, data, n_obs, m_states, new_lambda);
+    vi_exp (new_lambda, m_states);
 }
 
 
