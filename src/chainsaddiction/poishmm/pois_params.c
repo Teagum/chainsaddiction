@@ -45,6 +45,13 @@ PoisParams_Copy (
 }
 
 
+#define PoisParams_Set (this, lambda, gamma, delta) do {    \
+    PoisParams_SetLambda (this, lambda);                    \
+    PoisParams_SetGamma  (this, gamma);                     \
+    PoisParams_SetDelta  (this, delta);                     \
+while (false);
+
+
 inline void
 PoisParams_SetLambda (
     PoisParams *const restrict params,
