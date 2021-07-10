@@ -115,3 +115,24 @@ test__PoisHmm_LogLikelihood (void)
     PoisHmm_Delete (phmm);
     return err;
 }
+
+
+bool
+test__PoisHmm_EstimateParams (void)
+{
+    const char path[] = "../../../tests/data/earthquakes";
+    enum { n_repeat_test = 1, m_states = 3, n_obs = 107 };
+    const scalar ilambda[] = { 10L, 20L, 30L };
+    const scalar igamma[]  =  {.8, .1, .1, .1, .8, .1, .1, .1, .8 };
+    const scalar idelta[]  = { 1.0L/3L, 1.0L/3L, 1.0L/3L };
+
+    DataSet *inp = ds_NewFromFile (path);
+    PoisHmm *hmm = PoisHmm_New (n_obs, m_states);
+    PoisHmm_Init(hmm, ilambda, igamma, idelta);
+
+    PoisHmm_EstimateParams (hmm, inp);
+
+    ds_FREE (inp);
+    PoisHmm_Delete (hmm);
+    return false;
+}
