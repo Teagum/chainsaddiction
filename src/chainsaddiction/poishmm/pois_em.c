@@ -81,8 +81,8 @@ pois_m_step (
     const scalar *const restrict lsdp,
     const scalar *const restrict lalpha,
     const scalar *const restrict lbeta,
-    const scalar *const restrict lgamma,
     const scalar *const restrict lcxpt,
+    const scalar *const restrict lgamma,
     scalar *const restrict new_lambda,
     scalar *const restrict new_lgamma,
     scalar *const restrict new_ldelta)
