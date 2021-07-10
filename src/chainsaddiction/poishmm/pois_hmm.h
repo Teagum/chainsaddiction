@@ -92,9 +92,9 @@ void PoisHmm_PrintParams (
 
 
 void
-PoisHmm_BaumWelch (
-    const DataSet *const restrict inp,
-    PoisHmm *restrict hmm);
+PoisHmm_EstimateParams (
+    PoisHmm *const restrict this,
+    const DataSet *const restrict inp);
 
 
 #endif  /* HMM_H */

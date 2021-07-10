@@ -161,3 +161,13 @@ void PoisHmm_PrintParams (const PoisHmm *const phmm)
     }
     printf ("\n*%s%s%s*\n\n", border, border, border);
 }
+
+
+void
+PoisHmm_EstimateParams (
+    PoisHmm *const restrict this,
+    const DataSet *const restrict inp)
+{
+    pois_em (inp->size, this->m_states, this->max_iter, this->tol, inp->data,
+            &this->llh, this->probs, this->params);
+}
