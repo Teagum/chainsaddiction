@@ -62,6 +62,7 @@ PoisHmm_Init (
     memcpy (phmm->init->delta, delta, v_size);
 #endif
 
+    memcpy (phmm->params->lambda, phmm->init->lambda, v_size);
     v_log (phmm->init->gamma, n_elem_gamma, phmm->params->gamma);
     v_log (phmm->init->delta, phmm->m_states, phmm->params->delta);
 }
@@ -84,6 +85,7 @@ PoisHmm_InitRandom (PoisHmm *const restrict phmm)
     }
     vi_softmax (phmm->init->delta, m_states);
 
+    memcpy (phmm->params->lambda, phmm->init->lambda, m_states * sizeof (scalar));
     v_log (phmm->init->gamma, n_elem, phmm->params->gamma);
     v_log (phmm->init->delta, m_states, phmm->params->delta);
 }
