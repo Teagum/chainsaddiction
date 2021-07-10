@@ -10,6 +10,7 @@
 #include "pois_em.h"
 #include "pois_fwbw.h"
 #include "pois_hmm.h"
+#include "pois_params.h"
 #include "pois_probs.h"
 
 
