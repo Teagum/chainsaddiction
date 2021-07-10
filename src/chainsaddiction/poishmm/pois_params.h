@@ -78,6 +78,11 @@ PoisParams_SetDeltaRnd (
 
 
 void
+PoisParams_Print (
+    PoisParams *const this);
+
+
+void
 pp_rnd_lambda (
     const size_t m_states,
     scalar *const restrict buffer);

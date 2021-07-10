@@ -105,6 +105,51 @@ PoisParams_SetDeltaRnd (
 
 
 void
+PoisParams_Print (
+    PoisParams *const this)
+{
+    enum { linewidth=100 };
+    char border[] = "====================";
+    char sep[] = "--------------------";
+
+    size_t m_states = this->m_states;
+
+    printf ("\n\n*%s%s%s*\n\n", border, border, border);
+    printf ("%25s%10zu\n", "m-states:", m_states);
+
+    printf ("%25s", "State:");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10zu", i+1);
+    puts ("");
+    printf ("%25s", "State dependent means:");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10.5Lf", this->lambda[i]);
+    puts ("");
+    printf ("%25s", "Start distribution:");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10.5Lf", this->delta[i]);
+
+    printf ("\n\n%s%s%s\n\n", sep, sep, sep);
+
+    printf ("%25s", "Transition probability matrix:\n");
+    printf ("%25s", " ");
+    for (size_t i = 0; i < m_states; i++)
+        printf ("%10zu", i+1);
+    puts ("");
+    for (size_t i = 0; i < m_states; i++)
+    {
+        printf ("%25zu", i+1);
+        for (size_t j = 0; j < m_states; j++)
+        {
+            printf ("%10.5Lf", this->gamma[i*m_states+j]);
+        }
+        puts ("");
+    }
+    printf ("\n*%s%s%s*\n\n", border, border, border);
+}
+
+
+void
 pp_rnd_lambda (
     const size_t m_states,
     scalar *const restrict buffer)
