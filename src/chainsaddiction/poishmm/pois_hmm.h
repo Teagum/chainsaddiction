@@ -15,7 +15,7 @@
 #include "../vmath.h"
 
 #define DEFAULT_MAX_ITER 1000
-#define DEFAULT_TOLERANCE 1e-5
+#define DEFAULT_TOLERANCE 1e-6
 
 
 /** \struct PoisHmm
