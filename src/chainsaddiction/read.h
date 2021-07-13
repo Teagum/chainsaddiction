@@ -4,9 +4,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 #include "scalar.h"
 
 #define cnt unsigned int
+#define RETURN_ERROR return 1
+#define RETURN_SUCCESS return 0
+#define HEADER_SIZE_MAX 100
+#define M_STATES_MAX 50
 
 #define PERISH(msg) do {        \
     perror (msg);               \
@@ -61,6 +66,19 @@ Ca_ReadDataFile (FILE *stream, cnt n_lines, scalar *target);
  */
 extern void
 Ca_CountLines (FILE *file, cnt *line_cnt);
+
+
+extern int
+Ca_ReadSectionHeader (
+    FILE *stream,
+    const char *header);
+
+
+extern int
+Ca_ReadSectionData (
+    FILE *stream,
+    const size_t n_elem,
+    scalar *buff);
 
 
 #endif	/* read_h */
