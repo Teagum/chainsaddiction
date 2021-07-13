@@ -9,6 +9,7 @@ main (void)
     SETUP;
 
     RUN_TEST (test__PoisParams_New);
+    RUN_TEST (test__PoisParams_NewFromFile);
 
     RUN_TEST (test__PoisProbs_New);
 
@@ -24,5 +25,6 @@ main (void)
     RUN_TEST (test__pois_m_step_lambda);
 
     RUN_TEST (test__PoisHmm_EstimateParams);
+
     EVALUATE;
 }

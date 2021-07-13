@@ -31,3 +31,28 @@ test__PoisParams_New (void)
     }
     return false;
 }
+
+
+bool
+test__PoisParams_NewFromFile (void)
+{
+    enum { FNAME_LEN_MAX = 100, N_FILES = 5};
+    bool err = false;
+    PoisParams *out = NULL;
+    char test_files[][FNAME_LEN_MAX] = {
+        "tests/data/ppr1",
+        "tests/data/ppr2",
+        "tests/data/ppr3",
+        "tests/data/ppr4",
+        "tests/data/ppr5"
+    };
+
+    for (size_t fcnt = 0; fcnt < N_FILES; fcnt++) {
+        out = PoisParams_NewFromFile (test_files[fcnt]);
+        if (out == NULL) {
+            fprintf (stderr, "Failed on file ``%s''.\n", test_files[fcnt]);
+            err = true;
+        }
+    }
+    return  err;
+}
