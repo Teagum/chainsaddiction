@@ -34,7 +34,7 @@ pois_fwbw.o: pois_fwbw.h dataset.h libma.h read.h restrict.h scalar.h  \
 pois_hmm.o: pois_hmm.h pois_params.h pois_probs.h pois_utils.o         \
 	dataset.h libma.h read.h restrict.h rnd.h scalar.h vmath.h
 
-pois_params.o: pois_params.h libma.h restrict.h rnd.h scalar.h vmath.h
+pois_params.o: pois_params.h libma.h read.h restrict.h rnd.h scalar.h vmath.h
 pois_probs.o: pois_probs.h libma.h restrict.h scalar.h
 pois_utils.o: pois_utils.h libma.h restrict.h scalar.h vmath.h
 

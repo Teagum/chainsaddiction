@@ -5,10 +5,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../libma.h"
+#include "../read.h"
 #include "../restrict.h"
 #include "../rnd.h"
 #include "../scalar.h"
 #include "../vmath.h"
+
+
+#define CHECK_READ_ERROR(res) \
+if (res) { \
+    fprintf (stderr, "Reading error.\n"); \
+    return NULL;\
+} while (0)
 
 
 typedef struct {
@@ -31,6 +39,11 @@ typedef struct {
 PoisParams *
 PoisParams_New (
     const size_t m_states);
+
+
+PoisParams *
+PoisParams_NewFromFile (
+    const char *fpath);
 
 
 PoisParams *
