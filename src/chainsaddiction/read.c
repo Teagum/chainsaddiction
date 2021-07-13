@@ -107,3 +107,77 @@ Ca_CountLines (FILE *file, cnt *line_cnt)
         PERISH ("Could not set file position");
     }
 }
+
+
+int
+Ca_ReadSectionHeader (
+    FILE *stream,
+    const char *header)
+{
+    char  buff[HEADER_SIZE_MAX];
+    char *status   = NULL;
+    int   is_equal = 0;
+
+    if (header == NULL) {
+        fprintf (stderr, "Invalid header name.\n");
+        RETURN_ERROR;
+    }
+    const size_t len = strlen (header);
+
+    if (stream == NULL) {
+        fprintf (stderr, "Invalid file stream.\n");
+        RETURN_ERROR;
+    }
+
+    status = fgets (buff, len+1, stream);
+    if (status == NULL) {
+        fprintf (stderr, "Could not read section header ``%s''.\n", header);
+        RETURN_ERROR;
+    }
+
+    is_equal = strcmp (header, buff);
+    if (is_equal != 0) {
+        fprintf (stderr, "Header does not match.\n");
+        RETURN_ERROR;
+    }
+    RETURN_SUCCESS;
+}
+
+
+int
+Ca_ReadSectionData (
+    FILE *stream,
+    const size_t n_elem,
+    scalar *buff)
+{
+#ifdef LD_MATH
+    const char fmt[] = "%Lf ";
+#else
+    const char fmt[] = "%lf ";
+#endif
+    int status = 0;
+
+    if (stream == NULL) {
+        fprintf (stderr, "Invalid file stream.\n");
+        RETURN_ERROR;
+    }
+
+    if (n_elem == 0 || n_elem > M_STATES_MAX) {
+        fprintf (stderr, "Invalid number of data elements.\n");
+        RETURN_ERROR;
+    }
+
+    if (buff == NULL) {
+        fprintf (stderr, "Invalid output buffer.\n");
+        RETURN_ERROR;
+    }
+
+    for (size_t i = 0; i < n_elem; i++) {
+        status = fscanf (stream, fmt, buff++);
+        if (status != 1) {
+            fprintf (stderr, "Could not read element %zu of %zu.\n", i, n_elem);
+            RETURN_ERROR;
+        }
+    }
+    RETURN_SUCCESS;
+}

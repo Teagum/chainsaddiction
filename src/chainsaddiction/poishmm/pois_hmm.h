@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include "pois_em.h"
 #include "pois_params.h"
 #include "pois_probs.h"
 #include "pois_utils.h"
@@ -14,7 +15,7 @@
 #include "../vmath.h"
 
 #define DEFAULT_MAX_ITER 1000
-#define DEFAULT_TOLERANCE 1e-5
+#define DEFAULT_TOLERANCE 1e-6
 
 
 /** \struct PoisHmm
@@ -91,9 +92,9 @@ void PoisHmm_PrintParams (
 
 
 void
-PoisHmm_BaumWelch (
-    const DataSet *const restrict inp,
-    PoisHmm *restrict hmm);
+PoisHmm_EstimateParams (
+    PoisHmm *const restrict this,
+    const DataSet *const restrict inp);
 
 
 #endif  /* HMM_H */

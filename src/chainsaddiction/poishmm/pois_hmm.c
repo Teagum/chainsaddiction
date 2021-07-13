@@ -62,6 +62,7 @@ PoisHmm_Init (
     memcpy (phmm->init->delta, delta, v_size);
 #endif
 
+    memcpy (phmm->params->lambda, phmm->init->lambda, v_size);
     v_log (phmm->init->gamma, n_elem_gamma, phmm->params->gamma);
     v_log (phmm->init->delta, phmm->m_states, phmm->params->delta);
 }
@@ -84,6 +85,7 @@ PoisHmm_InitRandom (PoisHmm *const restrict phmm)
     }
     vi_softmax (phmm->init->delta, m_states);
 
+    memcpy (phmm->params->lambda, phmm->init->lambda, m_states * sizeof (scalar));
     v_log (phmm->init->gamma, n_elem, phmm->params->gamma);
     v_log (phmm->init->delta, m_states, phmm->params->delta);
 }
@@ -113,7 +115,7 @@ PoisHmm_PrintInit (const PoisHmm *phmm)
     puts ("");
 }
 
-void PoisHmm_PrintParams (const PoisHmm *const restrict phmm)
+void PoisHmm_PrintParams (const PoisHmm *const phmm)
 {
     enum {linewidth=100};
     char border[] = "====================";
@@ -139,7 +141,7 @@ void PoisHmm_PrintParams (const PoisHmm *const restrict phmm)
     puts ("");
     printf ("%25s", "Start distribution:");
     for (size_t i = 0; i < m_states; i++)
-        printf ("%10.5Lf", params->delta[i]);
+        printf ("%10.5Lf", expl (params->delta[i]));
 
     printf ("\n\n%s%s%s\n\n", sep, sep, sep);
 
@@ -153,9 +155,19 @@ void PoisHmm_PrintParams (const PoisHmm *const restrict phmm)
         printf ("%25zu", i+1);
         for (size_t j = 0; j < m_states; j++)
         {
-            printf ("%10.5Lf", params->gamma[i*m_states+j]);
+            printf ("%10.5Lf", expl (params->gamma[i*m_states+j]));
         }
         puts ("");
     }
     printf ("\n*%s%s%s*\n\n", border, border, border);
+}
+
+
+void
+PoisHmm_EstimateParams (
+    PoisHmm *const restrict this,
+    const DataSet *const restrict inp)
+{
+    pois_em (inp->size, this->m_states, this->max_iter, this->tol, inp->data,
+            &this->llh, this->probs, this->params);
 }
