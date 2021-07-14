@@ -24,6 +24,8 @@
     buff = NULL;        \
 } while (0)
 
+#define FOR_EACH(idx, max) for (size_t (idx) = 0; (idx) < (max); (idx++))
+
 #define OUTER_LOOP for (size_t i = 0; i < n_elem; i++)
 #define INNER_LOOP for (size_t j = 0; j < n_elem; j++)
 
