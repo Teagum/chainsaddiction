@@ -3,8 +3,7 @@
 
 #include <stdlib.h>
 #include <time.h>
-#include "scalar.h"
-#include "restrict.h"
+#include "config.h"
 
 /* Return random scalar.
  */

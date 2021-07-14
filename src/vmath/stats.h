@@ -3,8 +3,7 @@
 
 #include <stdlib.h>
 #include <math.h>
-#include "scalar.h"
-#include "restrict.h"
+#include "config.h"
 
 /** Log probability mass function of the Poisson distribution.
  *

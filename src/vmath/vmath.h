@@ -3,9 +3,7 @@
 
 #include <math.h>
 #include <stdlib.h>
-#include "libma.h"
-#include "restrict.h"
-#include "scalar.h"
+#include "config.h"
 
 /*
  * Prefixes:
