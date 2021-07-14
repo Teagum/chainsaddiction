@@ -17,6 +17,13 @@
  * Postfixes:
  * s:   scalar
  */
+
+#define VA_SCALAR_ZEROS(n_elem) calloc (n_elem, sizeof (scalar))
+#define FREE(buff) do { \
+    free (buff);        \
+    buff = NULL;        \
+} while (0)
+
 #define OUTER_LOOP for (size_t i = 0; i < n_elem; i++)
 #define INNER_LOOP for (size_t j = 0; j < n_elem; j++)
 

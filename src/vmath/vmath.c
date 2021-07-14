@@ -180,9 +180,9 @@ m_lse_centroid_rows (
     const size_t n_cols,
     scalar *centroid)
 {
-    scalar *row_sum = MA_SCALAR_ZEROS (n_cols);
-    scalar *w_row_sum = MA_SCALAR_ZEROS (n_cols);
-    scalar *row_max = MA_SCALAR_ZEROS (n_cols);
+    scalar *row_sum = VA_SCALAR_ZEROS (n_cols);
+    scalar *w_row_sum = VA_SCALAR_ZEROS (n_cols);
+    scalar *row_max = VA_SCALAR_ZEROS (n_cols);
 
     m_row_max (mtrx, n_rows, n_cols, row_max);
     for (size_t i = 0; i < n_rows*n_cols; i++)
@@ -198,9 +198,9 @@ m_lse_centroid_rows (
         centroid[i] = logl (w_row_sum[i] / row_sum[i]);
     }
 
-    MA_FREE (row_sum);
-    MA_FREE (w_row_sum);
-    MA_FREE (row_max);
+    FREE (row_sum);
+    FREE (w_row_sum);
+    FREE (row_max);
 }
 
 
