@@ -13,13 +13,13 @@ def_mm_op_s_func(div, /)
 
 inline void
 v_add (
-    const scalar *restrict vx,
-    const scalar *restrict vy,
-    const size_t n_elem,
-    scalar *sum)
+    scalar *const vx,
+    scalar *const vy,
+    const size_t n,
+    scalar *out)
 {
-    OUTER_LOOP {
-        sum[i] = vx[i] + vy[i];
+    FOR_EACH(i, n) {
+        out[i] = vx[i] + vy[i];
     }
 }
 

@@ -122,17 +122,17 @@ extern void mm_div_s (
 
 /** Add two vectors element-wise.
  *
- * \param _vx       Vector of size n_elem.
- * \param _vy       Vector of size n_elem.
- * \param n_elem    Number of elements in each vector.
- * \param sum       Output buffer of size n_elem.
+ * \param[in]  vtx       Vector of size n_elem.
+ * \param[in]  vty       Vector of size n_elem.
+ * \param[in]  n_elem    Number of elements in each vector.
+ * \param[out] out       Output buffer of size n_elem.
  */
 extern void
 v_add (
-    const scalar *restrict _vx,
-    const scalar *restrict _vy,
-    const size_t n_elem,
-    scalar *sum);
+    scalar *const vx,
+    scalar *const vy,
+    const size_t n,
+    scalar *out);
 
 
 /** Add first vector element-wise to second one.
