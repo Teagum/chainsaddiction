@@ -4,6 +4,7 @@
 *.out
 *.so
 *.swp
+*.a
 .venv
 .vimrc
 build/
