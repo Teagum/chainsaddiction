@@ -172,7 +172,7 @@ vs_sum (
  * Matrix interface
  */
 
-inline void
+inline int
 m_lse_centroid_rows (
     const scalar *restrict mtrx,
     const scalar *restrict wght,
@@ -180,27 +180,38 @@ m_lse_centroid_rows (
     const size_t n_cols,
     scalar *centroid)
 {
+    int err = 1;
     scalar *row_sum = VA_SCALAR_ZEROS (n_cols);
     scalar *w_row_sum = VA_SCALAR_ZEROS (n_cols);
     scalar *row_max = VA_SCALAR_ZEROS (n_cols);
 
-    m_row_max (mtrx, n_rows, n_cols, row_max);
-    for (size_t i = 0; i < n_rows*n_cols; i++)
+    if (row_sum == NULL || w_row_sum == NULL || row_max == NULL)
     {
-        size_t idx = i % n_cols;
-        scalar exp_val = expl (mtrx[i] - row_max[idx]);
-        row_sum[idx] += exp_val;
-        w_row_sum[idx] += exp_val * wght[i/n_cols];
+        fputs ("Could not allocate buffer in `m_lse_centroid_rows'.", stderr);
+        err = 1;
     }
-
-    for (size_t i = 0; i < n_cols; i++)
+    else
     {
-        centroid[i] = logl (w_row_sum[i] / row_sum[i]);
+        m_row_max (mtrx, n_rows, n_cols, row_max);
+        for (size_t i = 0; i < n_rows*n_cols; i++)
+        {
+            size_t idx = i % n_cols;
+            scalar exp_val = expl (mtrx[i] - row_max[idx]);
+            row_sum[idx] += exp_val;
+            w_row_sum[idx] += exp_val * wght[i/n_cols];
+        }
+
+        for (size_t i = 0; i < n_cols; i++)
+        {
+            centroid[i] = logl (w_row_sum[i] / row_sum[i]);
+        }
+        err = 0;
     }
 
     FREE (row_sum);
     FREE (w_row_sum);
     FREE (row_max);
+    return err;
 }
 
 

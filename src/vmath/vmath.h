@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "config.h"
 
 /*
@@ -268,7 +269,7 @@ vs_sum (
  * \param n_cols    Number of matrix columns.
  * \param centroid  Output buffer.
  */
-extern void
+extern int
 m_lse_centroid_rows (
         const scalar *restrict mtrx,
         const scalar *restrict wght,
