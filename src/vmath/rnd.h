@@ -1,15 +1,15 @@
-#ifndef RND_H
-#define RND_H
+#ifndef rnd_h
+#define rnd_h
 
 #include <stdlib.h>
 #include <time.h>
 #include "config.h"
 
+
 /* Return random scalar.
  */
 extern scalar
-rnd
-    (void);
+rnd (void);
 
 
 /* Random integer in range.
@@ -24,26 +24,27 @@ rnd_int (
 
 /* Fill vector wiht random scalars
  *
- * \param n_elem    Number of elements in vector.
- * \param buffer    Pointer to allocate memory.
+ * \param[in]  n_elem    Number of elements in vector.
+ * \param[out] buffer    Pointer to allocate memory.
  */
 extern void
 v_rnd (
     const size_t n_elem,
-    scalar *restrict buffer);
+    scalar *const restrict buffer);
 
 
 /* Fill vector with random integers in range.
- * \param r_min    Lower bound, inclusive.
- * \param r_max    Upper bound, exclusive.
- * \param n_elem   Number of elements.
- * \param buffer   Pointer to allocated memory.
+ * \param[in]  r_min    Lower bound, inclusive.
+ * \param[in]  r_max    Upper bound, exclusive.
+ * \param[in]  n_elem   Number of elements.
+ * \param[out] buffer   Pointer to allocated memory.
  */
 extern void
 v_rnd_int (
     const int r_min,
     const int r_max,
     const size_t n_elem,
-    int *restrict buffer);
+    int *const restrict buffer);
 
-#endif  /* RND_H */
+
+#endif  /* rnd_h */
