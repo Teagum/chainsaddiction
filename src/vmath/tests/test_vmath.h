@@ -1,11 +1,9 @@
-#ifndef TEST_VMATH_H
-#define TEST_VMATH_H
+#ifndef test_vmath_h
+#define test_vmath_h
 
+#include "config.h"
 #include "unittest.h"
-#include "libma.h"
-#include "restrict.h"
 #include "rnd.h"
-#include "scalar.h"
 #include "vmath.h"
 
 
