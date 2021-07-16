@@ -2,7 +2,7 @@
 
 
 bool
-test_strided_max (void)
+test__strided_max (void)
 {
     const size_t stride = 4;
     const size_t n_elem = stride * stride;
@@ -24,7 +24,7 @@ test_strided_max (void)
 
 
 bool
-test_v_lse (void)
+test__v_lse (void)
 {
     const size_t n_elem = 100;
     scalar *vals = MA_SCALAR_EMPTY (n_elem);
@@ -47,7 +47,7 @@ test_v_lse (void)
 
 
 bool
-test_vs_lse_centroid (void)
+test__vs_lse_centroid (void)
 {
     const size_t n_elem = 3;
     scalar vals[] = {2, 3, 4};
@@ -75,7 +75,7 @@ test_vs_lse_centroid (void)
 
 
 bool
-test_v_max (void)
+test__v_max (void)
 {
     bool err = true;
     scalar max = 2.0L;
@@ -92,7 +92,7 @@ test_v_max (void)
 
 
 bool
-test_vs_sum (void)
+test__vs_sum (void)
 {
     const size_t n_elem = 2;
     const size_t stride = 1; //rnd_int (0, n_elem);
@@ -115,7 +115,7 @@ test_vs_sum (void)
 
 
 bool
-test_m_max (void)
+test__m_max (void)
 {
     scalar max = 2L;
     scalar vals[N];
@@ -128,7 +128,7 @@ test_m_max (void)
 
 
 bool
-test_m_row_max (void)
+test__m_row_max (void)
 {
     const size_t rows = 5;
     const size_t cols = 5;
@@ -160,7 +160,7 @@ test_m_row_max (void)
 
 
 bool
-test_m_col_max (void)
+test__m_col_max (void)
 {
     const size_t rows = 4;
     const size_t cols = 3;
@@ -196,7 +196,7 @@ test_m_col_max (void)
 
 
 bool
-test_log_vmp (void)
+test__log_vmp (void)
 {
     const size_t n_elem = 3;
     scalar *vt = MA_SCALAR_EMPTY (n_elem);
@@ -222,7 +222,7 @@ test_log_vmp (void)
 
 
 bool
-test_log_mvp (void)
+test__log_mvp (void)
 {
     const size_t n = 3;
     scalar vt[] = {1, 2, 3};
@@ -245,7 +245,7 @@ test_log_mvp (void)
 }
 
 bool
-test_m_lse_centroid_rows (void)
+test__m_lse_centroid_rows (void)
 {
     const size_t n_rows = 4;
     const size_t n_cols = 3;
@@ -291,7 +291,7 @@ test_m_lse_centroid_rows (void)
 
 
 bool
-test_mm_add_s (void)
+test__mm_add_s (void)
 {
     const size_t n_elem = 10;
     scalar vals[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
