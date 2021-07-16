@@ -47,4 +47,7 @@ v_rnd_int (
     int *const restrict buffer);
 
 
+#define m_rnd(n_rows, n_cols, buffer) v_rnd (n_rows * n_cols, buffer)
+
+
 #endif  /* rnd_h */
