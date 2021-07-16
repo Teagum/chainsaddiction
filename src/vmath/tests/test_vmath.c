@@ -131,32 +131,41 @@ test__m_max (void)
 bool
 test__m_row_max (void)
 {
-    const size_t rows = 5;
-    const size_t cols = 5;
-    const size_t n_elem = rows * cols;
-    int *max_val = VA_INT_EMPTY (rows);
-    scalar *vals = VA_SCALAR_EMPTY (n_elem);
-    scalar *res_max = VA_SCALAR_EMPTY (rows);
-    bool err = true;
+    enum {
+        MIN_ROW_SIZE = 1, MAX_ROW_SIZE = 100,
+        MIN_COL_SIZE = 1, MAX_COL_SIZE = 20,
+        CHECK_VAL = 10,
+        n_repeat_test = 100
+    };
 
-    v_rnd_int (10, 100, rows, max_val);
-    v_rnd (n_elem, vals);
-
-    for (size_t i = 0; i < rows; i++)
+    bool is_equal = true;
+    for (size_t n = 0; n < n_repeat_test; n++)
     {
-        assert (i*rows+i < n_elem);
-        vals[i*rows+i] = (scalar) max_val[i];
-    }
+        const size_t n_rows = (size_t) rnd_int (MIN_ROW_SIZE, MAX_ROW_SIZE);
+        const size_t n_cols = (size_t) rnd_int (MIN_COL_SIZE, MAX_COL_SIZE);
+        const size_t n_elem = n_rows * n_cols;
 
-    m_row_max (vals, rows, cols, res_max);
-    for (size_t i = 0; i < rows; i++)
-    {
-        err &= ASSERT_EQUAL (res_max[i], max_val[i]);
+        scalar *mtx = VA_SCALAR_EMPTY (n_elem);
+        scalar *res = VA_SCALAR_EMPTY (n_rows);
+
+        m_rnd (n_rows, n_cols, mtx);
+        for (size_t row = 0; row < n_rows; row++)
+        {
+            const size_t max_idx = (size_t) rnd_int (0, n_cols);
+            mtx[row*n_cols+max_idx] = (scalar) CHECK_VAL;
+        }
+
+        m_row_max (mtx, n_rows, n_cols, res);
+        for (size_t i = 0; i < n_rows; i++)
+        {
+            is_equal &= ASSERT_EQUAL (res[i], (scalar) CHECK_VAL);
+        }
+
+        FREE (mtx);
+        FREE (res);
+        if (!is_equal) return true;
     }
-    FREE (max_val);
-    FREE (vals);
-    FREE (res_max);
-    return !err;
+    return false;
 }
 
 
