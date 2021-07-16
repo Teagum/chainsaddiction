@@ -227,14 +227,14 @@ m_max (
 
 inline void
 m_row_max (
-    const scalar *restrict _mt,
-    const size_t _n_rows,
-    const size_t _n_cols,
-    scalar *restrict _row_max)
+    const scalar *restrict mt,
+    const size_t n_rows,
+    const size_t n_cols,
+    scalar *restrict row_max)
 {
-    for (size_t i = 0; i < _n_cols; i++, _mt+=_n_cols)
+    for (size_t i = 0; i < n_cols; i++, mt+=n_cols)
     {
-        _row_max[i] = v_max (_mt, _n_cols);
+        row_max[i] = v_max (mt, n_cols);
     }
 }
 

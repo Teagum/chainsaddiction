@@ -315,10 +315,10 @@ m_col_max (
  */
 extern void
 m_row_max (
-    const scalar *restrict _mt,
-    const size_t _n_rows,
-    const size_t _n_cols,
-    scalar *restrict _row_max);
+    const scalar *restrict mt,
+    const size_t n_rows,
+    const size_t n_cols,
+    scalar *restrict row_max);
 
 
 /** Compute maximum along columns.
