@@ -1,31 +1,36 @@
 # ChainsAddiction
 
-ChainsAddiction is an easy to use tool for time series analysis with
+ChainsAddiction is an easy to use tool for time series analysis using
 discrete-time Hidden Markov Models. It is written in `C` as a `numpy`-based
-Python extension module.
+extension module for CPython.
+
 
 
 ## Installation
 ### Prerequisites
-The installation of ChainsAddiction requires to following tools to be installed
-on your system:
-- Python >= 3.7
-- pip
-- C compiler
+ChainsAddiction requires at least CPython 3.7. Installation is possible via
+pip, or by building from source.
+
+The pip setup procedure installs wheels. If you don't want to use wheels, pip
+will try to install from source. In this case you have to have a ready to use C
+compiler installed.
+
+
 
 ### Install with pip
 You can install chainsaddiction from PyPi with:
 
     pip install chainsaddiction
 
-Please note that ChainsAddiction is a CPython Extension module. You have to
-have set up a C compiler in order to install. Currently we provide wheel for
-macOS. So, if you are using this OS you do not need a compiler.
+lease note that ChainsAddiction is a CPython Extension module. Currently we
+provide wheels for macOS. GNU/Linux and Windows users have to build from
+source.
+
 
 
 ### Install from source
 First, clone the source code by typing the following command in your terminal app.
-Replace `path/to/ca` with the directory in which ChainsAddiction should be cloned.
+Replace `path/to/ca` with the path to the directory into which ChainsAddiction should be cloned.
 
     git clone https://github.com/teagum/chainsaddiction path/to/ca
 
@@ -37,15 +42,7 @@ Third, instruct Python to build ad install ChainsAddiction:
 
     pip install .
 
-DONE.
 
-
-## Working with the Python interpreter
-Calling chainsaddiction from `Python` is simple as pie. You just need to import
-it:
-
-    import chainsaddiction as ca
-    ca.hmm_poisson_fit_em(x, m, init_means, init_tpm, int_sd, max_iter=1000, tol=1e-5)
 
 ## Notes
 Currently only Poisson-distributed HMM are implemented.
