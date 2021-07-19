@@ -6,6 +6,8 @@ SHELL = /bin/sh
 vpath
 vpath %.h ./
 vpath %.h ../
+vpath %.h ../../../include
+
 
 objs := pois_em.o pois_fwbw.o pois_hmm.o pois_params.o pois_probs.o pois_utils.o
 
@@ -14,7 +16,7 @@ warnings = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
 optimize = -O2
 debug    = -g
 standard = -std=c17
-includes = -I./ -I../
+includes = -I. -I.. -I../../../include
 export CFLAGS = $(warnings) $(standard) $(optimize) $(includes)
 
 # Preprocessor flags
@@ -26,17 +28,17 @@ all: $(objs)
 
 pois_em.o: pois_em.h pois_fwbw.h pois_hmm.h pois_params.h pois_probs.h \
 	pois_utils.h pois_fwbw.h dataset.h libma.h read.h restrict.h   \
-	rnd.h scalar.h stats.h vmath.h
+	scalar.h libvmath.h 
 
 pois_fwbw.o: pois_fwbw.h dataset.h libma.h read.h restrict.h scalar.h  \
-	stats.h vmath.h
+	libvmath.h
 
 pois_hmm.o: pois_hmm.h pois_params.h pois_probs.h pois_utils.o         \
-	dataset.h libma.h read.h restrict.h rnd.h scalar.h vmath.h
+	dataset.h libma.h read.h restrict.h scalar.h libvmath.h 
 
-pois_params.o: pois_params.h libma.h read.h restrict.h rnd.h scalar.h vmath.h
+pois_params.o: pois_params.h libma.h read.h restrict.h scalar.h libvmath.h
 pois_probs.o: pois_probs.h libma.h restrict.h scalar.h
-pois_utils.o: pois_utils.h libma.h restrict.h scalar.h vmath.h
+pois_utils.o: pois_utils.h libma.h restrict.h scalar.h libvmath.h
 
 
 test: all

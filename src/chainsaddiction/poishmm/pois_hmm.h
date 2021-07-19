@@ -10,9 +10,8 @@
 #include "pois_utils.h"
 #include "../dataset.h"
 #include "../restrict.h"
-#include "../rnd.h"
 #include "../scalar.h"
-#include "../vmath.h"
+#include "libvmath.h"
 
 #define DEFAULT_MAX_ITER 1000
 #define DEFAULT_TOLERANCE 1e-6

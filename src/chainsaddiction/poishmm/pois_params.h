@@ -7,9 +7,8 @@
 #include "../libma.h"
 #include "../read.h"
 #include "../restrict.h"
-#include "../rnd.h"
 #include "../scalar.h"
-#include "../vmath.h"
+#include "libvmath.h"
 
 
 #define CHECK_READ_ERROR(res) \

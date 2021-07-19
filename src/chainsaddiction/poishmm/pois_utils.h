@@ -4,7 +4,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include "../scalar.h"
-#include "../vmath.h"
+#include "libvmath.h"
 
 
 /* Compute Akaine Information criterion. */
