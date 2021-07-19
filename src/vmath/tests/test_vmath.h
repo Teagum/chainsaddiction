@@ -17,7 +17,7 @@ bool test__m_row_max (void);
 bool test__m_col_max (void);
 bool test__log_vmp (void);
 bool test__log_mvp (void);
-bool test__m_lse_centroid_rows (void);
+bool test__m_log_centroid_cols (void);
 bool test__mm_add_s (void);
 
 

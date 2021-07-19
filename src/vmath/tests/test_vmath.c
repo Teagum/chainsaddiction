@@ -255,7 +255,7 @@ test__log_mvp (void)
 }
 
 bool
-test__m_lse_centroid_rows (void)
+test__m_log_centroid_cols (void)
 {
     const size_t n_rows = 4;
     const size_t n_cols = 3;
@@ -273,7 +273,7 @@ test__m_lse_centroid_rows (void)
     bool err = true;
 
     m_log (vals, n_elem, log_vals);
-    for (size_t i = 0; i < 12; i++)
+    for (size_t i = 0; i < n_elem; i++)
     {
         expected[i%n_cols] += vals[i] * weights[i/n_cols];
         sbuff[i%n_cols] += vals[i];
@@ -283,14 +283,8 @@ test__m_lse_centroid_rows (void)
         expected[i] /= sbuff[i];
     }
     vi_log (expected, n_cols);
-    m_lse_centroid_rows (log_vals, weights, n_rows, n_cols, centroid);
+    m_log_centroid_cols (log_vals, weights, n_rows, n_cols, centroid);
 
-    /*
-    puts ("\n");
-    for (size_t i = 0; i < n_cols; i++)
-        printf ("c[%2zu]: %Lf\t expected[%2zu]: %Lf\n", i,  centroid[i], i, expected[i]);
-    puts("\n");
-    */
     for (size_t i = 0; i < n_cols; i++)
     {
         err &= ASSERT_EQUAL (centroid[i], expected[i]);

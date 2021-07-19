@@ -261,21 +261,27 @@ vs_sum (
  * ====================
  */
 
-/** Compute centroid along the rows of _mt.
+/** Compute column-wise weighted sum in log domain.
  *
- * \param mtrx      Pointer to matrix data.
- * \param wght      Pointer to weight data.
- * \param n_rows    Number of matrix rows.
- * \param n_cols    Number of matrix columns.
- * \param centroid  Output buffer.
+ * `mtx' is a matrix of shape `n_rows' x `n_cols'.
+ * `wgt' is a weight vector of size `n_rows' that is applied to
+ * each column of `mtx'.
+ *
+ * This function computes the centroids using the LSE method.
+ *
+ * \param[in]  mtx      Pointer to matrix data.
+ * \param[in]  wgt      Pointer to weight data.
+ * \param[in]  n_rows   Number of matrix rows.
+ * \param[in]  n_cols   Number of matrix columns.
+ * \param[out] centroid_in_col      Output buffer.
  */
 extern int
-m_lse_centroid_rows (
-        const scalar *restrict mtrx,
-        const scalar *restrict wght,
+m_log_centroid_cols(
+        const scalar *restrict mtx,
+        const scalar *restrict wgt,
         const size_t n_rows,
         const size_t n_cols,
-        scalar *centroid);
+        scalar *const centroid_in_col);
 
 
 /** Compute maximum value.
