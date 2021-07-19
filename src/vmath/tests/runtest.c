@@ -18,7 +18,7 @@ int main (void)
     RUN_TEST (test__log_vmp);
 
     RUN_TEST (test__log_mvp);
-    RUN_TEST (test__m_lse_centroid_rows);
+    RUN_TEST (test__m_log_centroid_cols);
 
     EVALUATE;
 }

@@ -173,44 +173,44 @@ vs_sum (
  */
 
 inline int
-m_lse_centroid_rows (
-    const scalar *restrict mtrx,
-    const scalar *restrict wght,
+m_log_centroid_cols (
+    const scalar *restrict mtx,
+    const scalar *restrict wgt,
     const size_t n_rows,
     const size_t n_cols,
-    scalar *centroid)
+    scalar *centroid_in_col)
 {
     int err = 1;
-    scalar *row_sum = VA_SCALAR_ZEROS (n_cols);
-    scalar *w_row_sum = VA_SCALAR_ZEROS (n_cols);
-    scalar *row_max = VA_SCALAR_ZEROS (n_cols);
+    scalar *max_per_col = VA_SCALAR_ZEROS (n_cols);
+    scalar *sum_per_col = VA_SCALAR_ZEROS (n_cols);
+    scalar *w_sum_per_col = VA_SCALAR_ZEROS (n_cols);
 
-    if (row_sum == NULL || w_row_sum == NULL || row_max == NULL)
+    if (sum_per_col == NULL || w_sum_per_col == NULL || max_per_col == NULL)
     {
-        fputs ("Could not allocate buffer in `m_lse_centroid_rows'.", stderr);
+        fputs ("Virtual memory exhausted in `m_lse_centroid_rows'.", stderr);
         err = 1;
     }
     else
     {
-        m_row_max (mtrx, n_rows, n_cols, row_max);
+        m_col_max (mtx, n_rows, n_cols, max_per_col);
         for (size_t i = 0; i < n_rows*n_cols; i++)
         {
-            size_t idx = i % n_cols;
-            scalar exp_val = expl (mtrx[i] - row_max[idx]);
-            row_sum[idx] += exp_val;
-            w_row_sum[idx] += exp_val * wght[i/n_cols];
+            size_t c = i % n_cols;
+            scalar exp_val = expl (mtx[i] - max_per_col[c]);
+            sum_per_col[c] += exp_val;
+            w_sum_per_col[c] += exp_val * wgt[i/n_cols];
         }
 
         for (size_t i = 0; i < n_cols; i++)
         {
-            centroid[i] = logl (w_row_sum[i] / row_sum[i]);
+            centroid_in_col[i] = logl (w_sum_per_col[i] / sum_per_col[i]);
         }
         err = 0;
     }
 
-    FREE (row_sum);
-    FREE (w_row_sum);
-    FREE (row_max);
+    FREE (sum_per_col);
+    FREE (w_sum_per_col);
+    FREE (max_per_col);
     return err;
 }
 
