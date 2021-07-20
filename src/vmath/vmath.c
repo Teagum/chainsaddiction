@@ -13,8 +13,8 @@ def_mm_op_s_func(div, /)
 
 inline void
 v_add (
-    scalar *const vx,
-    scalar *const vy,
+    const scalar *const vx,
+    const scalar *const vy,
     const size_t n,
     scalar *out)
 {

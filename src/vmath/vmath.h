@@ -160,8 +160,8 @@ extern void mm_div_s (
  */
 extern void
 v_add (
-    scalar *const vx,
-    scalar *const vy,
+    const scalar *const vx,
+    const scalar *const vy,
     const size_t n,
     scalar *out);
 
