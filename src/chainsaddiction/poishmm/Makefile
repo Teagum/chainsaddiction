@@ -17,12 +17,13 @@ optimize = -O2
 debug    = -g
 standard = -std=c17
 includes = -I. -I.. -I../../../include
-export CFLAGS = $(warnings) $(standard) $(optimize) $(includes)
+
+export CFLAGS = $(warnings) $(standard) $(optimize) 
 
 # Preprocessor flags
 # 	LD_MATH           Typedef `scalar' to `long double', otherwise `double'.
 # 	NO_BOUNDS_CHECK   Do not check boundaries in array setters and getters.
-export CPPFLAGS = -D LD_MATH
+export CPPFLAGS = -D LD_MATH $(includes)
 
 all: $(objs)
 
@@ -42,7 +43,7 @@ pois_utils.o: pois_utils.h libma.h restrict.h scalar.h libvmath.h
 
 
 test: all
-	@$(MAKE) -C tests/
+	@$(MAKE) all -C tests
 
 check: test
 	tests/pois_hmm.test
