@@ -1,17 +1,6 @@
 #include "test_stats.h"
 
 
-int main (void)
-{
-    SETUP;
-
-    RUN_TEST (test_poisson_pmf);
-    RUN_TEST (test_poisson_logpmf);
-
-    EVALUATE;
-}
-
-
 bool
 test_poisson_pmf (void)
 {

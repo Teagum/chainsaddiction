@@ -7,9 +7,8 @@
 #include "../libma.h"
 #include "../read.h"
 #include "../restrict.h"
-#include "../rnd.h"
 #include "../scalar.h"
-#include "../vmath.h"
+#include "libvmath.h"
 
 
 #define CHECK_READ_ERROR(res) \
@@ -55,6 +54,12 @@ extern void
 PoisParams_Copy (
     const PoisParams *const restrict this,
     PoisParams *const restrict other);
+
+
+extern void
+PoisParams_CopyLog (
+    const PoisParams *restrict this,
+    PoisParams *restrict other);
 
 
 extern void

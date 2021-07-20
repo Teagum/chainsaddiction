@@ -4,7 +4,6 @@
 #include <math.h>
 #include <string.h>
 #include "unittest.h"
-#include "pois_500_4s.h"
 #include "../pois_hmm.h"
 
 bool test__PoisHmm_New (void);

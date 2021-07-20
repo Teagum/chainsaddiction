@@ -1,10 +1,10 @@
-#ifndef STATS_H
-#define STATS_H
+#ifndef stats_h
+#define stats_h
 
 #include <stdlib.h>
 #include <math.h>
-#include "scalar.h"
-#include "restrict.h"
+#include "config.h"
+
 
 /** Log probability mass function of the Poisson distribution.
  *
@@ -30,11 +30,11 @@ poisson_pmf (
 
 /** Vectorized log probability mass function of the Poisson distribution.
  *
- * \param qunatiles    Quantiles.
- * \param n_qnts       Number of qnts.
- * \param means        Expected values
- * \param m_means      Number of means.
- * \param log_probs    Output buffer.
+ * \param[in]  qnts         Quantiles.
+ * \param[in]  n_qnts       Number of qnts.
+ * \param[in]  means        Expected values
+ * \param[in]  m_means      Number of means.
+ * \param[out] log_probs    Output buffer.
  */
 void
 v_poisson_logpmf (
@@ -44,4 +44,4 @@ v_poisson_logpmf (
     const size_t m_means,
     scalar *restrict log_probs);
 
-#endif    /* STATS_H */
+#endif    /* stats_h */

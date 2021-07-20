@@ -1,5 +1,6 @@
 #include "rnd.h"
 
+
 inline scalar
 rnd (void)
 {

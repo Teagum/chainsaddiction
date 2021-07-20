@@ -13,13 +13,13 @@ def_mm_op_s_func(div, /)
 
 inline void
 v_add (
-    const scalar *restrict vx,
-    const scalar *restrict vy,
-    const size_t n_elem,
-    scalar *sum)
+    const scalar *const vx,
+    const scalar *const vy,
+    const size_t n,
+    scalar *out)
 {
-    OUTER_LOOP {
-        sum[i] = vx[i] + vy[i];
+    FOR_EACH(i, n) {
+        out[i] = vx[i] + vy[i];
     }
 }
 
@@ -74,6 +74,33 @@ vi_log (
 {
     OUTER_LOOP {
         vx[i] = logl (vx[i]);
+    }
+}
+
+inline void
+v_logr1 (
+    scalar *restrict vct,
+    const size_t n_elem,
+    scalar *restrict out)
+{
+    FOR_EACH (i, n_elem)
+    {
+        *out = logr1 (*vct);
+        out++;
+        vct++;
+    }
+}
+
+
+inline void
+vi_logr1 (
+    scalar *restrict vct,
+    const size_t n_elem)
+{
+    FOR_EACH (i, n_elem)
+    {
+        *vct = logr1 (*vct);
+        vct++;
     }
 }
 
@@ -172,35 +199,46 @@ vs_sum (
  * Matrix interface
  */
 
-inline void
-m_lse_centroid_rows (
-    const scalar *restrict mtrx,
-    const scalar *restrict wght,
+inline int
+m_log_centroid_cols (
+    const scalar *restrict mtx,
+    const scalar *restrict wgt,
     const size_t n_rows,
     const size_t n_cols,
-    scalar *centroid)
+    scalar *centroid_in_col)
 {
-    scalar *row_sum = MA_SCALAR_ZEROS (n_cols);
-    scalar *w_row_sum = MA_SCALAR_ZEROS (n_cols);
-    scalar *row_max = MA_SCALAR_ZEROS (n_cols);
+    int err = 1;
+    scalar *max_per_col = VA_SCALAR_ZEROS (n_cols);
+    scalar *sum_per_col = VA_SCALAR_ZEROS (n_cols);
+    scalar *w_sum_per_col = VA_SCALAR_ZEROS (n_cols);
 
-    m_row_max (mtrx, n_rows, n_cols, row_max);
-    for (size_t i = 0; i < n_rows*n_cols; i++)
+    if (sum_per_col == NULL || w_sum_per_col == NULL || max_per_col == NULL)
     {
-        size_t idx = i % n_cols;
-        scalar exp_val = expl (mtrx[i] - row_max[idx]);
-        row_sum[idx] += exp_val;
-        w_row_sum[idx] += exp_val * wght[i/n_cols];
+        fputs ("Virtual memory exhausted in `m_lse_centroid_rows'.", stderr);
+        err = 1;
+    }
+    else
+    {
+        m_col_max (mtx, n_rows, n_cols, max_per_col);
+        for (size_t i = 0; i < n_rows*n_cols; i++)
+        {
+            size_t c = i % n_cols;
+            scalar exp_val = expl (mtx[i] - max_per_col[c]);
+            sum_per_col[c] += exp_val;
+            w_sum_per_col[c] += exp_val * wgt[i/n_cols];
+        }
+
+        for (size_t i = 0; i < n_cols; i++)
+        {
+            centroid_in_col[i] = logl (w_sum_per_col[i] / sum_per_col[i]);
+        }
+        err = 0;
     }
 
-    for (size_t i = 0; i < n_cols; i++)
-    {
-        centroid[i] = logl (w_row_sum[i] / row_sum[i]);
-    }
-
-    MA_FREE (row_sum);
-    MA_FREE (w_row_sum);
-    MA_FREE (row_max);
+    FREE (sum_per_col);
+    FREE (w_sum_per_col);
+    FREE (max_per_col);
+    return err;
 }
 
 
@@ -216,14 +254,14 @@ m_max (
 
 inline void
 m_row_max (
-    const scalar *restrict _mt,
-    const size_t _n_rows,
-    const size_t _n_cols,
-    scalar *restrict _row_max)
+    const scalar *restrict mtx,
+    const size_t n_rows,
+    const size_t n_cols,
+    scalar *restrict row_max)
 {
-    for (size_t i = 0; i < _n_cols; i++, _mt+=_n_cols)
+    for (size_t i = 0; i < n_rows; i++, mtx+=n_cols)
     {
-        _row_max[i] = v_max (_mt, _n_cols);
+        row_max[i] = v_max (mtx, n_cols);
     }
 }
 

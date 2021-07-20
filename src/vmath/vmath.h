@@ -3,9 +3,8 @@
 
 #include <math.h>
 #include <stdlib.h>
-#include "libma.h"
-#include "restrict.h"
-#include "scalar.h"
+#include <stdio.h>
+#include "config.h"
 
 /*
  * Prefixes:
@@ -19,6 +18,23 @@
  * Postfixes:
  * s:   scalar
  */
+#define ASSERT_ALLOC(buff) if (buff == NULL) {          \
+    fputs ("Could not allocate buffer.\n", stderr);     \
+    return 1;                                           \
+}
+
+#define VA_SCALAR_EMPTY(n_elem) malloc ((n_elem) * sizeof (scalar));
+#define VA_SCALAR_ZEROS(n_elem) calloc (n_elem, sizeof (scalar))
+#define VA_INT_EMPTY(n_elem) malloc ((n_elem) * sizeof (int))
+#define VA_INT_ZEROS(n_elem) calloc (n_elem, sizeof (int))
+
+#define FREE(buff) do { \
+    free (buff);        \
+    buff = NULL;        \
+} while (0)
+
+#define FOR_EACH(idx, max) for (size_t (idx) = 0; (idx) < (max); (idx++))
+
 #define OUTER_LOOP for (size_t i = 0; i < n_elem; i++)
 #define INNER_LOOP for (size_t j = 0; j < n_elem; j++)
 
@@ -29,6 +45,28 @@
       M_INNER_LOOP { \
 #define END_ITER_MATRIX }}
 
+#define NEWLINE fputc ('\n', stdout)
+
+#define print_vector(n, vct) do {               \
+    NEWLINE;                                    \
+    for (size_t i = 0; i < n; i++) {            \
+        printf ("[%3zu] %10.5Lf\n", i, vct[i]);  \
+    }                                           \
+} while (0)
+
+
+#define print_matrix(rows, cols, mtx) do {      \
+    NEWLINE;\
+    for (size_t i = 0; i < rows; i++) {         \
+        printf ("[%3zu] ", i);                  \
+        for (size_t j = 0; j < cols; j++) {     \
+            printf ("%10.5Lf ", mtx[i*cols+j]); \
+        }                                       \
+        puts ("");                                \
+    }                                           \
+} while (0)
+
+#define logr1(val) isnormal (val) ? logl (val) : 1L
 
 #define def_vi_s_func(name, op)     \
 inline void                         \
@@ -115,17 +153,17 @@ extern void mm_div_s (
 
 /** Add two vectors element-wise.
  *
- * \param _vx       Vector of size n_elem.
- * \param _vy       Vector of size n_elem.
- * \param n_elem    Number of elements in each vector.
- * \param sum       Output buffer of size n_elem.
+ * \param[in]  vtx       Vector of size n_elem.
+ * \param[in]  vty       Vector of size n_elem.
+ * \param[in]  n_elem    Number of elements in each vector.
+ * \param[out] out       Output buffer of size n_elem.
  */
 extern void
 v_add (
-    const scalar *restrict _vx,
-    const scalar *restrict _vy,
-    const size_t n_elem,
-    scalar *sum);
+    const scalar *const vx,
+    const scalar *const vy,
+    const size_t n,
+    scalar *out);
 
 
 /** Add first vector element-wise to second one.
@@ -173,6 +211,31 @@ extern void
 vi_log (
     scalar *restrict _vx,
     const size_t n_elem);
+
+
+/** Replace non-normal values with 1 in log domain.
+ *
+ * \param[in]  vct      Pointer to input vector.
+ * \param[in]  n_elem   Number of elements in input vector.
+ * \param[out] out      Pointer to output buffer.
+ */
+extern void
+v_logr1 (
+    scalar *restrict vct,
+    const size_t n_elem,
+    scalar *restrict out);
+
+
+/** Replace non-normal values with 1 in log domain inplace.
+ *
+ * \param[in]  vct      Pointer to input vector.
+ * \param[in]  n_elem   Number of elements in input vector.
+ */
+extern void
+vi_logr1 (
+    scalar *restrict vct,
+    const size_t n_elem);
+
 
 /** Logarithm of the sum of the exponential of the vector elements.
  *
@@ -245,21 +308,27 @@ vs_sum (
  * ====================
  */
 
-/** Compute centroid along the rows of _mt.
+/** Compute column-wise weighted sum in log domain.
  *
- * \param mtrx      Pointer to matrix data.
- * \param wght      Pointer to weight data.
- * \param n_rows    Number of matrix rows.
- * \param n_cols    Number of matrix columns.
- * \param centroid  Output buffer.
+ * `mtx' is a matrix of shape `n_rows' x `n_cols'.
+ * `wgt' is a weight vector of size `n_rows' that is applied to
+ * each column of `mtx'.
+ *
+ * This function computes the centroids using the LSE method.
+ *
+ * \param[in]  mtx      Pointer to matrix data.
+ * \param[in]  wgt      Pointer to weight data.
+ * \param[in]  n_rows   Number of matrix rows.
+ * \param[in]  n_cols   Number of matrix columns.
+ * \param[out] centroid_in_col      Output buffer.
  */
-extern void
-m_lse_centroid_rows (
-        const scalar *restrict mtrx,
-        const scalar *restrict wght,
+extern int
+m_log_centroid_cols(
+        const scalar *restrict mtx,
+        const scalar *restrict wgt,
         const size_t n_rows,
         const size_t n_cols,
-        scalar *centroid);
+        scalar *const centroid_in_col);
 
 
 /** Compute maximum value.
@@ -299,10 +368,10 @@ m_col_max (
  */
 extern void
 m_row_max (
-    const scalar *restrict _mt,
-    const size_t _n_rows,
-    const size_t _n_cols,
-    scalar *restrict _row_max);
+    const scalar *restrict mt,
+    const size_t n_rows,
+    const size_t n_cols,
+    scalar *restrict row_max);
 
 
 /** Compute maximum along columns.

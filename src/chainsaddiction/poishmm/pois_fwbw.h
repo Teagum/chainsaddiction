@@ -7,8 +7,7 @@
 #include "../libma.h"
 #include "../restrict.h"
 #include "../scalar.h"
-#include "../stats.h"
-#include "../vmath.h"
+#include "libvmath.h"
 
 /** Forward algorithm in log domain.
  *

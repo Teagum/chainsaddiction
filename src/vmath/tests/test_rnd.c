@@ -1,17 +1,5 @@
 #include "test_rnd.h"
 
-int main (void)
-{
-    SETUP;
-
-    RUN_TEST (test_rnd);
-    RUN_TEST (test_rnd_int);
-    RUN_TEST (test_v_rnd);
-    RUN_TEST (test_v_rnd_int);
-
-    EVALUATE;
-}
-
 
 bool
 test_rnd (void)

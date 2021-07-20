@@ -1,9 +1,9 @@
-#ifndef TEST_STATS_H
-#define TEST_STATS_H
+#ifndef test_stats_h
+#define test_stats_h
+
 #include <math.h>
+#include "config.h"
 #include "unittest.h"
-#include "scalar.h"
-#include "restrict.h"
 #include "rnd.h"
 #include "stats.h"
 
@@ -13,4 +13,5 @@
 bool test_poisson_pmf (void);
 bool test_poisson_logpmf (void);
 
-#endif  /* TEST_STATS_H */
+
+#endif  /* test_stats_h */
