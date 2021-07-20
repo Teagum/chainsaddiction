@@ -2,7 +2,6 @@
 #define test_bw_h
 
 #include "unittest.h"
-#include "eq_short_3s.h"
 #include "../pois_em.h"
 
 
