@@ -4,34 +4,29 @@
 bool
 test__pois_e_step (void)
 {
-    enum { n_repeat_test = 10, m_states = 3, n_obs = 15 };
+    enum { n_repeat_test = 10 };
 
-    SET_EARTHQUAKES_SHORT;
-    SET_LAMBDA;
-    SET_LOG_GAMMA;
-    SET_LOG_DELTA;
+    const char data_path[] = "../../../tests/data/earthquakes";
+    const char params_path[] = "tests/data/ppr1";
 
     for (size_t n = 0; n < n_repeat_test; n++)
     {
-        //const size_t m_states = (size_t) rnd_int (1, 10);
-        //const size_t n_obs    = (size_t) rnd_int(1, 500);
-        const size_t n_elem   = m_states * n_obs;
+        scalar llh = 0;
+        DataSet *inp = ds_NewFromFile (data_path);
+        PoisParams *params = PoisParams_NewFromFile (params_path);
+        PoisParams *lparams = PoisParams_New(params->m_states);
+        v_log (params->gamma, params->m_states, lparams->gamma);
+        v_log (params->delta, params->m_states, lparams->delta);
+        PoisProbs *probs = PoisProbs_New (params->m_states, inp->size);
 
-        //scalar *input  = MA_SCALAR_EMPTY (n_obs);
-        scalar *lsdp   = MA_SCALAR_EMPTY (n_elem);
-        scalar *lalpha = MA_SCALAR_EMPTY (n_elem);
-        scalar *lbeta  = MA_SCALAR_EMPTY (n_elem);
-        scalar *lcxpt  = MA_SCALAR_EMPTY (n_elem);
-        scalar llh     = 0;
+        pois_e_step (inp->size, params->m_states, inp->data,
+                lparams->lambda, lparams->gamma, lparams->delta,
+                probs->lsdp, probs->lalpha, probs->lbeta, probs->lcxpt,
+                &llh);
 
-        pois_e_step (n_obs, m_states, input, lambda, lgamma, ldelta,
-                lsdp, lalpha, lbeta, lcxpt, &llh);
-
-        //MA_FREE (input);
-        MA_FREE (lsdp);
-        MA_FREE (lalpha);
-        MA_FREE (lbeta);
-        MA_FREE (lcxpt);
+        ds_FREE(inp);
+        PoisParams_Delete (params);
+        PoisParams_Delete (lparams);
     }
     return false;
 }
@@ -40,34 +35,38 @@ test__pois_e_step (void)
 bool
 test__pois_m_step_lambda (void)
 {
+    bool err = false;
+    scalar llh = 0L;
+    const char data_path[] = "../../../tests/data/earthquakes";
+    const char params_path[] = "tests/data/ppr1";
+    DataSet *inp = ds_NewFromFile (data_path);
+    PoisParams *params = PoisParams_NewFromFile (params_path);
+    PoisParams *lparams = PoisParams_New(params->m_states);
+    PoisProbs *probs = PoisProbs_New (inp->size, params->m_states);
+    scalar *new_lambda = MA_SCALAR_ZEROS (params->m_states);
 
-    enum { n_repeat_test = 10, m_states = 3, n_obs = 15, n_elem = m_states * n_obs};
-    bool err = true;
+    PoisParams_CopyLog (params, lparams);
+    pois_e_step (inp->size, params->m_states, inp->data,
+            lparams->lambda, lparams->gamma, lparams->delta,
+            probs->lsdp, probs->lalpha, probs->lbeta, probs->lcxpt,
+            &llh);
 
-    SET_EARTHQUAKES_SHORT;
-    SET_LAMBDA;
-    SET_LOG_GAMMA;
-    SET_LOG_DELTA;
+    pois_m_step_lambda (inp->size, probs->m_states, inp->data, probs->lcxpt,
+            new_lambda);
 
-    scalar new_lambda[m_states] = { 0L };
-
-    scalar *lsdp   = MA_SCALAR_ZEROS (n_elem);
-    scalar *lalpha = MA_SCALAR_ZEROS (n_elem);
-    scalar *lbeta  = MA_SCALAR_ZEROS (n_elem);
-    scalar *lcxpt  = MA_SCALAR_ZEROS (n_elem);
-    scalar llh     = 0L;
-
-    pois_e_step (n_obs, m_states, input, lambda, lgamma, ldelta,
-            lsdp, lalpha, lbeta, lcxpt, &llh);
-
-    pois_m_step_lambda (n_obs, m_states, input, lcxpt, new_lambda);
-
-    for (size_t i = 0; i < m_states; i++) {
+    for (size_t i = 0; i < params->m_states; i++) {
         if (!isnormal (new_lambda[i])) {
-            return err;
+            err = true;
+            break;
+
         }
     }
-    err = false;
+
+    ds_FREE (inp);
+    PoisParams_Delete (params);
+    PoisParams_Delete (lparams);
+    PoisProbs_Delete (probs);
+    MA_FREE (new_lambda);
     return err;
 }
 
@@ -75,77 +74,67 @@ test__pois_m_step_lambda (void)
 bool
 test__pois_m_step_gamma (void)
 {
-    enum { n_repeat_test = 10, m_states = 3, n_obs = 15, n_elem = m_states * n_obs};
+    bool err = false;
+    scalar llh = 0L;
+    const char data_path[] = "../../../tests/data/earthquakes";
+    const char params_path[] = "tests/data/ppr1";
+    DataSet *inp = ds_NewFromFile (data_path);
+    PoisParams *params = PoisParams_NewFromFile (params_path);
+    PoisParams *lparams = PoisParams_New(params->m_states);
+    v_log (params->gamma, params->m_states, lparams->gamma);
+    v_log (params->delta, params->m_states, lparams->delta);
+    PoisProbs *probs = PoisProbs_New (params->m_states, inp->size);
+    scalar *new_lgamma = MA_SCALAR_ZEROS (params->m_states*probs->m_states);
 
-    SET_EARTHQUAKES_SHORT;
-    SET_LAMBDA;
-    SET_LOG_GAMMA;
-    SET_LOG_DELTA;
 
-    for (size_t n = 0; n < n_repeat_test; n++)
-    {
-        scalar new_lgamma[m_states] = { 0L };
+    pois_e_step (inp->size, params->m_states, inp->data,
+            lparams->lambda, lparams->gamma, lparams->delta,
+            probs->lsdp, probs->lalpha, probs->lbeta, probs->lcxpt,
+            &llh);
 
-        //const size_t m_states = (size_t) rnd_int (1, 100);
-        //const size_t n_obs    = (size_t) rnd_int (1, 500);
-        //const size_t n_elem   = m_states * n_obs;
+    pois_m_step_gamma (inp->size, params->m_states, llh,
+            probs->lsdp, probs->lalpha, probs->lbeta,
+            lparams->gamma, new_lgamma);
 
-        scalar *lsdp   = MA_SCALAR_ZEROS (n_elem);
-        scalar *lalpha = MA_SCALAR_ZEROS (n_elem);
-        scalar *lbeta  = MA_SCALAR_ZEROS (n_elem);
-        scalar *lcxpt  = MA_SCALAR_ZEROS (n_elem);
-        scalar llh     = 0L;
 
-        pois_e_step (n_obs, m_states, input, lambda, lgamma, ldelta,
-                lsdp, lalpha, lbeta, lcxpt, &llh);
-
-        pois_m_step_gamma (n_obs, m_states, llh, lsdp, lalpha, lbeta,
-                lgamma, new_lgamma);
-
-        MA_FREE (lsdp);
-        MA_FREE (lalpha);
-        MA_FREE (lbeta);
-        MA_FREE (lcxpt);
-    }
-    return false;
+    ds_FREE (inp);
+    PoisParams_Delete (params);
+    PoisParams_Delete (lparams);
+    PoisProbs_Delete (probs);
+    MA_FREE (new_lgamma);
+    return err;
 }
 
 
 bool
 test__pois_m_step_delta(void)
 {
-    enum { n_repeat_test = 10, m_states = 3, n_obs = 15, n_elem = m_states * n_obs};
+    bool err = false;
+    scalar llh = 0L;
+    const char data_path[] = "../../../tests/data/earthquakes";
+    const char params_path[] = "tests/data/ppr1";
+    DataSet *inp = ds_NewFromFile (data_path);
+    PoisParams *params = PoisParams_NewFromFile (params_path);
+    PoisParams *lparams = PoisParams_New(params->m_states);
+    v_log (params->gamma, params->m_states, lparams->gamma);
+    v_log (params->delta, params->m_states, lparams->delta);
+    PoisProbs *probs = PoisProbs_New (params->m_states, inp->size);
+    scalar *new_ldelta = MA_SCALAR_ZEROS (params->m_states);
 
-    SET_EARTHQUAKES_SHORT;
-    SET_LAMBDA;
-    SET_LOG_GAMMA;
-    SET_LOG_DELTA;
+/*
+    pois_e_step (inp->size, params->m_states, inp->data,
+            lparams->lambda, lparams->gamma, lparams->delta,
+            probs->lsdp, probs->lalpha, probs->lbeta, probs->lcxpt,
+            &llh);
 
-    for (size_t n = 0; n < n_repeat_test; n++)
-    {
-        scalar new_ldelta[m_states] = { 0L };
-
-        //const size_t m_states = (size_t) rnd_int (1, 100);
-        //const size_t n_obs    = (size_t) rnd_int (1, 500);
-        //const size_t n_elem   = m_states * n_obs;
-
-        scalar *lsdp   = MA_SCALAR_ZEROS (n_elem);
-        scalar *lalpha = MA_SCALAR_ZEROS (n_elem);
-        scalar *lbeta  = MA_SCALAR_ZEROS (n_elem);
-        scalar *lcxpt  = MA_SCALAR_ZEROS (n_elem);
-        scalar llh     = 0L;
-
-        pois_e_step (n_obs, m_states, input, lambda, lgamma, ldelta,
-                lsdp, lalpha, lbeta, lcxpt, &llh);
-
-        pois_m_step_delta (m_states, lcxpt, new_ldelta);
-
-        MA_FREE (lsdp);
-        MA_FREE (lalpha);
-        MA_FREE (lbeta);
-        MA_FREE (lcxpt);
-    }
-    return false;
+    pois_m_step_delta (probs->m_states, probs->lcxpt, new_ldelta);
+*/
+    ds_FREE (inp);
+    PoisParams_Delete (params);
+    PoisParams_Delete (lparams);
+    PoisProbs_Delete (probs);
+    MA_FREE (new_ldelta);
+    return err;
 }
 
 
