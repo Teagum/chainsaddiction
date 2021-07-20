@@ -45,8 +45,10 @@ pois_utils.o: pois_utils.h libma.h restrict.h scalar.h libvmath.h
 test: all
 	@$(MAKE) all -C tests
 
-check: test
+runtest:
 	tests/pois_hmm.test
+
+check: all runtest
 
 clean:
 	rm -f *.o
