@@ -77,6 +77,33 @@ vi_log (
     }
 }
 
+inline void
+v_logr1 (
+    scalar *restrict vct,
+    const size_t n_elem,
+    scalar *restrict out)
+{
+    FOR_EACH (i, n_elem)
+    {
+        *out = logr1 (*vct);
+        out++;
+        vct++;
+    }
+}
+
+
+inline void
+vi_logr1 (
+    scalar *restrict vct,
+    const size_t n_elem)
+{
+    FOR_EACH (i, n_elem)
+    {
+        *vct = logr1 (*vct);
+        vct++;
+    }
+}
+
 
 inline scalar
 v_lse (

@@ -45,6 +45,28 @@
       M_INNER_LOOP { \
 #define END_ITER_MATRIX }}
 
+#define NEWLINE fputc ('\n', stdout)
+
+#define print_vector(n, vct) do {               \
+    NEWLINE;                                    \
+    for (size_t i = 0; i < n; i++) {            \
+        printf ("[%3zu] %10.5Lf\n", i, vct[i]);  \
+    }                                           \
+} while (0)
+
+
+#define print_matrix(rows, cols, mtx) do {      \
+    NEWLINE;\
+    for (size_t i = 0; i < rows; i++) {         \
+        printf ("[%3zu] ", i);                  \
+        for (size_t j = 0; j < cols; j++) {     \
+            printf ("%10.5Lf ", mtx[i*cols+j]); \
+        }                                       \
+        puts ("");                                \
+    }                                           \
+} while (0)
+
+#define logr1(val) isnormal (val) ? logl (val) : 1L
 
 #define def_vi_s_func(name, op)     \
 inline void                         \
@@ -189,6 +211,31 @@ extern void
 vi_log (
     scalar *restrict _vx,
     const size_t n_elem);
+
+
+/** Replace non-normal values with 1 in log domain.
+ *
+ * \param[in]  vct      Pointer to input vector.
+ * \param[in]  n_elem   Number of elements in input vector.
+ * \param[out] out      Pointer to output buffer.
+ */
+extern void
+v_logr1 (
+    scalar *restrict vct,
+    const size_t n_elem,
+    scalar *restrict out);
+
+
+/** Replace non-normal values with 1 in log domain inplace.
+ *
+ * \param[in]  vct      Pointer to input vector.
+ * \param[in]  n_elem   Number of elements in input vector.
+ */
+extern void
+vi_logr1 (
+    scalar *restrict vct,
+    const size_t n_elem);
+
 
 /** Logarithm of the sum of the exponential of the vector elements.
  *
