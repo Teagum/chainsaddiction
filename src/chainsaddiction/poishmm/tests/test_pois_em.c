@@ -15,9 +15,8 @@ test__pois_e_step (void)
         DataSet *inp = ds_NewFromFile (data_path);
         PoisParams *params = PoisParams_NewFromFile (params_path);
         PoisParams *lparams = PoisParams_New(params->m_states);
-        v_log (params->gamma, params->m_states, lparams->gamma);
-        v_log (params->delta, params->m_states, lparams->delta);
-        PoisProbs *probs = PoisProbs_New (params->m_states, inp->size);
+        PoisProbs *probs = PoisProbs_New (inp->size, params->m_states);
+        PoisParams_CopyLog (params, lparams);
 
         pois_e_step (inp->size, params->m_states, inp->data,
                 lparams->lambda, lparams->gamma, lparams->delta,
@@ -39,6 +38,7 @@ test__pois_m_step_lambda (void)
     scalar llh = 0L;
     const char data_path[] = "../../../tests/data/earthquakes";
     const char params_path[] = "tests/data/ppr1";
+
     DataSet *inp = ds_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
     PoisParams *lparams = PoisParams_New(params->m_states);
@@ -81,12 +81,11 @@ test__pois_m_step_gamma (void)
     DataSet *inp = ds_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
     PoisParams *lparams = PoisParams_New(params->m_states);
-    v_log (params->gamma, params->m_states, lparams->gamma);
-    v_log (params->delta, params->m_states, lparams->delta);
-    PoisProbs *probs = PoisProbs_New (params->m_states, inp->size);
+    PoisProbs *probs = PoisProbs_New (inp->size, params->m_states);
     scalar *new_lgamma = MA_SCALAR_ZEROS (params->m_states*probs->m_states);
 
 
+    PoisParams_CopyLog (params, lparams);
     pois_e_step (inp->size, params->m_states, inp->data,
             lparams->lambda, lparams->gamma, lparams->delta,
             probs->lsdp, probs->lalpha, probs->lbeta, probs->lcxpt,
@@ -116,19 +115,18 @@ test__pois_m_step_delta(void)
     DataSet *inp = ds_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
     PoisParams *lparams = PoisParams_New(params->m_states);
-    v_log (params->gamma, params->m_states, lparams->gamma);
-    v_log (params->delta, params->m_states, lparams->delta);
-    PoisProbs *probs = PoisProbs_New (params->m_states, inp->size);
+    PoisParams_CopyLog (params, lparams);
+    PoisProbs *probs = PoisProbs_New (inp->size, params->m_states);
     scalar *new_ldelta = MA_SCALAR_ZEROS (params->m_states);
 
-/*
     pois_e_step (inp->size, params->m_states, inp->data,
             lparams->lambda, lparams->gamma, lparams->delta,
             probs->lsdp, probs->lalpha, probs->lbeta, probs->lcxpt,
             &llh);
 
     pois_m_step_delta (probs->m_states, probs->lcxpt, new_ldelta);
-*/
+    
+
     ds_FREE (inp);
     PoisParams_Delete (params);
     PoisParams_Delete (lparams);
