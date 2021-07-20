@@ -85,6 +85,17 @@ PoisParams_Copy (
 }
 
 
+inline void
+PoisParams_CopyLog (
+    const PoisParams *restrict this,
+    PoisParams *restrict other)
+{
+    PoisParams_SetLambda (other, this->lambda);
+    v_logr1 (this->gamma, this->m_states * this->m_states, other->gamma);
+    v_logr1 (this->delta, this->m_states, other->delta);
+}
+
+
 #define PoisParams_Set (this, lambda, gamma, delta) do {    \
     PoisParams_SetLambda (this, lambda);                    \
     PoisParams_SetGamma  (this, gamma);                     \
