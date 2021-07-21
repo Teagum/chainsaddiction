@@ -156,7 +156,16 @@ test__PoisHmm_ForwardProbabilities(void)
             hmm->m_states, hmm->probs->lsdp);
 
     int status = PoisHmm_ForwardProbabilities (hmm);
-    return (status !=0 ) ? true: false;
+    if (status) return true;
+
+    for (size_t i = 0; i < hmm->m_states * inp->size; i++)
+    {
+        if (!isfinite (hmm->probs->lalpha[i]))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 
@@ -175,7 +184,16 @@ test__PoisHmm_BackwardProbabilities (void)
             hmm->m_states, hmm->probs->lsdp);
 
     int status = PoisHmm_BackwardProbabilities (hmm);
-    return (status !=0 ) ? true: false;
+    if (status) return true;
+
+    for (size_t i = 0; i < hmm->m_states * inp->size; i++)
+    {
+        if (!isfinite (hmm->probs->lbeta[i]))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 
@@ -194,10 +212,15 @@ test__PoisHmm_ForwardBackward (void)
             hmm->m_states, hmm->probs->lsdp);
 
     int status = PoisHmm_ForwardBackward (hmm);
-    return (status !=0 ) ? true: false;
+    if (status) return true;
+
+    for (size_t i = 0; i < hmm->m_states * inp->size; i++)
+    {
+        puts ("r\n");
+        if (!isfinite (hmm->probs->lalpha[i]) || !isfinite (hmm->probs->lbeta[i]))
+        {
+            return true;
+        }
+    }
+    return false;
 }
-
-
-
-
-
