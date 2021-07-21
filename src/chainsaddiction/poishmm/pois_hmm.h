@@ -85,9 +85,22 @@ PoisHmm_LogLikelihood (PoisHmm *phmm);
 void
 PoisHmm_PrintInit (const PoisHmm *const restrict phmm);
 
+
 /** Print Poisson parameters to stdout. */
 void PoisHmm_PrintParams (
     const PoisHmm *const restrict phmm);
+
+
+int
+PoisHmm_ForwardProbabilities (PoisHmm *const restrict this);
+
+
+int
+PoisHmm_BackwardProbabilities (PoisHmm *const restrict this);
+
+
+int
+PoisHmm_ForwardBackward (PoisHmm *const restrict this);
 
 
 void

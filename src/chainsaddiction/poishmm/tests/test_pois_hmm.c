@@ -17,6 +17,10 @@ test__PoisHmm_New (void)
 }
 
 
+PoisHmm *
+PoisHmm_NewFromFile (const char path[]);
+
+
 bool
 test__PoisHmm_Init (void)
 {
@@ -134,5 +138,89 @@ test__PoisHmm_EstimateParams (void)
 
     ds_FREE (inp);
     PoisHmm_Delete (hmm);
+    return false;
+}
+
+bool
+test__PoisHmm_ForwardProbabilities(void)
+{
+    const char data_path[] = "../../../tests/data/earthquakes";
+    const char params_path[] = "tests/data/std3s.poisparams";
+
+    DataSet *inp = ds_NewFromFile (data_path);
+    PoisParams *params = PoisParams_NewFromFile (params_path);
+
+    PoisHmm *hmm = PoisHmm_New (inp->size, params->m_states);
+    PoisHmm_Init (hmm, params->lambda, params->gamma, params->delta);
+    v_poisson_logpmf (inp->data, inp->size, hmm->params->lambda,
+            hmm->m_states, hmm->probs->lsdp);
+
+    int status = PoisHmm_ForwardProbabilities (hmm);
+    if (status) return true;
+
+    for (size_t i = 0; i < hmm->m_states * inp->size; i++)
+    {
+        if (!isfinite (hmm->probs->lalpha[i]))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+bool
+test__PoisHmm_BackwardProbabilities (void)
+{
+    const char data_path[] = "../../../tests/data/earthquakes";
+    const char params_path[] = "tests/data/std3s.poisparams";
+
+    DataSet *inp = ds_NewFromFile (data_path);
+    PoisParams *params = PoisParams_NewFromFile (params_path);
+
+    PoisHmm *hmm = PoisHmm_New (inp->size, params->m_states);
+    PoisHmm_Init (hmm, params->lambda, params->gamma, params->delta);
+    v_poisson_logpmf (inp->data, inp->size, hmm->params->lambda,
+            hmm->m_states, hmm->probs->lsdp);
+
+    int status = PoisHmm_BackwardProbabilities (hmm);
+    if (status) return true;
+
+    for (size_t i = 0; i < hmm->m_states * inp->size; i++)
+    {
+        if (!isfinite (hmm->probs->lbeta[i]))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+bool
+test__PoisHmm_ForwardBackward (void)
+{
+    const char data_path[] = "../../../tests/data/earthquakes";
+    const char params_path[] = "tests/data/std3s.poisparams";
+
+    DataSet *inp = ds_NewFromFile (data_path);
+    PoisParams *params = PoisParams_NewFromFile (params_path);
+
+    PoisHmm *hmm = PoisHmm_New (inp->size, params->m_states);
+    PoisHmm_Init (hmm, params->lambda, params->gamma, params->delta);
+    v_poisson_logpmf (inp->data, inp->size, hmm->params->lambda,
+            hmm->m_states, hmm->probs->lsdp);
+
+    int status = PoisHmm_ForwardBackward (hmm);
+    if (status) return true;
+
+    for (size_t i = 0; i < hmm->m_states * inp->size; i++)
+    {
+        puts ("r\n");
+        if (!isfinite (hmm->probs->lalpha[i]) || !isfinite (hmm->probs->lbeta[i]))
+        {
+            return true;
+        }
+    }
     return false;
 }
