@@ -11,5 +11,8 @@ bool test__PoisHmm_Init (void);
 bool test__PoisHmm_InitRandom (void);
 bool test__PoisHmm_LogLikelihood (void);
 bool test__PoisHmm_EstimateParams (void);
+bool test__PoisHmm_ForwardProbabilities (void);
+bool test__PoisHmm_BackwardProbabilities (void);
+bool test__PoisHmm_ForwardBackward (void);
 
 #endif  /* test_pois_hmm_h */

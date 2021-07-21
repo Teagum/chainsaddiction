@@ -17,6 +17,10 @@ test__PoisHmm_New (void)
 }
 
 
+PoisHmm *
+PoisHmm_NewFromFile (const char path[]);
+
+
 bool
 test__PoisHmm_Init (void)
 {
@@ -136,3 +140,64 @@ test__PoisHmm_EstimateParams (void)
     PoisHmm_Delete (hmm);
     return false;
 }
+
+bool
+test__PoisHmm_ForwardProbabilities(void)
+{
+    const char data_path[] = "../../../tests/data/earthquakes";
+    const char params_path[] = "tests/data/std3s.poisparams";
+
+    DataSet *inp = ds_NewFromFile (data_path);
+    PoisParams *params = PoisParams_NewFromFile (params_path);
+
+    PoisHmm *hmm = PoisHmm_New (inp->size, params->m_states);
+    PoisHmm_Init (hmm, params->lambda, params->gamma, params->delta);
+    v_poisson_logpmf (inp->data, inp->size, hmm->params->lambda,
+            hmm->m_states, hmm->probs->lsdp);
+
+    int status = PoisHmm_ForwardProbabilities (hmm);
+    return (status !=0 ) ? true: false;
+}
+
+
+bool
+test__PoisHmm_BackwardProbabilities (void)
+{
+    const char data_path[] = "../../../tests/data/earthquakes";
+    const char params_path[] = "tests/data/std3s.poisparams";
+
+    DataSet *inp = ds_NewFromFile (data_path);
+    PoisParams *params = PoisParams_NewFromFile (params_path);
+
+    PoisHmm *hmm = PoisHmm_New (inp->size, params->m_states);
+    PoisHmm_Init (hmm, params->lambda, params->gamma, params->delta);
+    v_poisson_logpmf (inp->data, inp->size, hmm->params->lambda,
+            hmm->m_states, hmm->probs->lsdp);
+
+    int status = PoisHmm_BackwardProbabilities (hmm);
+    return (status !=0 ) ? true: false;
+}
+
+
+bool
+test__PoisHmm_ForwardBackward (void)
+{
+    const char data_path[] = "../../../tests/data/earthquakes";
+    const char params_path[] = "tests/data/std3s.poisparams";
+
+    DataSet *inp = ds_NewFromFile (data_path);
+    PoisParams *params = PoisParams_NewFromFile (params_path);
+
+    PoisHmm *hmm = PoisHmm_New (inp->size, params->m_states);
+    PoisHmm_Init (hmm, params->lambda, params->gamma, params->delta);
+    v_poisson_logpmf (inp->data, inp->size, hmm->params->lambda,
+            hmm->m_states, hmm->probs->lsdp);
+
+    int status = PoisHmm_ForwardBackward (hmm);
+    return (status !=0 ) ? true: false;
+}
+
+
+
+
+

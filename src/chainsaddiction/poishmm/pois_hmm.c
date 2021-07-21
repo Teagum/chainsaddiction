@@ -162,6 +162,34 @@ void PoisHmm_PrintParams (const PoisHmm *const phmm)
     printf ("\n*%s%s%s*\n\n", border, border, border);
 }
 
+int
+PoisHmm_ForwardProbabilities (PoisHmm *const restrict this)
+{
+    log_forward (this->probs->lsdp, this->params->gamma, this->params->delta,
+            this->m_states, this->probs->n_obs, this->probs->lalpha);
+
+    return false;
+}
+
+
+int
+PoisHmm_BackwardProbabilities (PoisHmm *const restrict this)
+{
+    log_backward (this->probs->lsdp, this->params->gamma, this->m_states,
+            this->probs->n_obs, this->probs->lbeta);
+    return false;
+}
+
+
+int
+PoisHmm_ForwardBackward (PoisHmm *const restrict this)
+{
+    log_fwbw (this->probs->lsdp, this->params->gamma, this->params->delta,
+            this->m_states, this->probs->n_obs, this->probs->lalpha,
+            this->probs->lbeta);
+    return false;
+}
+
 
 void
 PoisHmm_EstimateParams (
