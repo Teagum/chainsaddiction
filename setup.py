@@ -1,16 +1,38 @@
 #/usr/bin/env python3
+import itertools
 from pathlib import Path
 from setuptools import setup, Extension
 from setuptools.config import read_configuration
 import numpy as np
 
-src_path = Path('src/chainsaddiction')
+
+def cglob(path: str):
+    """Generate all .c files in ``path``."""
+    return (f'{src!s}' for src in Path(path).glob('*.c'))
+
+def list_source_files (paths: list[str]) -> list:
+    """Generate a list of .c files in found in all of ``paths``."""
+    return list(itertools.chain.from_iterable(cglob(path) for path in paths))
+
 config = read_configuration('setup.cfg')
 
+c_src_dirs = (
+    'src/vmath',
+    'src/chainsaddiction',
+    'src/chainsaddiction/poishmm',
+)
+
+c_include_dirs = (
+    'include',
+    'src/chainsaddiction/',
+    'src/chainsaddiction/poishmm',
+    np.get_include()
+)
+
 ext = Extension('chainsaddiction',
-        sources = [f'{srcf!s}' for srcf in src_path.glob('*.c')],
-        include_dirs = ['src/chainsaddiction', np.get_include()],
-        # extra_compile_args = ['-Werror=vla'],    # not supported by MSVC
+        sources = list_source_files(c_src_dirs),
+        include_dirs = c_include_dirs,
+        extra_compile_args = ['-Wall', '-Wextra'],    # not supported by MSVC
         language = 'c')
 
 setup(ext_modules = [ext])
