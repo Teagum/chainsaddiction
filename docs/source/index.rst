@@ -3,13 +3,16 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Chains Addiction's documentation!
+ChainsAddiction Documentation Home
 ============================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   
+   python-api/overview
+   c-api/overview
 
 
 Indices and tables

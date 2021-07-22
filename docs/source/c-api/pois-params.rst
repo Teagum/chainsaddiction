@@ -1,0 +1,85 @@
+.. default-domain:: c
+
+Parameter Layer
+===============================================================================
+
+Data structure
+-------------------------------------------------------------------------------
+
+.. struct:: PoisParams
+
+    .. code-block:: c
+
+        typedef struct PoisParams {
+            size_t m_states;
+            scalar *lambda;
+            scalar *gamma;
+            scalar *delta;
+        } PoisParams;
+
+    .. member:: size_t PoisParams.m_states
+
+       Integral value specifying the number of states in the HMM.
+
+    .. member:: scalar *PoisParams.lambda
+
+        Pointer to memory for state-dependend means. The object pointed to by
+        :member:`PoisParams.lambda` must hold enough memory for
+        :member:`PoisParams.m_states` values of type :type:`scalar`.
+
+    .. member:: scalar *PoisParams.gamma
+
+        Pointer to memory for transition probability matrix. The object pointed
+        to by :member:`PoisParams.gamma` must hold enough memory for two times
+        :member:`PoisParams.m_states` values of type :type:`scalar`.
+    
+    .. member::scalar *PoisParams.delta
+
+        Pointer to memory for initial distribution. The object pointed to by
+        :member:`PoisParams.delta` must hold enough memory for
+        :member:`PoisParams.m_states` values of type :type:`scalar`.
+
+
+Functions
+-------------------------------------------------------------------------------
+
+.. function:: PoisParams *PoisParams_New (const size_t m_states)
+
+   Allocates a new :c:struct:`PoisParams` structure for a HMM with
+   :var:`m_states` states.
+
+
+.. function:: PoisParams *PoisParams_NewFromFile (const char *fpath)
+
+    Allocate a new :struct:`PoisParams` structure and initialize it with the
+    data read form file. The data file in location path :var:`fpath` must
+    conform to the data file specification.
+
+
+.. function:: PoisParams *PoisParams_NewRandom (const size_t m_states)
+
+    Allocate a new :struct:`PoisParams` for a HMM with :var:`m_states`
+    states and initialize it with random data. Internally calls
+    :func:`PoisParams_SetLambdaRnd`,
+    :func:`PoisParams_SetGammaRnd`, and
+    :func:`PoisParams_SetDeltaRnd`.
+
+
+.. function:: inline void PoisParams_SetLambdaRnd (PoisParams *const restrict this)
+
+    Sample the state-dependend means of :var:`this` uniformly from the
+    interval [1, 100].
+
+
+.. function:: inline void PoisParams_SetGammaRnd (PoisParams *const restrict this)
+
+    Sample the transition probability matrix (tpm) of :var:`this` randomly.
+    This function guaratees that each row of the tpm is indeed a discrete
+    probability distribution.
+
+
+.. function:: inline void PoisParams_SetDeltaRnd (PoisParams *const restrict this)
+
+    Sample the initial distribution of :var:`this` randomly. This function
+    guaratees that each row of the tpm is indeed a discrete probability
+    distribution.
