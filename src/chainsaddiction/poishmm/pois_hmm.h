@@ -20,7 +20,7 @@
 /** \struct PoisHmm
  * \brief HMM with Poisson-distributed states.
  */
-typedef struct {
+typedef struct PoisHmm {
     size_t n_obs;
     size_t m_states;
     size_t n_iter;

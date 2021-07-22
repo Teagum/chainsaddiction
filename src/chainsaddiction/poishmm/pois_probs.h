@@ -13,7 +13,7 @@
  * Each field is a pointer to continuous memory with
  * space for n_obs * m_states values.
  */
-typedef struct {
+typedef struct PoisProbs {
     size_t n_obs;
     size_t m_states;
     scalar *lsdp;       /**< Log of the state dependent probabilities   */

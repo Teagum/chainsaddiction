@@ -18,7 +18,7 @@ if (res) { \
 } while (0)
 
 
-typedef struct {
+typedef struct PoisParams {
     size_t m_states;
     scalar *lambda;
     scalar *gamma;
