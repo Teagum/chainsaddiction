@@ -216,7 +216,6 @@ test__PoisHmm_ForwardBackward (void)
 
     for (size_t i = 0; i < hmm->m_states * inp->size; i++)
     {
-        puts ("r\n");
         if (!isfinite (hmm->probs->lalpha[i]) || !isfinite (hmm->probs->lbeta[i]))
         {
             return true;
