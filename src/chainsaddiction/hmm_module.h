@@ -3,10 +3,7 @@
 
 #include <Python.h>
 #include <numpy/arrayobject.h>
-#include "poishmm.h"
-#include "em.h"
-#include "fwbw.h"
-#include "scalar.h"
+#include "pois_hmm.h"
 
 
 #define Apollon_NewPyArray1d(shape)                     \

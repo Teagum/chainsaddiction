@@ -6,88 +6,74 @@
 static PyObject *
 hmm_poisson_fit_em (PyObject *self, PyObject *args)
 {
-    PyObject *py_Xtrain = NULL;
-    PyObject *py_lambda = NULL;
-    PyObject *py_gamma  = NULL;
-    PyObject *py_delta  = NULL;
-    npy_intp m_states   = 0;
-    npy_intp max_iter   = 0;
-    double   tol        = 0.0;
+    PyObject *arg_lambda = NULL;
+    PyObject *arg_gamma  = NULL;
+    PyObject *arg_delta  = NULL;
 
-    PyArrayObject *X_t     = NULL;
-    PyArrayObject *_lambda = NULL;
-    PyArrayObject *_gamma  = NULL;
-    PyArrayObject *_delta  = NULL;
+    PyArrayObject *arr_lambda = NULL;
+    PyArrayObject *arr_gamma  = NULL;
+    PyArrayObject *arr_delta  = NULL;
 
-    if (!PyArg_ParseTuple(args, "OlOOOld", &py_Xtrain, &m_states, &py_lambda, &py_gamma,
-        &py_delta, &max_iter, &tol)) return NULL;
+    PoisHmm hmm = { 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, NULL, NULL, NULL };
+    PoisParams *init = NULL;
+    PoisParams *working = NULL;
+    PoisProbs *probs = NULL;
 
-    X_t     = (PyArrayObject *) PyArray_FROM_OTF(py_Xtrain, NPY_LONG,       NPY_ARRAY_IN_ARRAY);
-    _lambda = (PyArrayObject *) PyArray_FROM_OTF(py_lambda, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
-    _gamma  = (PyArrayObject *) PyArray_FROM_OTF(py_gamma,  NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
-    _delta  = (PyArrayObject *) PyArray_FROM_OTF(py_delta,  NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
-
-    if (X_t == NULL || _lambda == NULL || _gamma == NULL || _delta == NULL)
+    if (!PyArg_ParseTuple (args, "llldOOO",
+                (npy_intp *) &hmm.n_obs,
+                (npy_intp *) &hmm.m_states,
+                (npy_intp *) &hmm.max_iter,
+                (double *) &hmm.tol,
+                &arg_lambda, &arg_gamma, &arg_delta))
     {
-        Py_XDECREF (X_t);
-        Py_XDECREF (_lambda);
-        Py_XDECREF (_gamma);
-        Py_XDECREF (_delta);
-        PyErr_SetString (PyExc_MemoryError,
-            "Could not allocate memory for input array.");
-        Py_RETURN_NONE;
+        return NULL;
     }
 
-    PoisHmm *ph = PoisHmm_FromData ((size_t) m_states,
-                            PyArray_DATA (_lambda),
-                            PyArray_DATA (_gamma),
-                            PyArray_DATA (_delta),
-                            (size_t) max_iter, (scalar) tol);
-
-    if (ph == NULL)
+    arr_lambda = (PyArrayObject *) PyArray_FROM_OTF (arg_lambda, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+    arr_gamma  = (PyArrayObject *) PyArray_FROM_OTF (arg_gamma,  NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+    arr_delta  = (PyArrayObject *) PyArray_FROM_OTF (arg_delta,  NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+    if (arr_lambda == NULL || arr_gamma == NULL || arr_delta == NULL)
     {
-        Py_XDECREF (X_t);
-        Py_XDECREF (_lambda);
-        Py_XDECREF (_gamma);
-        Py_XDECREF (_delta);
-        PyErr_SetString (PyExc_MemoryError, "Could not allocate HMM.");
-        Py_RETURN_NONE;
+        PyErr_SetString (PyExc_MemoryError, "Something went wrong during array creation.");
+        goto fail;
     }
 
-    DataSet X_train = {PyArray_DATA (X_t), (size_t) PyArray_SIZE (X_t)};
-    int success = PoisHmm_EM (&X_train, ph);
+    init = PoisParams_New (hmm.m_states);
+    working = PoisParams_New (hmm.m_states);
+    probs = PoisProbs_New (hmm.n_obs, hmm.m_states);
+    if (init == NULL || working == NULL || probs == NULL)
     {
-        npy_intp dims_1d[] = { m_states };
-        npy_intp dims_2d[] = { m_states, m_states };
-        size_t   vector_s  = (size_t) m_states * sizeof (scalar);
-        size_t   matrix_s  = (size_t) m_states * vector_s;
-
-        PyObject *py_success = (success == 0) ? Py_True : Py_False;
-        Py_INCREF (py_success);
-
-        PyArrayObject *lambda_ = Apollon_NewPyArray1d (dims_1d);
-        PyArrayObject *gamma_  = Apollon_NewPyArray2d (dims_2d);
-        PyArrayObject *delta_  = Apollon_NewPyArray1d (dims_1d);
-
-        memcpy (PyArray_DATA (lambda_), ph->params->lambda, vector_s);
-        memcpy (PyArray_DATA (gamma_),  ph->params->gamma,  matrix_s);
-        memcpy (PyArray_DATA (delta_),  ph->params->delta,  vector_s);
-
-        ph->aic = compute_aic(ph->nll, ph->m);
-        ph->bic = compute_bic(ph->nll, ph->m, X_train.size);
-
-        PyObject *out = NULL;
-        out = Py_BuildValue("ONNNdddk", py_success, lambda_, gamma_, delta_,
-                (double) ph->aic, (double) ph->bic,
-                (double) ph->nll, ph->n_iter);
-
-        Py_DECREF (X_t);
-        Py_DECREF (_lambda);
-        Py_DECREF (_gamma);
-        Py_DECREF (_delta);
-        PoisHmm_DeleteHmm (ph);
-        return out;
+        PyErr_SetString (PyExc_MemoryError, "Error during HMM init.");
+        goto fail;
     }
+
+    PoisParams_SetLambda (init, PyArray_DATA (arr_lambda));
+    PoisParams_SetGamma  (init, PyArray_DATA (arr_gamma));
+    PoisParams_SetDelta  (init, PyArray_DATA (arr_delta));
+    PoisParams_CopyLog (init, working);
+
+    hmm.init = init;
+    hmm.params = working;
+    hmm.probs = probs;
+
+    printf ("hmm.n_obs: %zu, hmm.m_states: %zu\ninit.m_states: %zu, working.m_states: %zu\nprobs.n_obs: %zu, probs.m_states: %zu\n",
+            hmm.n_obs, hmm.m_states, hmm.init->m_states, hmm.params->m_states, hmm.probs->n_obs, hmm.probs->m_states);
+
+    PoisParams_Print (hmm.init);
+    PoisParams_Print (hmm.params);
+    /*
+    printf ("n_obs: %zu\nm_states: %zu\nmax_iter: %zu\ntol: %2.15f\n",
+            hmm.n_obs, hmm.m_states, hmm.max_iter, hmm.tol);
+            */
+
+fail:
+    PoisParams_Delete (init);
+    PoisParams_Delete (working);
+    PoisProbs_Delete (probs);
+    Py_XDECREF (arr_lambda);
+    Py_XDECREF (arr_gamma);
+    Py_XDECREF (arr_delta);
+    Py_RETURN_NONE;
 }
 
 
@@ -132,6 +118,7 @@ CA_Methods[] = {
     {NULL, NULL, 0, NULL}
 };
 
+
 static struct PyModuleDef
 chainsaddiction_module = {
     PyModuleDef_HEAD_INIT,
@@ -140,6 +127,7 @@ chainsaddiction_module = {
     -1,
     CA_Methods
 };
+
 
 PyMODINIT_FUNC
 PyInit_chainsaddiction (void)
