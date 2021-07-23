@@ -98,6 +98,7 @@ PoisHmm_LogLikelihood (PoisHmm *phmm)
             phmm->probs->lalpha, phmm->n_obs, phmm->m_states);
 }
 
+
 void
 PoisHmm_PrintInit (const PoisHmm *phmm)
 {
@@ -106,11 +107,11 @@ PoisHmm_PrintInit (const PoisHmm *phmm)
 
     puts ("");
     for (size_t i = 0; i < m_states; i++)
-        printf ("%10.5Lf", p->lambda[i]);
+        printf (SF, p->lambda[i]);
 
     puts ("");
     for (size_t i = 0; i < m_states; i++)
-        printf ("%10.5Lf", p->delta[i]);
+        printf (SF, p->delta[i]);
 
     puts ("");
 }
@@ -126,9 +127,12 @@ void PoisHmm_PrintParams (const PoisHmm *const phmm)
 
     printf ("\n\n*%s%s%s*\n\n", border, border, border);
     printf ("%25s%10zu\n", "m-states:", m_states);
-    printf ("%25s%10.5Lf\n", "-log likelihood:", phmm->llh);
-    printf ("%25s%10.5Lf\n", "AIC:", phmm->aic);
-    printf ("%25s%10.5Lf\n", "BIC:", phmm->bic);
+    printf ("%25s", "-log likelihood:");
+    printf (SFN, phmm->llh);
+    printf ("%25s", "AIC:");
+    printf (SFN, phmm->aic);
+    printf ("%25s", "BIC:");
+    printf (SFN, phmm->bic);
     printf ("\n\n%s%s%s\n\n", sep, sep, sep);
 
     printf ("%25s", "State:");
@@ -137,11 +141,11 @@ void PoisHmm_PrintParams (const PoisHmm *const phmm)
     puts ("");
     printf ("%25s", "State dependent means:");
     for (size_t i = 0; i < m_states; i++)
-        printf ("%10.5Lf", params->lambda[i]);
+        printf (SF, params->lambda[i]);
     puts ("");
     printf ("%25s", "Start distribution:");
     for (size_t i = 0; i < m_states; i++)
-        printf ("%10.5Lf", expl (params->delta[i]));
+        printf (SF, exp (params->delta[i]));
 
     printf ("\n\n%s%s%s\n\n", sep, sep, sep);
 

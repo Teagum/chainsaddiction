@@ -174,11 +174,11 @@ PoisParams_Print (
     puts ("");
     printf ("%25s", "State dependent means:");
     for (size_t i = 0; i < m_states; i++)
-        printf ("%10.5Lf", this->lambda[i]);
+        printf (SF, this->lambda[i]);
     puts ("");
     printf ("%25s", "Start distribution:");
     for (size_t i = 0; i < m_states; i++)
-        printf ("%10.5Lf", this->delta[i]);
+        printf (SF, this->delta[i]);
 
     printf ("\n\n%s%s%s\n\n", sep, sep, sep);
 
@@ -192,7 +192,7 @@ PoisParams_Print (
         printf ("%25zu", i+1);
         for (size_t j = 0; j < m_states; j++)
         {
-            printf ("%10.5Lf", this->gamma[i*m_states+j]);
+            printf (SF, this->gamma[i*m_states+j]);
         }
         puts ("");
     }

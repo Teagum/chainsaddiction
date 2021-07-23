@@ -39,7 +39,7 @@ Ca_ReadDataFile (FILE *stream, cnt n_lines, scalar *target)
 
     while (line_cnt < n_lines)
     {
-        ferr = fscanf (stream, "%40Lf", target);
+        ferr = fscanf (stream, RSF, target);
         if (ferr == EOF)
         {
             if (ferror (stream))
