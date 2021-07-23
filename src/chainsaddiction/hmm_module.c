@@ -77,43 +77,10 @@ fail:
 }
 
 
-static PyObject *
-hmm_poisson_fwbw(PyObject *self, PyObject *args)
-{
-    PyErr_SetString (PyExc_NotImplementedError, "");
-    Py_RETURN_NONE;
-}
-
-
-static PyObject *
-hmm_poisson_em (PyObject *self, PyObject *args)
-{
-    PyErr_SetString (PyExc_NotImplementedError, "");
-    Py_RETURN_NONE;
-}
-
-
-static PyObject *
-hmm_poisson_viterbi (PyObject *self, PyObject *args)
-{
-    PyErr_SetString (PyExc_NotImplementedError, "");
-    Py_RETURN_NONE;
-}
-
-
 static PyMethodDef
 CA_Methods[] = {
     {"hmm_poisson_fit_em", hmm_poisson_fit_em, METH_VARARGS,
      "hmm_poisson_fit_em (x, m, _lambda, _gamma, _delta, max_iter, tol)"},
-
-    {"hmm_poisson_fwbw", hmm_poisson_fwbw, METH_VARARGS,
-     "docstring"},
-
-    {"hmm_poisson_em", hmm_poisson_em, METH_VARARGS,
-     "docstring"},
-
-    {"hmm_poisson_viterbi", hmm_poisson_viterbi, METH_VARARGS,
-     "docstring"},
 
     {NULL, NULL, 0, NULL}
 };

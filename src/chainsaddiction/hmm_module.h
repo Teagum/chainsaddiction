@@ -19,23 +19,9 @@
                 PyArray_DescrFromType (NPY_LONGDOUBLE), \
                 2, shape, NULL, NULL, 0, NULL));
 
-
-/** Perform EM for given parameters. Return only fitted params. */
-static PyObject *hmm_poisson_em (PyObject* self, PyObject* args);
-
-
-/** Fit HMM for given parameters using EM. Return all params 
- * and quality measures. 
+/** Fit HMM for given parameters using EM. Return all params
+ * and quality measures.
  */
 static PyObject *hmm_poisson_fit_em (PyObject* self, PyObject* args);
-
-
-/** Return forward backward, and state-dependent probabilites. */
-static PyObject *hmm_poisson_fwbw (PyObject *self, PyObject *args);
-
-
-/** Calculate viterbi path given HMM. */
-static PyObject *hmm_poisson_viterbi (PyObject *self, PyObject *args);
-
 
 #endif  /* hmm_module_h */
