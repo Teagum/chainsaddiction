@@ -175,7 +175,8 @@ test__m_col_max (void)
     const size_t rows = 4;
     const size_t cols = 3;
     const size_t n_elem = rows * cols;
-    scalar *vals = VA_SCALAR_EMPTY (n_elem);
+
+    scalar *mtx = VA_SCALAR_EMPTY (n_elem);
     int *max_val = VA_INT_EMPTY (cols);
     int *max_row_idx = VA_INT_EMPTY (cols);
     scalar *res_max = VA_SCALAR_EMPTY (cols);
@@ -183,21 +184,21 @@ test__m_col_max (void)
 
     v_rnd_int (0, rows, cols, max_row_idx);
     v_rnd_int (10, 100, cols, max_val);
-    v_rnd (n_elem, vals);
+    v_rnd (n_elem, mtx);
 
     for (size_t i = 0; i < cols; i++)
     {
         size_t idx = max_row_idx[i] * cols + i;
-        vals[idx] = (scalar) max_val[i];
+        mtx[idx] = (scalar) max_val[i];
     }
 
-    m_col_max (vals, rows, cols, res_max);
+    m_col_max (mtx, rows, cols, res_max);
     for (size_t i = 0; i < cols; i++)
     {
         // printf ("[%3zu] %Lf\n", i, res_max[i]);
         err &= ASSERT_EQUAL (res_max[i], max_val[i]);
     }
-    FREE (vals);
+    FREE (mtx);
     FREE (max_val);
     FREE (max_row_idx);
     FREE (res_max);
