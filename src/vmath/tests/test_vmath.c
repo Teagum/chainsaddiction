@@ -5,19 +5,19 @@
 bool
 test__strided_max (void)
 {
-    const size_t stride = 4;
-    const size_t n_elem = stride * stride;
-    const scalar max_val = 2.0L;
-    scalar *mat = VA_SCALAR_EMPTY (n_elem);
     bool err = true;
+    const size_t n_elem = (const size_t) rnd_int (10, 100);
+    const size_t stride = (const size_t) rnd_int (1, n_elem);
+    const size_t max_idx = (const size_t) rnd_int (0, n_elem / stride) * stride;
+    const scalar max_val = 99L;
+
+    scalar *mat = VA_SCALAR_ZEROS (n_elem);
+    if (mat == NULL) { return err; }
 
     v_rnd (n_elem, mat);
-    for (size_t i = 0; i < stride; i++)
-    {
-        assert (i*stride+i < n_elem);
-        mat[i*stride+i] = max_val;
-    }
-    err = !ASSERT_EQUAL (_strided_max (mat, n_elem, stride), max_val);
+    mat[max_idx] = max_val;
+
+    err = !ASSERT_EQUAL (strided_max (mat, n_elem, stride), max_val);
 
     FREE (mat);
     return err;

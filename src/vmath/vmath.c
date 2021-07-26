@@ -340,13 +340,15 @@ log_mvp (
  * Private API
  */
 scalar
-_strided_max (
+strided_max (
     const scalar *restrict buffer,
     const size_t n_elem,
     const size_t stride)
 {
-    scalar c_max = 0;
-    for (size_t i = 0; i < n_elem; i+=stride, buffer+=stride)
+    const scalar *end = buffer + n_elem - 1;
+    scalar c_max = *buffer;
+
+    while ((buffer+=stride) < end)
     {
         c_max = fmaxl (*buffer, c_max);
     }

@@ -462,9 +462,9 @@ log_mvp (
  * \param _stride - Stride in elements.
  */
 extern scalar
-_strided_max (
-    const scalar *restrict _buffer,
-    const size_t _n_elem,
-    const size_t _stride);
+strided_max (
+    const scalar *restrict buffer,
+    const size_t n_elem,
+    const size_t stride);
 
 #endif  /* VMATH_H */
