@@ -348,7 +348,7 @@ strided_max (
     const scalar *end = buffer + n_elem - 1;
     scalar c_max = *buffer;
 
-    while ((buffer+=stride) < end)
+    while ((buffer+=stride) <= end)
     {
         c_max = fmaxl (*buffer, c_max);
     }
@@ -365,7 +365,7 @@ strided_absmax (
     const scalar *end = buffer + n_elem - 1;
     scalar c_max = *buffer;
 
-    while ((buffer+=stride) < end)
+    while ((buffer+=stride) <= end)
     {
         c_max = fmaxl (fabsl (*buffer), c_max);
     }
