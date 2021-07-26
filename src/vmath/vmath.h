@@ -467,4 +467,12 @@ strided_max (
     const size_t n_elem,
     const size_t stride);
 
+
+extern scalar
+strided_absmax (
+    const scalar *restrict buffer,
+    const size_t n_elem,
+    const size_t stride);
+
+
 #endif  /* VMATH_H */

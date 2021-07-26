@@ -354,3 +354,20 @@ strided_max (
     }
     return c_max;
 }
+
+
+scalar
+strided_absmax (
+    const scalar *restrict buffer,
+    const size_t n_elem,
+    const size_t stride)
+{
+    const scalar *end = buffer + n_elem - 1;
+    scalar c_max = *buffer;
+
+    while ((buffer+=stride) < end)
+    {
+        c_max = fmaxl (fabsl (*buffer), c_max);
+    }
+    return c_max;
+}
