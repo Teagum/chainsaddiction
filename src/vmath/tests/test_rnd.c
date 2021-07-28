@@ -15,6 +15,23 @@ test__rnd (void)
 
 
 bool
+test__r_rnd (void)
+{
+    enum setup {
+        SR_LOWER = -100,
+        SR_UPPER =  100  };
+
+    LOOP {
+        if (!ASSERT_IN_RANGE (r_rnd (SR_LOWER, SR_UPPER), SR_LOWER, SR_UPPER))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+bool
 test_rnd_int (void)
 {
     LOOP {

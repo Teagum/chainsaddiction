@@ -15,6 +15,19 @@ extern scalar
 rnd (void);
 
 
+/** Sample random scalar form interval.
+ *
+ * \param[in] r_min
+ * \param[in] r_max
+ *
+ * \return Random scalar value.
+ */
+extern scalar
+r_rnd (
+    const scalar r_min,
+    const scalar r_max);
+
+
 /* Random integer in range.
  * \param r_min    Lower bound, inclusive.
  * \param r_max    Upper bound, exclusive.

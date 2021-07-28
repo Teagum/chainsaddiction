@@ -8,6 +8,13 @@ rnd (void)
 }
 
 
+inline scalar
+r_rnd (const scalar r_min, const scalar r_max)
+{
+    return r_min + (SCALAR_RAND * (scalar)(r_max - r_min)) / RAND_MAX;
+}
+
+
 inline int
 rnd_int (const int r_min, const int r_max)
 {
