@@ -15,6 +15,17 @@ extern scalar
 rnd (void);
 
 
+/** Sample `n_elem` random scalars for the unit interval.
+ *
+ * \param[in]  n_elem    Number of elements in vector.
+ * \param[out] buffer    Pointer to allocate memory.
+ */
+extern void
+v_rnd (
+    const size_t n_elem,
+    scalar *const restrict buffer);
+
+
 /** Sample random scalar form interval.
  *
  * \param[in] r_min
