@@ -35,6 +35,20 @@ v_rnd
 
 
 inline void
+vr_rnd (
+    const size_t n_elem,
+    const scalar r_min,
+    const scalar r_max,
+    scalar *restrict samples)
+{
+    for (size_t i = 0; i < n_elem; i++, samples++)
+    {
+        *samples = r_rnd (r_min, r_max);
+    }
+}
+
+
+inline void
 v_rnd_int (
     const int r_min,
     const int r_max,

@@ -32,6 +32,28 @@ test__r_rnd (void)
 
 
 bool
+test__vr_rnd (void)
+{
+    enum setup {
+        N_ELEM   =  200,
+        SR_LOWER = -100,
+        SR_UPPER =  100, };
+
+    scalar arr[N_ELEM] = { 0.0L };
+
+    vr_rnd (N_ELEM, SR_LOWER, SR_UPPER, arr);
+    for (size_t i = 0; i < N_ELEM; i++)
+    {
+        if (!ASSERT_IN_RANGE (arr[i], SR_LOWER, SR_UPPER) || !isfinite (arr[i]))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+bool
 test_rnd_int (void)
 {
     LOOP {

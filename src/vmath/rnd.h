@@ -39,6 +39,22 @@ r_rnd (
     const scalar r_max);
 
 
+/** Sample `n_elem` random scalars form interval.
+ *
+ * \param[in]  n_elem   Number of samples.
+ * \param[in]  r_min    Lower bound of sampling range.
+ * \param[in]  r_max    Uppder bound of sampling range.
+ * \param[out] samples
+ *
+ */
+extern void
+vr_rnd (
+    const size_t n_elem,
+    const scalar r_min,
+    const scalar r_max,
+    scalar *restrict samples);
+
+
 /* Random integer in range.
  * \param r_min    Lower bound, inclusive.
  * \param r_max    Upper bound, exclusive.
@@ -47,17 +63,6 @@ extern int
 rnd_int (
     const int r_min,
     const int r_max);
-
-
-/* Fill vector wiht random scalars
- *
- * \param[in]  n_elem    Number of elements in vector.
- * \param[out] buffer    Pointer to allocate memory.
- */
-extern void
-v_rnd (
-    const size_t n_elem,
-    scalar *const restrict buffer);
 
 
 /* Fill vector with random integers in range.

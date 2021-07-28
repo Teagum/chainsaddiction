@@ -10,6 +10,7 @@ int main (void)
     RUN_TEST (test__rnd);
     RUN_TEST (test__v_rnd);
     RUN_TEST (test__r_rnd);
+    RUN_TEST (test__vr_rnd);
 
     RUN_TEST (test__strided_max);
     RUN_TEST (test__v_lse);
