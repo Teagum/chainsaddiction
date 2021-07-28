@@ -6,12 +6,13 @@
 #include "rnd.h"
 
 
+bool test__rnd_int (void);
+bool test__v_rnd_int (void);
+
 bool test__rnd (void);
 bool test__v_rnd (void);
 bool test__r_rnd (void);
 bool test__vr_rnd (void);
 
-bool test_rnd_int (void);
-bool test_v_rnd_int (void);
 
 #endif  /* test_rnd_h */

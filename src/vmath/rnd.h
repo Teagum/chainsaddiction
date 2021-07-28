@@ -15,6 +15,31 @@
 #define RND_SCALAR  (SCALAR_RAND / RAND_MAX)
 
 
+/** Sample random integer from interval.
+ *
+ * \param[in] r_min    Lower bound, inclusive.
+ * \param[in] r_max    Upper bound, exclusive.
+ *
+ * \return Random integer.
+ */
+extern int
+rnd_int (
+    const int r_min,
+    const int r_max);
+
+
+/* Sample `n_elem' random integers form interval.
+ * \param[in]  n_elem   Number of elements.
+ * \param[in]  r_min    Lower bound of sampling range.
+ * \param[in]  r_max    Upper bound of sampling range.
+ * \param[out] buffer   Pointer to allocated memory.
+ */
+extern void
+v_rnd_int (
+    const size_t n_elem,
+    const int r_min,
+    const int r_max,
+    int *const restrict samples);
 
 
 /* Sample random scalar from the unit interval.
@@ -61,30 +86,6 @@ vr_rnd (
     const scalar r_min,
     const scalar r_max,
     scalar *restrict samples);
-
-
-/* Random integer in range.
- * \param r_min    Lower bound, inclusive.
- * \param r_max    Upper bound, exclusive.
- */
-extern int
-rnd_int (
-    const int r_min,
-    const int r_max);
-
-
-/* Fill vector with random integers in range.
- * \param[in]  r_min    Lower bound, inclusive.
- * \param[in]  r_max    Upper bound, exclusive.
- * \param[in]  n_elem   Number of elements.
- * \param[out] buffer   Pointer to allocated memory.
- */
-extern void
-v_rnd_int (
-    const int r_min,
-    const int r_max,
-    const size_t n_elem,
-    int *const restrict buffer);
 
 
 #define m_rnd(n_rows, n_cols, buffer) v_rnd (n_rows * n_cols, buffer)

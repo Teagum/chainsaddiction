@@ -2,6 +2,53 @@
 
 
 bool
+test__rnd_int (void)
+{
+    enum setup {
+        N_ITER   =  100,
+        SR_LOWER = -100,
+        SR_UPPER =  100,
+    };
+
+    for (size_t i = 0; i < N_ITER; i++)
+    {
+        if (!ASSERT_IN_RANGE (rnd_int (SR_LOWER, SR_UPPER), SR_LOWER, SR_UPPER))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+bool
+test__v_rnd_int (void)
+{
+    enum setup {
+        N_ITER   =  100,
+        N_ELEM   =  200,
+        SR_LOWER = -100,
+        SR_UPPER =  100,
+    };
+
+    for (size_t n = 0; n < N_ITER; n++)
+    {
+        int arr[N_ELEM] = { 0 };
+        v_rnd_int (N_ELEM, SR_LOWER, SR_UPPER, arr);
+
+        for (size_t i = 0; i < N_ELEM; i++)
+        {
+            if (!ASSERT_IN_RANGE (arr[i], SR_LOWER, SR_UPPER) || !isfinite (arr[i]))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+bool
 test__rnd (void)
 {
     LOOP {
@@ -60,21 +107,6 @@ test__vr_rnd (void)
     for (size_t i = 0; i < N_ELEM; i++)
     {
         if (!ASSERT_IN_RANGE (arr[i], SR_LOWER, SR_UPPER) || !isfinite (arr[i]))
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-bool
-test_rnd_int (void)
-{
-    LOOP {
-        int low = rand () % 1000;
-        int high = 1000 + rand () % 1000;
-        if (!ASSERT_IN_RANGE (rnd_int (low, high), low, high))
         {
             return true;
         }

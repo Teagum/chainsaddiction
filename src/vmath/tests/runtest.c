@@ -7,6 +7,9 @@ int main (void)
 {
     SETUP;
 
+    RUN_TEST (test__rnd_int);
+    RUN_TEST (test__v_rnd_int);
+
     RUN_TEST (test__rnd);
     RUN_TEST (test__v_rnd);
     RUN_TEST (test__r_rnd);
