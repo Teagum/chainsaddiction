@@ -8,6 +8,7 @@ int main (void)
     SETUP;
 
     RUN_TEST (test__rnd);
+    RUN_TEST (test__v_rnd);
 
     RUN_TEST (test__strided_max);
     RUN_TEST (test__v_lse);

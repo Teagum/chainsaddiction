@@ -30,7 +30,7 @@ test_rnd_int (void)
 
 
 bool
-test_v_rnd (void)
+test__v_rnd (void)
 {
     scalar vals[N];
     v_rnd (N, vals);
