@@ -28,8 +28,8 @@ v_rnd (
 
 /** Sample random scalar form interval.
  *
- * \param[in] r_min
- * \param[in] r_max
+ * \param[in] r_min     Lower bound of sampling range.
+ * \param[in] r_max     Uppder bound of sampling range.
  *
  * \return Random scalar value.
  */
