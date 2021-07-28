@@ -8,12 +8,12 @@
     #define restrict restrict
 #endif
 
-
-#ifdef LD_MATH
-typedef	long double	scalar;
-#else
+#ifdef _NO_LD_MATH
 typedef double scalar;
+#else
+typedef	long double	scalar;
 #endif
 
+#define CA_NAN nanl ("CA_NAN")
 
 #endif  /* config_h */

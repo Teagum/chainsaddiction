@@ -27,9 +27,8 @@ standard = -std=c17
 CFLAGS = $(warnings) $(standard) $(optimize) $(debug)
 
 # Preprocessor flags
-# 	LD_MATH           Typedef `scalar' to `long double', otherwise `double'.
+# 	_NO_LD_MATH       Disable long double math.
 # 	NO_BOUNDS_CHECK   Do not check boundaries in array setters and getters.
-CPPFLAGS = -D LD_MATH
 INCLUDE = -I$(src_dir) -I$(test_src_dir)
 
 

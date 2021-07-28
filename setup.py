@@ -32,7 +32,7 @@ c_include_dirs = (
 ext = Extension('chainsaddiction',
         sources = list_source_files(c_src_dirs),
         include_dirs = c_include_dirs,
-        extra_compile_args = ['-Wall', '-Wextra'],    # not supported by MSVC
+        extra_compile_args = ['-Wall', '-Wextra'],
         language = 'c')
 
 setup(ext_modules = [ext])
