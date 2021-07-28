@@ -15,6 +15,21 @@ test__rnd (void)
 
 
 bool
+test__v_rnd (void)
+{
+    scalar vals[N];
+    v_rnd (N, vals);
+    LOOP {
+        if (!ASSERT_IN_RANGE (vals[i], 0, 1))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+bool
 test__r_rnd (void)
 {
     enum setup {
@@ -60,21 +75,6 @@ test_rnd_int (void)
         int low = rand () % 1000;
         int high = 1000 + rand () % 1000;
         if (!ASSERT_IN_RANGE (rnd_int (low, high), low, high))
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-bool
-test__v_rnd (void)
-{
-    scalar vals[N];
-    v_rnd (N, vals);
-    LOOP {
-        if (!ASSERT_IN_RANGE (vals[i], 0, 1))
         {
             return true;
         }
