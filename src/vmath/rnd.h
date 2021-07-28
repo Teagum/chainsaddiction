@@ -6,6 +6,9 @@
 #include "config.h"
 
 
+#define SCALAR_RAND (scalar) rand ()
+
+
 /* Return random scalar.
  */
 extern scalar
