@@ -9,7 +9,7 @@
 #define SCALAR_RAND (scalar) rand ()
 
 
-/* Return random scalar.
+/* Sample random scalar from the unit interval.
  */
 extern scalar
 rnd (void);

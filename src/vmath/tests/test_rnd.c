@@ -2,7 +2,7 @@
 
 
 bool
-test_rnd (void)
+test__rnd (void)
 {
     LOOP {
         if (!ASSERT_IN_RANGE (rnd (), 0, 1))

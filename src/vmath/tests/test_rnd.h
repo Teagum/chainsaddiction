@@ -6,7 +6,7 @@
 #include "rnd.h"
 
 
-bool test_rnd (void);
+bool test__rnd (void);
 bool test_rnd_int (void);
 bool test_v_rnd (void);
 bool test_v_rnd_int (void);

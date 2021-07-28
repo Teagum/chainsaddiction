@@ -4,7 +4,7 @@
 inline scalar
 rnd (void)
 {
-    return (scalar) rand() / RAND_MAX;
+    return SCALAR_RAND / RAND_MAX;
 }
 
 
