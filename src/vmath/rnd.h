@@ -6,7 +6,15 @@
 #include "config.h"
 
 
-#define SCALAR_RAND (scalar) rand ()
+/*
+ * Basic macros
+ */
+#define SCALAR_RAND ((scalar) rand ())
+#define RND_INT     (rand ())
+#define RND_SIZE    ((size_t) rand ())
+#define RND_SCALAR  (SCALAR_RAND / RAND_MAX)
+
+
 
 
 /* Sample random scalar from the unit interval.
