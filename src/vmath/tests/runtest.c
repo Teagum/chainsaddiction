@@ -9,11 +9,10 @@ int main (void)
 
     RUN_TEST (test__rnd_int);
     RUN_TEST (test__v_rnd_int);
-
-    RUN_TEST (test__rnd);
-    RUN_TEST (test__v_rnd);
-    RUN_TEST (test__r_rnd);
-    RUN_TEST (test__vr_rnd);
+    RUN_TEST (test__rnd_scalar);
+    RUN_TEST (test__v_rnd_scalar);
+    RUN_TEST (test__sample);
+    RUN_TEST (test__v_sample);
 
     RUN_TEST (test__strided_max);
     RUN_TEST (test__v_lse);

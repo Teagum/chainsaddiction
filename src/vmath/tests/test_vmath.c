@@ -11,7 +11,7 @@ test__strided_max (void)
     scalar *mat = VA_SCALAR_EMPTY (n_elem);
     bool err = true;
 
-    v_rnd (n_elem, mat);
+    v_sample (n_elem, mat);
     for (size_t i = 0; i < stride; i++)
     {
         assert (i*stride+i < n_elem);
@@ -34,7 +34,7 @@ test__v_lse (void)
     scalar lse = 0;
     bool err = true;
 
-    v_rnd (n_elem, vals);
+    v_sample (n_elem, vals);
     v_log (vals, n_elem, lvals);
     for (size_t i = 0; i < n_elem; i++) { lsum_vals += vals[i]; }
     lsum_vals = logl (lsum_vals);
@@ -62,8 +62,8 @@ test__vs_lse_centroid (void)
     const size_t v_stride = 1;
     const size_t w_stride = 1;
 
-    v_rnd (n_elem, weights);
-    v_rnd (n_elem, vals);
+    v_sample (n_elem, weights);
+    v_sample (n_elem, vals);
     v_log (vals, n_elem, lvals);
     for (size_t i = 0; i < n_elem; i++) {
         sum += vals[i];
@@ -83,7 +83,7 @@ test__v_max (void)
     size_t n_elem = 100;
     scalar *vals = VA_SCALAR_EMPTY (n_elem);
 
-    v_rnd (n_elem, vals);
+    v_sample (n_elem, vals);
     vals[n_elem/2] = max;
     err = !ASSERT_EQUAL (v_max (vals, n_elem), max);
 
@@ -102,7 +102,7 @@ test__vs_sum (void)
     scalar vs_sum_res = 0;
     bool err = true;
 
-    v_rnd (n_elem, vals);
+    v_sample (n_elem, vals);
     for (size_t i = 0; i < n_elem; i+=stride)
     {
         expected += vals[i];
@@ -121,7 +121,7 @@ test__m_max (void)
     scalar max = 2L;
     scalar vals[N];
 
-    v_rnd (N, vals);
+    v_sample (N, vals);
     vals[N/2] = max;
 
     return !ASSERT_EQUAL (m_max (vals, 2, N/2), max);
@@ -148,7 +148,7 @@ test__m_row_max (void)
         scalar *mtx = VA_SCALAR_EMPTY (n_elem);
         scalar *res = VA_SCALAR_EMPTY (n_rows);
 
-        m_rnd (n_rows, n_cols, mtx);
+        m_sample (n_rows, n_cols, mtx);
         for (size_t row = 0; row < n_rows; row++)
         {
             const size_t max_idx = (size_t) rnd_int (0, n_cols);
@@ -183,7 +183,7 @@ test__m_col_max (void)
 
     v_rnd_int (0, rows, cols, max_row_idx);
     v_rnd_int (10, 100, cols, max_val);
-    v_rnd (n_elem, vals);
+    v_sample (n_elem, vals);
 
     for (size_t i = 0; i < cols; i++)
     {
@@ -215,8 +215,8 @@ test__log_vmp (void)
     scalar *b2 = VA_SCALAR_ZEROS (n_elem*n_elem);
     scalar *res = VA_SCALAR_ZEROS (n_elem);
 
-    v_rnd (n_elem, vt);
-    v_rnd (n_elem*n_elem, mt);
+    v_sample (n_elem, vt);
+    v_sample (n_elem*n_elem, mt);
     vi_log (vt, n_elem);
     vi_log (mt, n_elem*n_elem);
 
@@ -241,8 +241,8 @@ test__log_mvp (void)
     scalar *b2 = VA_SCALAR_EMPTY (n*n);
     scalar *res = VA_SCALAR_EMPTY (n);
 
-    v_rnd (n, vt);
-    v_rnd (n*n, mt);
+    v_sample (n, vt);
+    v_sample (n*n, mt);
     vi_log (vt, n);
     vi_log (mt, n*n);
 

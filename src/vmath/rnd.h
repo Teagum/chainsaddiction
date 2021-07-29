@@ -44,23 +44,6 @@ v_rnd_int (
     int *const restrict samples);
 
 
-/* Sample random scalar from the unit interval.
- */
-extern scalar
-rnd (void);
-
-
-/** Sample `n_elem` random scalars for the unit interval.
- *
- * \param[in]  n_elem    Number of elements in vector.
- * \param[out] buffer    Pointer to allocate memory.
- */
-extern void
-v_rnd (
-    const size_t n_elem,
-    scalar *const restrict buffer);
-
-
 /** Sample random scalar form interval.
  *
  * \param[in] r_min     Lower bound of sampling range.
@@ -69,7 +52,7 @@ v_rnd (
  * \return Random scalar value.
  */
 extern scalar
-r_rnd (
+rnd_scalar (
     const scalar r_min,
     const scalar r_max);
 
@@ -79,18 +62,36 @@ r_rnd (
  * \param[in]  n_elem   Number of samples.
  * \param[in]  r_min    Lower bound of sampling range.
  * \param[in]  r_max    Uppder bound of sampling range.
- * \param[out] samples
+ * \param[out] samples  Pointer to allocated memory.
  *
  */
 extern void
-vr_rnd (
+v_rnd_scalar (
     const size_t n_elem,
     const scalar r_min,
     const scalar r_max,
     scalar *restrict samples);
 
 
-#define m_rnd(n_rows, n_cols, buffer) v_rnd (n_rows * n_cols, buffer)
+/** Sample random scalar from unit interval.
+ *
+ * \return Random scalar from [0.0, 1.0].
+ *
+ */
+#define sample() RND_SCALAR
+
+/** Sample `n_elem random scalars from unit interval.
+ *
+ * \param[in] n_elem    Number of samples.
+ *
+ */
+extern void
+v_sample (
+    size_t n_elem,
+    scalar *restrict samples);
+
+
+#define m_sample(n_rows, n_cols, buffer) v_sample (n_rows * n_cols, buffer)
 
 
 #endif  /* rnd_h */
