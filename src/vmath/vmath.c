@@ -275,7 +275,7 @@ m_col_max (
 {
     for (size_t i = 0; i < _n_cols; i++, _mt++)
     {
-        _col_max[i] = _strided_max (_mt, _n_rows*_n_cols, _n_cols);
+        _col_max[i] = strided_max (_mt, _n_rows*_n_cols, _n_cols);
     }
 }
 
