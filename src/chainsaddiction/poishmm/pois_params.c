@@ -205,11 +205,9 @@ pp_rnd_lambda (
     const size_t m_states,
     scalar *const restrict buffer)
 {
-    v_rnd (m_states, buffer);
-    for (size_t i = 0; i < m_states; i++)
-    {
-        buffer[i] += (scalar) rnd_int (1, 100);
-    }
+    const scalar SR_LB =   1.0L;
+    const scalar SR_UB = 100.0L;
+    v_rnd_scalar (m_states, SR_LB, SR_UB, buffer);
 }
 
 
@@ -220,7 +218,7 @@ pp_rnd_gamma (
 {
     const size_t g_elem = m_states * m_states;
 
-    v_rnd (g_elem, buffer);
+    v_sample (g_elem, buffer);
     for (size_t i = 0; i < m_states; i++)
     {
         vi_softmax (buffer+i*m_states, m_states);
@@ -233,6 +231,6 @@ pp_rnd_delta (
     const size_t m_states,
     scalar *const restrict buffer)
 {
-    v_rnd (m_states, buffer);
+    v_sample (m_states, buffer);
     vi_softmax (buffer, m_states);
 }
