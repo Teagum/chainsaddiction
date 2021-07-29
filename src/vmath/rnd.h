@@ -15,6 +15,8 @@
 #define RND_SCALAR  (SCALAR_RAND / RAND_MAX)
 
 
+#define ITER(x_n_elem, x_buffer) \
+    for (size_t i = 0; i < x_n_elem; i++, x_buffer++)
 /** Sample random integer from interval.
  *
  * \param[in] r_min    Lower bound, inclusive.
