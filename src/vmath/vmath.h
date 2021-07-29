@@ -23,10 +23,19 @@
     return 1;                                           \
 }
 
+#define SUCCESS 0
+
+enum vmath_error_codes {
+    VM_ERR_ZERO_SIZED_BUFFER = -1,
+};
+
 #define VA_SCALAR_EMPTY(n_elem) malloc ((n_elem) * sizeof (scalar));
 #define VA_SCALAR_ZEROS(n_elem) calloc (n_elem, sizeof (scalar))
 #define VA_INT_EMPTY(n_elem) malloc ((n_elem) * sizeof (int))
 #define VA_INT_ZEROS(n_elem) calloc (n_elem, sizeof (int))
+#define VA_SIZE_EMPTY(n_elem) malloc ((n_elem) * sizeof (size_t));
+#define VA_SIZE_ZEROS(n_elem) calloc (n_elem, sizeof (size_t));
+
 
 #define FREE(buff) do { \
     free (buff);        \
@@ -45,24 +54,42 @@
       M_INNER_LOOP { \
 #define END_ITER_MATRIX }}
 
-#define NEWLINE fputc ('\n', stdout)
+
+#define NEWLINE fputc ('\n', stderr)
+#define RED "\x1b[33m"
+#define GREEN "\x1b[32m"
+#define YELLOW "\x1b[34m"
+#define CLEAR "\x1b[0m"
+
 
 #define print_vector(n, vct) do {               \
     NEWLINE;                                    \
+    fprintf (stderr, "%6c", ' ');               \
     for (size_t i = 0; i < n; i++) {            \
-        printf ("[%3zu] %10.5Lf\n", i, vct[i]);  \
+        fprintf (stderr, YELLOW "%6c[%2zu] " CLEAR, ' ', i);                  \
     }                                           \
+    NEWLINE;                                    \
+    fprintf (stderr, "%6c", ' ');\
+    for (size_t i = 0; i < n; i++) {            \
+        fprintf (stderr, "%10.5Lf ",  (scalar)vct[i]);  \
+    }                                           \
+    NEWLINE;                                    \
 } while (0)
 
 
 #define print_matrix(rows, cols, mtx) do {      \
     NEWLINE;\
+    fprintf (stderr, "%6c", ' ');               \
+    for (size_t i = 0; i < cols; i++) {            \
+        fprintf (stderr, GREEN "%6c[%2zu] " CLEAR, ' ', i);                  \
+    }                                           \
+    NEWLINE;\
     for (size_t i = 0; i < rows; i++) {         \
-        printf ("[%3zu] ", i);                  \
+        fprintf (stderr, GREEN "[%3zu] " CLEAR, i);                  \
         for (size_t j = 0; j < cols; j++) {     \
-            printf ("%10.5Lf ", mtx[i*cols+j]); \
+            fprintf (stderr, "%10.5Lf ", (scalar)mtx[i*cols+j]); \
         }                                       \
-        puts ("");                                \
+        NEWLINE;                                \
     }                                           \
 } while (0)
 
@@ -344,21 +371,6 @@ m_max (
     const size_t _n_cols);
 
 
-/** Compute maximum along matrix columns.
- *
- * \param _mat
- * \param _n_rows
- * \param _n_cols
- * \param _col_max
- */
-extern void
-m_col_max (
-    const scalar *restrict _mt,
-    const size_t _n_rows,
-    const size_t _n_cols,
-    scalar *restrict _col_max);
-
-
 /** Compute maximum along rows.
  *
  * \param _mat
@@ -374,19 +386,22 @@ m_row_max (
     scalar *restrict row_max);
 
 
-/** Compute maximum along columns.
+/** Compute maximum along the matrix columns.
  *
- * \param _mat
- * \param _n_rows
- * \param _n_cols
- * \paran _row_max
+ * \param mtx           Pointer to matrix buffer.
+ * \param n_rows        Number of rows.
+ * \param n_cols        Number of columns. 
+ * \paran max_per_col   Pointer to output object.
+ *
+ * Note: If `n_rows' and `n_cols' are zero, the function aborts and returns
+ *       VM_ERR_ZERO_SIZED_BUFFER. The output buffer is not written.
  */
-extern void
+extern int
 m_col_max (
-    const scalar *restrict _mt,
-    const size_t _n_rows,
-    const size_t _n_cols,
-    scalar *restrict _col_max);
+    const scalar *restrict mtx,
+    const size_t n_rows,
+    const size_t n_cols,
+    scalar *restrict max_per_col);
 
 
 /** Compute logarithm of matrix elements.

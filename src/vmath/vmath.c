@@ -219,7 +219,14 @@ m_log_centroid_cols (
     }
     else
     {
-        m_col_max (mtx, n_rows, n_cols, max_per_col);
+        m_col_max (mtx, n_rows, n_cols, max_per_col); /* BUG */
+        print_vector (n_cols, max_per_col);
+
+        /*
+        for (size_t i = 0; i < n_cols; i++)
+            printf ("col [%2zu] %2.15Lf\n", i, max_per_col[i]);
+        */
+
         for (size_t i = 0; i < n_rows*n_cols; i++)
         {
             size_t c = i % n_cols;
@@ -230,6 +237,7 @@ m_log_centroid_cols (
 
         for (size_t i = 0; i < n_cols; i++)
         {
+            /* ceck for division by zero */
             centroid_in_col[i] = logl (w_sum_per_col[i] / sum_per_col[i]);
         }
         err = 0;
@@ -252,6 +260,7 @@ m_max (
 }
 
 
+
 inline void
 m_row_max (
     const scalar *restrict mtx,
@@ -266,18 +275,26 @@ m_row_max (
 }
 
 
-inline void
+inline int
 m_col_max (
-    const scalar *restrict _mt,
-    const size_t _n_rows,
-    const size_t _n_cols,
-    scalar *restrict _col_max)
+    const scalar *restrict mtx,
+    const size_t n_rows,
+    const size_t n_cols,
+    scalar *restrict max_per_col)
 {
-    for (size_t i = 0; i < _n_cols; i++, _mt++)
+    if (n_rows == 0 && n_cols == 0)
     {
-        _col_max[i] = strided_max (_mt, _n_rows*_n_cols, _n_cols);
+        fprintf (stderr, "Maximum of zero sized buffer if not defined.\n");
+        return VM_ERR_ZERO_SIZED_BUFFER;
     }
+    size_t n_elem = n_rows * n_cols;
+    for (size_t i = 0; i < n_cols; i++, mtx++)
+    {
+        max_per_col[i] = strided_max (mtx, n_elem--, n_cols);
+    }
+    return SUCCESS;
 }
+
 
 inline void
 log_vmp (

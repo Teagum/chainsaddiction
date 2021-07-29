@@ -6,22 +6,25 @@ bool
 test__strided_max (void)
 {
     bool err = true;
-    const size_t n_elem = (const size_t) rnd_int (10, 100);
-    const size_t stride = (const size_t) rnd_int (1, n_elem);
-    const size_t max_idx = (const size_t) rnd_int (0, n_elem / stride) * stride;
+    const size_t n_elem = (size_t) rnd_int (20, 100);
+    const size_t stride = (size_t) rnd_int (1, 20);
+    const size_t ets = n_elem / stride;
+    assert (ets > 0);
+    const size_t max_idx = (size_t) rnd_int (0, ets) * stride;
     const scalar max_val = 99L;
 
     scalar *mat = VA_SCALAR_ZEROS (n_elem);
     if (mat == NULL) { return err; }
 
     v_sample (n_elem, mat);
-    for (size_t i = 0; i < stride; i++)
-    {
-        assert (i*stride+i < n_elem);
-        mat[i*stride+i] = max_val;
-    }
-    err = !ASSERT_EQUAL (strided_max (mat, n_elem, stride), max_val);
+    mat[max_idx] = max_val;
 
+    scalar mm = strided_max (mat, n_elem, stride);
+    err = !ASSERT_EQUAL (mm, max_val);
+    /*
+    if (err)
+        fprintf (stderr, "\n%10s%3zu\n%10s%3zu\n%10s%3zu\n%10s%3zu\n%10s%3Lf\n%10s%Lf\n", "n_elem: ", n_elem, "stride: ", stride, "ets: ", ets, "max_idx: ", max_idx, "max_val: ", max_val, "max: ", mm);
+    */
     FREE (mat);
     return err;
 }
@@ -170,37 +173,55 @@ test__m_row_max (void)
     }
     return false;
 }
+#define NL fputc ('\n', stdout)
 
+
+
+#define STR "%10s"
+#define SCA "%5.3Lf"
+#define SIZE "%5zu"
+#define CR "\n"
+#define FIELD STR SIZE CR 
 
 bool
 test__m_col_max (void)
 {
-    const size_t rows = 4;
-    const size_t cols = 3;
+    enum test_setup { 
+        MIN_ROWS = 1, MAX_ROWS = 10, 
+        MIN_COLS = 1, MAX_COLS = 10,
+        MIN_SAMPLE_RANGE = 100,
+        MAX_SAMPLE_RANGE = 100
+    };
+
+    const size_t rows = rnd_int (MIN_ROWS, MAX_ROWS);
+    const size_t cols = rnd_int (MIN_ROWS, MAX_ROWS);
     const size_t n_elem = rows * cols;
 
     scalar *mtx = VA_SCALAR_EMPTY (n_elem);
     int *max_val = VA_INT_EMPTY (cols);
-    int *max_row_idx = VA_INT_EMPTY (cols);
+    size_t *max_row_idx = VA_SIZE_EMPTY (cols);
     scalar *res_max = VA_SCALAR_EMPTY (cols);
     bool err = true;
 
-    v_rnd_int (0, rows, cols, max_row_idx);
-    v_rnd_int (10, 100, cols, max_val);
-    v_sample (n_elem, mtx);
-
+    m_rnd_scalar (MIN_SAMPLE_RANGE, MAX_SAMPLE_RANGE, rows, cols, mtx); 
+    v_rnd_size (0, rows, cols, max_row_idx);
+    v_rnd_int (MAX_SAMPLE_RANGE+1, MAX_SAMPLE_RANGE+100, cols, max_val);
+    
     for (size_t i = 0; i < cols; i++)
     {
         size_t idx = max_row_idx[i] * cols + i;
+        assert (idx < n_elem);
         mtx[idx] = (scalar) max_val[i];
     }
-
     m_col_max (mtx, rows, cols, res_max);
     for (size_t i = 0; i < cols; i++)
     {
-        // printf ("[%3zu] %Lf\n", i, res_max[i]);
         err &= ASSERT_EQUAL (res_max[i], max_val[i]);
     }
+    print_matrix (rows, cols, mtx);
+    print_vector (cols, res_max);
+    print_vector (cols, max_val);
+
     FREE (mtx);
     FREE (max_val);
     FREE (max_row_idx);

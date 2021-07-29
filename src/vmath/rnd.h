@@ -93,5 +93,11 @@ v_sample (
 
 #define m_sample(n_rows, n_cols, buffer) v_sample (n_rows * n_cols, buffer)
 
+#define m_rnd_size(r_min, r_max, n_rows, n_cols, buffer) \
+    v_rnd_size (r_min, r_max, n_rows * n_cols, buffer)
+
+#define m_rnd_scalar(r_min, r_max, n_rows, n_cols, buffer) \
+    v_rnd_scalar (r_min, r_max, n_rows * n_cols, buffer)
+
 
 #endif  /* rnd_h */
