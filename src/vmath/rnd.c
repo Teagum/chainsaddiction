@@ -46,7 +46,9 @@ v_rnd_size (
 
 
 inline scalar
-rnd_scalar (const scalar r_min, const scalar r_max)
+rnd_scalar (
+    const scalar r_min,
+    const scalar r_max)
 {
     return r_min + (SCALAR_RAND * (scalar)(r_max - r_min)) / RAND_MAX;
 }

@@ -17,12 +17,14 @@
 
 #define ITER(x_n_elem, x_buffer) \
     for (size_t i = 0; i < x_n_elem; i++, x_buffer++)
-/** Sample random integer from interval.
+
+
+/** Sample random value of tyoe integer from interval.
  *
- * \param[in] r_min    Lower bound, inclusive.
- * \param[in] r_max    Upper bound, exclusive.
+ * \param[in] r_min    Lower bound of sampling range.
+ * \param[in] r_max    Upper bound of sampling range.
  *
- * \return Random integer.
+ * \return Random integer within [r_min, r_max].
  */
 extern int
 rnd_int (
@@ -30,11 +32,11 @@ rnd_int (
     const int r_max);
 
 
-/* Sample `n_elem' random integers form interval.
+/* Sample `n_elem' random values of type integer form interval.
  * \param[in]  n_elem   Number of elements.
  * \param[in]  r_min    Lower bound of sampling range.
  * \param[in]  r_max    Upper bound of sampling range.
- * \param[out] buffer   Pointer to allocated memory.
+ * \param[out] samples  Pointer to allocated memory.
  */
 extern void
 v_rnd_int (
@@ -71,7 +73,7 @@ v_rnd_size (
     size_t *restrict samples);
 
 
-/** Sample random scalar form interval.
+/** Sample random value of type scalar form interval.
  *
  * \param[in] r_min     Lower bound of sampling range.
  * \param[in] r_max     Uppder bound of sampling range.
@@ -84,7 +86,7 @@ rnd_scalar (
     const scalar r_max);
 
 
-/** Sample `n_elem` random scalars form interval.
+/** Sample `n_elem` random value of type scalars form interval.
  *
  * \param[in]  n_elem   Number of samples.
  * \param[in]  r_min    Lower bound of sampling range.
