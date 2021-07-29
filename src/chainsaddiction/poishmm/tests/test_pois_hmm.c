@@ -32,9 +32,9 @@ test__PoisHmm_Init (void)
         PoisParams *params = PoisParams_New (m_states);
         PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
-        v_rnd (m_states, params->lambda);
-        v_rnd (m_states*m_states, params->gamma);
-        v_rnd (m_states, params->delta);
+        v_rnd_scalar (m_states, 1, 100, params->lambda);
+        v_sample (m_states*m_states, params->gamma);
+        v_sample (m_states, params->delta);
         PoisHmm_Init (phmm, params->lambda, params->gamma, params->delta);
 
         for (size_t i = 0; i < m_states; i++)

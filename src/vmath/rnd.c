@@ -1,41 +1,55 @@
 #include "rnd.h"
 
 
-inline scalar
-rnd (void)
-{
-    return (scalar) rand() / RAND_MAX;
-}
-
-
 inline int
 rnd_int (const int r_min, const int r_max)
 {
-    return r_min + (rand () % (r_max - r_min));
-}
-
-
-inline void
-v_rnd
-    (const size_t n_elem,
-     scalar *restrict buffer)
-{
-    for (size_t i = 0; i < n_elem; i++, buffer++)
-    {
-        *buffer = rnd ();
-    }
+    return r_min + (RND_INT % (r_max - r_min));
 }
 
 
 inline void
 v_rnd_int (
+    const size_t n_elem,
     const int r_min,
     const int r_max,
-    const size_t n_elem,
-    int *restrict buffer)
+    int *restrict samples)
 {
-    for (size_t i = 0; i < n_elem; i++, buffer++)
+    ITER (n_elem, samples)
     {
-        *buffer = rnd_int (r_min, r_max);
+        *samples = rnd_int (r_min, r_max);
+    }
+}
+
+
+inline scalar
+rnd_scalar (const scalar r_min, const scalar r_max)
+{
+    return r_min + (SCALAR_RAND * (scalar)(r_max - r_min)) / RAND_MAX;
+}
+
+
+inline void
+v_rnd_scalar (
+    const size_t n_elem,
+    const scalar r_min,
+    const scalar r_max,
+    scalar *restrict samples)
+{
+    ITER (n_elem, samples)
+    {
+        *samples = rnd_scalar (r_min, r_max);
+    }
+}
+
+
+inline void
+v_sample (
+    const size_t n_elem,
+    scalar *restrict samples)
+{
+    ITER (n_elem, samples)
+    {
+        *samples = sample ();
     }
 }

@@ -1,10 +1,18 @@
 #include "unittest.h"
 #include "test_vmath.h"
+#include "test_rnd.h"
 
 
 int main (void)
 {
     SETUP;
+
+    RUN_TEST (test__rnd_int);
+    RUN_TEST (test__v_rnd_int);
+    RUN_TEST (test__rnd_scalar);
+    RUN_TEST (test__v_rnd_scalar);
+    RUN_TEST (test__sample);
+    RUN_TEST (test__v_sample);
 
     RUN_TEST (test__strided_max);
     RUN_TEST (test__v_lse);

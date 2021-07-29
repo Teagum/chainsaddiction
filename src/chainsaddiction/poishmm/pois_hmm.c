@@ -74,13 +74,12 @@ PoisHmm_InitRandom (PoisHmm *const restrict phmm)
     size_t m_states = phmm->m_states;
     size_t n_elem = m_states * m_states;
 
-    v_rnd (m_states, phmm->init->lambda);
-    v_rnd (m_states, phmm->init->delta);
-    v_rnd (n_elem, phmm->init->gamma);
+    v_rnd_scalar (m_states, 1, 100, phmm->init->lambda);
+    v_sample (m_states, phmm->init->delta);
+    v_sample (n_elem, phmm->init->gamma);
 
     for (size_t i = 0; i < m_states; i++)
     {
-        phmm->init->lambda[i] += (scalar) rnd_int (1, 100);
         vi_softmax (phmm->init->gamma+i*m_states, m_states);
     }
     vi_softmax (phmm->init->delta, m_states);
