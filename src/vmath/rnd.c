@@ -22,6 +22,29 @@ v_rnd_int (
 }
 
 
+inline size_t
+rnd_size (
+    const size_t r_min,
+    const size_t r_max)
+{
+    return (size_t) rnd_int (r_min, r_max);
+}
+
+
+inline void
+v_rnd_size (
+    const size_t n_elem,
+    const size_t r_min,
+    const size_t r_max,
+    size_t *restrict samples)
+{
+    ITER (n_elem, samples)
+    {
+        *samples = (size_t) rnd_int (r_min, r_max);
+    }
+}
+
+
 inline scalar
 rnd_scalar (const scalar r_min, const scalar r_max)
 {

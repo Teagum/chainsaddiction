@@ -44,6 +44,33 @@ v_rnd_int (
     int *const restrict samples);
 
 
+/** Sample random value of type size_t from interval.
+ *
+ * \param[in] r_min    Lower bound of sampling range.
+ * \param[in] r_max    Upper bound of sampling range.
+ *
+ * \return Random value of size_t within [r_min, r_max].
+ */
+extern size_t
+rnd_size (
+    const size_t r_min,
+    const size_t r_max);
+
+
+/* Sample `n_elem' random values of type size_t form interval.
+ * \param[in]  n_elem   Number of elements.
+ * \param[in]  r_min    Lower bound of sampling range.
+ * \param[in]  r_max    Upper bound of sampling range.
+ * \param[out] samples  Pointer to allocated memory.
+ */
+extern void
+v_rnd_size (
+    const size_t n_elem,
+    const size_t r_min,
+    const size_t r_max,
+    size_t *restrict samples);
+
+
 /** Sample random scalar form interval.
  *
  * \param[in] r_min     Lower bound of sampling range.
