@@ -290,7 +290,7 @@ m_col_max (
     size_t n_elem = n_rows * n_cols;
     for (size_t i = 0; i < n_cols; i++, mtx++)
     {
-        max_per_col[i] = strided_max (mtx, n_elem--, n_cols);
+        max_per_col[i] = strided_max (n_elem--, n_cols, mtx);
     }
     return SUCCESS;
 }
@@ -358,9 +358,9 @@ log_mvp (
  */
 scalar
 strided_max (
-    const scalar *restrict buffer,
     const size_t n_elem,
-    const size_t stride)
+    const size_t stride,
+    const scalar *restrict buffer)
 {
     const scalar *end = buffer + n_elem - 1;
     scalar c_max = *buffer;
@@ -375,9 +375,9 @@ strided_max (
 
 scalar
 strided_absmax (
-    const scalar *restrict buffer,
     const size_t n_elem,
-    const size_t stride)
+    const size_t stride,
+    const scalar *restrict buffer)
 {
     const scalar *end = buffer + n_elem - 1;
     scalar c_max = *buffer;

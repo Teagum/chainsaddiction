@@ -478,16 +478,16 @@ log_mvp (
  */
 extern scalar
 strided_max (
-    const scalar *restrict buffer,
     const size_t n_elem,
-    const size_t stride);
+    const size_t stride,
+    const scalar *restrict buffer);
 
 
 extern scalar
 strided_absmax (
-    const scalar *restrict buffer,
     const size_t n_elem,
-    const size_t stride);
+    const size_t stride,
+    const scalar *restrict buffer);
 
 
 #endif  /* VMATH_H */
