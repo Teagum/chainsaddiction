@@ -150,10 +150,10 @@ Ca_ReadSectionData (
     const size_t n_elem,
     scalar *buff)
 {
-#ifdef LD_MATH
-    const char fmt[] = "%Lf ";
-#else
+#ifdef _NO_LD_MATH
     const char fmt[] = "%lf ";
+#else
+    const char fmt[] = "%Lf ";
 #endif
     int status = 0;
 

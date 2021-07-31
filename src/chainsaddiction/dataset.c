@@ -76,10 +76,10 @@ ds_get (DataSet *pds, size_t idx, scalar *out)
 extern void
 ds_print (DataSet *pds)
 {
-#ifdef LD_MATH
-    const char fmt[] = "[%4zu]%12.5Lf\n";
-#else
+#ifdef _NO_LD_MATH
     const char fmt[] = "[%4zu]%12.5f\n";
+#else
+    const char fmt[] = "[%4zu]%12.5Lf\n";
 #endif
     if (pds->size == 0) {
         puts ("Empty dataset.");
