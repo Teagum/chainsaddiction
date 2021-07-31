@@ -21,9 +21,9 @@ includes = -I. -I.. -I../../../include
 export CFLAGS = $(warnings) $(standard) $(optimize) 
 
 # Preprocessor flags
-# 	LD_MATH           Typedef `scalar' to `long double', otherwise `double'.
-# 	NO_BOUNDS_CHECK   Do not check boundaries in array setters and getters.
-export CPPFLAGS = -D LD_MATH $(includes)
+#    _NO_LD_MATH        Disable long double math.
+#    NO_BOUNDS_CHECK    Do not check boundaries in array setters and getters.
+export CPPFLAGS = $(includes)
 
 all: $(objs)
 
