@@ -265,43 +265,80 @@ test__log_mvp (void)
     return false;
 }
 
+
 bool
 test__m_log_centroid_cols (void)
 {
-    const size_t n_rows = 4;
-    const size_t n_cols = 3;
-    const size_t n_elem = n_rows * n_cols;
-    scalar vals[] = {1, 2, 3,
-                    4, 5, 6,
-                    7, 8, 9,
-                    10, 11, 12};
+    enum setup {
+        MIN_ROWS = 1u, MAX_ROWS = 20u,
+        MIN_COLS = 1u, MAX_COLS = 20u,
+    };
 
-    scalar *log_vals = VA_SCALAR_EMPTY (n_elem);
-    scalar expected[] = { 0, 0, 0 };
-    scalar weights[] = {1, 2, 3, 4};
-    scalar centroid[] = {0, 0, 0};
-    scalar sbuff[] = { 0 , 0, 0};
     bool err = true;
+    const scalar SR_LB = 1.0E-10L;
+    const scalar SR_UB = 1.0L;
+    const size_t n_rows = rnd_int (MIN_ROWS, MAX_ROWS);
+    const size_t n_cols = rnd_int (MIN_COLS, MAX_COLS);
+    const size_t n_elem = n_rows * n_cols;
 
-    m_log (vals, n_elem, log_vals);
+    scalar *arr             = VA_SCALAR_EMPTY (n_elem);
+    scalar *larr            = VA_SCALAR_EMPTY (n_elem);
+    scalar *weight_per_row  = VA_SCALAR_EMPTY (n_rows);
+    scalar *average_per_col = VA_SCALAR_ZEROS (n_cols);
+    scalar *sum_per_col     = VA_SCALAR_ZEROS (n_cols);
+    scalar *expected_result = VA_SCALAR_ZEROS (n_cols);
+
+    if (arr == NULL || larr == NULL || weight_per_row == NULL ||
+        average_per_col == NULL || sum_per_col == NULL ||
+        expected_result == NULL)
+    {
+        fputs ("Allocation error in ``test__m_log_centroid_cols''.\n", stderr);
+        err = true;
+        goto exit;
+    }
+
+    m_rnd_scalar (SR_LB, SR_UB, n_rows, n_cols, arr);
+    v_log (arr, n_elem, larr);
+    v_rnd_scalar (n_rows, 0, 100, weight_per_row);
+
     for (size_t i = 0; i < n_elem; i++)
     {
-        expected[i%n_cols] += vals[i] * weights[i/n_cols];
-        sbuff[i%n_cols] += vals[i];
+        size_t col_idx = i % n_cols;
+        size_t row_idx = i / n_cols;
+
+        expected_result[col_idx] += arr[i] * weight_per_row[row_idx];
+        sum_per_col[col_idx] += arr[i];
     }
-    for (size_t i = 0; i < n_cols; i++)
-    {
-        expected[i] /= sbuff[i];
-    }
-    vi_log (expected, n_cols);
-    m_log_centroid_cols (log_vals, weights, n_rows, n_cols, centroid);
 
     for (size_t i = 0; i < n_cols; i++)
     {
-        err &= ASSERT_EQUAL (centroid[i], expected[i]);
+        expected_result[i] /= sum_per_col[i];
     }
-    FREE (log_vals);
-    return !err;
+
+    vi_log (expected_result, n_cols);
+    m_log_centroid_cols (larr, weight_per_row, n_rows, n_cols, average_per_col);
+
+    for (size_t i = 0; i < n_cols; i++)
+    {
+        if (ASSERT_EQUAL (average_per_col[i], expected_result[i]))
+        {
+            err = false;
+        }
+        else
+        {
+            err = true;
+            break;
+        }
+    }
+
+exit:
+    free (arr);
+    free (larr);
+    free (weight_per_row);
+    free (average_per_col);
+    free (sum_per_col);
+    free (expected_result);
+    return err;
 }
 
 
