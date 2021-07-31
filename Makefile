@@ -35,8 +35,6 @@ INCLUDE = -I$(src_dir) -I$(test_src_dir)
 build-ext:
 	python3 setup.py --quiet install --skip-build
 
-run-py-test:
-	python3 test.py
 
 help:
 	@echo 'Usage: make <target>\n\nTargets:'
@@ -80,6 +78,9 @@ $(test_objs): | $(build_dir)
 $(build_dir):
 	mkdir $(build_dir) $(obj_dir) $(bin_dir)
 
+check:
+	python3 tests/test-ext-module.py
+
 .PHONY: test
 test: $(test_apps)
 
@@ -110,3 +111,5 @@ build_env:
 	@echo 'OBJS:           $(objs)'
 	@echo 'TEST_ROOT_DIR:  $(test_root_dir)'
 	@echo 'TEST_SRC_DIR:   $(test_src_dir)'
+
+.PHONY: check
