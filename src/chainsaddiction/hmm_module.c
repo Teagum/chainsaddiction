@@ -9,33 +9,40 @@ hmm_poisson_fit_em (PyObject *self, PyObject *args)
     PyObject *arg_lambda = NULL;
     PyObject *arg_gamma  = NULL;
     PyObject *arg_delta  = NULL;
+    PyObject *arg_inp    = NULL;
 
     PyArrayObject *arr_lambda = NULL;
     PyArrayObject *arr_gamma  = NULL;
     PyArrayObject *arr_delta  = NULL;
+    PyArrayObject *arr_inp    = NULL;
 
+    DataSet inp = { NULL, 0, false };
     PoisHmm hmm = { 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, NULL, NULL, NULL };
     PoisParams *init = NULL;
     PoisParams *working = NULL;
     PoisProbs *probs = NULL;
 
-    if (!PyArg_ParseTuple (args, "llldOOO",
-                (npy_intp *) &hmm.n_obs,
-                (npy_intp *) &hmm.m_states,
-                (npy_intp *) &hmm.max_iter,
-                (double *) &hmm.tol,
-                &arg_lambda, &arg_gamma, &arg_delta))
+    double tol_buffer = 0;
+    if (!PyArg_ParseTuple (args, "llldOOOO",
+                &hmm.n_obs,
+                &hmm.m_states,
+                &hmm.max_iter,
+                &tol_buffer,
+                &arg_lambda, &arg_gamma, &arg_delta, &arg_inp))
     {
         return NULL;
     }
+    hmm.tol = (long double) tol_buffer;
 
-    arr_lambda = (PyArrayObject *) PyArray_FROM_OTF (arg_lambda, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
-    arr_gamma  = (PyArrayObject *) PyArray_FROM_OTF (arg_gamma,  NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
-    arr_delta  = (PyArrayObject *) PyArray_FROM_OTF (arg_delta,  NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
-    if (arr_lambda == NULL || arr_gamma == NULL || arr_delta == NULL)
+    arr_lambda = PyArray_NEW_LD (arg_lambda);
+    arr_gamma  = PyArray_NEW_LD (arg_gamma);
+    arr_delta  = PyArray_NEW_LD (arg_delta);
+    arr_inp    = PyArray_NEW_LD (arg_inp);
+
+    if (arr_lambda == NULL || arr_gamma == NULL || arr_delta == NULL || arr_inp == NULL)
     {
         PyErr_SetString (PyExc_MemoryError, "Something went wrong during array creation.");
-        goto fail;
+        goto exit;
     }
 
     init = PoisParams_New (hmm.m_states);
@@ -44,7 +51,7 @@ hmm_poisson_fit_em (PyObject *self, PyObject *args)
     if (init == NULL || working == NULL || probs == NULL)
     {
         PyErr_SetString (PyExc_MemoryError, "Error during HMM init.");
-        goto fail;
+        goto exit;
     }
 
     PoisParams_SetLambda (init, PyArray_DATA (arr_lambda));
@@ -55,24 +62,20 @@ hmm_poisson_fit_em (PyObject *self, PyObject *args)
     hmm.init = init;
     hmm.params = working;
     hmm.probs = probs;
+    inp.size = PyArray_SIZE (arr_inp);
+    inp.data = PyArray_DATA (arr_inp);
 
-    printf ("hmm.n_obs: %zu, hmm.m_states: %zu\ninit.m_states: %zu, working.m_states: %zu\nprobs.n_obs: %zu, probs.m_states: %zu\n",
-            hmm.n_obs, hmm.m_states, hmm.init->m_states, hmm.params->m_states, hmm.probs->n_obs, hmm.probs->m_states);
+    PoisHmm_EstimateParams (&hmm, &inp);
+    PoisHmm_PrintParams (&hmm);
 
-    PoisParams_Print (hmm.init);
-    PoisParams_Print (hmm.params);
-    /*
-    printf ("n_obs: %zu\nm_states: %zu\nmax_iter: %zu\ntol: %2.15f\n",
-            hmm.n_obs, hmm.m_states, hmm.max_iter, hmm.tol);
-            */
-
-fail:
+exit:
     PoisParams_Delete (init);
     PoisParams_Delete (working);
     PoisProbs_Delete (probs);
     Py_XDECREF (arr_lambda);
     Py_XDECREF (arr_gamma);
     Py_XDECREF (arr_delta);
+    Py_XDECREF (arr_inp);
     Py_RETURN_NONE;
 }
 
