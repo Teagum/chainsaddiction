@@ -220,13 +220,6 @@ m_log_centroid_cols (
     else
     {
         m_col_max (mtx, n_rows, n_cols, max_per_col); /* BUG */
-        print_vector (n_cols, max_per_col);
-
-        /*
-        for (size_t i = 0; i < n_cols; i++)
-            printf ("col [%2zu] %2.15Lf\n", i, max_per_col[i]);
-        */
-
         for (size_t i = 0; i < n_rows*n_cols; i++)
         {
             size_t c = i % n_cols;

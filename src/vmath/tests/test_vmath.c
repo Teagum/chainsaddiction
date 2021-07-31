@@ -6,26 +6,22 @@ bool
 test__strided_max (void)
 {
     bool err = true;
-    const size_t n_elem = (size_t) rnd_int (20, 100);
-    const size_t stride = (size_t) rnd_int (1, 20);
-    const size_t ets = n_elem / stride;
-    assert (ets > 0);
-    const size_t max_idx = (size_t) rnd_int (0, ets) * stride;
-    const scalar max_val = 99L;
+    const size_t n_elem  = rnd_size (20, 100);
+    const size_t stride  = rnd_size (1, 20);
+    const size_t max_idx = rnd_size (0, n_elem / stride) * stride;
+    const scalar max_val = 99.0L;
+          scalar max_res =  0.0L;
 
-    scalar *mat = VA_SCALAR_ZEROS (n_elem);
-    if (mat == NULL) { return err; }
+    scalar *mtx = VA_SCALAR_ZEROS (n_elem);
+    if (mtx == NULL) { return err; }
 
-    v_sample (n_elem, mat);
-    mat[max_idx] = max_val;
+    v_sample (n_elem, mtx);
+    mtx[max_idx] = max_val;
 
-    scalar mm = strided_max (mat, n_elem, stride);
-    err = !ASSERT_EQUAL (mm, max_val);
-    /*
-    if (err)
-        fprintf (stderr, "\n%10s%3zu\n%10s%3zu\n%10s%3zu\n%10s%3zu\n%10s%3Lf\n%10s%Lf\n", "n_elem: ", n_elem, "stride: ", stride, "ets: ", ets, "max_idx: ", max_idx, "max_val: ", max_val, "max: ", mm);
-    */
-    FREE (mat);
+    max_res = strided_max (n_elem, stride, mtx);
+    err = !ASSERT_EQUAL (max_res, max_val);
+
+    FREE (mtx);
     return err;
 }
 
