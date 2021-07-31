@@ -115,28 +115,34 @@ PoisHmm_PrintInit (const PoisHmm *phmm)
     puts ("");
 }
 
-void PoisHmm_PrintParams (const PoisHmm *const phmm)
+
+void
+PoisHmm_PrintParams (const PoisHmm *const this)
 {
-    enum {linewidth=100};
-    char border[] = "====================";
-    char sep[] = "--------------------";
+    enum {
+        linewidth = 120
+    };
+    char buffer[linewidth+1];
+    const char border[] = "========================================================================================================================\0";
+    const char sep[]    = "------------------------------------------------------------------------------------------------------------------------\0";
 
-    size_t m_states = phmm->m_states;
-    PoisParams *params = phmm->params;
+    size_t m_states = this->m_states;
+    PoisParams *params = this->params;
 
-    printf ("\n\n*%s%s%s*\n\n", border, border, border);
-    printf ("%25s%10zu\n", "m-states:", m_states);
-    printf ("%25s", "-log likelihood:");
-    printf (SFN, phmm->llh);
+    printf ("\n\n*%s*\n\n", border);
+    printf ("%25s%10zu\n", "m_states:", m_states);
+    printf ("%25s", "log likelihood:");
+    printf (SFN, this->llh);
     printf ("%25s", "AIC:");
-    printf (SFN, phmm->aic);
+    printf (SFN, this->aic);
     printf ("%25s", "BIC:");
-    printf (SFN, phmm->bic);
-    printf ("\n\n%s%s%s\n\n", sep, sep, sep);
+    printf (SFN, this->bic);
+    printf ("%25s%5zu /%4zu\n", "n_iter:", this->n_iter, this->max_iter);
+    printf ("\n%s\n\n", sep);
 
     printf ("%25s", "State:");
     for (size_t i = 0; i < m_states; i++)
-        printf ("%10zu", i+1);
+        printf ("%15zu", i+1);
     puts ("");
     printf ("%25s", "State dependent means:");
     for (size_t i = 0; i < m_states; i++)
@@ -146,7 +152,7 @@ void PoisHmm_PrintParams (const PoisHmm *const phmm)
     for (size_t i = 0; i < m_states; i++)
         printf (SF, expl (params->delta[i]));
 
-    printf ("\n\n%s%s%s\n\n", sep, sep, sep);
+    printf ("\n\n%s\n\n", sep);
 
     printf ("%25s", "Transition probability matrix:\n");
     printf ("%25s", " ");
@@ -162,7 +168,7 @@ void PoisHmm_PrintParams (const PoisHmm *const phmm)
         }
         puts ("");
     }
-    printf ("\n*%s%s%s*\n\n", border, border, border);
+    printf ("\n*%s*\n\n", border);
 }
 
 int

@@ -8,12 +8,12 @@ typedef	long double	scalar;
 #endif
 
 #ifdef _NO_LD_MATH
-#define SF "%10.5f"
-#define SFN "%10.5f\n"
+#define SF "%15.5f"
+#define SFN "%15.5f\n"
 #define RSF "%40lf"
 #else
-#define SF "%10.5Lf"
-#define SFN "%10.5Lf\n"
+#define SF "%15.5Lf"
+#define SFN "%15.5Lf\n"
 #define RSF "%40Lf"
 #endif
 
