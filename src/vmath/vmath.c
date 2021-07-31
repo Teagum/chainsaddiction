@@ -296,6 +296,27 @@ m_col_max (
 }
 
 
+inline int
+m_col_absmax (
+    const scalar *restrict mtx,
+    const size_t n_rows,
+    const size_t n_cols,
+    scalar *restrict max_per_col)
+{
+    if (n_rows == 0 && n_cols == 0)
+    {
+        fprintf (stderr, "Absolute maximum of zero sized buffer if not defined.\n");
+        return VM_ERR_ZERO_SIZED_BUFFER;
+    }
+    size_t n_elem = n_rows * n_cols;
+    for (size_t i = 0; i < n_cols; i++, mtx++)
+    {
+        max_per_col[i] = strided_absmax (n_elem--, n_cols, mtx);
+    }
+    return SUCCESS;
+}
+
+
 inline void
 log_vmp (
     const scalar *restrict vt,

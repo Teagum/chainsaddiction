@@ -404,6 +404,24 @@ m_col_max (
     scalar *restrict max_per_col);
 
 
+/** Compute absolute maximum along the matrix columns.
+ *
+ * \param mtx           Pointer to matrix buffer.
+ * \param n_rows        Number of rows.
+ * \param n_cols        Number of columns.
+ * \paran max_per_col   Pointer to output object.
+ *
+ * Note: If `n_rows' and `n_cols' are zero, the function aborts and returns
+ *       VM_ERR_ZERO_SIZED_BUFFER. The output buffer is not written.
+ */
+extern int
+m_col_absmax (
+    const scalar *restrict mtx,
+    const size_t n_rows,
+    const size_t n_cols,
+    scalar *restrict max_per_col);
+
+
 /** Compute logarithm of matrix elements.
  *
  * \param mat       Pointer to matrix elements.
