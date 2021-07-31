@@ -169,59 +169,49 @@ test__m_row_max (void)
     }
     return false;
 }
-#define NL fputc ('\n', stdout)
 
-
-
-#define STR "%10s"
-#define SCA "%5.3Lf"
-#define SIZE "%5zu"
-#define CR "\n"
-#define FIELD STR SIZE CR 
 
 bool
 test__m_col_max (void)
 {
-    enum test_setup { 
-        MIN_ROWS = 1, MAX_ROWS = 10, 
+    enum test_setup {
+        MIN_ROWS = 1, MAX_ROWS = 10,
         MIN_COLS = 1, MAX_COLS = 10,
-        MIN_SAMPLE_RANGE = 100,
-        MAX_SAMPLE_RANGE = 100
+        MIN_SAMPLE_RANGE = -100,
+        MAX_SAMPLE_RANGE =  100
     };
 
-    const size_t rows = rnd_int (MIN_ROWS, MAX_ROWS);
-    const size_t cols = rnd_int (MIN_ROWS, MAX_ROWS);
-    const size_t n_elem = rows * cols;
+    bool err = true;
+    const size_t n_rows = rnd_int (MIN_ROWS, MAX_ROWS);
+    const size_t n_cols = rnd_int (MIN_ROWS, MAX_ROWS);
+    const size_t n_elem = n_rows * n_cols;
 
     scalar *mtx = VA_SCALAR_EMPTY (n_elem);
-    int *max_val = VA_INT_EMPTY (cols);
-    size_t *max_row_idx = VA_SIZE_EMPTY (cols);
-    scalar *res_max = VA_SCALAR_EMPTY (cols);
-    bool err = true;
+    scalar *max_val = VA_SCALAR_EMPTY (n_cols);
+    scalar *max_res = VA_SCALAR_EMPTY (n_cols);
+    size_t *max_row_idx = VA_SIZE_EMPTY (n_cols);
 
-    m_rnd_scalar (MIN_SAMPLE_RANGE, MAX_SAMPLE_RANGE, rows, cols, mtx); 
-    v_rnd_size (0, rows, cols, max_row_idx);
-    v_rnd_int (MAX_SAMPLE_RANGE+1, MAX_SAMPLE_RANGE+100, cols, max_val);
-    
-    for (size_t i = 0; i < cols; i++)
+    m_rnd_scalar (MIN_SAMPLE_RANGE, MAX_SAMPLE_RANGE, n_rows, n_cols, mtx);
+    v_rnd_size (n_cols, 0, n_rows, max_row_idx);
+    v_rnd_scalar (n_cols, MAX_SAMPLE_RANGE+1, MAX_SAMPLE_RANGE+100, max_val);
+
+    for (size_t i = 0; i < n_cols; i++)
     {
-        size_t idx = max_row_idx[i] * cols + i;
+        size_t idx = max_row_idx[i] * n_cols + i;
         assert (idx < n_elem);
         mtx[idx] = (scalar) max_val[i];
     }
-    m_col_max (mtx, rows, cols, res_max);
-    for (size_t i = 0; i < cols; i++)
+
+    m_col_max (mtx, n_rows, n_cols, max_res);
+    for (size_t i = 0; i < n_cols; i++)
     {
-        err &= ASSERT_EQUAL (res_max[i], max_val[i]);
+        err &= ASSERT_EQUAL (max_res[i], max_val[i]);
     }
-    print_matrix (rows, cols, mtx);
-    print_vector (cols, res_max);
-    print_vector (cols, max_val);
 
     FREE (mtx);
     FREE (max_val);
+    FREE (max_res);
     FREE (max_row_idx);
-    FREE (res_max);
     return !err;
 }
 
