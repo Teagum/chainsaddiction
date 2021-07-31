@@ -26,6 +26,7 @@ vmath.test: $(tobjs) $(addprefix ../, $(objs)) runtest.o
 
 clean:
 	$(RM) *.o
+	$(RM) *.test
 
 runtest: all
 	./vmath.test

@@ -33,7 +33,7 @@ clean: cleantest
 cleantest:
 	@$(MAKE) clean -C tests
 
-check: clean $(lib) test
+check: $(lib) test
 	@$(MAKE) runtest -C tests
 
 vmath.o: vmath.h config.h 
