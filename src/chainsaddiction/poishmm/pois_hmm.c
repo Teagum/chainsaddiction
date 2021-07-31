@@ -144,7 +144,7 @@ void PoisHmm_PrintParams (const PoisHmm *const phmm)
     puts ("");
     printf ("%25s", "Start distribution:");
     for (size_t i = 0; i < m_states; i++)
-        printf (SF, exp (params->delta[i]));
+        printf (SF, expl (params->delta[i]));
 
     printf ("\n\n%s%s%s\n\n", sep, sep, sep);
 
@@ -199,6 +199,7 @@ PoisHmm_EstimateParams (
     PoisHmm *const restrict this,
     const DataSet *const restrict inp)
 {
-    pois_em (inp->size, this->m_states, this->max_iter, this->tol, inp->data,
-            &this->llh, this->probs, this->params);
+   this->n_iter = pois_em (inp->size, this->m_states, this->max_iter,
+                           this->tol, inp->data, &this->llh, this->probs,
+                           this->params);
 }

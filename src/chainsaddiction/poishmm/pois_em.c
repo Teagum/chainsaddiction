@@ -1,7 +1,7 @@
 #include "pois_em.h"
 
 
-void
+int
 pois_em (
     const size_t n_obs,
     const size_t m_states,
@@ -14,7 +14,10 @@ pois_em (
 {
     PoisParams *nlp = PoisParams_New (m_states);
 
-    for (size_t i = 0; i < iter_max; i++)
+    scalar score  = 0.0L;
+    size_t n_iter = 0;
+
+    for (size_t n_iter = 0; n_iter < iter_max; n_iter++)
     {
         pois_e_step (n_obs, m_states, data, params->lambda, params->gamma,
                 params->delta, probs->lsdp, probs->lalpha, probs->lbeta,
@@ -24,10 +27,13 @@ pois_em (
                 probs->lbeta, probs->lcxpt, params->gamma, nlp->lambda,
                 nlp->gamma, nlp->delta);
 
-        if (score_update (nlp, params) < tol) return;
+        score = score_update (nlp, params);
+        if (score < tol) return n_iter;
         PoisParams_Copy (nlp, params);
     }
+
     fputs ("Warning: no convergence.\n", stderr);
+    return (int) n_iter;
 }
 
 

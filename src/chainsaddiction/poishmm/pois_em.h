@@ -14,7 +14,7 @@
 #include "pois_probs.h"
 
 
-void
+int
 pois_em (
     const size_t n_obs,
     const size_t m_states,
