@@ -143,8 +143,7 @@ static PyMethodDef
 CA_Methods[] = {
     {"hmm_poisson_fit_em", hmm_poisson_fit_em, METH_VARARGS,
      "hmm_poisson_fit_em (x, m, _lambda, _gamma, _delta, max_iter, tol)"},
-    {"read_params", read_params, METH_VARARGS,
-     "read_params(path)"},
+    {"read_params", read_params, METH_VARARGS, read_params_doc},
     {NULL, NULL, 0, NULL}
 };
 

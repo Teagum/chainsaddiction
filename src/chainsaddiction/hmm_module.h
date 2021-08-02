@@ -31,4 +31,9 @@ static PyObject *hmm_poisson_fit_em (PyObject* self, PyObject* args);
 
 static PyObject *
 read_params (PyObject *self, PyObject *args);
+
+
+#define read_params_doc \
+    "read_params(path, /)\n\nRead HMM parameters from file located in ``path``."
+
 #endif  /* hmm_module_h */
