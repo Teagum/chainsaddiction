@@ -28,4 +28,7 @@
  */
 static PyObject *hmm_poisson_fit_em (PyObject* self, PyObject* args);
 
+
+static PyObject *
+read_params (PyObject *self, PyObject *args);
 #endif  /* hmm_module_h */
