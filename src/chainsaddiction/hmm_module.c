@@ -80,11 +80,70 @@ exit:
 }
 
 
+static PyObject *
+read_params (PyObject *self, PyObject *args)
+{
+    char *path = NULL;
+    PoisParams *params = NULL;
+    PyObject *arr_lambda = NULL;
+    PyObject *arr_delta  = NULL;
+    PyObject *arr_gamma  = NULL;
+    PyObject *out_lambda = NULL;
+    PyObject *out_delta  = NULL;
+    PyObject *out_gamma  = NULL;
+    PyObject *out_states = NULL;
+    PyObject *out = NULL;
+
+    if (!PyArg_ParseTuple (args, "s", &path))
+    {
+        PyErr_SetString (PyExc_TypeError, "read_params: Could not parse argument.");
+        return NULL;
+    }
+
+    params = PoisParams_NewFromFile (path);
+    const npy_intp shape[2] = {
+        (npy_intp) params->m_states,
+        (npy_intp) params->m_states
+    };
+
+    out_states = PyLong_FromUnsignedLong (params->m_states);
+    arr_lambda = PyArray_SimpleNewFromData (1, shape, NPY_LONGDOUBLE, (void *) params->lambda);
+    arr_delta  = PyArray_SimpleNewFromData (1, shape, NPY_LONGDOUBLE, (void *) params->delta);
+    arr_gamma  = PyArray_SimpleNewFromData (2, shape, NPY_LONGDOUBLE, (void *) params->gamma);
+    out_lambda = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
+    out_delta  = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
+    out_gamma  = PyArray_SimpleNew (2, shape, NPY_DOUBLE);
+    PyArray_CopyInto ((PyArrayObject *) out_lambda, (PyArrayObject *) arr_lambda);
+    PyArray_CopyInto ((PyArrayObject *) out_delta,  (PyArrayObject *) arr_delta);
+    PyArray_CopyInto ((PyArrayObject *) out_gamma,  (PyArrayObject *) arr_gamma);
+
+    out = PyDict_New ();
+    if (out == NULL)
+    {
+        PyErr_SetString (PyExc_TypeError, "read_params: Could not create output values.");
+        PoisParams_Delete (params);
+        return NULL;
+    }
+
+    PyDict_SetItemString (out, "m_states", out_states);
+    PyDict_SetItemString (out, "lambda", out_lambda);
+    PyDict_SetItemString (out, "delta", out_delta);
+    PyDict_SetItemString (out, "gamma", out_gamma);
+
+    Py_INCREF (out_lambda);
+    Py_INCREF (out_delta);
+    Py_INCREF (out_gamma);
+    PoisParams_Print (params);
+    PoisParams_Delete (params);
+
+    return out;
+}
+
 static PyMethodDef
 CA_Methods[] = {
     {"hmm_poisson_fit_em", hmm_poisson_fit_em, METH_VARARGS,
      "hmm_poisson_fit_em (x, m, _lambda, _gamma, _delta, max_iter, tol)"},
-
+    {"read_params", read_params, METH_VARARGS, read_params_doc},
     {NULL, NULL, 0, NULL}
 };
 
