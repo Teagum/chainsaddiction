@@ -1,10 +1,10 @@
 #define NPY_NO_DEPRECATED_API NPY_1_8_API_VERSION
 
-#include "hmm_module.h"
+#include "poishmm_module.h"
 
 
 static PyObject *
-hmm_poisson_fit_em (PyObject *self, PyObject *args)
+poishmm_fit_em (PyObject *self, PyObject *args)
 {
     PyObject *arg_lambda = NULL;
     PyObject *arg_gamma  = NULL;
@@ -133,34 +133,33 @@ read_params (PyObject *self, PyObject *args)
     Py_INCREF (out_lambda);
     Py_INCREF (out_delta);
     Py_INCREF (out_gamma);
-    PoisParams_Print (params);
     PoisParams_Delete (params);
 
     return out;
 }
 
+
 static PyMethodDef
-CA_Methods[] = {
-    {"hmm_poisson_fit_em", hmm_poisson_fit_em, METH_VARARGS,
-     "hmm_poisson_fit_em (x, m, _lambda, _gamma, _delta, max_iter, tol)"},
+poishmm_methods[] = {
+    {"fit_em", poishmm_fit_em, METH_VARARGS, poishmm_fit_em_doc},
     {"read_params", read_params, METH_VARARGS, read_params_doc},
     {NULL, NULL, 0, NULL}
 };
 
 
 static struct PyModuleDef
-chainsaddiction_module = {
+poishmm_module = {
     PyModuleDef_HEAD_INIT,
-    "chainsaddiction",
-    NULL,
+    "poishmm",
+    "HMM with Poisson-distributed latent variables.",
     -1,
-    CA_Methods
+    poishmm_methods
 };
 
 
 PyMODINIT_FUNC
-PyInit_chainsaddiction (void)
+PyInit_poishmm (void)
 {
     import_array ();
-    return PyModule_Create (&chainsaddiction_module);
+    return PyModule_Create (&poishmm_module);
 }
