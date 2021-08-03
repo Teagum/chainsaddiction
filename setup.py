@@ -18,23 +18,24 @@ def list_source_files (paths: Tuple[str, ...]) -> list:
     return list(itertools.chain.from_iterable(cglob(path) for path in paths))
 
 
-c_src_dirs = (
+poishmm_src = (
     'src/vmath',
     'src/chainsaddiction',
     'src/chainsaddiction/poishmm',
 )
 
-c_include_dirs = (
-    'include',
-    'src/chainsaddiction/',
-    'src/chainsaddiction/poishmm',
-    np.get_include()
-)
 
-ext = Extension('chainsaddiction',
-        sources = list_source_files(c_src_dirs),
-        include_dirs = c_include_dirs,
+poishmm = Extension('chainsaddiction.poishmm',
+        sources = list_source_files(poishmm_src),
+        include_dirs =  [
+            'include',
+            'src/vmath',
+            'src/chainsaddiction',
+            'src/chainsaddiction/poishmm',
+            np.get_include()
+        ],
         extra_compile_args = ['-Wall', '-Wextra'],
         language = 'c')
 
-setup(ext_modules = [ext])
+
+setup(ext_modules = [poishmm])
