@@ -1,6 +1,53 @@
 #define NPY_NO_DEPRECATED_API NPY_1_8_API_VERSION
 
 #include "poishmm_module.h"
+#include "structmember.h"
+
+typedef struct {
+    PyObject_HEAD
+    double llk;
+    size_t n_iter;
+} PoisHmmFit;
+
+
+static PyMemberDef PoisHmmFit_members[] = {
+    {"llk", T_DOUBLE, offsetof (PoisHmmFit, llk), 0, "Log likelihood"},
+    {"n_iter", T_ULONG, offsetof (PoisHmmFit, n_iter), 0, "Number of iterations"},
+    {NULL}  /* Sentinel */
+};
+
+
+static void
+PoisHmmFit_Delete (PoisHmmFit *self)
+{
+    Py_TYPE(self)->tp_free((PyObject *) self);
+}
+
+
+static PyObject *
+PoisHmmFit_New(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    PoisHmmFit *self;
+    self = (PoisHmmFit *) type->tp_alloc (type, 0);
+    if (self != NULL)
+    {
+        self->llk = 0;
+    }
+    return (PyObject *) self;
+}
+
+
+static PyTypeObject PoisHmmFit_Type = {
+    PyVarObject_HEAD_INIT (NULL, 0)
+    .tp_name = "poishmm.Fit",
+    .tp_doc = "Stuff",
+    .tp_basicsize = sizeof (PoisHmmFit),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = PoisHmmFit_New,
+    .tp_dealloc = (destructor) PoisHmmFit_Delete,
+    .tp_members = PoisHmmFit_members,
+};
 
 
 static PyObject *
@@ -10,6 +57,7 @@ poishmm_fit_em (PyObject *self, PyObject *args)
     PyObject *arg_gamma  = NULL;
     PyObject *arg_delta  = NULL;
     PyObject *arg_inp    = NULL;
+    PyObject *out        = PoisHmmFit_New (&PoisHmmFit_Type, NULL, NULL);
 
     PyArrayObject *arr_lambda = NULL;
     PyArrayObject *arr_gamma  = NULL;
@@ -66,17 +114,17 @@ poishmm_fit_em (PyObject *self, PyObject *args)
     inp.data = PyArray_DATA (arr_inp);
 
     PoisHmm_EstimateParams (&hmm, &inp);
-    PoisHmm_PrintParams (&hmm);
+
+    ((PoisHmmFit *) out)->llk = (double) hmm.llh;
+    ((PoisHmmFit *) out)->n_iter = hmm.n_iter;
 
 exit:
     PoisParams_Delete (init);
     PoisParams_Delete (working);
     PoisProbs_Delete (probs);
-    Py_XDECREF (arr_lambda);
-    Py_XDECREF (arr_gamma);
-    Py_XDECREF (arr_delta);
     Py_XDECREF (arr_inp);
-    Py_RETURN_NONE;
+    Py_INCREF (out);
+    return out;
 }
 
 
@@ -160,6 +208,24 @@ poishmm_module = {
 PyMODINIT_FUNC
 PyInit_poishmm (void)
 {
+    int err = 0;
+    PyObject *module = NULL;
+
     import_array ();
-    return PyModule_Create (&poishmm_module);
+
+    module = PyModule_Create (&poishmm_module);
+    if (module == NULL) return NULL;
+
+    err = PyType_Ready (&PoisHmmFit_Type);
+    if (err < 0) return NULL;
+
+    Py_INCREF (&PoisHmmFit_Type);
+    err = PyModule_AddObject (module, "PoisHmmFit", (PyObject *) &PoisHmmFit_Type);
+    if (err < 0)
+    {
+        Py_DECREF (&PoisHmmFit_Type);
+        Py_DECREF (module);
+        return NULL;
+    }
+    return module;
 }
