@@ -17,10 +17,10 @@ def main(argv=None):
     for file in Path(PARAMS_PATH).glob('**/*.p'):
         print(file)
         prs = poishmm.read_params(str(file))
-        hyper = (data.size, prs['m_states'], 300, 1e-5)
+        hyper = (data.size, prs['m_states'], 300, 1e-6)
         params = prs['lambda'], prs['gamma'], prs['delta']
-        poishmm.fit_em(*hyper, *params, data)
-
+        res = poishmm.fit_em(*hyper, *params, data)
+        print(res.llk, res.n_iter, "\n")
     return 0
 
 
