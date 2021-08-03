@@ -10,6 +10,10 @@ typedef struct {
     double llk;
     double aic;
     double bic;
+    size_t m_states;
+    PyObject *lambda;
+    PyObject *gamma;
+    PyObject *delta;
 } PoisHmmFit;
 
 
@@ -19,6 +23,10 @@ static PyMemberDef PoisHmmFit_members[] = {
     {"llk", T_DOUBLE, offsetof (PoisHmmFit, llk), 0, "Log likelihood"},
     {"aic", T_DOUBLE, offsetof (PoisHmmFit, aic), 0, "Akaike information criterion"},
     {"bic", T_DOUBLE, offsetof (PoisHmmFit, bic), 0, "Bayesian information criterion"},
+    {"m_states", T_ULONG, offsetof (PoisHmmFit, m_states), 0, "Number of states"},
+    {"lambda_", T_OBJECT, offsetof (PoisHmmFit, lambda), 0, "State-dependent means"},
+    {"gamma_", T_OBJECT, offsetof (PoisHmmFit, gamma), 0, "Transition probability matrix"},
+    {"delta_", T_OBJECT, offsetof (PoisHmmFit, delta), 0, "Initial distribution"},
     {NULL}  /* Sentinel */
 };
 
@@ -26,6 +34,9 @@ static PyMemberDef PoisHmmFit_members[] = {
 static void
 PoisHmmFit_Delete (PoisHmmFit *self)
 {
+    Py_XDECREF (self->lambda);
+    Py_XDECREF (self->gamma);
+    Py_XDECREF (self->delta);
     Py_TYPE(self)->tp_free((PyObject *) self);
 }
 
@@ -33,7 +44,7 @@ PoisHmmFit_Delete (PoisHmmFit *self)
 static PyObject *
 PoisHmmFit_New(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-    PoisHmmFit *self;
+    PoisHmmFit *self = NULL;
     self = (PoisHmmFit *) type->tp_alloc (type, 0);
     if (self != NULL)
     {
@@ -42,6 +53,10 @@ PoisHmmFit_New(PyTypeObject *type, PyObject *args, PyObject *kwds)
         self->llk = 0.0;
         self->aic = 0.0;
         self->bic = 0.0;
+        self->m_states = 0;
+        self->lambda = NULL;
+        self->delta = NULL;
+        self->gamma = NULL;
     }
     return (PyObject *) self;
 }
@@ -67,7 +82,7 @@ poishmm_fit_em (PyObject *self, PyObject *args)
     PyObject *arg_gamma  = NULL;
     PyObject *arg_delta  = NULL;
     PyObject *arg_inp    = NULL;
-    PyObject *out        = PoisHmmFit_New (&PoisHmmFit_Type, NULL, NULL);
+    PyObject *out        = NULL;
 
     PyArrayObject *arr_lambda = NULL;
     PyArrayObject *arr_gamma  = NULL;
@@ -125,9 +140,37 @@ poishmm_fit_em (PyObject *self, PyObject *args)
 
     PoisHmm_EstimateParams (&hmm, &inp);
 
-
-    ((PoisHmmFit *) out)->llk = (double) hmm.llh;
+    out = PoisHmmFit_New (&PoisHmmFit_Type, NULL, NULL);
+    ((PoisHmmFit *) out)->err = 0;
     ((PoisHmmFit *) out)->n_iter = hmm.n_iter;
+    ((PoisHmmFit *) out)->llk = (double) hmm.llh;
+    ((PoisHmmFit *) out)->aic = (double) hmm.aic;
+    ((PoisHmmFit *) out)->bic = (double) hmm.bic;
+
+    ((PoisHmmFit *) out)->lambda = PyArray_SimpleNew (PyArray_NDIM (arr_lambda),
+                                    PyArray_SHAPE (arr_lambda), NPY_DOUBLE);
+    ((PoisHmmFit *) out)->gamma = PyArray_SimpleNew (PyArray_NDIM (arr_gamma),
+                                    PyArray_SHAPE (arr_gamma), NPY_DOUBLE);
+    ((PoisHmmFit *) out)->delta = PyArray_SimpleNew (PyArray_NDIM (arr_delta),
+                                    PyArray_SHAPE (arr_delta), NPY_DOUBLE);
+
+    double *out_ptr = NULL;
+    out_ptr = (double *) PyArray_DATA ((PyArrayObject *) (((PoisHmmFit *) out)->lambda));
+    for (size_t i = 0; i < hmm.m_states; i++)
+    {
+        out_ptr[i] = (double) hmm.params->lambda[i];
+    }
+    out_ptr = (double *) PyArray_DATA ((PyArrayObject *) (((PoisHmmFit *) out)->gamma));
+    for (size_t i = 0; i < hmm.m_states * hmm.m_states; i++)
+    {
+        out_ptr[i] = (double) expl (hmm.params->gamma[i]);
+    }
+    out_ptr = (double *) PyArray_DATA ((PyArrayObject *) (((PoisHmmFit *) out)->delta));
+    for (size_t i = 0; i < hmm.m_states; i++)
+    {
+        out_ptr[i] = (double) expl (hmm.params->delta[i]);
+    }
+
 
 exit:
     PoisParams_Delete (init);
