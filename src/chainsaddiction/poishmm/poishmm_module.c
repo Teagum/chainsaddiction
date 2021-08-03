@@ -5,14 +5,20 @@
 
 typedef struct {
     PyObject_HEAD
-    double llk;
+    int err;
     size_t n_iter;
+    double llk;
+    double aic;
+    double bic;
 } PoisHmmFit;
 
 
 static PyMemberDef PoisHmmFit_members[] = {
-    {"llk", T_DOUBLE, offsetof (PoisHmmFit, llk), 0, "Log likelihood"},
+    {"err", T_INT, offsetof (PoisHmmFit, err), 0, "Error number"},
     {"n_iter", T_ULONG, offsetof (PoisHmmFit, n_iter), 0, "Number of iterations"},
+    {"llk", T_DOUBLE, offsetof (PoisHmmFit, llk), 0, "Log likelihood"},
+    {"aic", T_DOUBLE, offsetof (PoisHmmFit, aic), 0, "Akaike information criterion"},
+    {"bic", T_DOUBLE, offsetof (PoisHmmFit, bic), 0, "Bayesian information criterion"},
     {NULL}  /* Sentinel */
 };
 
@@ -31,7 +37,11 @@ PoisHmmFit_New(PyTypeObject *type, PyObject *args, PyObject *kwds)
     self = (PoisHmmFit *) type->tp_alloc (type, 0);
     if (self != NULL)
     {
-        self->llk = 0;
+        self->err = 1;
+        self->n_iter = 0;
+        self->llk = 0.0;
+        self->aic = 0.0;
+        self->bic = 0.0;
     }
     return (PyObject *) self;
 }
@@ -114,6 +124,7 @@ poishmm_fit_em (PyObject *self, PyObject *args)
     inp.data = PyArray_DATA (arr_inp);
 
     PoisHmm_EstimateParams (&hmm, &inp);
+
 
     ((PoisHmmFit *) out)->llk = (double) hmm.llh;
     ((PoisHmmFit *) out)->n_iter = hmm.n_iter;
