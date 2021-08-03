@@ -31,8 +31,7 @@ CFLAGS = $(warnings) $(standard) $(optimize) $(debug)
 # 	NO_BOUNDS_CHECK   Do not check boundaries in array setters and getters.
 INCLUDE = -I$(src_dir) -I$(test_src_dir)
 
-
-build-ext:
+all:
 	python3 setup.py --quiet install --skip-build
 
 
@@ -79,8 +78,7 @@ $(build_dir):
 	mkdir $(build_dir) $(obj_dir) $(bin_dir)
 
 check:
-	python3 tests/test-ext-module.py
-
+	make check -C tests
 .PHONY: test
 test: $(test_apps)
 
