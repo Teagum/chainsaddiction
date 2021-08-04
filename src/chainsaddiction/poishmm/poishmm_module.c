@@ -1,6 +1,114 @@
 #define NPY_NO_DEPRECATED_API NPY_1_8_API_VERSION
 
 #include "poishmm_module.h"
+#include "structmember.h"
+
+typedef struct {
+    PyObject_HEAD
+    int err;
+    size_t n_iter;
+    double llk;
+    double aic;
+    double bic;
+    size_t m_states;
+    PyObject *lambda;
+    PyObject *gamma;
+    PyObject *delta;
+} PoisHmmFit;
+
+
+static PyMemberDef PoisHmmFit_members[] = {
+    {"err", T_INT, offsetof (PoisHmmFit, err), 0, "Error number"},
+    {"n_iter", T_ULONG, offsetof (PoisHmmFit, n_iter), 0, "Number of iterations"},
+    {"llk", T_DOUBLE, offsetof (PoisHmmFit, llk), 0, "Log likelihood"},
+    {"aic", T_DOUBLE, offsetof (PoisHmmFit, aic), 0, "Akaike information criterion"},
+    {"bic", T_DOUBLE, offsetof (PoisHmmFit, bic), 0, "Bayesian information criterion"},
+    {"m_states", T_ULONG, offsetof (PoisHmmFit, m_states), 0, "Number of states"},
+    {"lambda_", T_OBJECT, offsetof (PoisHmmFit, lambda), 0, "State-dependent means"},
+    {"gamma_", T_OBJECT, offsetof (PoisHmmFit, gamma), 0, "Transition probability matrix"},
+    {"delta_", T_OBJECT, offsetof (PoisHmmFit, delta), 0, "Initial distribution"},
+    {NULL}  /* Sentinel */
+};
+
+
+static void
+PoisHmmFit_Delete (PoisHmmFit *self)
+{
+    Py_XDECREF (self->lambda);
+    Py_XDECREF (self->gamma);
+    Py_XDECREF (self->delta);
+    Py_TYPE(self)->tp_free((PyObject *) self);
+}
+
+
+static PyObject *
+PoisHmmFit_New(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    PoisHmmFit *self = NULL;
+    self = (PoisHmmFit *) type->tp_alloc (type, 0);
+    if (self != NULL)
+    {
+        self->err = 1;
+        self->n_iter = 0;
+        self->llk = 0.0;
+        self->aic = 0.0;
+        self->bic = 0.0;
+        self->m_states = 0;
+        self->lambda = NULL;
+        self->delta = NULL;
+        self->gamma = NULL;
+    }
+    return (PyObject *) self;
+}
+
+
+static int
+PoisHmmFit_CInit (PoisHmmFit *self, const size_t m_states)
+{
+    npy_intp shape[] = { (npy_intp) m_states, (npy_intp) m_states };
+    self->lambda = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
+    self->gamma  = PyArray_SimpleNew (2, shape, NPY_DOUBLE);
+    self->delta  = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
+    return 0;
+}
+
+
+static void
+PoisHmmFit_Set (PoisHmmFit *out, PoisHmm *hmm)
+{
+    out->err = 0;
+    out->n_iter = hmm->n_iter;
+    out->llk = (double) hmm->llh;
+    out->aic = (double) hmm->aic;
+    out->bic = (double) hmm->bic;
+
+    double *lambda_data = (double *) PyArray_DATA ((PyArrayObject *) out->lambda);
+    double *gamma_data  = (double *) PyArray_DATA ((PyArrayObject *) out->gamma);
+    double *delta_data  = (double *) PyArray_DATA ((PyArrayObject *) out->delta);
+    for (size_t i = 0; i < hmm->m_states; i++)
+    {
+        lambda_data[i] = (double) hmm->params->lambda[i];
+        delta_data[i]  = (double) expl (hmm->params->delta[i]);
+        for (size_t j = 0; j < hmm->m_states; j++)
+        {
+            size_t idx = i * hmm->m_states + j;
+            gamma_data[idx] = (double) expl (hmm->params->gamma[idx]);
+        }
+    }
+}
+
+
+static PyTypeObject PoisHmmFit_Type = {
+    PyVarObject_HEAD_INIT (NULL, 0)
+    .tp_name = "poishmm.Fit",
+    .tp_doc = "Stuff",
+    .tp_basicsize = sizeof (PoisHmmFit),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = PoisHmmFit_New,
+    .tp_dealloc = (destructor) PoisHmmFit_Delete,
+    .tp_members = PoisHmmFit_members,
+};
 
 
 static PyObject *
@@ -21,6 +129,7 @@ poishmm_fit_em (PyObject *self, PyObject *args)
     PoisParams *init = NULL;
     PoisParams *working = NULL;
     PoisProbs *probs = NULL;
+    PoisHmmFit *out = NULL;
 
     double tol_buffer = 0;
     if (!PyArg_ParseTuple (args, "llldOOOO",
@@ -66,17 +175,18 @@ poishmm_fit_em (PyObject *self, PyObject *args)
     inp.data = PyArray_DATA (arr_inp);
 
     PoisHmm_EstimateParams (&hmm, &inp);
-    PoisHmm_PrintParams (&hmm);
+
+    out = (PoisHmmFit *) PoisHmmFit_New (&PoisHmmFit_Type, NULL, NULL);
+    PoisHmmFit_CInit (out, hmm.m_states);
+    PoisHmmFit_Set (out, &hmm);
 
 exit:
     PoisParams_Delete (init);
     PoisParams_Delete (working);
     PoisProbs_Delete (probs);
-    Py_XDECREF (arr_lambda);
-    Py_XDECREF (arr_gamma);
-    Py_XDECREF (arr_delta);
     Py_XDECREF (arr_inp);
-    Py_RETURN_NONE;
+    Py_INCREF (out);
+    return (PyObject *) out;
 }
 
 
@@ -160,6 +270,24 @@ poishmm_module = {
 PyMODINIT_FUNC
 PyInit_poishmm (void)
 {
+    int err = 0;
+    PyObject *module = NULL;
+
     import_array ();
-    return PyModule_Create (&poishmm_module);
+
+    module = PyModule_Create (&poishmm_module);
+    if (module == NULL) return NULL;
+
+    err = PyType_Ready (&PoisHmmFit_Type);
+    if (err < 0) return NULL;
+
+    Py_INCREF (&PoisHmmFit_Type);
+    err = PyModule_AddObject (module, "PoisHmmFit", (PyObject *) &PoisHmmFit_Type);
+    if (err < 0)
+    {
+        Py_DECREF (&PoisHmmFit_Type);
+        Py_DECREF (module);
+        return NULL;
+    }
+    return module;
 }
