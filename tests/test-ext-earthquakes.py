@@ -20,7 +20,11 @@ def main(argv=None):
         hyper = (data.size, prs['m_states'], 300, 1e-6)
         params = prs['lambda'], prs['gamma'], prs['delta']
         res = poishmm.fit_em(*hyper, *params, data)
-        print(res.err, res.n_iter, res.llk, res.aic, res.bic, "\n")
+
+        fmt = f"Error: {res.err} n_iter: {res.n_iter} m_states: {res.m_states}\n" \
+            f"llk: {res.llk} AIC: {res.aic} BIC: {res.bic}\n" \
+            f"{res.lambda_}\n{res.gamma_.round(4)}\n{res.delta_.round(4)}\n"
+        print(fmt)
 
     return 0
 
