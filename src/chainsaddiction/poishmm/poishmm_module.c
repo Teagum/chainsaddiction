@@ -82,7 +82,6 @@ poishmm_fit_em (PyObject *self, PyObject *args)
     PyObject *arg_gamma  = NULL;
     PyObject *arg_delta  = NULL;
     PyObject *arg_inp    = NULL;
-    PyObject *out        = NULL;
 
     PyArrayObject *arr_lambda = NULL;
     PyArrayObject *arr_gamma  = NULL;
@@ -94,6 +93,7 @@ poishmm_fit_em (PyObject *self, PyObject *args)
     PoisParams *init = NULL;
     PoisParams *working = NULL;
     PoisProbs *probs = NULL;
+    PoisHmmFit *out = NULL;
 
     double tol_buffer = 0;
     if (!PyArg_ParseTuple (args, "llldOOOO",
@@ -140,32 +140,30 @@ poishmm_fit_em (PyObject *self, PyObject *args)
 
     PoisHmm_EstimateParams (&hmm, &inp);
 
-    out = PoisHmmFit_New (&PoisHmmFit_Type, NULL, NULL);
-    ((PoisHmmFit *) out)->err = 0;
-    ((PoisHmmFit *) out)->n_iter = hmm.n_iter;
-    ((PoisHmmFit *) out)->llk = (double) hmm.llh;
-    ((PoisHmmFit *) out)->aic = (double) hmm.aic;
-    ((PoisHmmFit *) out)->bic = (double) hmm.bic;
+    out = (PoisHmmFit *) PoisHmmFit_New (&PoisHmmFit_Type, NULL, NULL);
+    out->err = 0;
+    out->n_iter = hmm.n_iter;
+    out->llk = (double) hmm.llh;
+    out->aic = (double) hmm.aic;
+    out->bic = (double) hmm.bic;
 
-    ((PoisHmmFit *) out)->lambda = PyArray_SimpleNew (PyArray_NDIM (arr_lambda),
-                                    PyArray_SHAPE (arr_lambda), NPY_DOUBLE);
-    ((PoisHmmFit *) out)->gamma = PyArray_SimpleNew (PyArray_NDIM (arr_gamma),
-                                    PyArray_SHAPE (arr_gamma), NPY_DOUBLE);
-    ((PoisHmmFit *) out)->delta = PyArray_SimpleNew (PyArray_NDIM (arr_delta),
-                                    PyArray_SHAPE (arr_delta), NPY_DOUBLE);
+    out->lambda = PyArray_SimpleNew (PyArray_NDIM (arr_lambda), PyArray_SHAPE (arr_lambda), NPY_DOUBLE);
+    out->gamma = PyArray_SimpleNew (PyArray_NDIM (arr_gamma), PyArray_SHAPE (arr_gamma), NPY_DOUBLE);
+    out->delta = PyArray_SimpleNew (PyArray_NDIM (arr_delta), PyArray_SHAPE (arr_delta), NPY_DOUBLE);
+
 
     double *out_ptr = NULL;
-    out_ptr = (double *) PyArray_DATA ((PyArrayObject *) (((PoisHmmFit *) out)->lambda));
+    out_ptr = (double *) PyArray_DATA ((PyArrayObject *) out->lambda);
     for (size_t i = 0; i < hmm.m_states; i++)
     {
         out_ptr[i] = (double) hmm.params->lambda[i];
     }
-    out_ptr = (double *) PyArray_DATA ((PyArrayObject *) (((PoisHmmFit *) out)->gamma));
+    out_ptr = (double *) PyArray_DATA ((PyArrayObject *) out->gamma);
     for (size_t i = 0; i < hmm.m_states * hmm.m_states; i++)
     {
         out_ptr[i] = (double) expl (hmm.params->gamma[i]);
     }
-    out_ptr = (double *) PyArray_DATA ((PyArrayObject *) (((PoisHmmFit *) out)->delta));
+    out_ptr = (double *) PyArray_DATA ((PyArrayObject *) out->delta);
     for (size_t i = 0; i < hmm.m_states; i++)
     {
         out_ptr[i] = (double) expl (hmm.params->delta[i]);
@@ -178,7 +176,7 @@ exit:
     PoisProbs_Delete (probs);
     Py_XDECREF (arr_inp);
     Py_INCREF (out);
-    return out;
+    return (PyObject *) out;
 }
 
 
