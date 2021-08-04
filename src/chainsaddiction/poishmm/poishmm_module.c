@@ -62,6 +62,17 @@ PoisHmmFit_New(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 
+static int
+PoisHmmFit_CInit (PoisHmmFit *self, const size_t m_states)
+{
+    npy_intp shape[] = { (npy_intp) m_states, (npy_intp) m_states };
+    self->lambda = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
+    self->gamma  = PyArray_SimpleNew (2, shape, NPY_DOUBLE);
+    self->delta  = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
+    return 0;
+}
+
+
 static PyTypeObject PoisHmmFit_Type = {
     PyVarObject_HEAD_INIT (NULL, 0)
     .tp_name = "poishmm.Fit",
@@ -141,15 +152,12 @@ poishmm_fit_em (PyObject *self, PyObject *args)
     PoisHmm_EstimateParams (&hmm, &inp);
 
     out = (PoisHmmFit *) PoisHmmFit_New (&PoisHmmFit_Type, NULL, NULL);
+    PoisHmmFit_CInit (out, hmm.m_states);
     out->err = 0;
     out->n_iter = hmm.n_iter;
     out->llk = (double) hmm.llh;
     out->aic = (double) hmm.aic;
     out->bic = (double) hmm.bic;
-
-    out->lambda = PyArray_SimpleNew (PyArray_NDIM (arr_lambda), PyArray_SHAPE (arr_lambda), NPY_DOUBLE);
-    out->gamma = PyArray_SimpleNew (PyArray_NDIM (arr_gamma), PyArray_SHAPE (arr_gamma), NPY_DOUBLE);
-    out->delta = PyArray_SimpleNew (PyArray_NDIM (arr_delta), PyArray_SHAPE (arr_delta), NPY_DOUBLE);
 
 
     double *out_ptr = NULL;
