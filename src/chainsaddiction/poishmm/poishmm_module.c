@@ -73,6 +73,31 @@ PoisHmmFit_CInit (PoisHmmFit *self, const size_t m_states)
 }
 
 
+static void
+PoisHmmFit_Set (PoisHmmFit *out, PoisHmm *hmm)
+{
+    out->err = 0;
+    out->n_iter = hmm->n_iter;
+    out->llk = (double) hmm->llh;
+    out->aic = (double) hmm->aic;
+    out->bic = (double) hmm->bic;
+
+    double *lambda_data = (double *) PyArray_DATA ((PyArrayObject *) out->lambda);
+    double *gamma_data  = (double *) PyArray_DATA ((PyArrayObject *) out->gamma);
+    double *delta_data  = (double *) PyArray_DATA ((PyArrayObject *) out->delta);
+    for (size_t i = 0; i < hmm->m_states; i++)
+    {
+        lambda_data[i] = (double) hmm->params->lambda[i];
+        delta_data[i]  = (double) expl (hmm->params->delta[i]);
+        for (size_t j = 0; j < hmm->m_states; j++)
+        {
+            size_t idx = i * hmm->m_states + j;
+            gamma_data[idx] = (double) expl (hmm->params->gamma[idx]);
+        }
+    }
+}
+
+
 static PyTypeObject PoisHmmFit_Type = {
     PyVarObject_HEAD_INIT (NULL, 0)
     .tp_name = "poishmm.Fit",
@@ -153,30 +178,7 @@ poishmm_fit_em (PyObject *self, PyObject *args)
 
     out = (PoisHmmFit *) PoisHmmFit_New (&PoisHmmFit_Type, NULL, NULL);
     PoisHmmFit_CInit (out, hmm.m_states);
-    out->err = 0;
-    out->n_iter = hmm.n_iter;
-    out->llk = (double) hmm.llh;
-    out->aic = (double) hmm.aic;
-    out->bic = (double) hmm.bic;
-
-
-    double *out_ptr = NULL;
-    out_ptr = (double *) PyArray_DATA ((PyArrayObject *) out->lambda);
-    for (size_t i = 0; i < hmm.m_states; i++)
-    {
-        out_ptr[i] = (double) hmm.params->lambda[i];
-    }
-    out_ptr = (double *) PyArray_DATA ((PyArrayObject *) out->gamma);
-    for (size_t i = 0; i < hmm.m_states * hmm.m_states; i++)
-    {
-        out_ptr[i] = (double) expl (hmm.params->gamma[i]);
-    }
-    out_ptr = (double *) PyArray_DATA ((PyArrayObject *) out->delta);
-    for (size_t i = 0; i < hmm.m_states; i++)
-    {
-        out_ptr[i] = (double) expl (hmm.params->delta[i]);
-    }
-
+    PoisHmmFit_Set (out, &hmm);
 
 exit:
     PoisParams_Delete (init);
