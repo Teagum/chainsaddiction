@@ -6,6 +6,7 @@
 #include "pois_hmm.h"
 #include "pois_params.h"
 
+#define UNUSED(obj) obj = NULL;
 
 #define Apollon_NewPyArray1d(shape)                     \
         ((PyArrayObject *)                              \
