@@ -27,7 +27,7 @@ static PyMemberDef PoisHmmFit_members[] = {
     {"lambda_", T_OBJECT, offsetof (PoisHmmFit, lambda), 0, "State-dependent means"},
     {"gamma_", T_OBJECT, offsetof (PoisHmmFit, gamma), 0, "Transition probability matrix"},
     {"delta_", T_OBJECT, offsetof (PoisHmmFit, delta), 0, "Initial distribution"},
-    {NULL}  /* Sentinel */
+    {NULL, -1, 0, 0, NULL}  /* Sentinel */
 };
 
 
