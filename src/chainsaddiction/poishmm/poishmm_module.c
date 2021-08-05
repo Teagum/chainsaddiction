@@ -44,6 +44,9 @@ PoisHmmFit_Delete (PoisHmmFit *self)
 static PyObject *
 PoisHmmFit_New(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
+    UNUSED (args);
+    UNUSED (kwds);
+
     PoisHmmFit *self = NULL;
     self = (PoisHmmFit *) type->tp_alloc (type, 0);
     if (self != NULL)
@@ -114,6 +117,7 @@ static PyTypeObject PoisHmmFit_Type = {
 static PyObject *
 poishmm_fit_em (PyObject *self, PyObject *args)
 {
+    UNUSED (self);
     PyObject *arg_lambda = NULL;
     PyObject *arg_gamma  = NULL;
     PyObject *arg_delta  = NULL;
@@ -193,6 +197,7 @@ exit:
 static PyObject *
 read_params (PyObject *self, PyObject *args)
 {
+    UNUSED (self);
     char *path = NULL;
     PoisParams *params = NULL;
     PyObject *arr_lambda = NULL;
