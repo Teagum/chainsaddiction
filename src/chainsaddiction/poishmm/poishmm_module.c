@@ -128,6 +128,7 @@ poishmm_fit_em (PyObject *self, PyObject *args)
     PyArrayObject *arr_delta  = NULL;
     PyArrayObject *arr_inp    = NULL;
 
+
     DataSet inp = { NULL, 0, false };
     PoisHmm hmm = { 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, NULL, NULL, NULL };
     PoisParams *init = NULL;
@@ -265,10 +266,10 @@ poishmm_methods[] = {
 static struct PyModuleDef
 poishmm_module = {
     PyModuleDef_HEAD_INIT,
-    "poishmm",
-    "HMM with Poisson-distributed latent variables.",
-    -1,
-    poishmm_methods
+    .m_name    = "poishmm",
+    .m_doc     = "HMM with Poisson-distributed latent variables.",
+    .m_size    = -1,
+    .m_methods = poishmm_methods
 };
 
 
