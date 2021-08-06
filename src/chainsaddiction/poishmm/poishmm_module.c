@@ -1,7 +1,4 @@
-#define NPY_NO_DEPRECATED_API NPY_1_8_API_VERSION
-
 #include "poishmm_module.h"
-#include "structmember.h"
 
 typedef struct {
     PyObject_HEAD

@@ -1,26 +1,17 @@
 #ifndef poishmm_module_h
 #define poishmm_module_h
 
+#define NPY_NO_DEPRECATED_API NPY_1_8_API_VERSION
+#define PY_SSIZE_T_CLEAN
+
 #include <Python.h>
+#include "structmember.h"
 #include <numpy/arrayobject.h>
 #include "pois_hmm.h"
 #include "pois_params.h"
 
+
 #define UNUSED(obj) obj = NULL;
-
-#define Apollon_NewPyArray1d(shape)                     \
-        ((PyArrayObject *)                              \
-        PyArray_NewFromDescr (&PyArray_Type,            \
-                PyArray_DescrFromType (NPY_LONGDOUBLE), \
-                1, shape, NULL, NULL, 0, NULL));
-
-
-#define Apollon_NewPyArray2d(shape)                     \
-        ((PyArrayObject *)                              \
-        PyArray_NewFromDescr (&PyArray_Type,            \
-                PyArray_DescrFromType (NPY_LONGDOUBLE), \
-                2, shape, NULL, NULL, 0, NULL));
-
 
 #define PyArray_NEW_LD(py_obj) \
     (PyArrayObject *) PyArray_FROM_OTF (py_obj, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
