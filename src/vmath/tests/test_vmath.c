@@ -360,3 +360,27 @@ test__mm_add_s (void)
     }
     return !err;
 }
+
+
+bool
+test__v_argmax (void)
+{
+    enum {
+        size_bound = 100,
+    };
+
+    size_t res = 0;
+    const size_t n_elem  = rnd_size (1, size_bound);
+    const size_t arg_max = rnd_size (0, n_elem);
+    const scalar max_val =  999.0L;
+    const scalar SR_LB   = -100.0L;
+    const scalar SR_UB   =  100.0L;
+
+    scalar *vect = VA_SCALAR_ZEROS(n_elem);
+    v_rnd_scalar (n_elem, SR_LB, SR_UB, vect);
+    vect[arg_max] = max_val;
+
+    res = v_argmax (n_elem, vect);
+
+    return res == arg_max ? false : true;
+}

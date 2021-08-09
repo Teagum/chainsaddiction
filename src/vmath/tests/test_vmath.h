@@ -8,9 +8,10 @@
 
 
 bool test__strided_max (void);
+bool test__v_argmax (void);
+bool test__v_max (void);
 bool test__v_lse (void);
 bool test__vs_lse_centroid (void);
-bool test__v_max (void);
 bool test__vs_sum (void);
 bool test__m_max (void);
 bool test__m_row_max (void);
