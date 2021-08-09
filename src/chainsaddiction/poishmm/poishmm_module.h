@@ -10,6 +10,8 @@
 
 #include "pois_hmm.h"
 #include "pois_params.h"
+#include "fitobject.h"
+
 
 
 #define UNUSED(obj) obj = NULL;
