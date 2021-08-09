@@ -1,12 +1,13 @@
 #ifndef poishmm_module_h
 #define poishmm_module_h
 
-#define NPY_NO_DEPRECATED_API NPY_1_8_API_VERSION
 #define PY_SSIZE_T_CLEAN
-
 #include <Python.h>
-#include "structmember.h"
+
+#define NPY_NO_DEPRECATED_API NPY_1_22_API_VERSION
 #include <numpy/arrayobject.h>
+#include "structmember.h"
+
 #include "pois_hmm.h"
 #include "pois_params.h"
 
