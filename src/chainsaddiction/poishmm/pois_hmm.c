@@ -207,4 +207,6 @@ PoisHmm_EstimateParams (
    this->n_iter = pois_em (inp->size, this->m_states, this->max_iter,
                            this->tol, inp->data, &this->llh, this->probs,
                            this->params);
+    this->aic = compute_aic (this->llh, this->m_states);
+    this->bic = compute_bic (this->llh, this->n_obs, this->m_states);
 }
