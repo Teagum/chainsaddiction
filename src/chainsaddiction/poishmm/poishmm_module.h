@@ -21,8 +21,12 @@
 
 
 #define poishmm_fit_em_doc                                              \
-    "Estimate the HMM parameters given an observation time series by"   \
-    "Expectation Maximization"
+    "Estimate HMM parameters given an observation time series by "      \
+    "Expectation Maximization\n\n"                                      \
+    "fit_em(n_obs: int, m_states: int, max_iter: int, tol: float, "     \
+    "sdm: array-like, tpm: array-like, distr: array-like, "             \
+    "data: array-like) -> Fit\n"
+
 
 #define read_params_doc \
     "read_params(path, /)\n\nRead HMM parameters from file located in ``path``."
