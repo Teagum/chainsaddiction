@@ -31,14 +31,25 @@ CFLAGS = $(warnings) $(standard) $(optimize) $(debug)
 # 	NO_BOUNDS_CHECK   Do not check boundaries in array setters and getters.
 INCLUDE = -I$(src_dir) -I$(test_src_dir)
 
-all:
-	python3 setup.py --quiet install --skip-build
-
-
 help:
-	@echo 'Usage: make <target>\n\nTargets:'
-	@echo '\ttest -- build all tests.'
-	@echo '\ttest -- build and run all tests.'
+	@echo 'Usage: make <target>'
+	@echo ' '
+	@echo 'Targets:'
+	@echo '    install    Install the package.'
+	@echo '    pkg        Build the package under build/.'
+	@echo '    ext        Recompile the extension module.'
+
+
+install:
+	python setup.py install 
+
+pkg:
+	python setup.py --quiet build --force
+
+ext:
+	python setup.py --quiet build_ext --force
+
+
 
 
 $(obj_dir)/%.o: %.c
