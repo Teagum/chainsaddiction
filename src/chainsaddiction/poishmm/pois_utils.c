@@ -63,3 +63,24 @@ v_log_normalize (
         dest[i] = src[i] - lsum;
     }
 }
+
+
+extern int
+local_decoding (
+    const size_t n_obs,
+    const size_t m_states,
+    const scalar *lcxpt,
+    size_t *states)
+{
+    scalar *obs_probs = malloc (sizeof (scalar) * n_obs * m_states);
+    if (obs_probs == NULL)
+    {
+        fputs ("Alloc error in global decoding.", stderr);
+        return 1;
+    }
+    m_exp (n_obs, m_states, lcxpt, obs_probs);
+    m_row_argmax (n_obs, m_states, obs_probs, states);
+
+    free (obs_probs);
+    return 0;
+}

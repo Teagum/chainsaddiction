@@ -28,7 +28,7 @@ all: pois_hmm.test
 pois_hmm.test: $(test_runner).o $(test_objs) $(objs) $(addsuffix .o, $(modules) ../pois_utils ../pois_fwbw)
 	$(LINK.c) $^ $(LDLIBS) -o $@
 
-$(test_runner).o: test_pois_params.h test_pois_probs.h test_pois_hmm.h test_pois_em.h unittest.h libvmath.h \
+$(test_runner).o: test_pois_params.h test_pois_probs.h test_pois_hmm.h test_pois_em.h test_pois_utils.h unittest.h libvmath.h \
 	$(addprefix ../, pois_params.h pois_probs.h pois_utils.h pois_hmm.h pois_em.h) \
 	$(addsuffix .h, $(modules)) $(addprefix ../../, scalar.h restrict.h)
 
@@ -41,6 +41,11 @@ test_pois_probs.o: test_pois_probs.h ../pois_probs.h ../../libma.h
 test_pois_em.o: test_pois_em.h libvmath.h \
 	$(addprefix ../, pois_em.h pois_fwbw.h pois_hmm.h pois_params.h pois_probs.h pois_utils.h) \
 	$(addprefix ../../, dataset.h libma.h read.h restrict.h)
+
+test_pois_utisl.o: test_pois_utils.h libvmath.h \
+	$(addprefix ../, pois_em.h pois_fwbw.h pois_hmm.h pois_params.h pois_probs.h pois_utils.h) \
+	$(addsuffix .h, $(modules))
+
 
 
 $(test_objs): $(addprefix ../../, scalar.h restrict.h) unittest.h

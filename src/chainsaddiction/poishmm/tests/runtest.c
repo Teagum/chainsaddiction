@@ -2,6 +2,7 @@
 #include "test_pois_params.h"
 #include "test_pois_hmm.h"
 #include "test_pois_em.h"
+#include "test_pois_utils.h"
 
 int
 main (void)
@@ -27,6 +28,8 @@ main (void)
     RUN_TEST (test__PoisHmm_BackwardProbabilities);
     RUN_TEST (test__PoisHmm_ForwardBackward);
     RUN_TEST (test__PoisHmm_EstimateParams);
+
+    RUN_TEST (test__local_decoding);
 
     EVALUATE;
 }
