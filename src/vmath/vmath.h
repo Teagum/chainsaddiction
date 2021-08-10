@@ -444,7 +444,7 @@ m_col_absmax (
  * \param mtx   Pointer to matrix data.
  * \param out   Pointer to output buffer.
  */
-#define m_exp(rows, cols, mtx, out) v_log ((mtx), (rows*cols), (out))
+#define m_exp(rows, cols, mtx, out) v_exp ((mtx), (rows*cols), (out))
 
 
 /** Compute logarithm of matrix elements.
