@@ -362,6 +362,17 @@ m_log_centroid_cols(
         scalar *const centroid_in_col);
 
 
+#define m_argmax(rows, cols, mtx) v_argmax(((rows) * (cols)), mtx)
+
+
+extern void
+m_row_argmax (
+    const size_t rows,
+    const size_t cols,
+    const scalar *mtx,
+    size_t *restrict argmax_row);
+
+
 /** Compute maximum value.
  *
  * \param _mat

@@ -20,6 +20,7 @@ bool test__log_vmp (void);
 bool test__log_mvp (void);
 bool test__m_log_centroid_cols (void);
 bool test__mm_add_s (void);
+bool test__m_row_argmax (void);
 
 
 #endif  /* test_vmath_h */

@@ -261,6 +261,19 @@ m_log_centroid_cols (
 }
 
 
+inline void
+m_row_argmax (
+    const size_t rows,
+    const size_t cols,
+    const scalar *mtx,
+    size_t *restrict argmax_row)
+{
+    for (size_t i = 0; i < rows; i++, mtx+=cols)
+    {
+        argmax_row[i] = v_argmax (cols, mtx);
+    }
+}
+
 
 inline scalar
 m_max (

@@ -384,3 +384,40 @@ test__v_argmax (void)
 
     return res == arg_max ? false : true;
 }
+
+bool
+test__m_row_argmax (void)
+{
+    bool err = true;
+    const size_t rows = rnd_size (1, 10);
+    const size_t cols = rnd_size (1, 10);
+    const scalar max_val =  999.0L;
+    const scalar SR_LB   = -100.0L;
+    const scalar SR_UB   =  100.0L;
+
+    size_t *arg_max = VA_SIZE_ZEROS (rows);
+    size_t *res = VA_SIZE_ZEROS (rows);
+    scalar *mtx = VA_SCALAR_ZEROS (rows*cols);
+
+    v_rnd_scalar (rows*cols, SR_LB, SR_UB, mtx);
+    v_rnd_size (rows, 0, cols, arg_max);
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        mtx[i*cols+arg_max[i]] = max_val;
+    }
+
+    m_row_argmax (rows, cols, mtx, res);
+
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        err = (res[i] != arg_max[i]) ? true : false;
+        if (err) break;
+    }
+
+    FREE (arg_max);
+    FREE (res);
+    FREE (mtx);
+    return err;
+}
