@@ -34,7 +34,7 @@ log_cond_expect (
     scalar *lcexpt)
 {
     size_t n_elem = n_obs * m_states;
-    mm_add_s (lalpha, lbeta, n_elem, llh, lcexpt);
+    mm_add_s (lalpha, lbeta, n_elem, -llh, lcexpt);
 }
 
 
