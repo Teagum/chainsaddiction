@@ -206,8 +206,8 @@ PoisHmm_EstimateParams (
     const DataSet *const restrict inp)
 {
     this->err = pois_em (inp->size, this->m_states, this->max_iter,
-                         this->tol, inp->data, &this->n_iter, &this->llh,
-                         this->probs, this->params);
+                         this->tol, inp->data, &this->n_iter, &this->llh, this->probs,
+                         this->params);
     this->aic = compute_aic (this->llh, this->m_states);
     this->bic = compute_bic (this->llh, this->n_obs, this->m_states);
 }

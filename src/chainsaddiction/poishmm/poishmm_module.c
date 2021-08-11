@@ -87,7 +87,7 @@ poishmm_fit_em (PyObject *self, PyObject *args)
 
 
     DataSet inp = { NULL, 0, false };
-    PoisHmm hmm = { 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, NULL, NULL, NULL };
+    PoisHmm hmm = { true, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, NULL, NULL, NULL };
     PoisParams *init = NULL;
     PoisParams *working = NULL;
     PoisProbs *probs = NULL;
@@ -137,6 +137,10 @@ poishmm_fit_em (PyObject *self, PyObject *args)
     inp.data = PyArray_DATA (arr_inp);
 
     PoisHmm_EstimateParams (&hmm, &inp);
+    if (hmm.err)
+    {
+        PyErr_WarnEx (PyExc_Warning, "No convergence.", 1);
+    }
 
     out = (PoisHmmFit *) PoisHmmFit_New (&PoisHmmFit_Type, NULL, NULL);
     PoisHmmFit_CInit (out, hmm.m_states);
