@@ -14,6 +14,7 @@ PoisHmm *PoisHmm_New (const size_t n_obs, const size_t m_states)
     phmm->params = PoisParams_New (m_states);
     phmm->probs  = PoisProbs_New (n_obs, m_states);
 
+    phmm->err      = false;
     phmm->n_obs    = n_obs;
     phmm->m_states = m_states;
     phmm->n_iter   = 0;
@@ -204,9 +205,9 @@ PoisHmm_EstimateParams (
     PoisHmm *const restrict this,
     const DataSet *const restrict inp)
 {
-   this->n_iter = pois_em (inp->size, this->m_states, this->max_iter,
-                           this->tol, inp->data, &this->llh, this->probs,
-                           this->params);
+    this->err = pois_em (inp->size, this->m_states, this->max_iter,
+                         this->tol, inp->data, &this->n_iter, &this->llh,
+                         this->probs, this->params);
     this->aic = compute_aic (this->llh, this->m_states);
     this->bic = compute_bic (this->llh, this->n_obs, this->m_states);
 }

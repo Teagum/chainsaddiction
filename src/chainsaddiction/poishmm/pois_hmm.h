@@ -1,6 +1,7 @@
 #ifndef HMM_H
 #define HMM_H
 
+#include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
@@ -21,6 +22,7 @@
  * \brief HMM with Poisson-distributed states.
  */
 typedef struct PoisHmm {
+    bool   err;
     size_t n_obs;
     size_t m_states;
     size_t n_iter;
