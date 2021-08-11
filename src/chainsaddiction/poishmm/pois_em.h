@@ -2,6 +2,7 @@
 #define pois_em_h
 
 #include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "../dataset.h"
@@ -21,7 +22,8 @@ pois_em (
     const size_t iter_max,
     const scalar tol,
     const scalar *const restrict data,
-    scalar *const restrict llh,
+    size_t *restrict n_iter,
+    scalar *restrict llh,
     PoisProbs *const restrict probs,
     PoisParams *const restrict params);
 

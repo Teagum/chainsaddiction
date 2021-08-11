@@ -8,32 +8,39 @@ pois_em (
     const size_t iter_max,
     const scalar tol,
     const scalar *const restrict data,
-    scalar *const restrict llh,
+    size_t *restrict n_iter,
+    scalar *restrict llh,
     PoisProbs *const restrict probs,
     PoisParams *const restrict params)
 {
+    bool   err    = true;
+    scalar score  = 0.0L;
     PoisParams *nlp = PoisParams_New (m_states);
 
-    scalar score  = 0.0L;
-    size_t n_iter = 0;
-
-    for (size_t n_iter = 0; n_iter < iter_max; n_iter++)
+    for (; *n_iter < iter_max; (*n_iter)++)
     {
         pois_e_step (n_obs, m_states, data, params->lambda, params->gamma,
-                params->delta, probs->lsdp, probs->lalpha, probs->lbeta,
-                probs->lcxpt, llh);
+                     params->delta, probs->lsdp, probs->lalpha, probs->lbeta,
+                     probs->lcxpt, llh);
 
         pois_m_step (n_obs, m_states, *llh, data, probs->lsdp, probs->lalpha,
-                probs->lbeta, probs->lcxpt, params->gamma, nlp->lambda,
-                nlp->gamma, nlp->delta);
+                     probs->lbeta, probs->lcxpt, params->gamma, nlp->lambda,
+                     nlp->gamma, nlp->delta);
 
         score = score_update (nlp, params);
-        if (score < tol) return n_iter;
-        PoisParams_Copy (nlp, params);
+        if (score < tol)
+        {
+            err = false;
+            break;
+        }
+        else
+        {
+            PoisParams_Copy (nlp, params);
+        }
     }
 
-    fputs ("Warning: no convergence.\n", stderr);
-    return (int) n_iter;
+    PoisParams_Delete (nlp);
+    return err;
 }
 
 
