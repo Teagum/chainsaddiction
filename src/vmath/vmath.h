@@ -287,6 +287,10 @@ vs_lse_centroid (
     vs_lse_centroid (vt, 1, weights, 1, n_elem)
 
 
+extern size_t
+v_argmax (const size_t n_elem, const scalar *restrict vec);
+
+
 /** Compute maximum element of vector.
  *
  * \param _vt
@@ -358,6 +362,17 @@ m_log_centroid_cols(
         scalar *const centroid_in_col);
 
 
+#define m_argmax(rows, cols, mtx) v_argmax(((rows) * (cols)), mtx)
+
+
+extern void
+m_row_argmax (
+    const size_t rows,
+    const size_t cols,
+    const scalar *mtx,
+    size_t *restrict argmax_row);
+
+
 /** Compute maximum value.
  *
  * \param _mat
@@ -390,7 +405,7 @@ m_row_max (
  *
  * \param mtx           Pointer to matrix buffer.
  * \param n_rows        Number of rows.
- * \param n_cols        Number of columns. 
+ * \param n_cols        Number of columns.
  * \paran max_per_col   Pointer to output object.
  *
  * Note: If `n_rows' and `n_cols' are zero, the function aborts and returns
@@ -422,6 +437,16 @@ m_col_absmax (
     scalar *restrict max_per_col);
 
 
+/** Compute exponentials of matrix elements.
+ *
+ * \param rows  Number of rows in matrix.
+ * \param cols  Number of cols in matrix.
+ * \param mtx   Pointer to matrix data.
+ * \param out   Pointer to output buffer.
+ */
+#define m_exp(rows, cols, mtx, out) v_exp ((mtx), (rows*cols), (out))
+
+
 /** Compute logarithm of matrix elements.
  *
  * \param mat       Pointer to matrix elements.
@@ -429,6 +454,15 @@ m_col_absmax (
  * \param out       Pointer to output buffer.
  */
 #define m_log(mat, n_elem, out) v_log ((mat), (n_elem), (out))
+
+
+/** Compute exponentials of matrix elements inplace.
+ *
+ * \param rows  Number of rows in matrix.
+ * \param cols  Number of cols in matrix.
+ * \param mtx   Pointer to matrix data.
+ */
+#define mi_exp(rows, cols, mtx) vi_log ((mtx), (rows*cols))
 
 
 /** Compute logarithm of matrix elements inplace

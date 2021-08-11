@@ -142,6 +142,24 @@ vs_lse_centroid (
 }
 
 
+extern size_t
+v_argmax (const size_t n_elem, const scalar *restrict vec)
+{
+    size_t arg = 0;
+    scalar max = *vec;
+
+    for (size_t i = 1; i < n_elem; i++)
+    {
+        if (vec[i] > max)
+        {
+            arg = i;
+            max = vec[i];
+        }
+    }
+    return arg;
+}
+
+
 inline scalar
 v_max (
     const scalar *restrict vt,
@@ -240,6 +258,20 @@ m_log_centroid_cols (
     FREE (w_sum_per_col);
     FREE (max_per_col);
     return err;
+}
+
+
+inline void
+m_row_argmax (
+    const size_t rows,
+    const size_t cols,
+    const scalar *mtx,
+    size_t *restrict argmax_row)
+{
+    for (size_t i = 0; i < rows; i++, mtx+=cols)
+    {
+        argmax_row[i] = v_argmax (cols, mtx);
+    }
 }
 
 

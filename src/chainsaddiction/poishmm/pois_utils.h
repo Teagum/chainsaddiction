@@ -63,4 +63,13 @@ v_log_normalize (
     scalar *const restrict dest);
 
 
+/** Local decoding */
+extern int
+local_decoding (
+    const size_t n_obs,
+    const size_t m_states,
+    const scalar *lcxpt,
+    size_t *states);
+
+
 #endif  /* pois_utils.h */
