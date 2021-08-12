@@ -6,7 +6,7 @@
 int main (void)
 {
     SETUP;
-
+/*
     RUN_TEST (test__rnd_int);
     RUN_TEST (test__v_rnd_int);
     RUN_TEST (test__rnd_scalar);
@@ -49,6 +49,6 @@ int main (void)
     RUN_TEST (test__m_log_centroid_cols);
 
     RUN_TEST (test__mm_multiply);
-
+*/
     return 0;
 }

@@ -561,6 +561,24 @@ strided_absmax (
     const size_t stride,
     const scalar *restrict buffer);
 
+/*
+ * Vector matrix operations
+ */
+extern int
+vm_add (
+    const size_t rows,
+    const size_t cols,
+    const scalar *restrict vtr,
+    const scalar *restrict mtx,
+    scalar *out);
+
+
+extern int
+vm_add_i (
+    const size_t rows,
+    const size_t cols,
+    const scalar *restrict vtr,
+    scalar *restrict mtx);
 
 
 extern scalar logr1 (scalar val);

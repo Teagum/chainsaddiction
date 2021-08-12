@@ -609,8 +609,6 @@ strided_absmax (
 }
 
 
-
-
 inline scalar
 logr1 (scalar val)
 {
