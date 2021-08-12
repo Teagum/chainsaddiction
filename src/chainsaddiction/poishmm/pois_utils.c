@@ -107,7 +107,6 @@ global_decoding (
     }
 
     v_add(ldelta, lsdp, m_states, chi);
-    print_vector (m_states, chi);
     scalar *prev_row = chi;
     scalar *this_row = chi+m_states;
     for (size_t n = 1; n < n_obs; n++, this_row+=m_states, prev_row+=m_states, lsdp+=m_states)
@@ -116,7 +115,6 @@ global_decoding (
         m_row_max (mb, m_states, m_states, this_row);
         vi_add (lsdp, this_row, m_states);
     }
-
 
     states[n_obs-1] = v_argmax (m_states, this_row);
     for (size_t i = n_obs-2; i > 0; i--, prev_row-=m_states)

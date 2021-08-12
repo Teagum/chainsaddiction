@@ -86,16 +86,7 @@ bool test__global_decoding (void)
 
     global_decoding (hmm->n_obs, hmm->m_states, hmm->params->gamma,
                      hmm->params->delta, hmm->probs->lsdp, decoding);
-    /*
-    local_decoding (hmm->n_obs, hmm->m_states, hmm->probs->lcxpt, decoding);
-    for (size_t i = 0; i < hmm->n_obs; i++)
-    {
-        err = (decoding[i] != expected[i]) ? true : false;
-        if (err) break;
-        printf ("[%3zu] %zu\n", i, decoding[i]);
-    }
-
-    */
+    print_matrix(n_obs, 1, decoding);
     free (decoding);
     PoisHmm_Delete (hmm);
     ds_FREE (inp);
