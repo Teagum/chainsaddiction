@@ -31,6 +31,9 @@
 #define read_params_doc \
     "read_params(path, /)\n\nRead HMM parameters from file located in ``path``."
 
+#define global_decoding_doc \
+    "global_decoding(n_obs, m_states, lgamma, ldelta, lsdp, /)\n\n"    \
+    "Compute the most likely sequence of states\n"
 
 static PyObject
 *poishmm_fit_em (PyObject* self, PyObject* args);

@@ -215,11 +215,45 @@ read_params (PyObject *self, PyObject *args)
     return out;
 }
 
+static PyObject *
+global_decoding_impl (PyObject *self, PyObject *args)
+{
+    npy_intp n_obs    = 0;
+    npy_intp m_states = 0;
+    PyObject *arg_lgamma = NULL;
+    PyObject *arg_ldelta = NULL;
+    PyObject *arg_lsdp = NULL;
+    PyObject *arr_states = NULL;
+    if (!PyArg_ParseTuple (args, "llOOO", &n_obs, &m_states, &arg_lgamma,
+                            &arg_ldelta, &arg_lsdp))
+    {
+        PyErr_SetString (PyExc_TypeError, "global_decoding: Could not parse args.");
+        return NULL;
+    }
+
+    npy_intp dims[2] = { n_obs, m_states };
+    arr_states = PyArray_SimpleNew (1, dims, NPY_ULONG);
+    if (arr_states == NULL)
+    {
+        PyErr_SetString (PyExc_TypeError, "global_decoding: Could not allocate states object.");
+        return NULL;
+    }
+
+    global_decoding ((size_t) n_obs, (size_t) m_states,
+            (long double *)((PyArrayObject *) arg_lgamma)->data,
+            (long double *)((PyArrayObject *) arg_ldelta)->data,
+            (long double *)((PyArrayObject *) arg_lsdp)->data,
+            (size_t *)((PyArrayObject *) arr_states)->data);
+
+    Py_INCREF (arr_states);
+    return arr_states;
+}
 
 static PyMethodDef
 poishmm_methods[] = {
     {"fit_em", poishmm_fit_em, METH_VARARGS, poishmm_fit_em_doc},
     {"read_params", read_params, METH_VARARGS, read_params_doc},
+    {"global_decoding", global_decoding_impl, METH_VARARGS, global_decoding_doc},
     {NULL, NULL, 0, NULL}
 };
 
