@@ -8,7 +8,7 @@ int
 main (void)
 {
     SETUP;
-
+/*
     RUN_TEST (test__PoisParams_New);
     RUN_TEST (test__PoisParams_NewFromFile);
 
@@ -28,8 +28,9 @@ main (void)
     RUN_TEST (test__PoisHmm_BackwardProbabilities);
     RUN_TEST (test__PoisHmm_ForwardBackward);
     RUN_TEST (test__PoisHmm_EstimateParams);
-
     RUN_TEST (test__local_decoding);
+*/
+    RUN_TEST (test__global_decoding);
 
     EVALUATE;
 }

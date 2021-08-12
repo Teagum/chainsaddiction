@@ -6,6 +6,7 @@
 #include "../scalar.h"
 #include "libvmath.h"
 
+typedef const size_t dim;
 
 /* Compute Akaine Information criterion. */
 scalar
@@ -72,4 +73,13 @@ local_decoding (
     size_t *states);
 
 
+/** Global decoding */
+extern int
+global_decoding (
+    dim n_obs,
+    dim m_states,
+    const scalar *lgamma,
+    const scalar *ldelta,
+    const scalar *lsdp,
+    size_t *states);
 #endif  /* pois_utils.h */
