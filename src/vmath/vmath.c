@@ -13,24 +13,25 @@ def_mm_op_s_func(div, /)
 
 inline void
 v_add (
-    const scalar *const vx,
-    const scalar *const vy,
-    const size_t n,
+    size_t n_elem,
+    scalar *vtx,
+    scalar *vty,
     scalar *out)
 {
-    FOR_EACH(i, n) {
-        out[i] = vx[i] + vy[i];
+    while (n_elem--) {
+        *out++ = *vtx++ + *vty++;
     }
 }
 
+
 inline void
 vi_add (
-    const scalar *restrict vx,
-    scalar *vy,
-    const size_t n_elem)
+    size_t n_elem,
+    scalar *vtx,
+    scalar *vty)
 {
-    OUTER_LOOP {
-        vy[i] += vx[i];
+    while (n_elem--) {
+        *vty++ += *vtx++;
     }
 }
 

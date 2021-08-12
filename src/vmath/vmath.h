@@ -180,30 +180,30 @@ extern void mm_div_s (
 
 /** Add two vectors element-wise.
  *
+ * \param[in]  n_elem    Number of elements in each vector.
  * \param[in]  vtx       Vector of size n_elem.
  * \param[in]  vty       Vector of size n_elem.
- * \param[in]  n_elem    Number of elements in each vector.
  * \param[out] out       Output buffer of size n_elem.
  */
 extern void
 v_add (
-    const scalar *const vx,
-    const scalar *const vy,
-    const size_t n,
+    size_t n_elem,
+    scalar *vtx,
+    scalar *vty,
     scalar *out);
 
 
 /** Add first vector element-wise to second one.
  *
- * \param _vx       Vector of size n_elem.
- * \param _vy       Vector of size n_elem.
  * \param n_elem    Number of elements in each vector.
+ * \param vtx       Pointer to vector data.
+ * \param vty       Pointer to vector data.
  */
 extern void
 vi_add (
-    const scalar *restrict _vx,
-    scalar *restrict _vy,
-    const size_t n_elem);
+    const size_t n_elem,
+    scalar *vtx,
+    scalar *vty);
 
 
 /** Vectorized e function.
