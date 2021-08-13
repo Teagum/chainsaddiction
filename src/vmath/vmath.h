@@ -111,6 +111,8 @@ enum vmath_error_codes {
  */
 extern void     v_exp       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 extern void     v_log       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern scalar   v_max       (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_min       (size_t n_elem, const scalar *restrict vtx);
 
 #define def_v_op(name, op_func)                                     \
 inline void v_##name                                                \
@@ -364,15 +366,6 @@ vs_lse_centroid (
 
 extern size_t
 v_argmax (const size_t n_elem, const scalar *restrict vec);
-
-
-/** Compute maximum element of vector.
- *
- * \param _vt
- * \param n_elem
- */
-extern scalar
-v_max (const scalar *restrict _vt, const size_t n_elem);
 
 
 /** Compute softmax o `buffer' inplace.

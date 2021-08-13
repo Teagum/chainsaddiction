@@ -6,6 +6,26 @@
 def_v_op(exp, expl)
 def_v_op(log, logl)
 
+inline scalar
+v_max (size_t n_elem, const scalar *restrict vtx)
+{
+    const scalar *max_ptr = vtx;
+    while (--n_elem) {
+        max_ptr = *++vtx >= *max_ptr ? vtx : max_ptr;
+    }
+    return *max_ptr;
+}
+
+inline scalar
+v_min (size_t n_elem, const scalar *restrict vtx)
+{
+    const scalar *min_ptr = vtx;
+    while (--n_elem) {
+        min_ptr = *++vtx <= *min_ptr ? vtx : min_ptr;
+    }
+    return *min_ptr;
+}
+
 /*
  * Vector inplace operators
  */
@@ -85,7 +105,7 @@ v_lse (
     const scalar *restrict vctr,
     const size_t n_elem)
 {
-    const scalar max_val = v_max (vctr, n_elem);
+    const scalar max_val = v_max (n_elem, vctr);
     scalar sum_exp = 0;
     for (size_t i = 0; i < n_elem; i++, vctr++)
     {
@@ -105,7 +125,7 @@ vs_lse_centroid (
 {
     scalar sum_exp =  0.0L;
     scalar sum_exp_w = 0.0L;
-    scalar max_val = v_max (vt, n_elem);
+    scalar max_val = v_max (n_elem, vt);
 
     for (size_t i = 0; i < n_elem; i++, vt+=v_stride, weights+=w_stride)
     {
@@ -135,18 +155,6 @@ v_argmax (const size_t n_elem, const scalar *restrict vec)
 }
 
 
-inline scalar
-v_max (
-    const scalar *restrict vt,
-    const size_t n_elem)
-{
-    scalar _max = *vt++;
-    for (size_t i = 1; i < n_elem; i++, vt++)
-    {
-        _max = fmaxl (*vt, _max);
-    }
-    return _max;
-}
 
 
 inline void
@@ -256,7 +264,7 @@ m_max (
     const size_t _n_rows,
     const size_t _n_cols)
 {
-    return v_max (_mt, _n_rows*_n_cols);
+    return v_max (_n_rows*_n_cols, _mt);
 }
 
 
@@ -270,7 +278,7 @@ m_row_max (
 {
     for (size_t i = 0; i < n_rows; i++, mtx+=n_cols)
     {
-        row_max[i] = v_max (mtx, n_cols);
+        row_max[i] = v_max (n_cols, mtx);
     }
 }
 
