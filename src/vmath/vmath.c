@@ -1,9 +1,22 @@
 #include "vmath.h"
 
-def_vi_s_func(add, +)
-def_vi_s_func(sub, -)
-def_vi_s_func(mul, *)
-def_vi_s_func(div, /)
+
+/*
+ * Vector/scalar operators
+ */
+def_vs_op(add, +)
+def_vs_op(sub, -)
+def_vs_op(mul, *)
+def_vs_op(div, /)
+
+/*
+ * Vector/scalar inplace operators
+ */
+def_vsi_op(add, +)
+def_vsi_op(sub, -)
+def_vsi_op(mul, *)
+def_vsi_op(div, /)
+
 
 def_mm_op_s_func(add, +)
 def_mm_op_s_func(sub, -)

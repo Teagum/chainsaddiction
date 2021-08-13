@@ -95,17 +95,58 @@ enum vmath_error_codes {
 
 #define logr1(val) isnormal (val) ? logl (val) : 1L
 
-#define def_vi_s_func(name, op)     \
-inline void                         \
-vi_ ## name ##_s (                  \
-    scalar *_vt,                    \
-    const size_t n_elem,            \
-    const scalar _val)              \
+
+/** Vector/scalar arithmetic
+ *
+ * Perform given operation and copy the result to `out`.
+ *
+ * \param n_elem    Number of elemets.
+ * \param alpha     Constant scalar value.
+ * \param vtx       Pointer to vector data.
+ * \param out       Pointer to output object.
+ */
+extern void vs_add (size_t n_elem, const scalar alpha, scalar *vtx, scalar *out);
+extern void vs_sub (size_t n_elem, const scalar alpha, scalar *vtx, scalar *out);
+extern void vs_mul (size_t n_elem, const scalar alpha, scalar *vtx, scalar *out);
+extern void vs_div (size_t n_elem, const scalar alpha, scalar *vtx, scalar *out);
+
+#define def_vs_op(name, op)         \
+inline void vs_##name (             \
+    size_t n_elem,                  \
+    const scalar alpha,             \
+    scalar *vtx,                    \
+    scalar *out)                    \
 {                                   \
-    OUTER_LOOP {                    \
-        _vt[i] op##= _val;          \
+    while (n_elem--) {              \
+        *out++ = alpha op *vtx++;   \
     }                               \
 }
+
+
+/** Vector/scalar inplace arithmetic
+ *
+ * Perform given operation inplace
+ *
+ * \param n_elem    Number of elemets.
+ * \param alpha     Constant scalar value.
+ * \param vtx       Pointer to vector data.
+ */
+extern void vsi_add (size_t n_elem, const scalar alpha, scalar *restrict vtx);
+extern void vsi_sub (size_t n_elem, const scalar alpha, scalar *restrict vtx);
+extern void vsi_mul (size_t n_elem, const scalar alpha, scalar *restrict vtx);
+extern void vsi_div (size_t n_elem, const scalar alpha, scalar *restrict vtx);
+
+#define def_vsi_op(name, op)        \
+inline void vsi_##name (            \
+    size_t n_elem,                  \
+    const scalar alpha,             \
+    scalar *restrict vtx)           \
+{                                   \
+    while (n_elem--) {              \
+        *vtx++ op##= alpha;         \
+    }                               \
+}
+
 
 #define def_mm_op_s_func(name, op)          \
 inline void                                 \
@@ -123,16 +164,6 @@ mm_ ## name ##_s (                          \
 }
 
 
-/** Compute basic math operations on vector elements give constant.
- *
- * \param _vt       Pointer to input data.
- * \param n_elem    Number of elemets.
- * \param _val      Constant value.
- */
-extern void vi_add_s (scalar *_vt, const size_t n_elem, const scalar _val);
-extern void vi_sub_s (scalar *_vt, const size_t n_elem, const scalar _val);
-extern void vi_mul_s (scalar *_vt, const size_t n_elem, const scalar _val);
-extern void vi_div_s (scalar *_vt, const size_t n_elem, const scalar _val);
 
 
 /** Compute basic matrix/matrix operations with added constant.
