@@ -148,6 +148,62 @@ inline void vsi_##name (            \
 }
 
 
+/*
+ * ============================================================================
+ * Vector/vector interface
+ * ============================================================================
+ */
+
+
+/** Basic vector/vector arithmetic 
+ *
+ * Perform given operation and copy data to output buffer.
+ * Vectors are expected to be contiguous objects with a size of at least
+ * `n_elem * sizeof (scalar)`.
+ *
+ * \param[in]  n_elem    Number of elements in each vector.
+ * \param[in]  vtx       Pointer to vector data. 
+ * \param[in]  vty       Pointer to vector data. 
+ * \param[out] out       Pointer to output object.
+ */
+extern void vv_add (size_t n_elem, scalar *vtx, scalar *vty, scalar *out);
+extern void vv_sub (size_t n_elem, scalar *vtx, scalar *vty, scalar *out);
+extern void vv_mul (size_t n_elem, scalar *vtx, scalar *vty, scalar *out);
+extern void vv_div (size_t n_elem, scalar *vtx, scalar *vty, scalar *out);
+
+#define def_vv_op(name, op)                                                 \
+inline void vv_##name (size_t n_elem, scalar *vtx, scalar *vty, scalar *out)\
+{                                                                           \
+    while (n_elem--) {                                                      \
+        *out++ = *vtx++ op *vty++;                                          \
+    }                                                                       \
+}
+
+
+/** Basic vector/vector inplace arithmetic 
+ *
+ * Perform given operation and modify data of second buffer.
+ * Vectors are expected to be contiguous objects with a size of at least
+ * `n_elem * sizeof (scalar)`.
+ *
+ * \param[in]       n_elem    Number of elements in each vector.
+ * \param[in]       vtx       Pointer to vector data. 
+ * \param[in, out]  vty       Pointer to vector data. 
+ */
+extern void vvi_add (size_t n_elem, scalar *vtx, scalar *vty);
+extern void vvi_sub (size_t n_elem, scalar *vtx, scalar *vty);
+extern void vvi_mul (size_t n_elem, scalar *vtx, scalar *vty);
+extern void vvi_div (size_t n_elem, scalar *vtx, scalar *vty);
+
+#define def_vvi_op(name, op)                                        \
+inline void vvi_##name (size_t n_elem, scalar *vtx, scalar *vty)    \
+{                                                                   \
+    while (n_elem--) {                                              \
+        *vty++ op##= *vtx++;                                        \
+    }                                                               \
+}
+
+
 #define def_mm_op_s_func(name, op)          \
 inline void                                 \
 mm_ ## name ##_s (                          \
@@ -209,32 +265,6 @@ extern void mm_div_s (
     scalar *restrict buffer);
 
 
-/** Add two vectors element-wise.
- *
- * \param[in]  n_elem    Number of elements in each vector.
- * \param[in]  vtx       Vector of size n_elem.
- * \param[in]  vty       Vector of size n_elem.
- * \param[out] out       Output buffer of size n_elem.
- */
-extern void
-v_add (
-    size_t n_elem,
-    scalar *vtx,
-    scalar *vty,
-    scalar *out);
-
-
-/** Add first vector element-wise to second one.
- *
- * \param n_elem    Number of elements in each vector.
- * \param vtx       Pointer to vector data.
- * \param vty       Pointer to vector data.
- */
-extern void
-vi_add (
-    const size_t n_elem,
-    scalar *vtx,
-    scalar *vty);
 
 
 /** Vectorized e function.

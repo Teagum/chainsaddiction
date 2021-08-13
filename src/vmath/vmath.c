@@ -17,36 +17,27 @@ def_vsi_op(sub, -)
 def_vsi_op(mul, *)
 def_vsi_op(div, /)
 
+/*
+ * Vector/vector arithmetic
+ */
+def_vv_op(add, +)
+def_vv_op(sub, -)
+def_vv_op(mul, *)
+def_vv_op(div, /)
+
+/*
+ * Vector/vector inplace arithmetic
+ */
+def_vvi_op(add, +)
+def_vvi_op(sub, -)
+def_vvi_op(mul, *)
+def_vvi_op(div, /)
 
 def_mm_op_s_func(add, +)
 def_mm_op_s_func(sub, -)
 def_mm_op_s_func(mul, *)
 def_mm_op_s_func(div, /)
 
-
-inline void
-v_add (
-    size_t n_elem,
-    scalar *vtx,
-    scalar *vty,
-    scalar *out)
-{
-    while (n_elem--) {
-        *out++ = *vtx++ + *vty++;
-    }
-}
-
-
-inline void
-vi_add (
-    size_t n_elem,
-    scalar *vtx,
-    scalar *vty)
-{
-    while (n_elem--) {
-        *vty++ += *vtx++;
-    }
-}
 
 inline void
 v_exp (
