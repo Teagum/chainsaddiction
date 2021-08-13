@@ -1,5 +1,17 @@
 #include "vmath.h"
 
+/*
+ * Vector operators
+ */
+def_v_op(exp, expl)
+def_v_op(log, logl)
+
+/*
+ * Vector inplace operators
+ */
+def_vi_op(exp, expl)
+def_vi_op(log, logl)
+
 
 /*
  * Vector/scalar operators
@@ -39,48 +51,6 @@ def_mm_op_s_func(mul, *)
 def_mm_op_s_func(div, /)
 
 
-inline void
-v_exp (
-    const scalar *restrict vx,
-    const size_t n_elem,
-    scalar *_exps)
-{
-    OUTER_LOOP {
-        _exps[i] = expl (vx[i]);
-    }
-}
-
-inline void
-vi_exp (
-    scalar *restrict vx,
-    const size_t n_elem)
-{
-    OUTER_LOOP {
-        vx[i] = expl (vx[i]);
-    }
-}
-
-inline void
-v_log (
-    const scalar *restrict vx,
-    const size_t n_elem,
-    scalar *_logs)
-{
-    OUTER_LOOP {
-        _logs[i] = logl (vx[i]);
-    }
-}
-
-
-inline void
-vi_log (
-    scalar *restrict vx,
-    const size_t n_elem)
-{
-    OUTER_LOOP {
-        vx[i] = logl (vx[i]);
-    }
-}
 
 inline void
 v_logr1 (

@@ -95,6 +95,56 @@ enum vmath_error_codes {
 
 #define logr1(val) isnormal (val) ? logl (val) : 1L
 
+/*
+ * ============================================================================
+ * Vector interface
+ * ============================================================================
+ */
+
+/** Common vector functions
+ *
+ * Evaluate function elementwise and copy result to output buffer.
+ *
+ * \param[in]   n_elem      Number of elements in vector.
+ * \param[in]   vtx         Pointer to vector data.
+ * \param[out]  out         Pointer to output obejct.
+ */
+extern void     v_exp       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void     v_log       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+
+#define def_v_op(name, op_func)                                     \
+inline void v_##name                                                \
+(size_t n_elem, const scalar *restrict vtx, scalar *restrict out)   \
+{                                                                   \
+    while (n_elem--) {                                              \
+        *out++ = op_func (*vtx++);                                  \
+    }                                                               \
+}
+
+
+/** Common inplace vector functions
+ *
+ * Evaluate function elementwise and copy result to output buffer.
+ *
+ * \param[in]   n_elem      Number of elements in vector.
+ * \param[in]   vtx         Pointer to vector data.
+ */
+extern void vi_exp (size_t n_elem, scalar *restrict vtx);
+extern void vi_log (size_t n_elem, scalar *restrict vtx);
+
+#define def_vi_op(name, op_func)                                        \
+inline void                                                             \
+vi_##name (size_t n_elem, scalar *restrict vtx) { \
+    while (n_elem--) {                                                  \
+        *vtx = op_func (*vtx);                                          \
+        vtx++;                                                          \
+    }                                                                   \
+}
+/*
+ * ============================================================================
+ * Vector/scalar interface
+ * ============================================================================
+ */
 
 /** Vector/scalar arithmetic
  *
@@ -263,42 +313,6 @@ extern void mm_div_s (
     const size_t n_elem,
     const scalar val,
     scalar *restrict buffer);
-
-
-
-
-/** Vectorized e function.
- */
-extern void
-v_exp (
-    const scalar *restrict _vx,
-    const size_t n_elem,
-    scalar *_exps);
-
-
-/** Vectorized e function inplace.
- */
-extern void
-vi_exp (
-    scalar *restrict _vx,
-    const size_t n_elem);
-
-
-/** Vectorized logarithm.
- */
-extern void
-v_log (
-    const scalar *restrict _vx,
-    const size_t n_elem,
-    scalar *_logs);
-
-
-/** Vectorized logarithm inplace.
- */
-extern void
-vi_log (
-    scalar *restrict _vx,
-    const size_t n_elem);
 
 
 /** Replace non-normal values with 1 in log domain.
