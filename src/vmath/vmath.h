@@ -111,11 +111,11 @@ enum vmath_error_codes {
  */
 extern void     v_exp       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 extern void     v_log       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void     v_logr1     (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 extern scalar   v_max       (size_t n_elem, const scalar *restrict vtx);
 extern scalar   v_min       (size_t n_elem, const scalar *restrict vtx);
 extern size_t   v_argmax    (size_t n_elem, const scalar *restrict vtx);
 extern size_t   v_argmin    (size_t n_elem, const scalar *restrict vtx);
-
 
 #define def_v_op(name, op_func)                                     \
 inline void v_##name                                                \
@@ -134,8 +134,10 @@ inline void v_##name                                                \
  * \param[in]   n_elem      Number of elements in vector.
  * \param[in]   vtx         Pointer to vector data.
  */
-extern void vi_exp (size_t n_elem, scalar *restrict vtx);
-extern void vi_log (size_t n_elem, scalar *restrict vtx);
+extern void vi_exp   (size_t n_elem, scalar *restrict vtx);
+extern void vi_log   (size_t n_elem, scalar *restrict vtx);
+extern void vi_logr1 (size_t n_elem, scalar *restrict vtx);
+
 
 #define def_vi_op(name, op_func)                                        \
 inline void                                                             \
@@ -318,30 +320,6 @@ extern void mm_div_s (
     const size_t n_elem,
     const scalar val,
     scalar *restrict buffer);
-
-
-/** Replace non-normal values with 1 in log domain.
- *
- * \param[in]  vct      Pointer to input vector.
- * \param[in]  n_elem   Number of elements in input vector.
- * \param[out] out      Pointer to output buffer.
- */
-extern void
-v_logr1 (
-    scalar *restrict vct,
-    const size_t n_elem,
-    scalar *restrict out);
-
-
-/** Replace non-normal values with 1 in log domain inplace.
- *
- * \param[in]  vct      Pointer to input vector.
- * \param[in]  n_elem   Number of elements in input vector.
- */
-extern void
-vi_logr1 (
-    scalar *restrict vct,
-    const size_t n_elem);
 
 
 /** Logarithm of the sum of the exponential of the vector elements.

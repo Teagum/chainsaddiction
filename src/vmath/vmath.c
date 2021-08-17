@@ -3,8 +3,9 @@
 /*
  * Vector operators
  */
-def_v_op(exp, expl)
-def_v_op(log, logl)
+def_v_op (exp, expl)
+def_v_op (log, logl)
+def_v_op (logr1, logr1)
 
 
 inline scalar
@@ -68,6 +69,7 @@ v_argmin (size_t n_elem, const scalar *restrict vtx)
  */
 def_vi_op(exp, expl)
 def_vi_op(log, logl)
+def_vi_op(logr1, logr1)
 
 
 /*
@@ -109,32 +111,6 @@ def_mm_op_s_func(div, /)
 
 
 
-inline void
-v_logr1 (
-    scalar *restrict vct,
-    const size_t n_elem,
-    scalar *restrict out)
-{
-    FOR_EACH (i, n_elem)
-    {
-        *out = logr1 (*vct);
-        out++;
-        vct++;
-    }
-}
-
-
-inline void
-vi_logr1 (
-    scalar *restrict vct,
-    const size_t n_elem)
-{
-    FOR_EACH (i, n_elem)
-    {
-        *vct = logr1 (*vct);
-        vct++;
-    }
-}
 
 
 inline scalar
