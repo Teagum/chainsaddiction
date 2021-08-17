@@ -6,6 +6,7 @@
 def_v_op(exp, expl)
 def_v_op(log, logl)
 
+
 inline scalar
 v_max (size_t n_elem, const scalar *restrict vtx)
 {
@@ -16,6 +17,7 @@ v_max (size_t n_elem, const scalar *restrict vtx)
     return *max_ptr;
 }
 
+
 inline scalar
 v_min (size_t n_elem, const scalar *restrict vtx)
 {
@@ -24,6 +26,23 @@ v_min (size_t n_elem, const scalar *restrict vtx)
         min_ptr = *++vtx <= *min_ptr ? vtx : min_ptr;
     }
     return *min_ptr;
+}
+
+
+inline size_t
+v_argmax (size_t n_elem, const scalar *restrict vtx)
+{
+    size_t arg = 0;
+    size_t cnt = n_elem;
+    const long double *max_ptr = vtx;
+    while (--cnt) {
+        if (*++vtx >= *max_ptr)
+        {
+            max_ptr = vtx;
+            arg = cnt;
+        }
+    }
+    return n_elem - arg;
 }
 
 /*
@@ -135,26 +154,6 @@ vs_lse_centroid (
     }
     return logl (sum_exp_w/sum_exp);
 }
-
-
-extern size_t
-v_argmax (const size_t n_elem, const scalar *restrict vec)
-{
-    size_t arg = 0;
-    scalar max = *vec;
-
-    for (size_t i = 1; i < n_elem; i++)
-    {
-        if (vec[i] > max)
-        {
-            arg = i;
-            max = vec[i];
-        }
-    }
-    return arg;
-}
-
-
 
 
 inline void

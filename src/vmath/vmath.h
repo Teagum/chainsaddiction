@@ -113,6 +113,9 @@ extern void     v_exp       (size_t n_elem, const scalar *restrict vtx, scalar *
 extern void     v_log       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 extern scalar   v_max       (size_t n_elem, const scalar *restrict vtx);
 extern scalar   v_min       (size_t n_elem, const scalar *restrict vtx);
+extern size_t   v_argmax    (size_t n_elem, const scalar *restrict vtx);
+extern size_t   v_argmin    (size_t n_elem, const scalar *restrict vtx);
+
 
 #define def_v_op(name, op_func)                                     \
 inline void v_##name                                                \
