@@ -3,6 +3,30 @@
 /*
  * Operations on vectors
  */
+inline scalar
+v_sum (size_t n_elem, const scalar *restrict vtx)
+{
+    scalar sum = 0.0L;
+    while (n_elem--)
+    {
+        sum += *vtx++;
+    }
+    return sum;
+}
+
+
+inline scalar
+v_sumlog (size_t n_elem, const scalar *restrict vtx)
+{
+    scalar sum = 0.0L;
+    while (n_elem--)
+    {
+        sum += logl (*vtx++);
+    }
+    return sum;
+}
+
+
 def_v_op (exp, expl)
 def_v_op (log, logl)
 def_v_op (logr1, logr1)
@@ -164,15 +188,6 @@ vi_softmax (scalar *buffer, size_t n_elem)
     {
         buffer[i] /= total;
     }
-}
-
-
-inline scalar
-v_sum (
-    const scalar *restrict vt,
-    const size_t n_elem)
-{
-    return vs_sum (vt, n_elem, 1);
 }
 
 

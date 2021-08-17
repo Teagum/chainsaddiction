@@ -9,6 +9,9 @@
 
 bool test__strided_max (void);
 
+bool test__v_sum (void);
+bool test__v_sumlog (void);
+
 bool test__v_argmax (void);
 bool test__v_argmax__max_on_first (void);
 bool test__v_argmax__max_on_last (void);

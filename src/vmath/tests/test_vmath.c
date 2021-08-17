@@ -3,6 +3,64 @@
 
 
 bool
+test__v_sum (void)
+{
+    enum setup {
+        max_vector_size =  1000,
+        SR_LB           =  -100,
+        SR_UB           =   100
+    };
+
+    const size_t n_elem = rnd_size (1, max_vector_size);
+          scalar res    = 0.0L;
+          scalar sum    = 0.0L;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+    v_rnd_scalar (n_elem, SR_LB, SR_UB, vtx);
+
+
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        sum += vtx[i];
+    }
+    res = v_sum (n_elem, vtx);
+
+    FREE (vtx);
+    return ASSERT_EQUAL (res, sum) ? false : true;
+}
+
+
+bool
+test__v_sumlog (void)
+{
+    enum setup {
+        max_vector_size =  1000,
+        SR_LB           =     1,
+        SR_UB           =   100
+    };
+
+    const size_t n_elem = rnd_size (1, max_vector_size);
+          scalar res    = 0.0L;
+          scalar sum    = 0.0L;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+    v_rnd_scalar (n_elem, SR_LB, SR_UB, vtx);
+
+
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        sum += logl (vtx[i]);
+    }
+    res = v_sumlog (n_elem, vtx);
+
+    FREE (vtx);
+    return ASSERT_EQUAL (res, sum) ? false : true;
+}
+
+
+bool
 test__v_argmin (void)
 {
     const size_t n_elem  = rnd_size (1, 10);

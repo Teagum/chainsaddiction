@@ -102,6 +102,8 @@ enum vmath_error_codes {
  * \param[in]   vtx         Pointer to vector data.
  * \param[out]  out         Pointer to output obejct.
  */
+extern scalar   v_sum       (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_sumlog    (size_t n_elem, const scalar *restrict vtx);
 extern void     v_exp       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 extern void     v_log       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 extern void     v_logr1     (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
@@ -346,16 +348,6 @@ v_argmax (const size_t n_elem, const scalar *restrict vec);
 extern void
 vi_softmax (scalar *buffer, size_t n_elem);
 
-
-/** Compute the sum of the vector elements.
- *
- * \param _vt       Pointer to input data.
- * \param n_elem    Number of elements.
- */
-extern scalar
-v_sum (
-    const scalar *restrict _vt,
-    const size_t n_elem);
 
 /* === Strided vector interface ==== */
 
