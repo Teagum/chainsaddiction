@@ -4,6 +4,11 @@
 inline int
 rnd_int (const int r_min, const int r_max)
 {
+    if (r_max <= r_min)
+    {
+        errno = EDOM;
+        return 0;
+    }
     return r_min + (RND_INT % (r_max - r_min));
 }
 

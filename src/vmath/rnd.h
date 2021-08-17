@@ -1,6 +1,7 @@
 #ifndef rnd_h
 #define rnd_h
 
+#include <errno.h>
 #include <stdlib.h>
 #include <time.h>
 #include "config.h"
@@ -32,7 +33,11 @@ rnd_int (
     const int r_max);
 
 
-/* Sample `n_elem' random values of type integer form interval.
+/* Sample `n_elem' random values of type integer from interval.
+ *
+ * `r_min` must be less then `r_max`. Otherwise the function sets errno
+ * and returns 0.
+ *
  * \param[in]  n_elem   Number of elements.
  * \param[in]  r_min    Lower bound of sampling range.
  * \param[in]  r_max    Upper bound of sampling range.
