@@ -12,6 +12,8 @@ bool test__v_argmax (void);
 bool test__v_argmax__max_on_first (void);
 bool test__v_argmax__max_on_last (void);
 bool test__v_max (void);
+bool test__v_max__max_on_first (void);
+bool test__v_max__max_on_last (void);
 bool test__v_lse (void);
 bool test__vs_lse_centroid (void);
 bool test__vs_sum (void);

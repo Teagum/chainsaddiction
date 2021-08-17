@@ -151,6 +151,42 @@ test__v_max (void)
     return err;
 }
 
+bool
+test__v_max__max_on_first (void)
+{
+    size_t max_idx = 0u;
+    scalar max_val = 2.0L;
+    scalar res     = 0.0L;
+    size_t n_elem  = rnd_size (1, 100);
+    scalar *vtx    = VA_SCALAR_EMPTY (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_sample (n_elem, vtx);
+    vtx[max_idx] = max_val;
+    res = v_max (n_elem, vtx);
+
+    FREE (vtx);
+    return ASSERT_EQUAL (res, max_val) ? false : true;
+}
+
+
+bool
+test__v_max__max_on_last (void)
+{
+    scalar max_val = 2.0L;
+    scalar res     = 0.0L;
+    size_t n_elem  = rnd_size (1, 100);
+    size_t max_idx = n_elem - 1;
+    scalar *vtx    = VA_SCALAR_EMPTY (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_sample (n_elem, vtx);
+    vtx[max_idx] = max_val;
+    res = v_max (n_elem, vtx);
+
+    FREE (vtx);
+    return ASSERT_EQUAL (res, max_val) ? false : true;
+}
 
 bool
 test__vs_sum (void)
