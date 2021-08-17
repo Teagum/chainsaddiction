@@ -37,7 +37,7 @@ test__v_lse (void)
     bool err = true;
 
     v_sample (n_elem, vals);
-    v_log (vals, n_elem, lvals);
+    v_log (n_elem, vals, lvals);
     for (size_t i = 0; i < n_elem; i++) { lsum_vals += vals[i]; }
     lsum_vals = logl (lsum_vals);
     lse = v_lse (lvals, n_elem);
@@ -66,7 +66,7 @@ test__vs_lse_centroid (void)
 
     v_sample (n_elem, weights);
     v_sample (n_elem, vals);
-    v_log (vals, n_elem, lvals);
+    v_log (n_elem, vals, lvals);
     for (size_t i = 0; i < n_elem; i++) {
         sum += vals[i];
         wsum += vals[i] * weights[i];
@@ -298,7 +298,7 @@ test__m_log_centroid_cols (void)
     }
 
     m_rnd_scalar (SR_LB, SR_UB, n_rows, n_cols, arr);
-    v_log (arr, n_elem, larr);
+    v_log (n_elem, arr, larr);
     v_rnd_scalar (n_rows, 0, 100, weight_per_row);
 
     for (size_t i = 0; i < n_elem; i++)
