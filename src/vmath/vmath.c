@@ -1,7 +1,7 @@
 #include "vmath.h"
 
 /*
- * Vector operators
+ * Operations on vectors
  */
 def_v_op (exp, expl)
 def_v_op (log, logl)
@@ -76,7 +76,7 @@ v_argmin (size_t n_elem, const scalar *restrict vtx)
 
 
 /*
- * Vector inplace operators
+ * Inplace operations on vectors
  */
 def_vi_op(exp, expl)
 def_vi_op(log, logl)
@@ -84,31 +84,34 @@ def_vi_op(logr1, logr1)
 
 
 /*
- * Vector/scalar operators
+ * Basic vector/scalar arithmetic
  */
 def_vs_op(add, +)
 def_vs_op(sub, -)
 def_vs_op(mul, *)
 def_vs_op(div, /)
 
+
 /*
- * Vector/scalar inplace operators
+ * Basic vector/scalar inplace arithmetic
  */
 def_vsi_op(add, +)
 def_vsi_op(sub, -)
 def_vsi_op(mul, *)
 def_vsi_op(div, /)
 
+
 /*
- * Vector/vector arithmetic
+ * Basic vector/vector arithmetic
  */
 def_vv_op(add, +)
 def_vv_op(sub, -)
 def_vv_op(mul, *)
 def_vv_op(div, /)
 
+
 /*
- * Vector/vector inplace arithmetic
+ * Basic vector/vector inplace arithmetic
  */
 def_vvi_op(add, +)
 def_vvi_op(sub, -)

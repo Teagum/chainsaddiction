@@ -94,7 +94,7 @@ enum vmath_error_codes {
  * ============================================================================
  */
 
-/** Common vector functions
+/** Operations on vectors
  *
  * Evaluate function elementwise and copy result to output buffer.
  *
@@ -121,7 +121,7 @@ inline void v_##name                                                \
 }
 
 
-/** Common inplace vector functions
+/** Inplace operations on vectors
  *
  * Evaluate function elementwise and copy result to output buffer.
  *
@@ -132,10 +132,9 @@ extern void vi_exp   (size_t n_elem, scalar *restrict vtx);
 extern void vi_log   (size_t n_elem, scalar *restrict vtx);
 extern void vi_logr1 (size_t n_elem, scalar *restrict vtx);
 
-
 #define def_vi_op(name, op_func)                                        \
 inline void                                                             \
-vi_##name (size_t n_elem, scalar *restrict vtx) { \
+vi_##name (size_t n_elem, scalar *restrict vtx) {                       \
     while (n_elem--) {                                                  \
         *vtx = op_func (*vtx);                                          \
         vtx++;                                                          \
@@ -147,14 +146,14 @@ vi_##name (size_t n_elem, scalar *restrict vtx) { \
  * ============================================================================
  */
 
-/** Vector/scalar arithmetic
+/** Basic vector/scalar arithmetic
  *
  * Perform given operation and copy the result to `out`.
  *
- * \param n_elem    Number of elemets.
- * \param alpha     Constant scalar value.
- * \param vtx       Pointer to vector data.
- * \param out       Pointer to output object.
+ * \param[in]   n_elem      Number of elemets.
+ * \param[in]   alpha       Constant scalar value.
+ * \param[in]   vtx         Pointer to vector data.
+ * \param[out]  out         Pointer to output object.
  */
 extern void vs_add (size_t n_elem, const scalar alpha, scalar *vtx, scalar *out);
 extern void vs_sub (size_t n_elem, const scalar alpha, scalar *vtx, scalar *out);
@@ -174,13 +173,13 @@ inline void vs_##name (             \
 }
 
 
-/** Vector/scalar inplace arithmetic
+/** Basic vector/scalar inplace arithmetic
  *
  * Perform given operation inplace
  *
- * \param n_elem    Number of elemets.
- * \param alpha     Constant scalar value.
- * \param vtx       Pointer to vector data.
+ * \param[in]   n_elem      Number of elemets.
+ * \param[in]   alpha       Constant scalar value.
+ * \param[in]   vtx         Pointer to vector data.
  */
 extern void vsi_add (size_t n_elem, const scalar alpha, scalar *restrict vtx);
 extern void vsi_sub (size_t n_elem, const scalar alpha, scalar *restrict vtx);
@@ -208,14 +207,14 @@ inline void vsi_##name (            \
 
 /** Basic vector/vector arithmetic
  *
- * Perform given operation and copy data to output buffer.
- * Vectors are expected to be contiguous objects with a size of at least
- * `n_elem * sizeof (scalar)`.
+ * Perform given operation and copy data to output buffer.  Vectors are
+ * expected to be contiguous objects with a size of at least `n_elem * sizeof
+ * (scalar)`.
  *
- * \param[in]  n_elem    Number of elements in each vector.
- * \param[in]  vtx       Pointer to vector data.
- * \param[in]  vty       Pointer to vector data.
- * \param[out] out       Pointer to output object.
+ * \param[in]   n_elem      Number of elements in each vector.
+ * \param[in]   vtx         Pointer to vector data.
+ * \param[in]   vty         Pointer to vector data.
+ * \param[out]  out         Pointer to output object.
  */
 extern void vv_add (size_t n_elem, scalar *vtx, scalar *vty, scalar *out);
 extern void vv_sub (size_t n_elem, scalar *vtx, scalar *vty, scalar *out);
@@ -233,13 +232,13 @@ inline void vv_##name (size_t n_elem, scalar *vtx, scalar *vty, scalar *out)\
 
 /** Basic vector/vector inplace arithmetic
  *
- * Perform given operation and modify data of second buffer.
- * Vectors are expected to be contiguous objects with a size of at least
- * `n_elem * sizeof (scalar)`.
+ * Perform given operation and modify data of second buffer.  Vectors are
+ * expected to be contiguous objects with a size of at least `n_elem * sizeof
+ * (scalar)`.
  *
- * \param[in]       n_elem    Number of elements in each vector.
- * \param[in]       vtx       Pointer to vector data.
- * \param[in, out]  vty       Pointer to vector data.
+ * \param[in]       n_elem      Number of elements in each vector.
+ * \param[in]       vtx         Pointer to vector data.
+ * \param[in, out]  vty         Pointer to vector data.
  */
 extern void vvi_add (size_t n_elem, scalar *vtx, scalar *vty);
 extern void vvi_sub (size_t n_elem, scalar *vtx, scalar *vty);
