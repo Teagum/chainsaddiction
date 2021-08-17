@@ -16,6 +16,8 @@ int main (void)
 
     RUN_TEST (test__strided_max);
     RUN_TEST (test__v_argmax);
+    RUN_TEST (test__v_argmax__max_on_first);
+    RUN_TEST (test__v_argmax__max_on_last);
     RUN_TEST (test__v_max);
     RUN_TEST (test__v_lse);
     RUN_TEST (test__vs_lse_centroid);

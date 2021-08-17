@@ -32,7 +32,7 @@ v_min (size_t n_elem, const scalar *restrict vtx)
 inline size_t
 v_argmax (size_t n_elem, const scalar *restrict vtx)
 {
-    size_t arg = 0;
+    size_t arg = n_elem;
     size_t cnt = n_elem;
     const long double *max_ptr = vtx;
     while (--cnt) {

@@ -3,6 +3,64 @@
 
 
 bool
+test__v_argmax (void)
+{
+    const size_t n_elem  = rnd_size (1, 10);
+    const size_t max_idx = rnd_size (0, n_elem-1);
+    const scalar max_val = 999.0L;
+          size_t res_idx = 0;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_sample (n_elem, vtx);
+    vtx[max_idx] = max_val;
+    res_idx = v_argmax (n_elem, vtx);
+
+    FREE (vtx);
+    return (max_idx == res_idx) ? false : true;
+}
+
+
+bool test__v_argmax__max_on_first (void)
+{
+    const size_t n_elem  = rnd_size (1, 10);
+    const size_t max_idx = 0;
+    const scalar max_val = 999.0L;
+          size_t res_idx = 999;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_sample (n_elem, vtx);
+    vtx[max_idx] = max_val;
+    res_idx = v_argmax (n_elem, vtx);
+
+    FREE (vtx);
+    return (max_idx == res_idx) ? false : true;
+}
+
+
+bool test__v_argmax__max_on_last (void)
+{
+    const size_t n_elem  = rnd_size (1, 10);
+    const size_t max_idx = n_elem-1;
+    const scalar max_val = 999.0L;
+          size_t res_idx = 999;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_sample (n_elem, vtx);
+    vtx[max_idx] = max_val;
+    res_idx = v_argmax (n_elem, vtx);
+
+    FREE (vtx);
+    return (max_idx == res_idx) ? false : true;
+}
+
+
+bool
 test__strided_max (void)
 {
     bool err = true;
@@ -362,16 +420,17 @@ test__mm_add_s (void)
 }
 
 
+/*
 bool
 test__v_argmax (void)
 {
     enum {
-        size_bound = 100,
+        size_bound = 20,
     };
 
     size_t res = 0;
     const size_t n_elem  = rnd_size (1, size_bound);
-    const size_t arg_max = rnd_size (0, n_elem);
+    const size_t arg_max = rnd_size (0, n_elem-1);
     const scalar max_val =  999.0L;
     const scalar SR_LB   = -100.0L;
     const scalar SR_UB   =  100.0L;
@@ -382,8 +441,11 @@ test__v_argmax (void)
 
     res = v_argmax (n_elem, vect);
 
+    print_vector (n_elem, vect);
+    printf ("Arg: %zu Expected %zu\n", res, arg_max);
     return res == arg_max ? false : true;
 }
+*/
 
 bool
 test__m_row_argmax (void)
