@@ -87,7 +87,7 @@ test__v_max (void)
 
     v_sample (n_elem, vals);
     vals[n_elem/2] = max;
-    err = !ASSERT_EQUAL (v_max (vals, n_elem), max);
+    err = !ASSERT_EQUAL (v_max (n_elem, vals), max);
 
     FREE (vals);
     return err;
