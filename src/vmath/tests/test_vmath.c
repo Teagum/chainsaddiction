@@ -158,23 +158,30 @@ test__strided_max (void)
 bool
 test__v_lse (void)
 {
-    const size_t n_elem = 100;
-    scalar *vals = VA_SCALAR_EMPTY (n_elem);
-    scalar *lvals = VA_SCALAR_EMPTY (n_elem);
-    scalar lsum_vals = 0;
-    scalar lse = 0;
-    bool err = true;
+    enum setup {
+        max_vector_size =  100,
+    };
 
-    v_sample (n_elem, vals);
-    v_log (n_elem, vals, lvals);
-    for (size_t i = 0; i < n_elem; i++) { lsum_vals += vals[i]; }
-    lsum_vals = logl (lsum_vals);
-    lse = v_lse (lvals, n_elem);
+    const size_t n_elem   = rnd_size (1, max_vector_size);
+          scalar lsum_vtx = 0;
+          scalar lse      = 0;
 
-    err = !ASSERT_EQUAL (lsum_vals, lse);
-    FREE (vals);
-    FREE (lvals);
-    return err;
+    scalar *vtx  = VA_SCALAR_EMPTY (n_elem);
+    scalar *lvtx = VA_SCALAR_EMPTY (n_elem);
+    if (vtx == NULL || lvtx == NULL) return true;
+
+    v_sample (n_elem, vtx);
+    v_log (n_elem, vtx, lvtx);
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        lsum_vtx += vtx[i];
+    }
+    lsum_vtx = logl (lsum_vtx);
+    lse = v_lse (n_elem, lvtx);
+
+    FREE (vtx);
+    FREE (lvtx);
+    return ASSERT_EQUAL (lsum_vtx, lse) ? false : true;
 }
 
 

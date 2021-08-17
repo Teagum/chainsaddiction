@@ -105,6 +105,7 @@ enum vmath_error_codes {
 extern void     v_exp       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 extern void     v_log       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 extern void     v_logr1     (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern scalar   v_lse       (size_t n_elem, const scalar *restrict vtx);
 extern scalar   v_max       (size_t n_elem, const scalar *restrict vtx);
 extern scalar   v_min       (size_t n_elem, const scalar *restrict vtx);
 extern size_t   v_argmax    (size_t n_elem, const scalar *restrict vtx);
@@ -320,10 +321,6 @@ extern void mm_div_s (
  * \param vctr      Pointer to input data.
  * \param n_elem    Number of vector elements.
  */
-extern scalar
-v_lse (
-    const scalar *restrict vctr,
-    const size_t n_elem);
 
 
 extern scalar

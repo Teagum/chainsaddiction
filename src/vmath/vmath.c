@@ -7,6 +7,17 @@ def_v_op (exp, expl)
 def_v_op (log, logl)
 def_v_op (logr1, logr1)
 
+inline scalar
+v_lse (size_t n_elem, const scalar *restrict vtx)
+{
+    const scalar max_val = v_max (n_elem, vtx);
+    scalar sum_exp = 0;
+    for (size_t i = 0; i < n_elem; i++, vtx++)
+    {
+        sum_exp += expl (*vtx - max_val);
+    }
+    return logl (sum_exp) + max_val;
+}
 
 inline scalar
 v_max (size_t n_elem, const scalar *restrict vtx)
@@ -113,19 +124,6 @@ def_mm_op_s_func(div, /)
 
 
 
-inline scalar
-v_lse (
-    const scalar *restrict vctr,
-    const size_t n_elem)
-{
-    const scalar max_val = v_max (n_elem, vctr);
-    scalar sum_exp = 0;
-    for (size_t i = 0; i < n_elem; i++, vctr++)
-    {
-        sum_exp += expl (*vctr - max_val);
-    }
-    return logl (sum_exp) + max_val;
-}
 
 
 inline scalar
