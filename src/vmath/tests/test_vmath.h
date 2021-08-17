@@ -8,9 +8,15 @@
 
 
 bool test__strided_max (void);
+
 bool test__v_argmax (void);
 bool test__v_argmax__max_on_first (void);
 bool test__v_argmax__max_on_last (void);
+
+bool test__v_argmin (void);
+bool test__v_argmin__min_on_first (void);
+bool test__v_argmin__min_on_last (void);
+
 bool test__v_max (void);
 bool test__v_max__max_on_first (void);
 bool test__v_max__max_on_last (void);

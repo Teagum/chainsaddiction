@@ -15,11 +15,18 @@ int main (void)
     RUN_TEST (test__v_sample);
 
     RUN_TEST (test__strided_max);
+
     RUN_TEST (test__v_argmax);
     RUN_TEST (test__v_argmax__max_on_first);
     RUN_TEST (test__v_argmax__max_on_last);
+
+    RUN_TEST (test__v_argmin);
+    RUN_TEST (test__v_argmin__min_on_first);
+    RUN_TEST (test__v_argmin__min_on_last);
+
     RUN_TEST (test__v_max__max_on_last);
     RUN_TEST (test__v_max);
+
     RUN_TEST (test__v_max__max_on_first);
     RUN_TEST (test__v_max__max_on_last);
     RUN_TEST (test__v_lse);

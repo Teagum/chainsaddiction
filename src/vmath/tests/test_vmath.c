@@ -3,6 +3,77 @@
 
 
 bool
+test__v_argmin (void)
+{
+    const size_t n_elem  = rnd_size (1, 10);
+    const size_t min_idx = rnd_size (0, n_elem-1);
+    const scalar min_val = -111.0L;
+          size_t res_idx =    0u;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_rnd_scalar (n_elem, -10, 10, vtx);
+    vtx[min_idx] = min_val;
+    res_idx = v_argmin (n_elem, vtx);
+
+    FREE (vtx);
+    return (min_idx == res_idx) ? false : true;
+}
+
+
+bool
+test__v_argmin__min_on_first (void)
+{
+    enum setup {
+        max_vector_size =  100,
+        min_idx         =    0,
+        min_val         = -111,
+        SR_LB           = -100,
+        SR_UB           =  100
+    };
+
+    const size_t n_elem  = rnd_size (1, max_vector_size);
+          size_t res_idx = 0u;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_rnd_scalar (n_elem, SR_LB, SR_UB, vtx);
+    vtx[min_idx] = min_val;
+    res_idx = v_argmin (n_elem, vtx);
+
+    FREE (vtx);
+    return (min_idx == res_idx) ? false : true;
+}
+
+
+bool
+test__v_argmin__min_on_last (void)
+{
+    enum setup {
+        max_vector_size =  100,
+        min_val         = -111,
+        SR_LB           = -100,
+        SR_UB           =  100
+    };
+
+    const size_t n_elem  = rnd_size (1, max_vector_size);
+    const size_t min_idx = n_elem - 1;
+          size_t res_idx = 0u;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_rnd_scalar (n_elem, SR_LB, SR_UB, vtx);
+    vtx[min_idx] = min_val;
+    res_idx = v_argmin (n_elem, vtx);
+
+    FREE (vtx);
+    return (min_idx == res_idx) ? false : true;
+}
+
+bool
 test__v_argmax (void)
 {
     const size_t n_elem  = rnd_size (1, 10);
