@@ -45,6 +45,24 @@ v_argmax (size_t n_elem, const scalar *restrict vtx)
     return n_elem - arg;
 }
 
+
+inline size_t
+v_argmin (size_t n_elem, const scalar *restrict vtx)
+{
+    size_t arg = n_elem;
+    size_t cnt = n_elem;
+    const long double *max_ptr = vtx;
+    while (--cnt) {
+        if (*++vtx <= *max_ptr)
+        {
+            max_ptr = vtx;
+            arg = cnt;
+        }
+    }
+    return n_elem - arg;
+}
+
+
 /*
  * Vector inplace operators
  */
