@@ -47,13 +47,6 @@ enum vmath_error_codes {
 #define OUTER_LOOP for (size_t i = 0; i < n_elem; i++)
 #define INNER_LOOP for (size_t j = 0; j < n_elem; j++)
 
-#define M_OUTER_LOOP for (size_t i = 0; i < _n_rows; i++)
-#define M_INNER_LOOP for (size_t j = 0; j < _n_cols; j++)
-#define ITER_MATRIX \
-   M_OUTER_LOOP { \
-      M_INNER_LOOP { \
-#define END_ITER_MATRIX }}
-
 
 #define NEWLINE fputc ('\n', stderr)
 #define RED "\x1b[33m"
