@@ -228,8 +228,8 @@ test__log_vmp (void)
 
     v_sample (n_elem, vt);
     v_sample (n_elem*n_elem, mt);
-    vi_log (vt, n_elem);
-    vi_log (mt, n_elem*n_elem);
+    vi_log (n_elem, vt);
+    vi_log (n_elem*n_elem, mt);
 
     log_vmp (vt, mt, n_elem, b1, b2, res);
 
@@ -254,8 +254,8 @@ test__log_mvp (void)
 
     v_sample (n, vt);
     v_sample (n*n, mt);
-    vi_log (vt, n);
-    vi_log (mt, n*n);
+    vi_log (n ,vt);
+    vi_log (n*n, mt);
 
     log_mvp (mt, vt, n, b1, b2, res);
 
@@ -315,7 +315,7 @@ test__m_log_centroid_cols (void)
         expected_result[i] /= sum_per_col[i];
     }
 
-    vi_log (expected_result, n_cols);
+    vi_log (n_cols, expected_result);
     m_log_centroid_cols (larr, weight_per_row, n_rows, n_cols, average_per_col);
 
     for (size_t i = 0; i < n_cols; i++)
