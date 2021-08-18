@@ -1,6 +1,7 @@
 #ifndef VMATH_H
 #define VMATH_H
 
+#include <errno.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>

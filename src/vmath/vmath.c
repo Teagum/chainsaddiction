@@ -426,3 +426,45 @@ strided_absmax (
     }
     return c_max;
 }
+
+
+inline scalar
+v_acc_sum (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx)
+{
+    scalar sum = 0.0L;
+    size_t end =   0u;
+    if (n_elem == 0 || stride == 0)
+    {
+        errno = EDOM;
+        return 0.0L;
+    }
+
+    end = n_elem / stride;
+    for (size_t i = 0; i < end; i++)
+    {
+        sum += op (*vtx);
+        vtx+=stride;
+    }
+    return sum;
+}
+
+
+inline scalar
+v_acc_prod (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx)
+{
+    scalar prob = 0.0L;
+    size_t end  =   0u;
+    if (n_elem == 0 || stride == 0)
+    {
+        errno = EDOM;
+        return 0.0L;
+    }
+
+    end = n_elem / stride;
+    for (size_t i = 0; i < end; i++)
+    {
+        prob += op (*vtx);
+        vtx+=stride;
+    }
+    return prob;
+}
