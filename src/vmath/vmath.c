@@ -432,18 +432,19 @@ inline scalar
 v_acc_sum (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx)
 {
     scalar sum = 0.0L;
-    size_t end =   0u;
     if (n_elem == 0 || stride == 0)
     {
         errno = EDOM;
         return 0.0L;
     }
 
-    end = n_elem / stride;
-    for (size_t i = 0; i < end; i++)
+    if (op == NULL)
     {
-        sum += op (*vtx);
-        vtx+=stride;
+        acc_sum (n_elem, stride, vtx, &sum);
+    }
+    else
+    {
+        acc_sum_op(n_elem, stride, op, vtx, &sum);
     }
     return sum;
 }
@@ -452,19 +453,68 @@ v_acc_sum (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *re
 inline scalar
 v_acc_prod (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx)
 {
-    scalar prob = 0.0L;
-    size_t end  =   0u;
+    scalar prod = 1.0L;
     if (n_elem == 0 || stride == 0)
     {
         errno = EDOM;
         return 0.0L;
     }
 
-    end = n_elem / stride;
-    for (size_t i = 0; i < end; i++)
+    if (op == NULL)
     {
-        prob += op (*vtx);
+        acc_prod(n_elem, stride, vtx, &prod);
+    }
+    else
+    {
+        acc_prod_op(n_elem, stride, op, vtx, &prod);
+    }
+    return prod;
+}
+
+
+inline void
+acc_sum_op (size_t n_elem, size_t stride, scalar (*op) (scalar),
+            const scalar *restrict vtx, scalar *restrict res)
+{
+    for (size_t i = 0; i < n_elem; i+=stride)
+    {
+        *res += op (*vtx);
         vtx+=stride;
     }
-    return prob;
+}
+
+
+inline void
+acc_sum (size_t n_elem, size_t stride, const scalar *restrict vtx,
+         scalar *restrict res)
+{
+    for (size_t i = 0; i < n_elem; i+=stride)
+    {
+        *res += (*vtx);
+        vtx+=stride;
+    }
+}
+
+
+inline void
+acc_prod_op (size_t n_elem, size_t stride, scalar (*op) (scalar),
+             const scalar *restrict vtx, scalar *restrict res)
+{
+    for (size_t i = 0; i < n_elem; i+=stride)
+    {
+        *res *= op (*vtx);
+        vtx+=stride;
+    }
+}
+
+
+inline void
+acc_prod (size_t n_elem, size_t stride, const scalar *restrict vtx,
+          scalar *restrict res)
+{
+    for (size_t i = 0; i < n_elem; i+=stride)
+    {
+        *res += (*vtx);
+        vtx+=stride;
+    }
 }

@@ -113,6 +113,8 @@ extern scalar   v_max       (size_t n_elem, const scalar *restrict vtx);
 extern scalar   v_min       (size_t n_elem, const scalar *restrict vtx);
 extern size_t   v_argmax    (size_t n_elem, const scalar *restrict vtx);
 extern size_t   v_argmin    (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_acc_prod  (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx);
+extern scalar   v_acc_sum   (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx);
 
 #define def_v_op(name, op_func)                                     \
 inline void v_##name                                                \
@@ -571,6 +573,40 @@ strided_absmax (
     const size_t n_elem,
     const size_t stride,
     const scalar *restrict buffer);
+
+
+extern void 
+acc_sum (
+    size_t n_elem,
+    size_t stride,
+    const scalar *restrict vtx,
+    scalar *restrict res);
+
+
+extern void
+acc_prod (
+    size_t n_elem,
+    size_t stride,
+    const scalar *restrict vtx,
+    scalar *restrict res);
+
+
+extern void
+acc_sum_op (
+    size_t n_elem,
+    size_t stride,
+    scalar (*op) (scalar),
+    const scalar *restrict vtx,
+    scalar *res);
+
+
+extern void
+acc_prod_op (
+    size_t n_elem,
+    size_t stride,
+    scalar (*op) (scalar),
+    const scalar *restrict vtx,
+    scalar *res);
 
 
 #endif  /* VMATH_H */
