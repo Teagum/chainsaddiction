@@ -5,6 +5,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "alloc.h"
 #include "config.h"
 #include "core.h"
 
@@ -16,10 +17,6 @@
  * s:   strided operation
  */
 
-#define ASSERT_ALLOC(buff) if (buff == NULL) {          \
-    fputs ("Could not allocate buffer.\n", stderr);     \
-    return 1;                                           \
-}
 
 #define SUCCESS 0
 
@@ -27,18 +24,6 @@ enum vmath_error_codes {
     VM_ERR_ZERO_SIZED_BUFFER = -1,
 };
 
-#define VA_SCALAR_EMPTY(n_elem) malloc ((n_elem) * sizeof (scalar));
-#define VA_SCALAR_ZEROS(n_elem) calloc (n_elem, sizeof (scalar))
-#define VA_INT_EMPTY(n_elem) malloc ((n_elem) * sizeof (int))
-#define VA_INT_ZEROS(n_elem) calloc (n_elem, sizeof (int))
-#define VA_SIZE_EMPTY(n_elem) malloc ((n_elem) * sizeof (size_t));
-#define VA_SIZE_ZEROS(n_elem) calloc (n_elem, sizeof (size_t));
-
-
-#define FREE(buff) do { \
-    free (buff);        \
-    buff = NULL;        \
-} while (0)
 
 #define FOR_EACH(idx, max) for (size_t (idx) = 0; (idx) < (max); (idx++))
 

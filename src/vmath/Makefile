@@ -37,7 +37,7 @@ check: $(lib) test
 	@$(MAKE) runtest -C tests
 
 core.o: core.h config.h
-vmath.o: vmath.h config.h 
+vmath.o: alloc.h config.h vmath.h
 rnd.o: rnd.h config.h
 stats.o: stats.h config.h
 
