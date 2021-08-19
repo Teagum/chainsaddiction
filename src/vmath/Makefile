@@ -7,7 +7,7 @@ vpath
 vpath %.h .
 vpath %.h ..
 
-export objs := vmath.o rnd.o stats.o
+export objs := core.o vmath.o rnd.o stats.o
 lib := libvmath.a
 
 warnings = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
@@ -36,6 +36,7 @@ cleantest:
 check: $(lib) test
 	@$(MAKE) runtest -C tests
 
+core.o: core.h config.h
 vmath.o: vmath.h config.h 
 rnd.o: rnd.h config.h
 stats.o: stats.h config.h

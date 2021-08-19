@@ -6,24 +6,14 @@
 inline scalar
 v_sum (size_t n_elem, const scalar *restrict vtx)
 {
-    scalar sum = 0.0L;
-    while (n_elem--)
-    {
-        sum += *vtx++;
-    }
-    return sum;
+    return v_acc_sum (n_elem, 1, NULL, vtx);
 }
 
 
 inline scalar
 v_sumlog (size_t n_elem, const scalar *restrict vtx)
 {
-    scalar sum = 0.0L;
-    while (n_elem--)
-    {
-        sum += logl (*vtx++);
-    }
-    return sum;
+    return v_acc_sum (n_elem, 1, logl, vtx);
 }
 
 
@@ -472,49 +462,3 @@ v_acc_prod (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *r
 }
 
 
-inline void
-acc_sum_op (size_t n_elem, size_t stride, scalar (*op) (scalar),
-            const scalar *restrict vtx, scalar *restrict res)
-{
-    for (size_t i = 0; i < n_elem; i+=stride)
-    {
-        *res += op (*vtx);
-        vtx+=stride;
-    }
-}
-
-
-inline void
-acc_sum (size_t n_elem, size_t stride, const scalar *restrict vtx,
-         scalar *restrict res)
-{
-    for (size_t i = 0; i < n_elem; i+=stride)
-    {
-        *res += (*vtx);
-        vtx+=stride;
-    }
-}
-
-
-inline void
-acc_prod_op (size_t n_elem, size_t stride, scalar (*op) (scalar),
-             const scalar *restrict vtx, scalar *restrict res)
-{
-    for (size_t i = 0; i < n_elem; i+=stride)
-    {
-        *res *= op (*vtx);
-        vtx+=stride;
-    }
-}
-
-
-inline void
-acc_prod (size_t n_elem, size_t stride, const scalar *restrict vtx,
-          scalar *restrict res)
-{
-    for (size_t i = 0; i < n_elem; i+=stride)
-    {
-        *res += (*vtx);
-        vtx+=stride;
-    }
-}

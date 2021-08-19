@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "config.h"
+#include "core.h"
 
 /*
  * Prefixes:
@@ -574,39 +575,6 @@ strided_absmax (
     const size_t stride,
     const scalar *restrict buffer);
 
-
-extern void 
-acc_sum (
-    size_t n_elem,
-    size_t stride,
-    const scalar *restrict vtx,
-    scalar *restrict res);
-
-
-extern void
-acc_prod (
-    size_t n_elem,
-    size_t stride,
-    const scalar *restrict vtx,
-    scalar *restrict res);
-
-
-extern void
-acc_sum_op (
-    size_t n_elem,
-    size_t stride,
-    scalar (*op) (scalar),
-    const scalar *restrict vtx,
-    scalar *res);
-
-
-extern void
-acc_prod_op (
-    size_t n_elem,
-    size_t stride,
-    scalar (*op) (scalar),
-    const scalar *restrict vtx,
-    scalar *res);
 
 
 #endif  /* VMATH_H */
