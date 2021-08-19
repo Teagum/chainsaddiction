@@ -31,7 +31,6 @@ enum vmath_error_codes {
 #define INNER_LOOP for (size_t j = 0; j < n_elem; j++)
 
 
-#define logr1(val) isnormal (val) ? logl (val) : 1L
 
 /*
  * ============================================================================
@@ -518,6 +517,9 @@ strided_absmax (
     const size_t stride,
     const scalar *restrict buffer);
 
+
+
+extern scalar logr1 (scalar val);
 
 
 #endif  /* VMATH_H */

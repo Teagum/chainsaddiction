@@ -462,3 +462,15 @@ v_acc_prod (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *r
 }
 
 
+inline scalar
+logr1 (scalar val)
+{
+    if (isnormal (val))
+    {
+        return logl (val);
+    }
+    else
+    {
+        return 1.0L;
+    }
+}
