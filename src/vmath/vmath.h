@@ -68,14 +68,13 @@ extern void vi_exp   (size_t n_elem, scalar *restrict vtx);
 extern void vi_log   (size_t n_elem, scalar *restrict vtx);
 extern void vi_logr1 (size_t n_elem, scalar *restrict vtx);
 
-#define def_vi_op(name, op_func)                                        \
-inline void                                                             \
-vi_##name (size_t n_elem, scalar *restrict vtx) {                       \
-    while (n_elem--) {                                                  \
-        *vtx = op_func (*vtx);                                          \
-        vtx++;                                                          \
-    }                                                                   \
+#define def_vi_op(name, op_func) \
+inline void                                         \
+vi_##name (size_t n_elem, scalar *restrict vtx) {   \
+    inplace_op (n_elem, 1, op_func, vtx);           \
 }
+
+
 /*
  * ============================================================================
  * Vector/scalar interface
