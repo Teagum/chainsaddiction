@@ -42,6 +42,7 @@ extern scalar   v_sumexp    (size_t n_elem, const scalar *restrict vtx);
 extern void     v_exp       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 extern void     v_log       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 extern void     v_logr1     (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void     v_softmax   (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 extern scalar   v_lse       (size_t n_elem, const scalar *restrict vtx);
 extern scalar   v_max       (size_t n_elem, const scalar *restrict vtx);
 extern scalar   v_min       (size_t n_elem, const scalar *restrict vtx);

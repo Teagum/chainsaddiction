@@ -97,6 +97,29 @@ v_argmin (size_t n_elem, const scalar *restrict vtx)
 }
 
 
+inline void
+v_softmax (size_t n_elem, const scalar *restrict vtx, scalar *restrict out)
+{
+    scalar total = 0.0L;
+    scalar *iter = out;
+
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        *iter = expl (*vtx);
+        total += *iter;
+        iter++;
+        vtx++;
+    }
+    iter = NULL;
+
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        *out /= total;
+        out++;
+    }
+}
+
+
 /*
  * Inplace operations on vectors
  */

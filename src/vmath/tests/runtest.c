@@ -27,11 +27,11 @@ int main (void)
     RUN_TEST (test__v_argmin__min_on_first);
     RUN_TEST (test__v_argmin__min_on_last);
 
-    RUN_TEST (test__v_max__max_on_last);
     RUN_TEST (test__v_max);
-
     RUN_TEST (test__v_max__max_on_first);
     RUN_TEST (test__v_max__max_on_last);
+
+    RUN_TEST (test__v_softmax);
     RUN_TEST (test__v_lse);
     RUN_TEST (test__vs_lse_centroid);
     RUN_TEST (test__vs_sum);
@@ -44,7 +44,5 @@ int main (void)
 
     RUN_TEST (test__log_vmp);
     RUN_TEST (test__log_mvp);
-
-    EVALUATE;
     return 0;
 }
