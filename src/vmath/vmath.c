@@ -17,6 +17,13 @@ v_sumlog (size_t n_elem, const scalar *restrict vtx)
 }
 
 
+inline scalar
+v_sumexp (size_t n_elem, const scalar *restrict vtx)
+{
+    return v_acc_sum (n_elem, 1, expl, vtx);
+}
+
+
 def_v_op (exp, expl)
 def_v_op (log, logl)
 def_v_op (logr1, logr1)

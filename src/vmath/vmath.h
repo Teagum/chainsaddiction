@@ -38,6 +38,7 @@ enum vmath_error_codes {
  */
 extern scalar   v_sum       (size_t n_elem, const scalar *restrict vtx);
 extern scalar   v_sumlog    (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_sumexp    (size_t n_elem, const scalar *restrict vtx);
 extern void     v_exp       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 extern void     v_log       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 extern void     v_logr1     (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
