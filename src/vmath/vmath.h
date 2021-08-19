@@ -11,15 +11,6 @@
 #include "print.h"
 
 
-/*
- * Prefixes:
- * v:   vector operation
- * m:   matrix operation
- * i:   inplace operation
- * s:   strided operation
- */
-
-
 enum vmath_error_codes {
     VM_ERR_ZERO_SIZED_BUFFER = -1,
 };
@@ -29,7 +20,6 @@ enum vmath_error_codes {
 
 #define OUTER_LOOP for (size_t i = 0; i < n_elem; i++)
 #define INNER_LOOP for (size_t j = 0; j < n_elem; j++)
-
 
 
 /*
