@@ -16,10 +16,6 @@
  * s:   strided operation
  */
 
-/*
- * Postfixes:
- * s:   scalar
- */
 #define ASSERT_ALLOC(buff) if (buff == NULL) {          \
     fputs ("Could not allocate buffer.\n", stderr);     \
     return 1;                                           \
