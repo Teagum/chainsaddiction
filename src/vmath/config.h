@@ -16,4 +16,11 @@ typedef	long double	scalar;
 
 #define CA_NAN nanl ("CA_NAN")
 
+#define SUCCESS 0
+#define FAILURE 1
+
+#define RETURN_SUCCESS return SUCCESS
+#define RETURN_FAILURE return FAILURE
+
+
 #endif  /* config_h */

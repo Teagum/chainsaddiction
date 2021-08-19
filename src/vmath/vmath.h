@@ -20,8 +20,6 @@
  */
 
 
-#define SUCCESS 0
-
 enum vmath_error_codes {
     VM_ERR_ZERO_SIZED_BUFFER = -1,
 };
