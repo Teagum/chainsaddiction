@@ -21,6 +21,7 @@ def_v_op (exp, expl)
 def_v_op (log, logl)
 def_v_op (logr1, logr1)
 
+
 inline scalar
 v_lse (size_t n_elem, const scalar *restrict vtx)
 {

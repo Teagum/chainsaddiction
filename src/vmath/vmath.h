@@ -53,9 +53,7 @@ extern scalar   v_acc_sum   (size_t n_elem, size_t stride, scalar (*op) (scalar)
 inline void v_##name                                                \
 (size_t n_elem, const scalar *restrict vtx, scalar *restrict out)   \
 {                                                                   \
-    while (n_elem--) {                                              \
-        *out++ = op_func (*vtx++);                                  \
-    }                                                               \
+    copy_op (n_elem, 1, op_func, vtx, out);                         \
 }
 
 
