@@ -37,5 +37,5 @@ bool test__m_log_centroid_cols (void);
 bool test__mm_add_s (void);
 bool test__m_row_argmax (void);
 
-
+bool test__vi_softmax (void);
 #endif  /* test_vmath_h */

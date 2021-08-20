@@ -678,3 +678,26 @@ test__v_softmax (void)
 
     return ASSERT_EQUAL (1.0, total) ? SUCCESS : FAILURE;
 }
+
+
+bool
+test__vi_softmax (void)
+{
+    enum setup {
+        vector_max_size = 5,
+        SR_LB = -10,
+        SR_UB =  10
+    };
+    scalar n_elem = rnd_size (1, vector_max_size);
+    scalar total  = 0.0L;
+
+    scalar *vtx = VA_SCALAR_EMPTY (n_elem);
+    if (vtx == NULL) RETURN_FAILURE;
+
+    v_rnd_scalar (n_elem, SR_LB, SR_UB, vtx);
+    vi_softmax (n_elem, vtx);
+    total = v_sum (n_elem, vtx);
+
+    FREE (vtx);
+    return ASSERT_EQUAL (1.0, total) ? SUCCESS : FAILURE;
+}

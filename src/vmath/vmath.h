@@ -281,7 +281,7 @@ v_argmax (const size_t n_elem, const scalar *restrict vec);
  * \param n_elem    Number of elements in object.
  */
 extern void
-vi_softmax (scalar *buffer, size_t n_elem);
+vi_softmax (size_t n_elem, scalar *restrict vtx);
 
 
 /* === Strided vector interface ==== */

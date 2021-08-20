@@ -197,18 +197,19 @@ vs_lse_centroid (
 
 
 inline void
-vi_softmax (scalar *buffer, size_t n_elem)
+vi_softmax (size_t n_elem , scalar *vtx)
 {
     scalar total = 0.0L;
+    scalar *iter = vtx;
+
     for (size_t i = 0; i < n_elem; i++)
     {
-        buffer[i] = expl (buffer[i]);
-        total += buffer[i];
+        *iter = expl (*iter);
+        total += *iter;
+        iter++;
     }
-    for (size_t i = 0; i < n_elem; i++)
-    {
-        buffer[i] /= total;
-    }
+    iter = NULL;
+    vsi_div (n_elem, total, vtx);
 }
 
 
