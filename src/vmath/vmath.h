@@ -548,4 +548,8 @@ strided_absmax (
 extern scalar logr1 (scalar val);
 
 
+
+extern void
+mi_row_apply (size_t rows, size_t cols, void (*row_op) (size_t, scalar *), scalar *mtx);
+
 #endif  /* VMATH_H */

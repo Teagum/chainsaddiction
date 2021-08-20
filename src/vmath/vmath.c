@@ -570,3 +570,14 @@ logr1 (scalar val)
         return 1.0L;
     }
 }
+
+
+inline void
+mi_row_apply (size_t rows, size_t cols, void (*row_op) (size_t, scalar *), scalar *mtx)
+{
+    for (size_t i = 0; i < rows; i++)
+    {
+        row_op (cols, mtx);
+        mtx+=cols;
+    }
+}
