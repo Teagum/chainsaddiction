@@ -702,13 +702,15 @@ test__vi_softmax (void)
     return ASSERT_EQUAL (1.0, total) ? SUCCESS : FAILURE;
 }
 
+
 bool
-test__gemm (void)
+test__mm_multiply (void)
 {
     enum setup {
         xr = 3, xc = 4,
         yr = 4, yc = 5,
     };
+    scalar total = 0.0L;
     
     scalar X[xr*xc] = {  1,  2,  3,  4,
                          5,  6,  7,  8,
@@ -721,13 +723,8 @@ test__gemm (void)
 
     scalar out[xr*yc] = { 0 };
     
-    
     mm_multiply (xr, yr, yc, X, Y, out);
-    print_matrix (xr, yc, out);
-
-    
-    scalar total = v_sum (xr*yc, out);
-    printf ("%Lf\n", total);
+    total = v_sum (xr*yc, out);
 
     return ASSERT_EQUAL (total, 4470.0L) ? SUCCESS : FAILURE;
 }

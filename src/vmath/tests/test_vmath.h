@@ -40,5 +40,5 @@ bool test__m_row_argmax (void);
 bool test__vi_softmax (void);
 
 
-bool test__gemm (void);
+bool test__mm_multiply (void);
 #endif  /* test_vmath_h */
