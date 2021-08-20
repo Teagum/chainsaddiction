@@ -437,6 +437,12 @@ m_col_absmax (
 #define mi_log(mat, n_elem) vi_log ((mat), (n_elem))
 
 
+/*
+ * ============================================================================
+ * Vector/matrix interface
+ * ============================================================================
+ */
+
 /** Compute vector/matrix product in log domain.
  *
  * Compute the product of a vector and a square matrix with the same
@@ -460,6 +466,12 @@ log_vmp (
     scalar *_prod);
 
 
+/*
+ * ============================================================================
+ * Matrix/vector interface
+ * ============================================================================
+ */
+
 /** Compute matrix/vector product in log domain.
  *
  * Compute the product of a square matrix with n_elem rows and columns and a
@@ -481,6 +493,16 @@ log_mvp (
     scalar *_cs,
     scalar *_mb,
     scalar *_prod);
+
+
+/*
+ * ============================================================================
+ * Matrix/matrix interface
+ * ============================================================================
+ */
+
+
+
 
 /*
  * Private API
