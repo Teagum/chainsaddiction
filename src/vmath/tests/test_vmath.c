@@ -728,3 +728,43 @@ test__mm_multiply (void)
 
     return ASSERT_EQUAL (total, 4470.0L) ? SUCCESS : FAILURE;
 }
+
+
+bool
+test__vm_multiply (void)
+{
+    enum setup {
+        max_rows = 10,
+        max_cols = 10,
+    };
+    scalar total = 0.0L;
+    size_t rows = rnd_size (1, max_rows);
+    size_t cols = rnd_size (1, max_cols);
+
+    scalar *vtx = VA_SCALAR_ZEROS (rows);
+    scalar *mtx = VA_SCALAR_ZEROS (rows*cols);
+    scalar *out = VA_SCALAR_ZEROS (cols);
+    scalar *mtxptr = mtx;
+    if (vtx == NULL || mtx == NULL || out == NULL) RETURN_FAILURE;
+
+    v_rnd_scalar (rows, 0, 1, vtx);
+    v_rnd_scalar (rows*cols, 0, 1, mtx);
+
+    vi_softmax (rows, vtx);
+    for (size_t i = 0; i < rows; i++)
+    {
+        vi_softmax (cols, mtxptr);
+        mtxptr+=cols;
+    }
+
+    print_vector (rows, vtx);
+    print_matrix (rows, cols, mtx);
+
+    vm_multiply (rows, cols, vtx, mtx, out);
+    total = v_sum (cols, out);
+
+    FREE (vtx);
+    FREE (mtx);
+    FREE (out);
+    return ASSERT_EQUAL (total, 1.0L) ? SUCCESS : FAILURE;
+}

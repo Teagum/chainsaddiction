@@ -466,6 +466,15 @@ log_vmp (
     scalar *_prod);
 
 
+extern void
+vm_multiply (
+    const size_t rows,
+    const size_t cols,
+    const scalar *vtx,
+    const scalar *mtx,
+    scalar *out);
+
+
 /*
  * ============================================================================
  * Matrix/vector interface

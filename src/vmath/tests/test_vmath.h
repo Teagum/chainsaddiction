@@ -41,4 +41,7 @@ bool test__vi_softmax (void);
 
 
 bool test__mm_multiply (void);
+bool test__vm_multiply (void);
+
+
 #endif  /* test_vmath_h */
