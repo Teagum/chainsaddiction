@@ -283,12 +283,6 @@ vs_lse_centroid (
     vs_lse_centroid (vt, 1, weights, 1, n_elem)
 
 
-extern size_t
-v_argmax (const size_t n_elem, const scalar *restrict vec);
-
-
-
-
 /* === Strided vector interface ==== */
 
 /** Compute the sum of the vector elements given a stride.
