@@ -494,6 +494,17 @@ log_mvp (
     scalar *_mb,
     scalar *_prod);
 
+
+extern void
+mm_multiply (
+    const size_t xr,
+    const size_t rc,
+    const size_t yc,
+    const scalar *mtx,
+    const scalar *mty,
+    scalar *out);
+
+
 /*
  * Private API
  */

@@ -38,4 +38,7 @@ bool test__mm_add_s (void);
 bool test__m_row_argmax (void);
 
 bool test__vi_softmax (void);
+
+
+bool test__gemm (void);
 #endif  /* test_vmath_h */
