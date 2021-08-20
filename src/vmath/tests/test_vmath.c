@@ -707,26 +707,31 @@ bool
 test__mm_multiply (void)
 {
     enum setup {
-        xr = 3, xc = 4,
-        yr = 4, yc = 5,
+        rc_max = 100,
     };
+
     scalar total = 0.0L;
-    
-    scalar X[xr*xc] = {  1,  2,  3,  4,
-                         5,  6,  7,  8,
-                         9, 10, 11, 12, };
+    const size_t rc = rnd_size (2, rc_max);
+    const size_t n_elem = rc * rc;
 
-    scalar Y[yr*yc] = {  1,  2,  3,  4,  5,
-                         6,  7,  8,  9, 10,
-                        11, 12, 13, 14, 15,
-                        16, 17, 18, 19, 20, };
+    scalar *A = VA_SCALAR_ZEROS (n_elem);
+    scalar *B = VA_SCALAR_ZEROS (n_elem);
+    scalar *C = VA_SCALAR_ZEROS (n_elem);
+    if (A == NULL || B == NULL || C == NULL) RETURN_FAILURE;
 
-    scalar out[xr*yc] = { 0 };
-    
-    mm_multiply (xr, yr, yc, X, Y, out);
-    total = v_sum (xr*yc, out);
+    v_rnd_scalar (n_elem, 0, 1, A);
+    v_rnd_scalar (n_elem, 0, 1, B);
 
-    return ASSERT_EQUAL (total, 4470.0L) ? SUCCESS : FAILURE;
+    mi_row_apply (rc, rc, vi_softmax, A);
+    mi_row_apply (rc, rc, vi_softmax, B);
+
+    mm_multiply (rc, rc, rc, A, B, C);
+    total = v_sum (n_elem, C);
+
+    FREE (A);
+    FREE (B);
+    FREE (C);
+    return ASSERT_EQUAL (total, rc) ? SUCCESS : FAILURE;
 }
 
 
@@ -744,21 +749,13 @@ test__vm_multiply (void)
     scalar *vtx = VA_SCALAR_ZEROS (rows);
     scalar *mtx = VA_SCALAR_ZEROS (rows*cols);
     scalar *out = VA_SCALAR_ZEROS (cols);
-    scalar *mtxptr = mtx;
     if (vtx == NULL || mtx == NULL || out == NULL) RETURN_FAILURE;
 
     v_rnd_scalar (rows, 0, 1, vtx);
     v_rnd_scalar (rows*cols, 0, 1, mtx);
 
     vi_softmax (rows, vtx);
-    for (size_t i = 0; i < rows; i++)
-    {
-        vi_softmax (cols, mtxptr);
-        mtxptr+=cols;
-    }
-
-    print_vector (rows, vtx);
-    print_matrix (rows, cols, mtx);
+    mi_row_apply (rows, cols, vi_softmax, mtx);
 
     vm_multiply (rows, cols, vtx, mtx, out);
     total = v_sum (cols, out);

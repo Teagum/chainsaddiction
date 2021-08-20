@@ -45,7 +45,7 @@ int main (void)
     RUN_TEST (test__log_vmp);
     RUN_TEST (test__log_mvp);
 
-    RUN_TEST (test__vi_softmax);
+    RUN_TEST (test__vm_multiply);
     RUN_TEST (test__mm_multiply);
 
     return 0;
