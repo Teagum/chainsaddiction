@@ -28,7 +28,28 @@ enum vmath_error_codes {
  * ============================================================================
  */
 
-/** Operations on vectors
+/*
+ * Low-level reductions
+ */
+
+extern scalar   v_acc_prod  (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx);
+extern scalar   v_acc_sum   (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx);
+
+/*
+ * High-level reductions
+ */
+
+extern scalar   v_sum       (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_sumlog    (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_sumexp    (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_lse       (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_max       (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_min       (size_t n_elem, const scalar *restrict vtx);
+extern size_t   v_argmax    (size_t n_elem, const scalar *restrict vtx);
+extern size_t   v_argmin    (size_t n_elem, const scalar *restrict vtx);
+
+
+/** Vectorized transforms 
  *
  * Evaluate function elementwise and copy result to output buffer.
  *
@@ -36,20 +57,10 @@ enum vmath_error_codes {
  * \param[in]   vtx         Pointer to vector data.
  * \param[out]  out         Pointer to output obejct.
  */
-extern scalar   v_sum       (size_t n_elem, const scalar *restrict vtx);
-extern scalar   v_sumlog    (size_t n_elem, const scalar *restrict vtx);
-extern scalar   v_sumexp    (size_t n_elem, const scalar *restrict vtx);
-extern void     v_exp       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
-extern void     v_log       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
-extern void     v_logr1     (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
-extern void     v_softmax   (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
-extern scalar   v_lse       (size_t n_elem, const scalar *restrict vtx);
-extern scalar   v_max       (size_t n_elem, const scalar *restrict vtx);
-extern scalar   v_min       (size_t n_elem, const scalar *restrict vtx);
-extern size_t   v_argmax    (size_t n_elem, const scalar *restrict vtx);
-extern size_t   v_argmin    (size_t n_elem, const scalar *restrict vtx);
-extern scalar   v_acc_prod  (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx);
-extern scalar   v_acc_sum   (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx);
+extern void v_exp       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void v_log       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void v_logr1     (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void v_softmax   (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 
 #define def_v_op(name, op_func)                                     \
 inline void v_##name                                                \
@@ -59,16 +70,17 @@ inline void v_##name                                                \
 }
 
 
-/** Inplace operations on vectors
+/** Vectorized inplace transforms 
  *
- * Evaluate function elementwise and copy result to output buffer.
+ * Evaluate function elementwise and modify the current buffer. 
  *
- * \param[in]   n_elem      Number of elements in vector.
- * \param[in]   vtx         Pointer to vector data.
+ * \param[in]       n_elem      Number of elements in vector.
+ * \param[in,out]   vtx         Pointer to vector data.
  */
-extern void vi_exp   (size_t n_elem, scalar *restrict vtx);
-extern void vi_log   (size_t n_elem, scalar *restrict vtx);
-extern void vi_logr1 (size_t n_elem, scalar *restrict vtx);
+extern void vi_exp      (size_t n_elem, scalar *restrict vtx);
+extern void vi_log      (size_t n_elem, scalar *restrict vtx);
+extern void vi_logr1    (size_t n_elem, scalar *restrict vtx);
+extern void vi_softmax  (size_t n_elem, scalar *restrict vtx);
 
 #define def_vi_op(name, op_func) \
 inline void                                         \
@@ -275,13 +287,6 @@ extern size_t
 v_argmax (const size_t n_elem, const scalar *restrict vec);
 
 
-/** Compute softmax o `buffer' inplace.
- *
- * \param buffer    Pointer to object.
- * \param n_elem    Number of elements in object.
- */
-extern void
-vi_softmax (size_t n_elem, scalar *restrict vtx);
 
 
 /* === Strided vector interface ==== */

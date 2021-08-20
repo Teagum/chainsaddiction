@@ -1,7 +1,56 @@
 #include "vmath.h"
 
+
 /*
- * Operations on vectors
+ * Low-level reductions
+ */
+
+inline scalar
+v_acc_sum (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx)
+{
+    scalar sum = 0.0L;
+    if (n_elem == 0 || stride == 0)
+    {
+        errno = EDOM;
+        return 0.0L;
+    }
+
+    if (op == NULL)
+    {
+        acc_sum (n_elem, stride, vtx, &sum);
+    }
+    else
+    {
+        acc_sum_op(n_elem, stride, op, vtx, &sum);
+    }
+    return sum;
+}
+
+
+inline scalar
+v_acc_prod (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx)
+{
+    scalar prod = 1.0L;
+    if (n_elem == 0 || stride == 0)
+    {
+        errno = EDOM;
+        return 0.0L;
+    }
+
+    if (op == NULL)
+    {
+        acc_prod(n_elem, stride, vtx, &prod);
+    }
+    else
+    {
+        acc_prod_op(n_elem, stride, op, vtx, &prod);
+    }
+    return prod;
+}
+
+
+/*
+ * High-level reductions
  */
 inline scalar
 v_sum (size_t n_elem, const scalar *restrict vtx)
@@ -24,11 +73,6 @@ v_sumexp (size_t n_elem, const scalar *restrict vtx)
 }
 
 
-def_v_op (exp, expl)
-def_v_op (log, logl)
-def_v_op (logr1, logr1)
-
-
 inline scalar
 v_lse (size_t n_elem, const scalar *restrict vtx)
 {
@@ -40,6 +84,7 @@ v_lse (size_t n_elem, const scalar *restrict vtx)
     }
     return logl (sum_exp) + max_val;
 }
+
 
 inline scalar
 v_max (size_t n_elem, const scalar *restrict vtx)
@@ -97,6 +142,15 @@ v_argmin (size_t n_elem, const scalar *restrict vtx)
 }
 
 
+/*
+ * Vectorized transforms
+ */
+
+def_v_op (exp, expl)
+def_v_op (log, logl)
+def_v_op (logr1, logr1)
+
+
 inline void
 v_softmax (size_t n_elem, const scalar *restrict vtx, scalar *restrict out)
 {
@@ -121,11 +175,29 @@ v_softmax (size_t n_elem, const scalar *restrict vtx, scalar *restrict out)
 
 
 /*
- * Inplace operations on vectors
+ * Vectorized inplace transforms 
  */
+
 def_vi_op(exp, expl)
 def_vi_op(log, logl)
 def_vi_op(logr1, logr1)
+
+
+inline void
+vi_softmax (size_t n_elem, scalar *vtx)
+{
+    scalar total = 0.0L;
+    scalar *iter = vtx;
+
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        *iter = expl (*iter);
+        total += *iter;
+        iter++;
+    }
+    iter = NULL;
+    vsi_div (n_elem, total, vtx);
+}
 
 
 /*
@@ -196,21 +268,6 @@ vs_lse_centroid (
 }
 
 
-inline void
-vi_softmax (size_t n_elem , scalar *vtx)
-{
-    scalar total = 0.0L;
-    scalar *iter = vtx;
-
-    for (size_t i = 0; i < n_elem; i++)
-    {
-        *iter = expl (*iter);
-        total += *iter;
-        iter++;
-    }
-    iter = NULL;
-    vsi_div (n_elem, total, vtx);
-}
 
 
 inline scalar
@@ -450,48 +507,6 @@ strided_absmax (
 }
 
 
-inline scalar
-v_acc_sum (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx)
-{
-    scalar sum = 0.0L;
-    if (n_elem == 0 || stride == 0)
-    {
-        errno = EDOM;
-        return 0.0L;
-    }
-
-    if (op == NULL)
-    {
-        acc_sum (n_elem, stride, vtx, &sum);
-    }
-    else
-    {
-        acc_sum_op(n_elem, stride, op, vtx, &sum);
-    }
-    return sum;
-}
-
-
-inline scalar
-v_acc_prod (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx)
-{
-    scalar prod = 1.0L;
-    if (n_elem == 0 || stride == 0)
-    {
-        errno = EDOM;
-        return 0.0L;
-    }
-
-    if (op == NULL)
-    {
-        acc_prod(n_elem, stride, vtx, &prod);
-    }
-    else
-    {
-        acc_prod_op(n_elem, stride, op, vtx, &prod);
-    }
-    return prod;
-}
 
 
 inline scalar
