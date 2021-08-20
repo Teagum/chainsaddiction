@@ -470,6 +470,32 @@ log_mvp (
 }
 
 
+void mm_multiply (const size_t xr, const size_t rc, const size_t yc,
+                  const scalar *mtx, const scalar *mty, scalar *out)
+{
+    const scalar *x_row_ptr = NULL;
+    const scalar *y_col_ptr = NULL;
+
+    for (size_t i = 0; i < xr; i++)
+    {
+        for (size_t j = 0; j < yc; j++)
+        {
+            x_row_ptr = mtx;
+            y_col_ptr = mty+j;
+            for (size_t k = 0; k < rc; k++)
+            {
+                *out += *x_row_ptr * *y_col_ptr;
+                x_row_ptr++;
+                y_col_ptr+=yc;
+            }
+            out++;
+        }
+        mtx+=rc;
+    }
+}
+
+
+
 /*
  * Private API
  */

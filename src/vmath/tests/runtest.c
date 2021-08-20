@@ -6,7 +6,7 @@
 int main (void)
 {
     SETUP;
-
+/*
     RUN_TEST (test__rnd_int);
     RUN_TEST (test__v_rnd_int);
     RUN_TEST (test__rnd_scalar);
@@ -46,6 +46,8 @@ int main (void)
     RUN_TEST (test__log_mvp);
 
     RUN_TEST (test__vi_softmax);
+    */
+    RUN_TEST (test__gemm);
 
     return 0;
 }

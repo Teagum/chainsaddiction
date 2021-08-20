@@ -501,7 +501,14 @@ log_mvp (
  * ============================================================================
  */
 
-
+extern void
+mm_multiply (
+    const size_t xr,
+    const size_t rc,
+    const size_t yc,
+    const scalar *mtx,
+    const scalar *mty,
+    scalar *out);
 
 
 /*
