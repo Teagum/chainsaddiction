@@ -442,6 +442,35 @@ log_vmp (
 }
 
 
+inline void
+vm_logprod (
+    const size_t n_elem,
+    const scalar *restrict vtx,
+    const scalar *restrict mtx,
+    scalar *vbuff,
+    scalar *mbuff,
+    scalar *prod)
+{
+    OUTER_LOOP {
+        vbuff[i] = -INFINITY;
+        INNER_LOOP {
+            size_t idx = j * n_elem + i;
+            mbuff[idx] = mtx[idx] + vtx[j];
+            vbuff[i] = fmax (mbuff[idx], vbuff[i]);
+        }
+    }
+
+    OUTER_LOOP {
+        prod[i] = 0.0L;
+        INNER_LOOP {
+            size_t idx = j * n_elem + i;
+            prod[i] += expl (mbuff[idx]-vbuff[i]);
+        }
+        prod[i] = logl (prod[i]) + vbuff[i];
+    }
+}
+
+
 extern void
 vm_multiply (const size_t rows, const size_t cols, const scalar *vtx,
              const scalar *mtx, scalar *out)

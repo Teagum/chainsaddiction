@@ -467,6 +467,16 @@ log_vmp (
 
 
 extern void
+vm_logprod (
+    const size_t n_elem,
+    const scalar *restrict vtx,
+    const scalar *restrict mtx,
+    scalar *vbuff,
+    scalar *mbuff,
+    scalar *prod);
+
+
+extern void
 vm_multiply (
     const size_t rows,
     const size_t cols,
