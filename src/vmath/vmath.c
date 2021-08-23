@@ -175,7 +175,7 @@ v_softmax (size_t n_elem, const scalar *restrict vtx, scalar *restrict out)
 
 
 /*
- * Vectorized inplace transforms 
+ * Vectorized inplace transforms
  */
 
 def_vi_op(exp, expl)
@@ -447,26 +447,23 @@ vm_logprod (
     const size_t n_elem,
     const scalar *restrict vtx,
     const scalar *restrict mtx,
-    scalar *vbuff,
+    scalar *max_per_row,
     scalar *mbuff,
     scalar *prod)
 {
-    OUTER_LOOP {
-        vbuff[i] = -INFINITY;
-        INNER_LOOP {
-            size_t idx = j * n_elem + i;
-            mbuff[idx] = mtx[idx] + vtx[j];
-            vbuff[i] = fmax (mbuff[idx], vbuff[i]);
-        }
-    }
 
-    OUTER_LOOP {
-        prod[i] = 0.0L;
-        INNER_LOOP {
+    for (size_t i = 0; i < n_elem; i++) {
+        max_per_row[i] = -INFINITY;
+        for (size_t j = 0; j < n_elem; j++) {
             size_t idx = j * n_elem + i;
-            prod[i] += expl (mbuff[idx]-vbuff[i]);
+            mbuff[j] = mtx[idx] + vtx[j];
+            max_per_row[i] = fmax (mbuff[j], max_per_row[i]);
         }
-        prod[i] = logl (prod[i]) + vbuff[i];
+        prod[i] = 0.0L;
+        for (size_t j = 0; j < n_elem; j++) {
+            prod[i] += expl (mbuff[j] - max_per_row[i]);
+        }
+        prod[i] = logl (prod[i]) + max_per_row[i];
     }
 }
 
