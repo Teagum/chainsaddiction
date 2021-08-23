@@ -444,28 +444,39 @@ log_vmp (
 
 inline void
 vm_logprod (
-    const size_t n_elem,
-    const scalar *restrict vtx,
-    const scalar *restrict mtx,
-    scalar *mbuff,
-    scalar *prod)
+    const size_t rows,
+    const size_t cols,
+    const scalar *const vtx,
+    const scalar *const mtx,
+          scalar *const acc,
+          scalar *restrict prod)
 {
-    for (size_t i = 0; i < n_elem; i++) {
+    const scalar *vt_data  = NULL;
+    const scalar *mt_data  = NULL;
+          scalar *acc_data = NULL;
+          scalar row_max   = 0.0L;
 
-        scalar row_max = -INFINITY;
-        prod[i] = 0.0L;
+    for (size_t i = 0; i < cols; i++) {
+        vt_data  = vtx;
+        mt_data  = mtx + i;
+        acc_data = acc;
+        row_max  = -INFINITY;
+        *prod    = 0.0L;
 
-        for (size_t j = 0; j < n_elem; j++) {
-            size_t idx = j * n_elem + i;
-            mbuff[j] = mtx[idx] + vtx[j];
-            row_max = fmax (mbuff[j], row_max);
+        for (size_t j = 0; j < rows; j++) {
+            *acc_data = *mt_data + *vt_data++;
+            row_max = fmax (*acc, row_max);
+            acc_data++;
+            mt_data+=cols;
         }
 
-        for (size_t j = 0; j < n_elem; j++) {
-            prod[i] += expl (mbuff[j] - row_max);
+        acc_data = acc;
+        for (size_t j = 0; j < rows; j++) {
+            *prod += expl (*acc_data++ - row_max);
         }
 
-        prod[i] = logl (prod[i]) + row_max;
+        *prod = logl (*prod) + row_max;
+        prod++;
     }
 }
 

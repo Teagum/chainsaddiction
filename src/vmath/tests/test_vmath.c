@@ -766,27 +766,43 @@ test__vm_multiply (void)
     return ASSERT_EQUAL (total, 1.0L) ? SUCCESS : FAILURE;
 }
 
+
 bool
 test__vm_logprod (void)
 {
-    const size_t n_elem = 3;
-    scalar *vt = VA_SCALAR_EMPTY (n_elem);
-    scalar *mt = VA_SCALAR_EMPTY (n_elem*n_elem);
-    scalar *b1 = VA_SCALAR_EMPTY (n_elem);
-    scalar *b2 = VA_SCALAR_ZEROS (n_elem*n_elem);
-    scalar *res = VA_SCALAR_ZEROS (n_elem);
+    const size_t rows   = rnd_size (1, 10);
+    const size_t cols   = rnd_size (1, 20);
+    const size_t n_elem = rows * cols;
+          scalar total  = 0.0L;
 
-    v_sample (n_elem, vt);
-    v_sample (n_elem*n_elem, mt);
-    vi_log (n_elem, vt);
-    vi_log (n_elem*n_elem, mt);
+    scalar *vtx = VA_SCALAR_ZEROS (rows);
+    scalar *mtx = VA_SCALAR_ZEROS (n_elem);
+    scalar *acc = VA_SCALAR_ZEROS (rows);
+    scalar *res = VA_SCALAR_ZEROS (cols);
+    if (vtx == NULL || mtx == NULL || acc == NULL || res == NULL)
+        RETURN_FAILURE;
 
-    vm_logprod (n_elem, vt, mt, b1, b2, res);
+    v_rnd_scalar (rows, 1, 10, vtx);
+    v_rnd_scalar (n_elem, 1, 10, mtx);
 
-    FREE (vt);
-    FREE (mt);
-    FREE (b1);
-    FREE (b2);
+    vi_softmax (rows, vtx);
+    mi_row_apply (rows, cols, vi_softmax, mtx);
+
+    vi_log (rows, vtx);
+    vi_log (n_elem, mtx);
+
+    print_vector (rows, vtx);
+    print_matrix (rows, cols, mtx);
+
+    vm_logprod (rows, cols , vtx, mtx, acc, res);
+    print_vector(cols, res);
+
+    vi_exp (cols, res);
+    total = v_sum (cols, res);
+
+    FREE (vtx);
+    FREE (mtx);
+    FREE (acc);
     FREE (res);
-    return false;
+    return ASSERT_EQUAL (1.0L, total) ? SUCCESS : FAILURE;
 }

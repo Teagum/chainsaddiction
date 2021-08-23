@@ -49,7 +49,7 @@ extern size_t   v_argmax    (size_t n_elem, const scalar *restrict vtx);
 extern size_t   v_argmin    (size_t n_elem, const scalar *restrict vtx);
 
 
-/** Vectorized transforms 
+/** Vectorized transforms
  *
  * Evaluate function elementwise and copy result to output buffer.
  *
@@ -70,9 +70,9 @@ inline void v_##name                                                \
 }
 
 
-/** Vectorized inplace transforms 
+/** Vectorized inplace transforms
  *
- * Evaluate function elementwise and modify the current buffer. 
+ * Evaluate function elementwise and modify the current buffer.
  *
  * \param[in]       n_elem      Number of elements in vector.
  * \param[in,out]   vtx         Pointer to vector data.
@@ -466,14 +466,26 @@ log_vmp (
     scalar *_prod);
 
 
+/** Compute the inner product of log(vtx) and log(mtx).
+ *
+ * Compute the product of a vector and a square matrix with the same
+ * number of elements in each row and column. Computation is performed
+ * in log domain by means of LSE.
+ *
+ * \param[in]   n_elem  Number of elements in _vt.
+ * \param[in]   vtx     Pointer to vector data.
+ * \param[in]   mtx     Pointer to matrix data.
+ * \param       acc     Pointer to accumulation buffer.
+ * \param[out]  prod    Pointer to output object.
+ */
 extern void
 vm_logprod (
-    const size_t n_elem,
-    const scalar *restrict vtx,
-    const scalar *restrict mtx,
-    scalar *vbuff,
-    scalar *mbuff,
-    scalar *prod);
+    const size_t rows,
+    const size_t cols,
+    const scalar *const vtx,
+    const scalar *const mtx,
+          scalar *const acc,
+          scalar *restrict prod);
 
 
 extern void
