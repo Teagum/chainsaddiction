@@ -447,23 +447,25 @@ vm_logprod (
     const size_t n_elem,
     const scalar *restrict vtx,
     const scalar *restrict mtx,
-    scalar *max_per_row,
     scalar *mbuff,
     scalar *prod)
 {
-
     for (size_t i = 0; i < n_elem; i++) {
-        max_per_row[i] = -INFINITY;
+
+        scalar row_max = -INFINITY;
+        prod[i] = 0.0L;
+
         for (size_t j = 0; j < n_elem; j++) {
             size_t idx = j * n_elem + i;
             mbuff[j] = mtx[idx] + vtx[j];
-            max_per_row[i] = fmax (mbuff[j], max_per_row[i]);
+            row_max = fmax (mbuff[j], row_max);
         }
-        prod[i] = 0.0L;
+
         for (size_t j = 0; j < n_elem; j++) {
-            prod[i] += expl (mbuff[j] - max_per_row[i]);
+            prod[i] += expl (mbuff[j] - row_max);
         }
-        prod[i] = logl (prod[i]) + max_per_row[i];
+
+        prod[i] = logl (prod[i]) + row_max;
     }
 }
 
