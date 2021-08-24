@@ -414,35 +414,6 @@ m_col_absmax (
 
 
 inline void
-log_vmp (
-    const scalar *restrict vt,
-    const scalar *restrict _mt,
-    const size_t n_elem,
-    scalar *_cs,
-    scalar *_mb,
-    scalar *_prod)
-{
-    OUTER_LOOP {
-        _cs[i] = -INFINITY;
-        INNER_LOOP {
-            size_t idx = j * n_elem + i;
-            _mb[idx] = _mt[idx] + vt[j];
-            _cs[i] = fmax (_mb[idx], _cs[i]);
-        }
-    }
-
-    OUTER_LOOP {
-        _prod[i] = 0.0L;
-        INNER_LOOP {
-            size_t idx = j * n_elem + i;
-            _prod[i] += expl (_mb[idx]-_cs[i]);
-        }
-        _prod[i] = logl (_prod[i]) + _cs[i];
-    }
-}
-
-
-inline void
 vm_logprod (
     const size_t rows,
     const size_t cols,

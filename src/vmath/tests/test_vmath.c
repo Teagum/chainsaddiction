@@ -447,32 +447,6 @@ test__m_col_max (void)
 
 
 bool
-test__log_vmp (void)
-{
-    const size_t n_elem = 3;
-    scalar *vt = VA_SCALAR_EMPTY (n_elem);
-    scalar *mt = VA_SCALAR_EMPTY (n_elem*n_elem);
-    scalar *b1 = VA_SCALAR_EMPTY (n_elem);
-    scalar *b2 = VA_SCALAR_ZEROS (n_elem*n_elem);
-    scalar *res = VA_SCALAR_ZEROS (n_elem);
-
-    v_sample (n_elem, vt);
-    v_sample (n_elem*n_elem, mt);
-    vi_log (n_elem, vt);
-    vi_log (n_elem*n_elem, mt);
-
-    log_vmp (vt, mt, n_elem, b1, b2, res);
-
-    FREE (vt);
-    FREE (mt);
-    FREE (b1);
-    FREE (b2);
-    FREE (res);
-    return false;
-}
-
-
-bool
 test__log_mvp (void)
 {
     const size_t n = 3;

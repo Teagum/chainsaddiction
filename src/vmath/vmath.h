@@ -443,28 +443,6 @@ m_col_absmax (
  * ============================================================================
  */
 
-/** Compute vector/matrix product in log domain.
- *
- * Compute the product of a vector and a square matrix with the same
- * number of elements in each row and column. Computation is performed
- * in log domain by means of LSE.
- *
- * \param _vt    - Pointer to vector elements.
- * \param _mt    - Pointer to matrix elements.
- * \param n_elem - Number of elements in _vt.
- * \param _cs    - Computation buffer of lenght n_elem.
- * \param _mb    _ Computation buffer of lenght n_elem^2.
- * \param prod   - Output buffer of lenght n_elem.
- */
-extern void
-log_vmp (
-    const scalar *restrict _vt,
-    const scalar *restrict _mat,
-    const size_t n_elem,
-    scalar *_cs,
-    scalar *_mb,
-    scalar *_prod);
-
 
 /** Compute the inner product of log(vtx) and log(mtx).
  *
