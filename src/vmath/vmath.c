@@ -474,6 +474,26 @@ vm_multiply (const size_t rows, const size_t cols, const scalar *vtx,
 }
 
 
+extern void
+mv_multiply (const size_t rows, const size_t cols, const scalar *mtx,
+             const scalar *vtx, scalar *restrict out)
+{
+    const scalar *vptr = NULL;
+    const scalar *mptr = mtx;
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        *out = 0.0L;
+        vptr = vtx;
+        for (size_t j = 0; j < cols; j++)
+        {
+            *out += *mptr++ * *vptr++ ;
+        }
+        out++;
+    }
+}
+
+
 inline void
 log_mvp (
     const scalar *restrict _mt,

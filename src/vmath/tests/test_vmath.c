@@ -780,3 +780,29 @@ test__vm_logprod (void)
     FREE (res);
     return ASSERT_EQUAL (1.0L, total) ? SUCCESS : FAILURE;
 }
+
+
+bool
+test__mv_multiply (void)
+{
+    const size_t rows   = 3; //rnd_size (1, 20);
+    const size_t cols   = 5; //rnd_size (1, 20);
+    const size_t n_elem = rows * cols;
+          scalar total  = 0.0L;
+
+    scalar *vtx = VA_SCALAR_ZEROS (cols);
+    scalar *mtx = VA_SCALAR_ZEROS (n_elem);
+    scalar *res = VA_SCALAR_ZEROS (rows);
+    if (vtx == NULL || mtx == NULL || res == NULL)
+        RETURN_FAILURE;
+
+    v_rnd_scalar (cols, 1, 10, vtx);
+    v_rnd_scalar (n_elem, 1, 10, mtx);
+
+    print_vector (cols, vtx);
+    print_matrix (rows, cols, mtx);
+    mv_multiply (rows, cols, mtx, vtx, res);
+    print_vector (rows, res);
+
+    RETURN_FAILURE;
+}

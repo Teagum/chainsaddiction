@@ -504,6 +504,13 @@ log_mvp (
     scalar *_prod);
 
 
+extern void
+mv_multiply (
+    const size_t rows,
+    const size_t cols,
+    const scalar *mtx,
+    const scalar *vtx,
+          scalar *restrict out);
 /*
  * ============================================================================
  * Matrix/matrix interface
