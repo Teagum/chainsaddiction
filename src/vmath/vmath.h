@@ -470,9 +470,9 @@ extern void
 vm_multiply (
     const size_t rows,
     const size_t cols,
-    const scalar *vtx,
-    const scalar *mtx,
-    scalar *out);
+    const scalar *const vtx,
+    const scalar *const mtx,
+          scalar *restrict prod);
 
 
 /*

@@ -459,17 +459,28 @@ vm_multiply (const size_t rows, const size_t cols, const scalar *vtx,
     const scalar *vptr = NULL;
     const scalar *mptr = NULL;
 
+
+
+extern void
+vm_multiply (const size_t rows, const size_t cols, const scalar *const vtx,
+             const scalar *const mtx, scalar *restrict prod)
+{
+    const scalar *vtx_data = NULL;
+    const scalar *mtx_data = NULL;
+          scalar *out_data = prod;
+
+    *out_data = 0.0L;
     for (size_t i = 0; i < cols; i++)
     {
-        vptr = vtx;
-        mptr = mtx;
+        vtx_data = vtx;
+        mtx_data = mtx + i;
         for (size_t j = 0; j < rows; j++)
         {
-            *out += *vptr * *mptr;
-            vptr++;
-            mptr+=cols;
+            *out_data += *vtx_data * *mtx_data;
+            vtx_data++;
+            mtx_data+=cols;
         }
-        mtx++;
+        out_data++;
     }
 }
 

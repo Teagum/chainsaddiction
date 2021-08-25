@@ -713,16 +713,17 @@ bool
 test__vm_multiply (void)
 {
     enum setup {
-        max_rows = 10,
-        max_cols = 10,
+        max_rows = 1000,
+        max_cols = 1000,
     };
+
     scalar total = 0.0L;
     size_t rows = rnd_size (1, max_rows);
     size_t cols = rnd_size (1, max_cols);
 
     scalar *vtx = VA_SCALAR_ZEROS (rows);
     scalar *mtx = VA_SCALAR_ZEROS (rows*cols);
-    scalar *out = VA_SCALAR_ZEROS (cols);
+    scalar *out = VA_SCALAR_EMPTY (cols);
     if (vtx == NULL || mtx == NULL || out == NULL) RETURN_FAILURE;
 
     v_rnd_scalar (rows, 0, 1, vtx);
