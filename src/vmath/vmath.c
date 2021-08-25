@@ -498,7 +498,7 @@ mv_multiply (const size_t rows, const size_t cols, const scalar *mtx,
         vptr = vtx;
         for (size_t j = 0; j < cols; j++)
         {
-            *out += *mptr++ * *vptr++ ;
+            *out = fmal (*mptr++, *vptr++, *out);
         }
         out++;
     }

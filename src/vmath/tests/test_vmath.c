@@ -802,8 +802,42 @@ test__mv_multiply (void)
 
     print_vector (cols, vtx);
     print_matrix (rows, cols, mtx);
-    mv_multiply (rows, cols, mtx, vtx, res);
-    print_vector (rows, res);
 
-    RETURN_FAILURE;
+
+bool
+test__mv_multiply (void)
+{
+    enum setup {
+        max_rows = 1000,
+        max_cols = 1000,
+        SR_LB    = -100,
+        SR_UB    =  100,
+    };
+    const size_t rows   = rnd_size (1, max_rows);
+    const size_t cols   = rnd_size (1, max_cols);
+    const size_t n_elem = rows * cols;
+          scalar total_res  = 0.0L;
+          scalar total_mtx  = 0.0L;
+
+    scalar *vtx = VA_SCALAR_ZEROS (cols);
+    scalar *mtx = VA_SCALAR_ZEROS (n_elem);
+    scalar *res = VA_SCALAR_ZEROS (rows);
+    if (vtx == NULL || mtx == NULL || res == NULL)
+        RETURN_FAILURE;
+
+    for (size_t i = 0; i < cols; i++)
+    {
+        vtx[i] = 1.0L;
+    }
+    v_rnd_scalar (n_elem, SR_LB, SR_UB, mtx);
+    mv_multiply (rows, cols, mtx, vtx, res);
+
+    total_res = v_sum (rows, res);
+    total_mtx = v_sum (n_elem, mtx);
+
+    FREE (vtx);
+    FREE (mtx);
+    FREE (res);
+
+    return ASSERT_EQUAL (total_res, total_mtx) ? SUCCESS : FAILURE;
 }
