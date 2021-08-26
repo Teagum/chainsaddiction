@@ -36,16 +36,18 @@ int main (void)
     RUN_TEST (test__vs_lse_centroid);
     RUN_TEST (test__vs_sum);
 
+    RUN_TEST (test__vm_multiply);
+    RUN_TEST (test__vm_multiply_log);
+
+    RUN_TEST (test__mv_multiply);
+    RUN_TEST (test__mv_multiply_log);
+
     RUN_TEST (test__m_max);
     RUN_TEST (test__m_row_argmax);
     RUN_TEST (test__m_row_max);
     RUN_TEST (test__m_col_max);
     RUN_TEST (test__m_log_centroid_cols);
 
-    RUN_TEST (test__log_vmp);
-    RUN_TEST (test__log_mvp);
-
-    RUN_TEST (test__vm_multiply);
     RUN_TEST (test__mm_multiply);
 
     return 0;
