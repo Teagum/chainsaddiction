@@ -165,17 +165,18 @@ inline void vsi_##name (            \
  * \param[in]   vty         Pointer to vector data.
  * \param[out]  out         Pointer to output object.
  */
-extern void vv_add (size_t n_elem, scalar *vtx, scalar *vty, scalar *out);
-extern void vv_sub (size_t n_elem, scalar *vtx, scalar *vty, scalar *out);
-extern void vv_mul (size_t n_elem, scalar *vtx, scalar *vty, scalar *out);
-extern void vv_div (size_t n_elem, scalar *vtx, scalar *vty, scalar *out);
+extern void vv_add (const size_t n_elem, const scalar *vtx, const scalar *vty, scalar *out);
+extern void vv_sub (const size_t n_elem, const scalar *vtx, const scalar *vty, scalar *out);
+extern void vv_mul (const size_t n_elem, const scalar *vtx, const scalar *vty, scalar *out);
+extern void vv_div (const size_t n_elem, const scalar *vtx, const scalar *vty, scalar *out);
 
-#define def_vv_op(name, op)                                                 \
-inline void vv_##name (size_t n_elem, scalar *vtx, scalar *vty, scalar *out)\
-{                                                                           \
-    while (n_elem--) {                                                      \
-        *out++ = *vtx++ op *vty++;                                          \
-    }                                                                       \
+#define def_vv_op(name, op)                                         \
+inline void vv_##name (const size_t n_elem, const scalar *vtx,      \
+                       const scalar *vty, scalar *out)              \
+{                                                                   \
+    for (size_t i = 0; i < n_elem; i++) {                           \
+        *out++ = *vtx++ op *vty++;                                  \
+    }                                                               \
 }
 
 
@@ -189,17 +190,17 @@ inline void vv_##name (size_t n_elem, scalar *vtx, scalar *vty, scalar *out)\
  * \param[in]       vtx         Pointer to vector data.
  * \param[in, out]  vty         Pointer to vector data.
  */
-extern void vvi_add (size_t n_elem, scalar *vtx, scalar *vty);
-extern void vvi_sub (size_t n_elem, scalar *vtx, scalar *vty);
-extern void vvi_mul (size_t n_elem, scalar *vtx, scalar *vty);
-extern void vvi_div (size_t n_elem, scalar *vtx, scalar *vty);
+extern void vvi_add (const size_t n_elem, const scalar *vtx, scalar *vty);
+extern void vvi_sub (const size_t n_elem, const scalar *vtx, scalar *vty);
+extern void vvi_mul (const size_t n_elem, const scalar *vtx, scalar *vty);
+extern void vvi_div (const size_t n_elem, const scalar *vtx, scalar *vty);
 
-#define def_vvi_op(name, op)                                        \
-inline void vvi_##name (size_t n_elem, scalar *vtx, scalar *vty)    \
-{                                                                   \
-    while (n_elem--) {                                              \
-        *vty++ op##= *vtx++;                                        \
-    }                                                               \
+#define def_vvi_op(name, op)                                                 \
+inline void vvi_##name (const size_t n_elem, const scalar *vtx, scalar *vty) \
+{                                                                            \
+    for (size_t i = 0; i < n_elem; i++) {                                    \
+        *vty++ op##= *vtx++;                                                 \
+    }                                                                        \
 }
 
 
