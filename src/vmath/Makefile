@@ -14,9 +14,7 @@ warnings = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
 optimize = -O2
 debug    = -g
 standard = -std=c17
-includes = -iquote../../include
-export CFLAGS = $(warnings) $(standard) $(optimize) $(includes)
-export CPPFLAGS = -D LD_MATH
+export CFLAGS = $(warnings) $(standard) $(debug) $(optimize) $(includes)
 
 all: $(lib)
 
