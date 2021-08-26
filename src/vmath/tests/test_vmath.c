@@ -611,21 +611,23 @@ bool
 test__v_softmax (void)
 {
     enum setup {
-        vector_max_size = 1000,
-        SR_LB = -10,
-        SR_UB =  10
+        VECTOR_MAX_SIZE = 1000,
+        SRANGE_LB = -10,
+        SRANGE_UB =  10
     };
-    scalar n_elem = rnd_size (1, vector_max_size);
+    scalar n_elem = rnd_size (1, VECTOR_MAX_SIZE);
     scalar total  = 0.0L;
 
     scalar *vtx = VA_SCALAR_EMPTY (n_elem);
-    scalar *out = VA_SCALAR_EMPTY (n_elem);
-    if (vtx == NULL || out == NULL) RETURN_FAILURE;
+    scalar *res = VA_SCALAR_EMPTY (n_elem);
+    if (vtx == NULL || res == NULL) RETURN_FAILURE;
 
-    v_rnd_scalar (n_elem, SR_LB, SR_UB, vtx);
-    v_softmax (n_elem, vtx, out);
-    total = v_sum (n_elem, out);
+    v_rnd_scalar (n_elem, SRANGE_LB, SRANGE_UB, vtx);
+    v_softmax (n_elem, vtx, res);
+    total = v_sum (n_elem, res);
 
+    FREE (vtx);
+    FREE (res);
     return ASSERT_EQUAL (1.0, total) ? SUCCESS : FAILURE;
 }
 
