@@ -697,10 +697,10 @@ test__vm_multiply (void)
     size_t rows = rnd_size (1, max_rows);
     size_t cols = rnd_size (1, max_cols);
 
-    scalar *vtx = VA_SCALAR_ZEROS (rows);
-    scalar *mtx = VA_SCALAR_ZEROS (rows*cols);
-    scalar *out = VA_SCALAR_EMPTY (cols);
-    if (vtx == NULL || mtx == NULL || out == NULL) RETURN_FAILURE;
+    scalar *vtx = VA_SCALAR_EMPTY (rows);
+    scalar *mtx = VA_SCALAR_EMPTY (rows*cols);
+    scalar *res = VA_SCALAR_EMPTY (cols);
+    if (vtx == NULL || mtx == NULL || res == NULL) RETURN_FAILURE;
 
     v_rnd_scalar (rows, 0, 1, vtx);
     v_rnd_scalar (rows*cols, 0, 1, mtx);
@@ -708,12 +708,12 @@ test__vm_multiply (void)
     vi_softmax (rows, vtx);
     mi_row_apply (rows, cols, vi_softmax, mtx);
 
-    vm_multiply (rows, cols, vtx, mtx, out);
-    total = v_sum (cols, out);
+    vm_multiply (rows, cols, vtx, mtx, res);
+    total = v_sum (cols, res);
 
     FREE (vtx);
     FREE (mtx);
-    FREE (out);
+    FREE (res);
     return ASSERT_EQUAL (total, 1.0L) ? SUCCESS : FAILURE;
 }
 
