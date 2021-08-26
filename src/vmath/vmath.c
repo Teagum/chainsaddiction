@@ -436,7 +436,7 @@ vm_logprod (
 
         for (size_t j = 0; j < rows; j++) {
             *acc_data = *mt_data + *vt_data++;
-            row_max = fmax (*acc, row_max);
+            row_max = fmax (*acc_data, row_max);
             acc_data++;
             mt_data+=cols;
         }
@@ -453,12 +453,42 @@ vm_logprod (
 
 
 extern void
-vm_multiply (const size_t rows, const size_t cols, const scalar *vtx,
-             const scalar *mtx, scalar *out)
+mv_logprod (
+    const scalar rows,
+    const scalar cols,
+    const scalar *const mtx,
+    const scalar *const vtx,
+          scalar *const acc,
+          scalar *restrict prod)
 {
-    const scalar *vptr = NULL;
-    const scalar *mptr = NULL;
 
+    const scalar *vt_data  = vtx;
+    const scalar *mt_data  = mtx;
+          scalar *acc_data = acc;
+          scalar row_max   = -INFINITY;
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        for (size_t j = 0; j < cols; j++)
+        {
+            *acc_data = *mt_data++ + *vt_data++;
+            row_max = fmax (*acc_data, row_max);
+            acc_data++;
+        }
+
+        acc_data = acc;
+        for (size_t j = 0; j < cols; j++)
+        {
+            *prod += expl (*acc_data++ - row_max);
+        }
+        *prod = logl (*prod) + row_max;
+
+        prod++;
+        vt_data = vtx;
+        acc_data = acc;
+        row_max = -INFINITY;
+    }
+}
 
 
 extern void
@@ -476,7 +506,7 @@ vm_multiply (const size_t rows, const size_t cols, const scalar *const vtx,
         mtx_data = mtx + i;
         for (size_t j = 0; j < rows; j++)
         {
-            *out_data += *vtx_data * *mtx_data;
+            *out_data = fmal (*vtx_data, *mtx_data, *out_data);
             vtx_data++;
             mtx_data+=cols;
         }

@@ -503,6 +503,14 @@ log_mvp (
     scalar *_mb,
     scalar *_prod);
 
+extern void
+mv_logprod (
+    const scalar rows,
+    const scalar cols,
+    const scalar *const mtx,
+    const scalar *const vtx,
+          scalar *const acc,
+          scalar *restrict out);
 
 extern void
 mv_multiply (

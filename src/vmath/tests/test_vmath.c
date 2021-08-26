@@ -766,12 +766,7 @@ test__vm_logprod (void)
     vi_log (rows, vtx);
     vi_log (n_elem, mtx);
 
-    print_vector (rows, vtx);
-    print_matrix (rows, cols, mtx);
-
     vm_logprod (rows, cols , vtx, mtx, acc, res);
-    print_vector(cols, res);
-
     vi_exp (cols, res);
     total = v_sum (cols, res);
 
@@ -784,37 +779,68 @@ test__vm_logprod (void)
 
 
 bool
-test__mv_multiply (void)
+test__mv_logprod (void)
 {
-    const size_t rows   = 3; //rnd_size (1, 20);
-    const size_t cols   = 5; //rnd_size (1, 20);
+    enum setup {
+        N_ROWS_MAX =  1000,
+        N_COLS_MAX =  1000,
+        SRANGE_LB  = -1000,
+        SRANGE_UB  =  1000,
+    };
+
+    const size_t rows   = rnd_size (1, N_COLS_MAX);
+    const size_t cols   = rnd_size (1, N_ROWS_MAX);
     const size_t n_elem = rows * cols;
-          scalar total  = 0.0L;
+          scalar t_xpc  = 0.0L;
+          scalar t_res  = 0.0L;
 
     scalar *vtx = VA_SCALAR_ZEROS (cols);
     scalar *mtx = VA_SCALAR_ZEROS (n_elem);
+    scalar *acc = VA_SCALAR_ZEROS (cols);
     scalar *res = VA_SCALAR_ZEROS (rows);
-    if (vtx == NULL || mtx == NULL || res == NULL)
+    scalar *xpc = VA_SCALAR_ZEROS (rows);
+    if (vtx == NULL || mtx == NULL || acc == NULL || res == NULL ||
+        xpc == NULL)
+    {
         RETURN_FAILURE;
+    }
 
-    v_rnd_scalar (cols, 1, 10, vtx);
-    v_rnd_scalar (n_elem, 1, 10, mtx);
+    v_rnd_scalar (cols, SRANGE_LB, SRANGE_UB, vtx);
+    v_rnd_scalar (n_elem, SRANGE_LB, SRANGE_UB, mtx);
+    vi_softmax (cols, vtx);
+    mi_row_apply (rows, cols, vi_softmax, mtx);
 
-    print_vector (cols, vtx);
-    print_matrix (rows, cols, mtx);
+    mv_multiply (rows, cols, mtx, vtx, xpc);
+    vi_log (rows, xpc);
+    t_xpc = v_sum (rows, xpc);
+
+    vi_log (cols, vtx);
+    vi_log (n_elem, mtx);
+
+    mv_logprod (rows, cols , mtx, vtx, acc, res);
+    t_res = v_sum (rows, res);
+
+    FREE (vtx);
+    FREE (mtx);
+    FREE (acc);
+    FREE (res);
+    FREE (xpc);
+    return ASSERT_EQUAL (t_xpc, t_res) ? SUCCESS : FAILURE;
+}
 
 
 bool
 test__mv_multiply (void)
 {
     enum setup {
-        max_rows = 1000,
-        max_cols = 1000,
-        SR_LB    = -100,
-        SR_UB    =  100,
+        N_ROWS_MAX = 1000,
+        N_COLS_MAX = 1000,
+        SRANGE_LB  = -100,
+        SRANGE_UB  =  100,
     };
-    const size_t rows   = rnd_size (1, max_rows);
-    const size_t cols   = rnd_size (1, max_cols);
+
+    const size_t rows   = rnd_size (1, N_ROWS_MAX);
+    const size_t cols   = rnd_size (1, N_COLS_MAX);
     const size_t n_elem = rows * cols;
           scalar total_res  = 0.0L;
           scalar total_mtx  = 0.0L;
@@ -829,7 +855,7 @@ test__mv_multiply (void)
     {
         vtx[i] = 1.0L;
     }
-    v_rnd_scalar (n_elem, SR_LB, SR_UB, mtx);
+    v_rnd_scalar (n_elem, SRANGE_LB, SRANGE_UB, mtx);
     mv_multiply (rows, cols, mtx, vtx, res);
 
     total_res = v_sum (rows, res);
