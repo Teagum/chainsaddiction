@@ -414,7 +414,7 @@ m_col_absmax (
 
 
 inline void
-vm_logprod (
+vm_multiply_log (
     const size_t rows,
     const size_t cols,
     const scalar *const vtx,
@@ -452,8 +452,60 @@ vm_logprod (
 }
 
 
+
+
 extern void
-mv_logprod (
+vm_multiply (const size_t rows, const size_t cols, const scalar *const vtx,
+             const scalar *const mtx, scalar *restrict prod)
+{
+    const scalar *vtx_data = NULL;
+    const scalar *mtx_data = NULL;
+          scalar *out_data = prod;
+
+    for (size_t i = 0; i < cols; i++)
+    {
+        vtx_data  = vtx;
+        mtx_data  = mtx + i;
+        *out_data = 0.0L;
+        for (size_t j = 0; j < rows; j++)
+        {
+            *out_data = fmal (*vtx_data, *mtx_data, *out_data);
+            vtx_data++;
+            mtx_data+=cols;
+        }
+        out_data++;
+    }
+}
+
+
+/*
+ * ============================================================================
+ * Matrix * vector interface
+ * ============================================================================
+ */
+
+extern void
+mv_multiply (const size_t rows, const size_t cols, const scalar *const mtx,
+             const scalar *const vtx, scalar *restrict out)
+{
+    const scalar *v_data = NULL;
+    const scalar *m_data = mtx;
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        *out = 0.0L;
+        v_data = vtx;
+        for (size_t j = 0; j < cols; j++)
+        {
+            *out = fmal (*m_data++, *v_data++, *out);
+        }
+        out++;
+    }
+}
+
+
+extern void
+mv_multiply_log (
     const scalar rows,
     const scalar cols,
     const scalar *const mtx,
@@ -490,50 +542,11 @@ mv_logprod (
     }
 }
 
-
-extern void
-vm_multiply (const size_t rows, const size_t cols, const scalar *const vtx,
-             const scalar *const mtx, scalar *restrict prod)
-{
-    const scalar *vtx_data = NULL;
-    const scalar *mtx_data = NULL;
-          scalar *out_data = prod;
-
-    for (size_t i = 0; i < cols; i++)
-    {
-        vtx_data  = vtx;
-        mtx_data  = mtx + i;
-        *out_data = 0.0L;
-        for (size_t j = 0; j < rows; j++)
-        {
-            *out_data = fmal (*vtx_data, *mtx_data, *out_data);
-            vtx_data++;
-            mtx_data+=cols;
-        }
-        out_data++;
-    }
-}
-
-
-extern void
-mv_multiply (const size_t rows, const size_t cols, const scalar *mtx,
-             const scalar *vtx, scalar *restrict out)
-{
-    const scalar *vptr = NULL;
-    const scalar *mptr = mtx;
-
-    for (size_t i = 0; i < rows; i++)
-    {
-        *out = 0.0L;
-        vptr = vtx;
-        for (size_t j = 0; j < cols; j++)
-        {
-            *out = fmal (*mptr++, *vptr++, *out);
-        }
-        out++;
-    }
-}
-
+/*
+ * ============================================================================
+ * Matrix/matrix interface
+ * ============================================================================
+ */
 
 void mm_multiply (const size_t xr, const size_t rc, const size_t yc,
                   const scalar *mtx, const scalar *mty, scalar *out)

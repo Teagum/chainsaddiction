@@ -654,38 +654,6 @@ test__vi_softmax (void)
 
 
 bool
-test__mm_multiply (void)
-{
-    enum setup {
-        rc_max = 100,
-    };
-
-    scalar total = 0.0L;
-    const size_t rc = rnd_size (2, rc_max);
-    const size_t n_elem = rc * rc;
-
-    scalar *A = VA_SCALAR_ZEROS (n_elem);
-    scalar *B = VA_SCALAR_ZEROS (n_elem);
-    scalar *C = VA_SCALAR_ZEROS (n_elem);
-    if (A == NULL || B == NULL || C == NULL) RETURN_FAILURE;
-
-    v_rnd_scalar (n_elem, 0, 1, A);
-    v_rnd_scalar (n_elem, 0, 1, B);
-
-    mi_row_apply (rc, rc, vi_softmax, A);
-    mi_row_apply (rc, rc, vi_softmax, B);
-
-    mm_multiply (rc, rc, rc, A, B, C);
-    total = v_sum (n_elem, C);
-
-    FREE (A);
-    FREE (B);
-    FREE (C);
-    return ASSERT_EQUAL (total, rc) ? SUCCESS : FAILURE;
-}
-
-
-bool
 test__vm_multiply (void)
 {
     enum setup {
@@ -719,7 +687,7 @@ test__vm_multiply (void)
 
 
 bool
-test__vm_logprod (void)
+test__vm_multiply_log (void)
 {
     const size_t rows   = rnd_size (1, 10);
     const size_t cols   = rnd_size (1, 20);
@@ -742,7 +710,7 @@ test__vm_logprod (void)
     vi_log (rows, vtx);
     vi_log (n_elem, mtx);
 
-    vm_logprod (rows, cols , vtx, mtx, acc, res);
+    vm_multiply_log (rows, cols , vtx, mtx, acc, res);
     vi_exp (cols, res);
     total = v_sum (cols, res);
 
@@ -751,57 +719,6 @@ test__vm_logprod (void)
     FREE (acc);
     FREE (res);
     return ASSERT_EQUAL (1.0L, total) ? SUCCESS : FAILURE;
-}
-
-
-bool
-test__mv_logprod (void)
-{
-    enum setup {
-        N_ROWS_MAX =  1000,
-        N_COLS_MAX =  1000,
-        SRANGE_LB  = -1000,
-        SRANGE_UB  =  1000,
-    };
-
-    const size_t rows   = rnd_size (1, N_COLS_MAX);
-    const size_t cols   = rnd_size (1, N_ROWS_MAX);
-    const size_t n_elem = rows * cols;
-          scalar t_xpc  = 0.0L;
-          scalar t_res  = 0.0L;
-
-    scalar *vtx = VA_SCALAR_ZEROS (cols);
-    scalar *mtx = VA_SCALAR_ZEROS (n_elem);
-    scalar *acc = VA_SCALAR_ZEROS (cols);
-    scalar *res = VA_SCALAR_ZEROS (rows);
-    scalar *xpc = VA_SCALAR_ZEROS (rows);
-    if (vtx == NULL || mtx == NULL || acc == NULL || res == NULL ||
-        xpc == NULL)
-    {
-        RETURN_FAILURE;
-    }
-
-    v_rnd_scalar (cols, SRANGE_LB, SRANGE_UB, vtx);
-    v_rnd_scalar (n_elem, SRANGE_LB, SRANGE_UB, mtx);
-    vi_softmax (cols, vtx);
-    mi_row_apply (rows, cols, vi_softmax, mtx);
-
-    mv_multiply (rows, cols, mtx, vtx, xpc);
-    vi_log (rows, xpc);
-    t_xpc = v_sum (rows, xpc);
-
-    vi_log (cols, vtx);
-    vi_log (n_elem, mtx);
-
-    mv_logprod (rows, cols , mtx, vtx, acc, res);
-    t_res = v_sum (rows, res);
-
-    FREE (vtx);
-    FREE (mtx);
-    FREE (acc);
-    FREE (res);
-    FREE (xpc);
-    return ASSERT_EQUAL (t_xpc, t_res) ? SUCCESS : FAILURE;
 }
 
 
@@ -842,4 +759,87 @@ test__mv_multiply (void)
     FREE (res);
 
     return ASSERT_EQUAL (total_res, total_mtx) ? SUCCESS : FAILURE;
+}
+
+
+bool
+test__mv_multiply_log (void)
+{
+    enum setup {
+        N_ROWS_MAX =  1000,
+        N_COLS_MAX =  1000,
+        SRANGE_LB  = -1000,
+        SRANGE_UB  =  1000,
+    };
+
+    const size_t rows   = rnd_size (1, N_COLS_MAX);
+    const size_t cols   = rnd_size (1, N_ROWS_MAX);
+    const size_t n_elem = rows * cols;
+          scalar t_xpc  = 0.0L;
+          scalar t_res  = 0.0L;
+
+    scalar *vtx = VA_SCALAR_ZEROS (cols);
+    scalar *mtx = VA_SCALAR_ZEROS (n_elem);
+    scalar *acc = VA_SCALAR_ZEROS (cols);
+    scalar *res = VA_SCALAR_ZEROS (rows);
+    scalar *xpc = VA_SCALAR_ZEROS (rows);
+    if (vtx == NULL || mtx == NULL || acc == NULL || res == NULL ||
+        xpc == NULL)
+    {
+        RETURN_FAILURE;
+    }
+
+    v_rnd_scalar (cols, SRANGE_LB, SRANGE_UB, vtx);
+    v_rnd_scalar (n_elem, SRANGE_LB, SRANGE_UB, mtx);
+    vi_softmax (cols, vtx);
+    mi_row_apply (rows, cols, vi_softmax, mtx);
+
+    mv_multiply (rows, cols, mtx, vtx, xpc);
+    vi_log (rows, xpc);
+    t_xpc = v_sum (rows, xpc);
+
+    vi_log (cols, vtx);
+    vi_log (n_elem, mtx);
+
+    mv_multiply_log (rows, cols , mtx, vtx, acc, res);
+    t_res = v_sum (rows, res);
+
+    FREE (vtx);
+    FREE (mtx);
+    FREE (acc);
+    FREE (res);
+    FREE (xpc);
+    return ASSERT_EQUAL (t_xpc, t_res) ? SUCCESS : FAILURE;
+}
+
+
+bool
+test__mm_multiply (void)
+{
+    enum setup {
+        rc_max = 100,
+    };
+
+    scalar total = 0.0L;
+    const size_t rc = rnd_size (2, rc_max);
+    const size_t n_elem = rc * rc;
+
+    scalar *A = VA_SCALAR_ZEROS (n_elem);
+    scalar *B = VA_SCALAR_ZEROS (n_elem);
+    scalar *C = VA_SCALAR_ZEROS (n_elem);
+    if (A == NULL || B == NULL || C == NULL) RETURN_FAILURE;
+
+    v_rnd_scalar (n_elem, 0, 1, A);
+    v_rnd_scalar (n_elem, 0, 1, B);
+
+    mi_row_apply (rc, rc, vi_softmax, A);
+    mi_row_apply (rc, rc, vi_softmax, B);
+
+    mm_multiply (rc, rc, rc, A, B, C);
+    total = v_sum (n_elem, C);
+
+    FREE (A);
+    FREE (B);
+    FREE (C);
+    return ASSERT_EQUAL (total, rc) ? SUCCESS : FAILURE;
 }

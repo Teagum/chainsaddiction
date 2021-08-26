@@ -38,12 +38,11 @@ bool test__m_row_argmax (void);
 
 bool test__vi_softmax (void);
 
+bool test__vm_multiply (void);
+bool test__vm_multiply_log (void);
+
+bool test__mv_multiply (void);
+bool test__mv_multiply_log (void);
 
 bool test__mm_multiply (void);
-bool test__vm_multiply (void);
-bool test__mv_multiply (void);
-
-bool test__vm_logprod (void);
-bool test__mv_logprod (void);
-
 #endif  /* test_vmath_h */

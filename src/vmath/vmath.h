@@ -439,32 +439,21 @@ m_col_absmax (
 
 /*
  * ============================================================================
- * Vector/matrix interface
+ * Vector * matrix interface
  * ============================================================================
  */
 
 
-/** Compute the inner product of log(vtx) and log(mtx).
+/** Vector-matrix product: v * M.
  *
- * Compute the product of a vector and a square matrix with the same
- * number of elements in each row and column. Computation is performed
- * in log domain by means of LSE.
+ * Compute the product of a (, n) row vector `v` and a (n x m) matrix `M`.
  *
- * \param[in]   n_elem  Number of elements in _vt.
- * \param[in]   vtx     Pointer to vector data.
- * \param[in]   mtx     Pointer to matrix data.
- * \param       acc     Pointer to accumulation buffer.
+ * \param[in]   rows    Number of rows in matrix and elements in vector.
+ * \param[in]   cols    Number of columns in matrix.
+ * \param[in]   mtx     Pointer to log matrix data.
+ * \param[in]   vtx     Pointer to log vector data.
  * \param[out]  prod    Pointer to output object.
  */
-extern void
-vm_logprod (
-    const size_t rows,
-    const size_t cols,
-    const scalar *const vtx,
-    const scalar *const mtx,
-          scalar *const acc,
-          scalar *restrict prod);
-
 
 extern void
 vm_multiply (
@@ -475,28 +464,72 @@ vm_multiply (
           scalar *restrict prod);
 
 
+/** Vector-matrix product in log domain: log(v) * log(M)
+ *
+ * Compute the product of a (, n) row vector `v` and a (n x m) matrix `M`.
+ * `mv_multiply_log` assumes that the values in `M` and `v` are transformed
+ * to log domain.
+ *
+ * \param[in]   rows    Number of rows in matrix.
+ * \param[in]   cols    Number of columns in matrix and elements in vector.
+ * \param[in]   mtx     Pointer to log matrix data.
+ * \param[in]   vtx     Pointer to log vector data.
+ * \param       acc     Reusable computation buffer.
+ * \param[out]  prod    Pointer to output object.
+ */
+extern void
+vm_multiply_log (
+    const size_t rows,
+    const size_t cols,
+    const scalar *const vtx,
+    const scalar *const mtx,
+          scalar *const acc,
+          scalar *restrict prod);
+
+
+
 /*
  * ============================================================================
- * Matrix/vector interface
+ * Matrix * vector interface
  * ============================================================================
  */
 
-/** Compute matrix/vector product in log domain.
+/** Matrix-vector product: M * v.
  *
- * Compute the product of a square matrix with n_elem rows and columns and a
- * vector with n_elem elements. Computation is performed in log domain by
- * means of LSE.
+ * Compute the product of a (m x n) matrix `M` and a (n, ) column vector `v`.
  *
- * \param _mt    - Pointer to matrix elements.
- * \param _vt    - Pointer to vector elements.
- * \param n_elem - Number of elements in _vt.
- * \param _cs    - Computation buffer of lenght n_elem.
- * \param _mb    _ Computation buffer of lenght n_elem^2.
- * \param prod   - Output buffer of lenght n_elem.
+ * \param[in]   rows    Number of rows in matrix.
+ * \param[in]   cols    Number of columns in matrix and elements in vector.
+ * \param[in]   mtx     Pointer to log matrix data.
+ * \param[in]   vtx     Pointer to log vector data.
+ * \param[out]  prod    Pointer to output object.
  */
 
 extern void
-mv_logprod (
+mv_multiply (
+    const size_t rows,
+    const size_t cols,
+    const scalar *const mtx,
+    const scalar *const vtx,
+          scalar *restrict out);
+
+
+/** Matrix-vector product in log domain: log(M) * log(v)
+ *
+ * Compute the product of a (m x n) matrix `M` and a (n, ) column vector `v`.
+ * `mv_multiply_log` assumes that the values in `M` and `v` are transformed
+ * to log domain.
+ *
+ * \param[in]   rows    Number of rows in matrix.
+ * \param[in]   cols    Number of columns in matrix and elements in vector.
+ * \param[in]   mtx     Pointer to log matrix data.
+ * \param[in]   vtx     Pointer to log vector data.
+ * \param       acc     Reusable computation buffer.
+ * \param[out]  prod    Pointer to output object.
+ */
+
+extern void
+mv_multiply_log (
     const scalar rows,
     const scalar cols,
     const scalar *const mtx,
@@ -504,13 +537,6 @@ mv_logprod (
           scalar *const acc,
           scalar *restrict out);
 
-extern void
-mv_multiply (
-    const size_t rows,
-    const size_t cols,
-    const scalar *mtx,
-    const scalar *vtx,
-          scalar *restrict out);
 /*
  * ============================================================================
  * Matrix/matrix interface
