@@ -447,30 +447,6 @@ test__m_col_max (void)
 
 
 bool
-test__log_mvp (void)
-{
-    const size_t n = 3;
-    scalar vt[] = {1, 2, 3};
-    scalar mt[] = {1, 2, 3, 2, 3, 1, 3, 2, 1};
-    scalar *b1 = VA_SCALAR_EMPTY (n);
-    scalar *b2 = VA_SCALAR_EMPTY (n*n);
-    scalar *res = VA_SCALAR_EMPTY (n);
-
-    v_sample (n, vt);
-    v_sample (n*n, mt);
-    vi_log (n ,vt);
-    vi_log (n*n, mt);
-
-    log_mvp (mt, vt, n, b1, b2, res);
-
-    FREE (b1);
-    FREE (b2);
-    FREE (res);
-    return false;
-}
-
-
-bool
 test__m_log_centroid_cols (void)
 {
     enum setup {

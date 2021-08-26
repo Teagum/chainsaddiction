@@ -494,14 +494,6 @@ vm_multiply (
  * \param _mb    _ Computation buffer of lenght n_elem^2.
  * \param prod   - Output buffer of lenght n_elem.
  */
-extern void
-log_mvp (
-    const scalar *restrict _mt,
-    const scalar *restrict _vt,
-    const size_t n_elem,
-    scalar *_cs,
-    scalar *_mb,
-    scalar *_prod);
 
 extern void
 mv_logprod (

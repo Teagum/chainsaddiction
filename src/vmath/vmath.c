@@ -535,35 +535,6 @@ mv_multiply (const size_t rows, const size_t cols, const scalar *mtx,
 }
 
 
-inline void
-log_mvp (
-    const scalar *restrict _mt,
-    const scalar *restrict vt,
-    const size_t n_elem,
-    scalar *_cs,
-    scalar *_mb,
-    scalar *_prod)
-{
-    OUTER_LOOP {
-        _cs[i] = -INFINITY;
-        INNER_LOOP {
-            size_t idx = i * n_elem + j;
-            _mb[idx] = _mt[idx] + vt[j];
-            _cs[i] = fmax(_mb[idx], _cs[i]);
-        }
-    }
-
-    OUTER_LOOP {
-        _prod[i] = 0.0L;
-        INNER_LOOP {
-            size_t idx = i * n_elem + j;
-            _prod[i] += expl (_mb[idx]-_cs[i]);
-        }
-        _prod[i] = logl (_prod[i]) + _cs[i];
-    }
-}
-
-
 void mm_multiply (const size_t xr, const size_t rc, const size_t yc,
                   const scalar *mtx, const scalar *mty, scalar *out)
 {
