@@ -13,6 +13,30 @@ rnd_int (const int r_min, const int r_max)
 }
 
 
+inline size_t
+rnd_size (
+    const size_t r_min,
+    const size_t r_max)
+{
+    return (size_t) rnd_int (r_min, r_max);
+}
+
+
+inline scalar
+rnd_scalar (
+    const scalar r_min,
+    const scalar r_max)
+{
+    return r_min + (SCALAR_RAND * (scalar)(r_max - r_min)) / RAND_MAX;
+}
+
+inline scalar
+rnd_sample (void)
+{
+    return RND_SCALAR;
+}
+
+
 inline void
 v_rnd_int (
     const size_t n_elem,
@@ -27,15 +51,6 @@ v_rnd_int (
 }
 
 
-inline size_t
-rnd_size (
-    const size_t r_min,
-    const size_t r_max)
-{
-    return (size_t) rnd_int (r_min, r_max);
-}
-
-
 inline void
 v_rnd_size (
     const size_t n_elem,
@@ -47,15 +62,6 @@ v_rnd_size (
     {
         *samples = (size_t) rnd_int (r_min, r_max);
     }
-}
-
-
-inline scalar
-rnd_scalar (
-    const scalar r_min,
-    const scalar r_max)
-{
-    return r_min + (SCALAR_RAND * (scalar)(r_max - r_min)) / RAND_MAX;
 }
 
 
@@ -74,12 +80,12 @@ v_rnd_scalar (
 
 
 inline void
-v_sample (
+v_rnd_sample (
     const size_t n_elem,
     scalar *restrict samples)
 {
     ITER (n_elem, samples)
     {
-        *samples = sample ();
+        *samples = rnd_sample ();
     }
 }
