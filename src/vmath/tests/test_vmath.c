@@ -477,9 +477,9 @@ test__m_log_centroid_cols (void)
         goto exit;
     }
 
-    m_rnd_scalar (n_rows, n_cols, SR_LB, SR_UB, arr);
-    v_log (n_elem, arr, larr);
     v_rnd_scalar (n_rows, 0, 100, weight_per_row);
+    m_rnd_scalar (n_rows, n_cols, SR_LB, SR_UB, arr);
+    m_log (n_rows, n_cols, arr, larr);
 
     for (size_t i = 0; i < n_elem; i++)
     {
