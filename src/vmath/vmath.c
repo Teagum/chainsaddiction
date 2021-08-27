@@ -411,6 +411,29 @@ m_col_absmax (
     }
     return VM_SUCCESS;
 }
+
+
+extern void
+vm_multiply (const size_t rows, const size_t cols, const scalar *const vtx,
+             const scalar *const mtx, scalar *restrict prod)
+{
+    const scalar *vtx_data = NULL;
+    const scalar *mtx_data = NULL;
+          scalar *out_data = prod;
+
+    for (size_t i = 0; i < cols; i++)
+    {
+        vtx_data  = vtx;
+        mtx_data  = mtx + i;
+        *out_data = 0.0L;
+        for (size_t j = 0; j < rows; j++)
+        {
+            *out_data = fmal (*vtx_data, *mtx_data, *out_data);
+            vtx_data++;
+            mtx_data+=cols;
+        }
+        out_data++;
+    }
 }
 
 
@@ -449,32 +472,6 @@ vm_multiply_log (
 
         *prod = logl (*prod) + row_max;
         prod++;
-    }
-}
-
-
-
-
-extern void
-vm_multiply (const size_t rows, const size_t cols, const scalar *const vtx,
-             const scalar *const mtx, scalar *restrict prod)
-{
-    const scalar *vtx_data = NULL;
-    const scalar *mtx_data = NULL;
-          scalar *out_data = prod;
-
-    for (size_t i = 0; i < cols; i++)
-    {
-        vtx_data  = vtx;
-        mtx_data  = mtx + i;
-        *out_data = 0.0L;
-        for (size_t j = 0; j < rows; j++)
-        {
-            *out_data = fmal (*vtx_data, *mtx_data, *out_data);
-            vtx_data++;
-            mtx_data+=cols;
-        }
-        out_data++;
     }
 }
 

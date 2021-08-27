@@ -468,7 +468,7 @@ vm_multiply (
 /** Vector-matrix product in log domain: log(v) * log(M)
  *
  * Compute the product of a (, n) row vector `v` and a (n x m) matrix `M`.
- * `mv_multiply_log` assumes that the values in `M` and `v` are transformed
+ * `vm_multiply_log` assumes that the values in `M` and `v` are transformed
  * to log domain.
  *
  * \param[in]   rows    Number of rows in matrix.
