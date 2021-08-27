@@ -4,29 +4,23 @@
 bool
 test__pois_e_step (void)
 {
-    enum { n_repeat_test = 10 };
-
     const char data_path[] = "../../../tests/data/earthquakes";
     const char params_path[] = "tests/data/ppr1";
 
-    for (size_t n = 0; n < n_repeat_test; n++)
-    {
-        scalar llh = 0;
-        DataSet *inp = ds_NewFromFile (data_path);
-        PoisParams *params = PoisParams_NewFromFile (params_path);
-        PoisParams *lparams = PoisParams_New(params->m_states);
-        PoisProbs *probs = PoisProbs_New (inp->size, params->m_states);
-        PoisParams_CopyLog (params, lparams);
+    scalar llh = 0;
+    DataSet *inp = ds_NewFromFile (data_path);
+    PoisParams *params = PoisParams_NewFromFile (params_path);
+    PoisParams *lparams = PoisParams_New(params->m_states);
+    PoisProbs *probs = PoisProbs_New (inp->size, params->m_states);
 
-        pois_e_step (inp->size, params->m_states, inp->data,
-                lparams->lambda, lparams->gamma, lparams->delta,
-                probs->lsdp, probs->lalpha, probs->lbeta, probs->lcxpt,
-                &llh);
+    PoisParams_CopyLog (params, lparams);
+    pois_e_step (inp->size, params->m_states, inp->data, lparams->lambda,
+            lparams->gamma, lparams->delta, probs->lsdp, probs->lalpha,
+            probs->lbeta, probs->lcxpt, &llh);
 
-        ds_FREE(inp);
-        PoisParams_Delete (params);
-        PoisParams_Delete (lparams);
-    }
+    ds_FREE(inp);
+    PoisParams_Delete (params);
+    PoisParams_Delete (lparams);
     return false;
 }
 
@@ -125,7 +119,7 @@ test__pois_m_step_delta(void)
             &llh);
 
     pois_m_step_delta (probs->m_states, probs->lcxpt, new_ldelta);
-    
+
 
     ds_FREE (inp);
     PoisParams_Delete (params);
