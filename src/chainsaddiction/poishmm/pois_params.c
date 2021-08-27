@@ -91,8 +91,8 @@ PoisParams_CopyLog (
     PoisParams *restrict other)
 {
     PoisParams_SetLambda (other, this->lambda);
-    v_logr1 (this->gamma, this->m_states * this->m_states, other->gamma);
-    v_logr1 (this->delta, this->m_states, other->delta);
+    v_logr1 (this->m_states * this->m_states, this->gamma, other->gamma);
+    v_logr1 (this->m_states, this->delta, other->delta);
 }
 
 
@@ -216,12 +216,10 @@ pp_rnd_gamma (
     const size_t m_states,
     scalar *const restrict buffer)
 {
-    const size_t g_elem = m_states * m_states;
-
-    v_sample (g_elem, buffer);
+    m_rnd_sample (m_states, m_states, buffer);
     for (size_t i = 0; i < m_states; i++)
     {
-        vi_softmax (buffer+i*m_states, m_states);
+        vi_softmax (m_states, buffer+i*m_states);
     }
 }
 
@@ -231,6 +229,6 @@ pp_rnd_delta (
     const size_t m_states,
     scalar *const restrict buffer)
 {
-    v_sample (m_states, buffer);
-    vi_softmax (buffer, m_states);
+    v_rnd_sample (m_states, buffer);
+    vi_softmax (m_states, buffer);
 }
