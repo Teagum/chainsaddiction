@@ -24,7 +24,7 @@ log_forward (
     {
         size_t c_idx = (i-1) * m_states;
         size_t n_idx = i * m_states;
-        vm_multiply_log (n_obs, m_states, lalpha+c_idx, lgamma, _cs, lalpha+n_idx);
+        vm_multiply_log (m_states, m_states, lalpha+c_idx, lgamma, _cs, lalpha+n_idx);
         vvi_add (m_states, lprobs+=m_states, lalpha+n_idx);
     }
     MA_FREE (_cs);
