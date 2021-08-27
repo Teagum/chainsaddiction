@@ -388,7 +388,7 @@ m_col_max (
     {
         max_per_col[i] = strided_max (n_elem--, n_cols, mtx);
     }
-    return SUCCESS;
+    return VM_SUCCESS;
 }
 
 
@@ -409,7 +409,8 @@ m_col_absmax (
     {
         max_per_col[i] = strided_absmax (n_elem--, n_cols, mtx);
     }
-    return SUCCESS;
+    return VM_SUCCESS;
+}
 }
 
 

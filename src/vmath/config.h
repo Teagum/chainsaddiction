@@ -14,13 +14,13 @@ typedef double scalar;
 typedef	long double	scalar;
 #endif
 
-#define CA_NAN nanl ("CA_NAN")
+#define VM_NAN nanl ("CA_NAN")
 
-#define SUCCESS 0
-#define FAILURE 1
+#define VM_SUCCESS 0
+#define VM_FAILURE 1
 
-#define RETURN_SUCCESS return SUCCESS
-#define RETURN_FAILURE return FAILURE
+#define VM_RETURN_SUCCESS return VM_SUCCESS
+#define VM_RETURN_FAILURE return VM_FAILURE
 
 
 #endif  /* config_h */

@@ -620,7 +620,7 @@ test__v_softmax (void)
 
     scalar *vtx = VA_SCALAR_EMPTY (n_elem);
     scalar *res = VA_SCALAR_EMPTY (n_elem);
-    if (vtx == NULL || res == NULL) RETURN_FAILURE;
+    if (vtx == NULL || res == NULL) VM_RETURN_FAILURE;
 
     v_rnd_scalar (n_elem, SRANGE_LB, SRANGE_UB, vtx);
     v_softmax (n_elem, vtx, res);
@@ -628,7 +628,7 @@ test__v_softmax (void)
 
     FREE (vtx);
     FREE (res);
-    return ASSERT_EQUAL (1.0, total) ? SUCCESS : FAILURE;
+    return ASSERT_EQUAL (1.0, total) ? VM_SUCCESS : VM_FAILURE;
 }
 
 
@@ -644,14 +644,14 @@ test__vi_softmax (void)
     scalar total  = 0.0L;
 
     scalar *vtx = VA_SCALAR_EMPTY (n_elem);
-    if (vtx == NULL) RETURN_FAILURE;
+    if (vtx == NULL) VM_RETURN_FAILURE;
 
     v_rnd_scalar (n_elem, SRANGE_LB, SRANGE_UB, vtx);
     vi_softmax (n_elem, vtx);
     total = v_sum (n_elem, vtx);
 
     FREE (vtx);
-    return ASSERT_EQUAL (1.0, total) ? SUCCESS : FAILURE;
+    return ASSERT_EQUAL (1.0, total) ? VM_SUCCESS : VM_FAILURE;
 }
 
 
@@ -670,7 +670,7 @@ test__vm_multiply (void)
     scalar *vtx = VA_SCALAR_EMPTY (rows);
     scalar *mtx = VA_SCALAR_EMPTY (rows*cols);
     scalar *res = VA_SCALAR_EMPTY (cols);
-    if (vtx == NULL || mtx == NULL || res == NULL) RETURN_FAILURE;
+    if (vtx == NULL || mtx == NULL || res == NULL) VM_RETURN_FAILURE;
 
     v_rnd_scalar (rows, 0, 1, vtx);
     v_rnd_scalar (rows*cols, 0, 1, mtx);
@@ -684,7 +684,7 @@ test__vm_multiply (void)
     FREE (vtx);
     FREE (mtx);
     FREE (res);
-    return ASSERT_EQUAL (total, 1.0L) ? SUCCESS : FAILURE;
+    return ASSERT_EQUAL (total, 1.0L) ? VM_SUCCESS : VM_FAILURE;
 }
 
 
@@ -701,7 +701,7 @@ test__vm_multiply_log (void)
     scalar *acc = VA_SCALAR_ZEROS (rows);
     scalar *res = VA_SCALAR_ZEROS (cols);
     if (vtx == NULL || mtx == NULL || acc == NULL || res == NULL)
-        RETURN_FAILURE;
+        VM_RETURN_FAILURE;
 
     v_rnd_scalar (rows, 1, 10, vtx);
     v_rnd_scalar (n_elem, 1, 10, mtx);
@@ -720,7 +720,7 @@ test__vm_multiply_log (void)
     FREE (mtx);
     FREE (acc);
     FREE (res);
-    return ASSERT_EQUAL (1.0L, total) ? SUCCESS : FAILURE;
+    return ASSERT_EQUAL (1.0L, total) ? VM_SUCCESS : VM_FAILURE;
 }
 
 
@@ -744,7 +744,7 @@ test__mv_multiply (void)
     scalar *mtx = VA_SCALAR_ZEROS (n_elem);
     scalar *res = VA_SCALAR_ZEROS (rows);
     if (vtx == NULL || mtx == NULL || res == NULL)
-        RETURN_FAILURE;
+        VM_RETURN_FAILURE;
 
     for (size_t i = 0; i < cols; i++)
     {
@@ -760,7 +760,7 @@ test__mv_multiply (void)
     FREE (mtx);
     FREE (res);
 
-    return ASSERT_EQUAL (total_res, total_mtx) ? SUCCESS : FAILURE;
+    return ASSERT_EQUAL (total_res, total_mtx) ? VM_SUCCESS : VM_FAILURE;
 }
 
 
@@ -788,7 +788,7 @@ test__mv_multiply_log (void)
     if (vtx == NULL || mtx == NULL || acc == NULL || res == NULL ||
         xpc == NULL)
     {
-        RETURN_FAILURE;
+        VM_RETURN_FAILURE;
     }
 
     v_rnd_scalar (cols, SRANGE_LB, SRANGE_UB, vtx);
@@ -811,7 +811,7 @@ test__mv_multiply_log (void)
     FREE (acc);
     FREE (res);
     FREE (xpc);
-    return ASSERT_EQUAL (t_xpc, t_res) ? SUCCESS : FAILURE;
+    return ASSERT_EQUAL (t_xpc, t_res) ? VM_SUCCESS : VM_FAILURE;
 }
 
 
@@ -829,7 +829,7 @@ test__mm_multiply (void)
     scalar *A = VA_SCALAR_ZEROS (n_elem);
     scalar *B = VA_SCALAR_ZEROS (n_elem);
     scalar *C = VA_SCALAR_ZEROS (n_elem);
-    if (A == NULL || B == NULL || C == NULL) RETURN_FAILURE;
+    if (A == NULL || B == NULL || C == NULL) VM_RETURN_FAILURE;
 
     v_rnd_scalar (n_elem, 0, 1, A);
     v_rnd_scalar (n_elem, 0, 1, B);
@@ -843,5 +843,5 @@ test__mm_multiply (void)
     FREE (A);
     FREE (B);
     FREE (C);
-    return ASSERT_EQUAL (total, rc) ? SUCCESS : FAILURE;
+    return ASSERT_EQUAL (total, rc) ? VM_SUCCESS : VM_FAILURE;
 }
