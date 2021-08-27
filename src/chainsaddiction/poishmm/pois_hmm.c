@@ -36,7 +36,6 @@ PoisHmm_Init (
     const scalar *const restrict delta)
 {
     size_t m_states = phmm->m_states;
-    size_t n_elem_gamma = m_states * m_states;
     size_t v_size = m_states * sizeof (scalar);
     size_t m_size = m_states * v_size;
 
@@ -64,8 +63,8 @@ PoisHmm_Init (
 #endif
 
     memcpy (phmm->params->lambda, phmm->init->lambda, v_size);
-    v_log (phmm->init->gamma, n_elem_gamma, phmm->params->gamma);
-    v_log (phmm->init->delta, phmm->m_states, phmm->params->delta);
+    m_log (m_states, m_states, phmm->init->gamma, phmm->params->gamma);
+    v_log (m_states, phmm->init->delta, phmm->params->delta);
 }
 
 
@@ -73,21 +72,17 @@ void
 PoisHmm_InitRandom (PoisHmm *const restrict phmm)
 {
     size_t m_states = phmm->m_states;
-    size_t n_elem = m_states * m_states;
 
     v_rnd_scalar (m_states, 1, 100, phmm->init->lambda);
-    v_sample (m_states, phmm->init->delta);
-    v_sample (n_elem, phmm->init->gamma);
+    v_rnd_sample (m_states, phmm->init->delta);
+    m_rnd_sample (m_states, m_states, phmm->init->gamma);
 
-    for (size_t i = 0; i < m_states; i++)
-    {
-        vi_softmax (phmm->init->gamma+i*m_states, m_states);
-    }
-    vi_softmax (phmm->init->delta, m_states);
+    mi_row_apply (m_states, m_states, vi_softmax, phmm->init->gamma);
+    vi_softmax (m_states, phmm->init->delta);
 
     memcpy (phmm->params->lambda, phmm->init->lambda, m_states * sizeof (scalar));
-    v_log (phmm->init->gamma, n_elem, phmm->params->gamma);
-    v_log (phmm->init->delta, m_states, phmm->params->delta);
+    m_log (m_states, m_states, phmm->init->gamma, phmm->params->gamma);
+    v_log (m_states, phmm->init->delta, phmm->params->delta);
 }
 
 
