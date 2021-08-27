@@ -402,41 +402,25 @@ m_col_absmax (
     scalar *restrict max_per_col);
 
 
-/** Compute exponentials of matrix elements.
+/** Vectorized transforms on matrix elemets
  *
- * \param rows  Number of rows in matrix.
- * \param cols  Number of cols in matrix.
- * \param mtx   Pointer to matrix data.
- * \param out   Pointer to output buffer.
+ * \param[in]   rows    Number of rows in matrix.
+ * \param[in]   cols    Number of columns in matrix.
+ * \param[in]   mtx     Pointer to matrix data.
+ * \param[out]  out     Pointer to output buffer.
  */
 #define m_exp(rows, cols, mtx, out) v_exp ((rows*cols), (mtx), (out))
+#define m_log(rows, cols, mtx, out) v_log ((rows*cols), (mtx), (out))
 
 
-/** Compute logarithm of matrix elements.
+/** Vectorized inplace transforms on matrix elements
  *
- * \param mat       Pointer to matrix elements.
- * \param n_elem    Number of matrix elements.
- * \param out       Pointer to output buffer.
+ * \param[in]       rows    Number of rows in matrix.
+ * \param[in]       cols    Number of columns in matrix.
+ * \param[in,out]   mtx     Pointer to matrix data.
  */
-#define m_log(mat, n_elem, out) v_log ((mat), (n_elem), (out))
-
-
-/** Compute exponentials of matrix elements inplace.
- *
- * \param rows  Number of rows in matrix.
- * \param cols  Number of cols in matrix.
- * \param mtx   Pointer to matrix data.
- */
-#define mi_exp(rows, cols, mtx) vi_log ((mtx), (rows*cols))
-
-
-/** Compute logarithm of matrix elements inplace
- *
- * \param mat       Pointer to matrix elements.
- * \param n_elem    Number of matrix elements.
- */
-#define mi_log(mat, n_elem) vi_log ((mat), (n_elem))
-
+#define mi_exp(rows, cols, mtx) vi_log ((rows*cols), (mtx))
+#define mi_log(rows, cols, mtx) vi_log ((rows*cols), (mtx))
 
 /*
  * ============================================================================
