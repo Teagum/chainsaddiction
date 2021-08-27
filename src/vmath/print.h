@@ -18,7 +18,7 @@
     NEWLINE;                                                        \
     fprintf (stderr, "%6c", ' ');                                   \
     for (size_t i = 0; i < n; i++) {                                \
-        fprintf (stderr, "%10.5Lf ",  (scalar)vct[i]);              \
+        fprintf (stderr, "%10.5Lf ",  (scalar)(vct)[i]);            \
     }                                                               \
     NEWLINE;                                                        \
 } while (0)
@@ -34,7 +34,7 @@
     for (size_t i = 0; i < rows; i++) {                             \
         fprintf (stderr, GREEN "[%3zu] " CLEAR, i);                 \
         for (size_t j = 0; j < cols; j++) {                         \
-            fprintf (stderr, "%10.5Lf ", (scalar)mtx[i*cols+j]);    \
+            fprintf (stderr, "%10.5Lf ", (scalar)(mtx)[i*cols+j]);  \
         }                                                           \
         NEWLINE;                                                    \
     }                                                               \
