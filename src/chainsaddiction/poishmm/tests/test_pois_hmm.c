@@ -186,9 +186,9 @@ test__PoisHmm_BackwardProbabilities (void)
     int status = PoisHmm_BackwardProbabilities (hmm);
     if (status) return true;
 
-    for (size_t i = 0; i < hmm->m_states * inp->size; i++)
+    for (size_t i = 0; i < (hmm->m_states * inp->size) - hmm->m_states; i++)
     {
-        if (!isfinite (hmm->probs->lbeta[i]))
+        if (!isnormal (hmm->probs->lbeta[i]))
         {
             return true;
         }
