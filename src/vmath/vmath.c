@@ -504,14 +504,13 @@ mv_multiply (const size_t rows, const size_t cols, const scalar *const mtx,
 
 extern void
 mv_multiply_log (
-    const scalar rows,
-    const scalar cols,
+    const size_t rows,
+    const size_t cols,
     const scalar *const mtx,
     const scalar *const vtx,
           scalar *const acc,
           scalar *restrict prod)
 {
-
     const scalar *vt_data  = vtx;
     const scalar *mt_data  = mtx;
           scalar *acc_data = acc;
@@ -519,6 +518,7 @@ mv_multiply_log (
 
     for (size_t i = 0; i < rows; i++)
     {
+        *prod = 0.0L;
         for (size_t j = 0; j < cols; j++)
         {
             *acc_data = *mt_data++ + *vt_data++;

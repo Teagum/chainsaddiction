@@ -515,8 +515,8 @@ mv_multiply (
 
 extern void
 mv_multiply_log (
-    const scalar rows,
-    const scalar cols,
+    const size_t rows,
+    const size_t cols,
     const scalar *const mtx,
     const scalar *const vtx,
           scalar *const acc,

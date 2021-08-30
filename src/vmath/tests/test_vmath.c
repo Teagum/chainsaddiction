@@ -780,11 +780,11 @@ test__mv_multiply_log (void)
           scalar t_xpc  = 0.0L;
           scalar t_res  = 0.0L;
 
-    scalar *vtx = VA_SCALAR_ZEROS (cols);
-    scalar *mtx = VA_SCALAR_ZEROS (n_elem);
-    scalar *acc = VA_SCALAR_ZEROS (cols);
-    scalar *res = VA_SCALAR_ZEROS (rows);
-    scalar *xpc = VA_SCALAR_ZEROS (rows);
+    scalar *vtx = VA_SCALAR_EMPTY (cols);
+    scalar *mtx = VA_SCALAR_EMPTY (n_elem);
+    scalar *acc = VA_SCALAR_EMPTY (cols);
+    scalar *res = VA_SCALAR_EMPTY (rows);
+    scalar *xpc = VA_SCALAR_EMPTY (rows);
     if (vtx == NULL || mtx == NULL || acc == NULL || res == NULL ||
         xpc == NULL)
     {
