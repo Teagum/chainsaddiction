@@ -41,6 +41,7 @@ log_backward (
 {
     /* shared buffers */
     scalar *_cs = MA_SCALAR_ZEROS (m_states);
+    scalar *obs_prob = MA_SCALAR_EMPTY (m_states);
 
     /* init step */
     size_t c_idx = (n_obs-1) * m_states;
@@ -54,12 +55,11 @@ log_backward (
 
     for (size_t i = n_obs-1; i > 0; i--)
     {
+        vv_add (m_states, lprobs, lbeta, obs_prob);
+        mv_multiply_log (m_states, m_states, lgamma, obs_prob, _cs, lbeta-m_states);
         lbeta -= m_states;
-        vv_add (m_states, lprobs, lbeta+m_states, lbeta);
-        mv_multiply_log (m_states, m_states, lgamma, lbeta+m_states, _cs, lbeta);
         lprobs -= m_states;
     }
-
     MA_FREE (_cs);
 }
 
