@@ -56,7 +56,7 @@ log_backward (
     {
         lbeta -= m_states;
         vv_add (m_states, lprobs, lbeta+m_states, lbeta);
-        mv_multiply_log (n_obs, m_states, lgamma, lbeta+m_states, _cs, lbeta);
+        mv_multiply_log (m_states, m_states, lgamma, lbeta+m_states, _cs, lbeta);
         lprobs -= m_states;
     }
 
