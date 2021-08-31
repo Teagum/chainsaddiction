@@ -106,20 +106,21 @@ global_decoding (
         return 1;
     }
 
-    v_add(ldelta, lsdp, m_states, chi);
+    //v_add(ldelta, lsdp, m_states, chi);
+    vv_add(m_states, ldelta, lsdp, chi);
     scalar *prev_row = chi;
     scalar *this_row = chi+m_states;
     for (size_t n = 1; n < n_obs; n++, this_row+=m_states, prev_row+=m_states, lsdp+=m_states)
     {
         vm_add (m_states, m_states, prev_row, lgamma, mb);
         m_row_max (mb, m_states, m_states, this_row);
-        vi_add (lsdp, this_row, m_states);
+        vvi_add (m_states, lsdp, this_row);
     }
 
     states[n_obs-1] = v_argmax (m_states, this_row);
     for (size_t i = n_obs-2; i > 0; i--, prev_row-=m_states)
     {
-        v_add (prev_row, lgamma+states[i+1], m_states, vb);
+        vv_add (m_states, prev_row, lgamma+states[i+1], vb);
         states[i] = v_argmax(m_states, vb);
     }
 
