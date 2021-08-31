@@ -98,7 +98,7 @@ test__sample (void)
 
     for (size_t i = 0; i < N_ELEM; i++)
     {
-        scalar val = sample ();
+        scalar val = rnd_sample ();
         if (!ASSERT_IN_RANGE (val, SR_LB, SR_UB) || !isfinite (val))
         {
             return true;
@@ -119,7 +119,7 @@ test__v_sample (void)
     for (size_t n = 0; n < N_ITER; n++)
     {
         scalar arr[N_ELEM] = { IVAL };
-        v_sample (N_ELEM, arr);
+        v_rnd_sample (N_ELEM, arr);
 
         for (size_t i = 0; i < N_ELEM; i++)
         {

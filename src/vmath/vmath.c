@@ -1,9 +1,239 @@
 #include "vmath.h"
 
-def_vi_s_func(add, +)
-def_vi_s_func(sub, -)
-def_vi_s_func(mul, *)
-def_vi_s_func(div, /)
+
+/*
+ * Low-level reductions
+ */
+
+inline scalar
+v_acc_sum (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx)
+{
+    scalar sum = 0.0L;
+    if (n_elem == 0 || stride == 0)
+    {
+        errno = EDOM;
+        return 0.0L;
+    }
+
+    if (op == NULL)
+    {
+        acc_sum (n_elem, stride, vtx, &sum);
+    }
+    else
+    {
+        acc_sum_op(n_elem, stride, op, vtx, &sum);
+    }
+    return sum;
+}
+
+
+inline scalar
+v_acc_prod (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx)
+{
+    scalar prod = 1.0L;
+    if (n_elem == 0 || stride == 0)
+    {
+        errno = EDOM;
+        return 0.0L;
+    }
+
+    if (op == NULL)
+    {
+        acc_prod(n_elem, stride, vtx, &prod);
+    }
+    else
+    {
+        acc_prod_op(n_elem, stride, op, vtx, &prod);
+    }
+    return prod;
+}
+
+
+/*
+ * High-level reductions
+ */
+inline scalar
+v_sum (size_t n_elem, const scalar *restrict vtx)
+{
+    return v_acc_sum (n_elem, 1, NULL, vtx);
+}
+
+
+inline scalar
+v_sumlog (size_t n_elem, const scalar *restrict vtx)
+{
+    return v_acc_sum (n_elem, 1, logl, vtx);
+}
+
+
+inline scalar
+v_sumexp (size_t n_elem, const scalar *restrict vtx)
+{
+    return v_acc_sum (n_elem, 1, expl, vtx);
+}
+
+
+inline scalar
+v_lse (size_t n_elem, const scalar *restrict vtx)
+{
+    const scalar max_val = v_max (n_elem, vtx);
+    scalar sum_exp = 0;
+    for (size_t i = 0; i < n_elem; i++, vtx++)
+    {
+        sum_exp += expl (*vtx - max_val);
+    }
+    return logl (sum_exp) + max_val;
+}
+
+
+inline scalar
+v_max (size_t n_elem, const scalar *restrict vtx)
+{
+    const scalar *max_ptr = vtx;
+    while (--n_elem) {
+        max_ptr = *++vtx >= *max_ptr ? vtx : max_ptr;
+    }
+    return *max_ptr;
+}
+
+
+inline scalar
+v_min (size_t n_elem, const scalar *restrict vtx)
+{
+    const scalar *min_ptr = vtx;
+    while (--n_elem) {
+        min_ptr = *++vtx <= *min_ptr ? vtx : min_ptr;
+    }
+    return *min_ptr;
+}
+
+
+inline size_t
+v_argmax (size_t n_elem, const scalar *restrict vtx)
+{
+    size_t arg = n_elem;
+    size_t cnt = n_elem;
+    const long double *max_ptr = vtx;
+    while (--cnt) {
+        if (*++vtx >= *max_ptr)
+        {
+            max_ptr = vtx;
+            arg = cnt;
+        }
+    }
+    return n_elem - arg;
+}
+
+
+inline size_t
+v_argmin (size_t n_elem, const scalar *restrict vtx)
+{
+    size_t arg = n_elem;
+    size_t cnt = n_elem;
+    const long double *max_ptr = vtx;
+    while (--cnt) {
+        if (*++vtx <= *max_ptr)
+        {
+            max_ptr = vtx;
+            arg = cnt;
+        }
+    }
+    return n_elem - arg;
+}
+
+
+/*
+ * Vectorized transforms
+ */
+
+def_v_op (exp, expl)
+def_v_op (log, logl)
+def_v_op (logr1, logr1)
+
+
+inline void
+v_softmax (size_t n_elem, const scalar *restrict vtx, scalar *restrict out)
+{
+    scalar total = 0.0L;
+    scalar *iter = out;
+
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        *iter = expl (*vtx);
+        total += *iter;
+        iter++;
+        vtx++;
+    }
+    iter = NULL;
+
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        *out /= total;
+        out++;
+    }
+}
+
+
+/*
+ * Vectorized inplace transforms
+ */
+
+def_vi_op(exp, expl)
+def_vi_op(log, logl)
+def_vi_op(logr1, logr1)
+
+
+inline void
+vi_softmax (size_t n_elem, scalar *vtx)
+{
+    scalar total = 0.0L;
+    scalar *iter = vtx;
+
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        *iter = expl (*iter);
+        total += *iter;
+        iter++;
+    }
+    iter = NULL;
+    vsi_div (n_elem, total, vtx);
+}
+
+
+/*
+ * Basic vector/scalar arithmetic
+ */
+def_vs_op(add, +)
+def_vs_op(sub, -)
+def_vs_op(mul, *)
+def_vs_op(div, /)
+
+
+/*
+ * Basic vector/scalar inplace arithmetic
+ */
+def_vsi_op(add, +)
+def_vsi_op(sub, -)
+def_vsi_op(mul, *)
+def_vsi_op(div, /)
+
+
+/*
+ * Basic vector/vector arithmetic
+ */
+def_vv_op(add, +)
+def_vv_op(sub, -)
+def_vv_op(mul, *)
+def_vv_op(div, /)
+
+
+/*
+ * Basic vector/vector inplace arithmetic
+ */
+def_vvi_op(add, +)
+def_vvi_op(sub, -)
+def_vvi_op(mul, *)
+def_vvi_op(div, /)
 
 def_mm_op_s_func(add, +)
 def_mm_op_s_func(sub, -)
@@ -11,113 +241,9 @@ def_mm_op_s_func(mul, *)
 def_mm_op_s_func(div, /)
 
 
-inline void
-v_add (
-    const scalar *const vx,
-    const scalar *const vy,
-    const size_t n,
-    scalar *out)
-{
-    FOR_EACH(i, n) {
-        out[i] = vx[i] + vy[i];
-    }
-}
-
-inline void
-vi_add (
-    const scalar *restrict vx,
-    scalar *vy,
-    const size_t n_elem)
-{
-    OUTER_LOOP {
-        vy[i] += vx[i];
-    }
-}
-
-inline void
-v_exp (
-    const scalar *restrict vx,
-    const size_t n_elem,
-    scalar *_exps)
-{
-    OUTER_LOOP {
-        _exps[i] = expl (vx[i]);
-    }
-}
-
-inline void
-vi_exp (
-    scalar *restrict vx,
-    const size_t n_elem)
-{
-    OUTER_LOOP {
-        vx[i] = expl (vx[i]);
-    }
-}
-
-inline void
-v_log (
-    const scalar *restrict vx,
-    const size_t n_elem,
-    scalar *_logs)
-{
-    OUTER_LOOP {
-        _logs[i] = logl (vx[i]);
-    }
-}
 
 
-inline void
-vi_log (
-    scalar *restrict vx,
-    const size_t n_elem)
-{
-    OUTER_LOOP {
-        vx[i] = logl (vx[i]);
-    }
-}
 
-inline void
-v_logr1 (
-    scalar *restrict vct,
-    const size_t n_elem,
-    scalar *restrict out)
-{
-    FOR_EACH (i, n_elem)
-    {
-        *out = logr1 (*vct);
-        out++;
-        vct++;
-    }
-}
-
-
-inline void
-vi_logr1 (
-    scalar *restrict vct,
-    const size_t n_elem)
-{
-    FOR_EACH (i, n_elem)
-    {
-        *vct = logr1 (*vct);
-        vct++;
-    }
-}
-
-
-inline scalar
-v_lse (
-    const scalar *restrict vctr,
-    const size_t n_elem)
-{
-    const scalar max_val = v_max (vctr, n_elem);
-    scalar sum_exp = 0;
-    for (size_t i = 0; i < n_elem; i++, vctr++)
-    {
-        sum_exp += expl (*vctr - max_val);
-    }
-    return logl (sum_exp) + max_val;
-}
 
 
 inline scalar
@@ -130,7 +256,7 @@ vs_lse_centroid (
 {
     scalar sum_exp =  0.0L;
     scalar sum_exp_w = 0.0L;
-    scalar max_val = v_max (vt, n_elem);
+    scalar max_val = v_max (n_elem, vt);
 
     for (size_t i = 0; i < n_elem; i++, vt+=v_stride, weights+=w_stride)
     {
@@ -142,61 +268,6 @@ vs_lse_centroid (
 }
 
 
-extern size_t
-v_argmax (const size_t n_elem, const scalar *restrict vec)
-{
-    size_t arg = 0;
-    scalar max = *vec;
-
-    for (size_t i = 1; i < n_elem; i++)
-    {
-        if (vec[i] > max)
-        {
-            arg = i;
-            max = vec[i];
-        }
-    }
-    return arg;
-}
-
-
-inline scalar
-v_max (
-    const scalar *restrict vt,
-    const size_t n_elem)
-{
-    scalar _max = *vt++;
-    for (size_t i = 1; i < n_elem; i++, vt++)
-    {
-        _max = fmaxl (*vt, _max);
-    }
-    return _max;
-}
-
-
-inline void
-vi_softmax (scalar *buffer, size_t n_elem)
-{
-    scalar total = 0.0L;
-    for (size_t i = 0; i < n_elem; i++)
-    {
-        buffer[i] = expl (buffer[i]);
-        total += buffer[i];
-    }
-    for (size_t i = 0; i < n_elem; i++)
-    {
-        buffer[i] /= total;
-    }
-}
-
-
-inline scalar
-v_sum (
-    const scalar *restrict vt,
-    const size_t n_elem)
-{
-    return vs_sum (vt, n_elem, 1);
-}
 
 
 inline scalar
@@ -281,7 +352,7 @@ m_max (
     const size_t _n_rows,
     const size_t _n_cols)
 {
-    return v_max (_mt, _n_rows*_n_cols);
+    return v_max (_n_rows*_n_cols, _mt);
 }
 
 
@@ -295,7 +366,7 @@ m_row_max (
 {
     for (size_t i = 0; i < n_rows; i++, mtx+=n_cols)
     {
-        row_max[i] = v_max (mtx, n_cols);
+        row_max[i] = v_max (n_cols, mtx);
     }
 }
 
@@ -317,7 +388,7 @@ m_col_max (
     {
         max_per_col[i] = strided_max (n_elem--, n_cols, mtx);
     }
-    return SUCCESS;
+    return VM_SUCCESS;
 }
 
 
@@ -338,65 +409,167 @@ m_col_absmax (
     {
         max_per_col[i] = strided_absmax (n_elem--, n_cols, mtx);
     }
-    return SUCCESS;
+    return VM_SUCCESS;
+}
+
+
+extern void
+vm_multiply (const size_t rows, const size_t cols, const scalar *const vtx,
+             const scalar *const mtx, scalar *restrict prod)
+{
+    const scalar *vtx_data = NULL;
+    const scalar *mtx_data = NULL;
+          scalar *out_data = prod;
+
+    for (size_t i = 0; i < cols; i++)
+    {
+        vtx_data  = vtx;
+        mtx_data  = mtx + i;
+        *out_data = 0.0L;
+        for (size_t j = 0; j < rows; j++)
+        {
+            *out_data = fmal (*vtx_data, *mtx_data, *out_data);
+            vtx_data++;
+            mtx_data+=cols;
+        }
+        out_data++;
+    }
 }
 
 
 inline void
-log_vmp (
-    const scalar *restrict vt,
-    const scalar *restrict _mt,
-    const size_t n_elem,
-    scalar *_cs,
-    scalar *_mb,
-    scalar *_prod)
+vm_multiply_log (
+    const size_t rows,
+    const size_t cols,
+    const scalar *const vtx,
+    const scalar *const mtx,
+          scalar *const acc,
+          scalar *restrict prod)
 {
-    OUTER_LOOP {
-        _cs[i] = -INFINITY;
-        INNER_LOOP {
-            size_t idx = j * n_elem + i;
-            _mb[idx] = _mt[idx] + vt[j];
-            _cs[i] = fmax (_mb[idx], _cs[i]);
-        }
-    }
+    const scalar *vt_data  = NULL;
+    const scalar *mt_data  = NULL;
+          scalar *acc_data = NULL;
+          scalar row_max   = 0.0L;
 
-    OUTER_LOOP {
-        _prod[i] = 0.0L;
-        INNER_LOOP {
-            size_t idx = j * n_elem + i;
-            _prod[i] += expl (_mb[idx]-_cs[i]);
+    for (size_t i = 0; i < cols; i++) {
+        vt_data  = vtx;
+        mt_data  = mtx + i;
+        acc_data = acc;
+        row_max  = -INFINITY;
+        *prod    = 0.0L;
+
+        for (size_t j = 0; j < rows; j++) {
+            *acc_data = *mt_data + *vt_data++;
+            row_max = fmax (*acc_data, row_max);
+            acc_data++;
+            mt_data+=cols;
         }
-        _prod[i] = logl (_prod[i]) + _cs[i];
+
+        acc_data = acc;
+        for (size_t j = 0; j < rows; j++) {
+            *prod += expl (*acc_data++ - row_max);
+        }
+
+        *prod = logl (*prod) + row_max;
+        prod++;
     }
 }
 
-inline void
-log_mvp (
-    const scalar *restrict _mt,
-    const scalar *restrict vt,
-    const size_t n_elem,
-    scalar *_cs,
-    scalar *_mb,
-    scalar *_prod)
-{
-    OUTER_LOOP {
-        _cs[i] = -INFINITY;
-        INNER_LOOP {
-            size_t idx = i * n_elem + j;
-            _mb[idx] = _mt[idx] + vt[j];
-            _cs[i] = fmax(_mb[idx], _cs[i]);
-        }
-    }
 
-    OUTER_LOOP {
-        _prod[i] = 0.0L;
-        INNER_LOOP {
-            size_t idx = i * n_elem + j;
-            _prod[i] += expl (_mb[idx]-_cs[i]);
+/*
+ * ============================================================================
+ * Matrix * vector interface
+ * ============================================================================
+ */
+
+extern void
+mv_multiply (const size_t rows, const size_t cols, const scalar *const mtx,
+             const scalar *const vtx, scalar *restrict out)
+{
+    const scalar *v_data = NULL;
+    const scalar *m_data = mtx;
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        *out = 0.0L;
+        v_data = vtx;
+        for (size_t j = 0; j < cols; j++)
+        {
+            *out = fmal (*m_data++, *v_data++, *out);
         }
-        _prod[i] = logl (_prod[i]) + _cs[i];
+        out++;
     }
 }
+
+
+extern void
+mv_multiply_log (
+    const size_t rows,
+    const size_t cols,
+    const scalar *const mtx,
+    const scalar *const vtx,
+          scalar *const acc,
+          scalar *restrict prod)
+{
+    const scalar *vt_data  = vtx;
+    const scalar *mt_data  = mtx;
+          scalar *acc_data = acc;
+          scalar row_max   = -INFINITY;
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        *prod = 0.0L;
+        for (size_t j = 0; j < cols; j++)
+        {
+            *acc_data = *mt_data++ + *vt_data++;
+            row_max = fmax (*acc_data, row_max);
+            acc_data++;
+        }
+
+        acc_data = acc;
+        for (size_t j = 0; j < cols; j++)
+        {
+            *prod += expl (*acc_data++ - row_max);
+        }
+        *prod = logl (*prod) + row_max;
+
+        prod++;
+        vt_data = vtx;
+        acc_data = acc;
+        row_max = -INFINITY;
+    }
+}
+
+/*
+ * ============================================================================
+ * Matrix/matrix interface
+ * ============================================================================
+ */
+
+void mm_multiply (const size_t xr, const size_t rc, const size_t yc,
+                  const scalar *mtx, const scalar *mty, scalar *out)
+{
+    const scalar *x_row_ptr = NULL;
+    const scalar *y_col_ptr = NULL;
+
+    for (size_t i = 0; i < xr; i++)
+    {
+        for (size_t j = 0; j < yc; j++)
+        {
+            x_row_ptr = mtx;
+            y_col_ptr = mty+j;
+            for (size_t k = 0; k < rc; k++)
+            {
+                *out += *x_row_ptr * *y_col_ptr;
+                x_row_ptr++;
+                y_col_ptr+=yc;
+            }
+            out++;
+        }
+        mtx+=rc;
+    }
+}
+
 
 
 /*
@@ -433,4 +606,31 @@ strided_absmax (
         c_max = fmaxl (fabsl (*buffer), c_max);
     }
     return c_max;
+}
+
+
+
+
+inline scalar
+logr1 (scalar val)
+{
+    if (isnormal (val))
+    {
+        return logl (val);
+    }
+    else
+    {
+        return 1.0L;
+    }
+}
+
+
+inline void
+mi_row_apply (size_t rows, size_t cols, void (*row_op) (size_t, scalar *), scalar *mtx)
+{
+    for (size_t i = 0; i < rows; i++)
+    {
+        row_op (cols, mtx);
+        mtx+=cols;
+    }
 }

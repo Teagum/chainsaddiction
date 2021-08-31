@@ -1,111 +1,208 @@
 #ifndef VMATH_H
 #define VMATH_H
 
+#include <errno.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "alloc.h"
 #include "config.h"
+#include "core.h"
+#include "print.h"
 
-/*
- * Prefixes:
- * v:   vector operation
- * m:   matrix operation
- * i:   inplace operation
- * s:   strided operation
- */
-
-/*
- * Postfixes:
- * s:   scalar
- */
-#define ASSERT_ALLOC(buff) if (buff == NULL) {          \
-    fputs ("Could not allocate buffer.\n", stderr);     \
-    return 1;                                           \
-}
-
-#define SUCCESS 0
 
 enum vmath_error_codes {
     VM_ERR_ZERO_SIZED_BUFFER = -1,
 };
 
-#define VA_SCALAR_EMPTY(n_elem) malloc ((n_elem) * sizeof (scalar));
-#define VA_SCALAR_ZEROS(n_elem) calloc (n_elem, sizeof (scalar))
-#define VA_INT_EMPTY(n_elem) malloc ((n_elem) * sizeof (int))
-#define VA_INT_ZEROS(n_elem) calloc (n_elem, sizeof (int))
-#define VA_SIZE_EMPTY(n_elem) malloc ((n_elem) * sizeof (size_t));
-#define VA_SIZE_ZEROS(n_elem) calloc (n_elem, sizeof (size_t));
-
-
-#define FREE(buff) do { \
-    free (buff);        \
-    buff = NULL;        \
-} while (0)
 
 #define FOR_EACH(idx, max) for (size_t (idx) = 0; (idx) < (max); (idx++))
 
 #define OUTER_LOOP for (size_t i = 0; i < n_elem; i++)
 #define INNER_LOOP for (size_t j = 0; j < n_elem; j++)
 
-#define M_OUTER_LOOP for (size_t i = 0; i < _n_rows; i++)
-#define M_INNER_LOOP for (size_t j = 0; j < _n_cols; j++)
-#define ITER_MATRIX \
-   M_OUTER_LOOP { \
-      M_INNER_LOOP { \
-#define END_ITER_MATRIX }}
+
+/*
+ * ============================================================================
+ * Vector interface
+ * ============================================================================
+ */
+
+/*
+ * Low-level reductions
+ */
+
+extern scalar   v_acc_prod  (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx);
+extern scalar   v_acc_sum   (size_t n_elem, size_t stride, scalar (*op) (scalar), const scalar *restrict vtx);
+
+/*
+ * High-level reductions
+ */
+
+extern scalar   v_sum       (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_sumlog    (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_sumexp    (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_lse       (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_max       (size_t n_elem, const scalar *restrict vtx);
+extern scalar   v_min       (size_t n_elem, const scalar *restrict vtx);
+extern size_t   v_argmax    (size_t n_elem, const scalar *restrict vtx);
+extern size_t   v_argmin    (size_t n_elem, const scalar *restrict vtx);
 
 
-#define NEWLINE fputc ('\n', stderr)
-#define RED "\x1b[33m"
-#define GREEN "\x1b[32m"
-#define YELLOW "\x1b[34m"
-#define CLEAR "\x1b[0m"
+/** Vectorized transforms
+ *
+ * Evaluate function elementwise and copy result to output buffer.
+ *
+ * \param[in]   n_elem      Number of elements in vector.
+ * \param[in]   vtx         Pointer to vector data.
+ * \param[out]  out         Pointer to output obejct.
+ */
+extern void v_exp       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void v_log       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void v_logr1     (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void v_softmax   (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+
+#define def_v_op(name, op_func)                                     \
+inline void v_##name                                                \
+(size_t n_elem, const scalar *restrict vtx, scalar *restrict out)   \
+{                                                                   \
+    copy_op (n_elem, 1, op_func, vtx, out);                         \
+}
 
 
-#define print_vector(n, vct) do {               \
-    NEWLINE;                                    \
-    fprintf (stderr, "%6c", ' ');               \
-    for (size_t i = 0; i < n; i++) {            \
-        fprintf (stderr, YELLOW "%6c[%2zu] " CLEAR, ' ', i);                  \
-    }                                           \
-    NEWLINE;                                    \
-    fprintf (stderr, "%6c", ' ');\
-    for (size_t i = 0; i < n; i++) {            \
-        fprintf (stderr, "%10.5Lf ",  (scalar)vct[i]);  \
-    }                                           \
-    NEWLINE;                                    \
-} while (0)
+/** Vectorized inplace transforms
+ *
+ * Evaluate function elementwise and modify the current buffer.
+ *
+ * \param[in]       n_elem      Number of elements in vector.
+ * \param[in,out]   vtx         Pointer to vector data.
+ */
+extern void vi_exp      (size_t n_elem, scalar *restrict vtx);
+extern void vi_log      (size_t n_elem, scalar *restrict vtx);
+extern void vi_logr1    (size_t n_elem, scalar *restrict vtx);
+extern void vi_softmax  (size_t n_elem, scalar *restrict vtx);
+
+#define def_vi_op(name, op_func) \
+inline void                                         \
+vi_##name (size_t n_elem, scalar *restrict vtx) {   \
+    inplace_op (n_elem, 1, op_func, vtx);           \
+}
 
 
-#define print_matrix(rows, cols, mtx) do {      \
-    NEWLINE;\
-    fprintf (stderr, "%6c", ' ');               \
-    for (size_t i = 0; i < cols; i++) {            \
-        fprintf (stderr, GREEN "%6c[%2zu] " CLEAR, ' ', i);                  \
-    }                                           \
-    NEWLINE;\
-    for (size_t i = 0; i < rows; i++) {         \
-        fprintf (stderr, GREEN "[%3zu] " CLEAR, i);                  \
-        for (size_t j = 0; j < cols; j++) {     \
-            fprintf (stderr, "%10.5Lf ", (scalar)mtx[i*cols+j]); \
-        }                                       \
-        NEWLINE;                                \
-    }                                           \
-} while (0)
+/*
+ * ============================================================================
+ * Vector/scalar interface
+ * ============================================================================
+ */
 
-#define logr1(val) isnormal (val) ? logl (val) : 1L
+/** Basic vector/scalar arithmetic
+ *
+ * Perform given operation and copy the result to `out`.
+ *
+ * \param[in]   n_elem      Number of elemets.
+ * \param[in]   alpha       Constant scalar value.
+ * \param[in]   vtx         Pointer to vector data.
+ * \param[out]  out         Pointer to output object.
+ */
+extern void vs_add (size_t n_elem, const scalar alpha, scalar *vtx, scalar *out);
+extern void vs_sub (size_t n_elem, const scalar alpha, scalar *vtx, scalar *out);
+extern void vs_mul (size_t n_elem, const scalar alpha, scalar *vtx, scalar *out);
+extern void vs_div (size_t n_elem, const scalar alpha, scalar *vtx, scalar *out);
 
-#define def_vi_s_func(name, op)     \
-inline void                         \
-vi_ ## name ##_s (                  \
-    scalar *_vt,                    \
-    const size_t n_elem,            \
-    const scalar _val)              \
+#define def_vs_op(name, op)         \
+inline void vs_##name (             \
+    size_t n_elem,                  \
+    const scalar alpha,             \
+    scalar *vtx,                    \
+    scalar *out)                    \
 {                                   \
-    OUTER_LOOP {                    \
-        _vt[i] op##= _val;          \
+    while (n_elem--) {              \
+        *out++ = alpha op *vtx++;   \
     }                               \
 }
+
+
+/** Basic vector/scalar inplace arithmetic
+ *
+ * Perform given operation inplace
+ *
+ * \param[in]   n_elem      Number of elemets.
+ * \param[in]   alpha       Constant scalar value.
+ * \param[in]   vtx         Pointer to vector data.
+ */
+extern void vsi_add (size_t n_elem, const scalar alpha, scalar *restrict vtx);
+extern void vsi_sub (size_t n_elem, const scalar alpha, scalar *restrict vtx);
+extern void vsi_mul (size_t n_elem, const scalar alpha, scalar *restrict vtx);
+extern void vsi_div (size_t n_elem, const scalar alpha, scalar *restrict vtx);
+
+#define def_vsi_op(name, op)        \
+inline void vsi_##name (            \
+    size_t n_elem,                  \
+    const scalar alpha,             \
+    scalar *restrict vtx)           \
+{                                   \
+    while (n_elem--) {              \
+        *vtx++ op##= alpha;         \
+    }                               \
+}
+
+
+/*
+ * ============================================================================
+ * Vector/vector interface
+ * ============================================================================
+ */
+
+
+/** Basic vector/vector arithmetic
+ *
+ * Perform given operation and copy data to output buffer.  Vectors are
+ * expected to be contiguous objects with a size of at least `n_elem * sizeof
+ * (scalar)`.
+ *
+ * \param[in]   n_elem      Number of elements in each vector.
+ * \param[in]   vtx         Pointer to vector data.
+ * \param[in]   vty         Pointer to vector data.
+ * \param[out]  out         Pointer to output object.
+ */
+extern void vv_add (const size_t n_elem, const scalar *vtx, const scalar *vty, scalar *out);
+extern void vv_sub (const size_t n_elem, const scalar *vtx, const scalar *vty, scalar *out);
+extern void vv_mul (const size_t n_elem, const scalar *vtx, const scalar *vty, scalar *out);
+extern void vv_div (const size_t n_elem, const scalar *vtx, const scalar *vty, scalar *out);
+
+#define def_vv_op(name, op)                                         \
+inline void vv_##name (const size_t n_elem, const scalar *vtx,      \
+                       const scalar *vty, scalar *out)              \
+{                                                                   \
+    for (size_t i = 0; i < n_elem; i++) {                           \
+        *out++ = *vtx++ op *vty++;                                  \
+    }                                                               \
+}
+
+
+/** Basic vector/vector inplace arithmetic
+ *
+ * Perform given operation and modify data of second buffer.  Vectors are
+ * expected to be contiguous objects with a size of at least `n_elem * sizeof
+ * (scalar)`.
+ *
+ * \param[in]       n_elem      Number of elements in each vector.
+ * \param[in]       vtx         Pointer to vector data.
+ * \param[in, out]  vty         Pointer to vector data.
+ */
+extern void vvi_add (const size_t n_elem, const scalar *vtx, scalar *vty);
+extern void vvi_sub (const size_t n_elem, const scalar *vtx, scalar *vty);
+extern void vvi_mul (const size_t n_elem, const scalar *vtx, scalar *vty);
+extern void vvi_div (const size_t n_elem, const scalar *vtx, scalar *vty);
+
+#define def_vvi_op(name, op)                                                 \
+inline void vvi_##name (const size_t n_elem, const scalar *vtx, scalar *vty) \
+{                                                                            \
+    for (size_t i = 0; i < n_elem; i++) {                                    \
+        *vty++ op##= *vtx++;                                                 \
+    }                                                                        \
+}
+
 
 #define def_mm_op_s_func(name, op)          \
 inline void                                 \
@@ -123,16 +220,6 @@ mm_ ## name ##_s (                          \
 }
 
 
-/** Compute basic math operations on vector elements give constant.
- *
- * \param _vt       Pointer to input data.
- * \param n_elem    Number of elemets.
- * \param _val      Constant value.
- */
-extern void vi_add_s (scalar *_vt, const size_t n_elem, const scalar _val);
-extern void vi_sub_s (scalar *_vt, const size_t n_elem, const scalar _val);
-extern void vi_mul_s (scalar *_vt, const size_t n_elem, const scalar _val);
-extern void vi_div_s (scalar *_vt, const size_t n_elem, const scalar _val);
 
 
 /** Compute basic matrix/matrix operations with added constant.
@@ -178,101 +265,11 @@ extern void mm_div_s (
     scalar *restrict buffer);
 
 
-/** Add two vectors element-wise.
- *
- * \param[in]  vtx       Vector of size n_elem.
- * \param[in]  vty       Vector of size n_elem.
- * \param[in]  n_elem    Number of elements in each vector.
- * \param[out] out       Output buffer of size n_elem.
- */
-extern void
-v_add (
-    const scalar *const vx,
-    const scalar *const vy,
-    const size_t n,
-    scalar *out);
-
-
-/** Add first vector element-wise to second one.
- *
- * \param _vx       Vector of size n_elem.
- * \param _vy       Vector of size n_elem.
- * \param n_elem    Number of elements in each vector.
- */
-extern void
-vi_add (
-    const scalar *restrict _vx,
-    scalar *restrict _vy,
-    const size_t n_elem);
-
-
-/** Vectorized e function.
- */
-extern void
-v_exp (
-    const scalar *restrict _vx,
-    const size_t n_elem,
-    scalar *_exps);
-
-
-/** Vectorized e function inplace.
- */
-extern void
-vi_exp (
-    scalar *restrict _vx,
-    const size_t n_elem);
-
-
-/** Vectorized logarithm.
- */
-extern void
-v_log (
-    const scalar *restrict _vx,
-    const size_t n_elem,
-    scalar *_logs);
-
-
-/** Vectorized logarithm inplace.
- */
-extern void
-vi_log (
-    scalar *restrict _vx,
-    const size_t n_elem);
-
-
-/** Replace non-normal values with 1 in log domain.
- *
- * \param[in]  vct      Pointer to input vector.
- * \param[in]  n_elem   Number of elements in input vector.
- * \param[out] out      Pointer to output buffer.
- */
-extern void
-v_logr1 (
-    scalar *restrict vct,
-    const size_t n_elem,
-    scalar *restrict out);
-
-
-/** Replace non-normal values with 1 in log domain inplace.
- *
- * \param[in]  vct      Pointer to input vector.
- * \param[in]  n_elem   Number of elements in input vector.
- */
-extern void
-vi_logr1 (
-    scalar *restrict vct,
-    const size_t n_elem);
-
-
 /** Logarithm of the sum of the exponential of the vector elements.
  *
  * \param vctr      Pointer to input data.
  * \param n_elem    Number of vector elements.
  */
-extern scalar
-v_lse (
-    const scalar *restrict vctr,
-    const size_t n_elem);
 
 
 extern scalar
@@ -286,38 +283,6 @@ vs_lse_centroid (
 #define v_lse_centroid(vt, weights, n_elem) \
     vs_lse_centroid (vt, 1, weights, 1, n_elem)
 
-
-extern size_t
-v_argmax (const size_t n_elem, const scalar *restrict vec);
-
-
-/** Compute maximum element of vector.
- *
- * \param _vt
- * \param n_elem
- */
-extern scalar
-v_max (const scalar *restrict _vt, const size_t n_elem);
-
-
-/** Compute softmax o `buffer' inplace.
- *
- * \param buffer    Pointer to object.
- * \param n_elem    Number of elements in object.
- */
-extern void
-vi_softmax (scalar *buffer, size_t n_elem);
-
-
-/** Compute the sum of the vector elements.
- *
- * \param _vt       Pointer to input data.
- * \param n_elem    Number of elements.
- */
-extern scalar
-v_sum (
-    const scalar *restrict _vt,
-    const size_t n_elem);
 
 /* === Strided vector interface ==== */
 
@@ -437,86 +402,141 @@ m_col_absmax (
     scalar *restrict max_per_col);
 
 
-/** Compute exponentials of matrix elements.
+/** Vectorized transforms on matrix elemets
  *
- * \param rows  Number of rows in matrix.
- * \param cols  Number of cols in matrix.
- * \param mtx   Pointer to matrix data.
- * \param out   Pointer to output buffer.
+ * \param[in]   rows    Number of rows in matrix.
+ * \param[in]   cols    Number of columns in matrix.
+ * \param[in]   mtx     Pointer to matrix data.
+ * \param[out]  out     Pointer to output buffer.
  */
-#define m_exp(rows, cols, mtx, out) v_exp ((mtx), (rows*cols), (out))
+#define m_exp(rows, cols, mtx, out) v_exp ((rows*cols), (mtx), (out))
+#define m_log(rows, cols, mtx, out) v_log ((rows*cols), (mtx), (out))
 
 
-/** Compute logarithm of matrix elements.
+/** Vectorized inplace transforms on matrix elements
  *
- * \param mat       Pointer to matrix elements.
- * \param n_elem    Number of matrix elements.
- * \param out       Pointer to output buffer.
+ * \param[in]       rows    Number of rows in matrix.
+ * \param[in]       cols    Number of columns in matrix.
+ * \param[in,out]   mtx     Pointer to matrix data.
  */
-#define m_log(mat, n_elem, out) v_log ((mat), (n_elem), (out))
+#define mi_exp(rows, cols, mtx) vi_log ((rows*cols), (mtx))
+#define mi_log(rows, cols, mtx) vi_log ((rows*cols), (mtx))
 
-
-/** Compute exponentials of matrix elements inplace.
- *
- * \param rows  Number of rows in matrix.
- * \param cols  Number of cols in matrix.
- * \param mtx   Pointer to matrix data.
+/*
+ * ============================================================================
+ * Vector * matrix interface
+ * ============================================================================
  */
-#define mi_exp(rows, cols, mtx) vi_log ((mtx), (rows*cols))
 
 
-/** Compute logarithm of matrix elements inplace
+/** Vector-matrix product: v * M.
  *
- * \param mat       Pointer to matrix elements.
- * \param n_elem    Number of matrix elements.
+ * Compute the product of a (, n) row vector `v` and a (n x m) matrix `M`.
+ *
+ * \param[in]   rows    Number of rows in matrix and elements in vector.
+ * \param[in]   cols    Number of columns in matrix.
+ * \param[in]   mtx     Pointer to log matrix data.
+ * \param[in]   vtx     Pointer to log vector data.
+ * \param[out]  prod    Pointer to output object.
  */
-#define mi_log(mat, n_elem) vi_log ((mat), (n_elem))
+
+extern void
+vm_multiply (
+    const size_t rows,
+    const size_t cols,
+    const scalar *const vtx,
+    const scalar *const mtx,
+          scalar *restrict prod);
 
 
-/** Compute vector/matrix product in log domain.
+/** Vector-matrix product in log domain: log(v) * log(M)
  *
- * Compute the product of a vector and a square matrix with the same
- * number of elements in each row and column. Computation is performed
- * in log domain by means of LSE.
+ * Compute the product of a (, n) row vector `v` and a (n x m) matrix `M`.
+ * `vm_multiply_log` assumes that the values in `M` and `v` are transformed
+ * to log domain.
  *
- * \param _vt    - Pointer to vector elements.
- * \param _mt    - Pointer to matrix elements.
- * \param n_elem - Number of elements in _vt.
- * \param _cs    - Computation buffer of lenght n_elem.
- * \param _mb    _ Computation buffer of lenght n_elem^2.
- * \param prod   - Output buffer of lenght n_elem.
+ * \param[in]   rows    Number of rows in matrix.
+ * \param[in]   cols    Number of columns in matrix and elements in vector.
+ * \param[in]   mtx     Pointer to log matrix data.
+ * \param[in]   vtx     Pointer to log vector data.
+ * \param       acc     Reusable computation buffer.
+ * \param[out]  prod    Pointer to output object.
  */
 extern void
-log_vmp (
-    const scalar *restrict _vt,
-    const scalar *restrict _mat,
-    const size_t n_elem,
-    scalar *_cs,
-    scalar *_mb,
-    scalar *_prod);
+vm_multiply_log (
+    const size_t rows,
+    const size_t cols,
+    const scalar *const vtx,
+    const scalar *const mtx,
+          scalar *const acc,
+          scalar *restrict prod);
 
 
-/** Compute matrix/vector product in log domain.
- *
- * Compute the product of a square matrix with n_elem rows and columns and a
- * vector with n_elem elements. Computation is performed in log domain by
- * means of LSE.
- *
- * \param _mt    - Pointer to matrix elements.
- * \param _vt    - Pointer to vector elements.
- * \param n_elem - Number of elements in _vt.
- * \param _cs    - Computation buffer of lenght n_elem.
- * \param _mb    _ Computation buffer of lenght n_elem^2.
- * \param prod   - Output buffer of lenght n_elem.
+
+/*
+ * ============================================================================
+ * Matrix * vector interface
+ * ============================================================================
  */
+
+/** Matrix-vector product: M * v.
+ *
+ * Compute the product of a (m x n) matrix `M` and a (n, ) column vector `v`.
+ *
+ * \param[in]   rows    Number of rows in matrix.
+ * \param[in]   cols    Number of columns in matrix and elements in vector.
+ * \param[in]   mtx     Pointer to log matrix data.
+ * \param[in]   vtx     Pointer to log vector data.
+ * \param[out]  prod    Pointer to output object.
+ */
+
 extern void
-log_mvp (
-    const scalar *restrict _mt,
-    const scalar *restrict _vt,
-    const size_t n_elem,
-    scalar *_cs,
-    scalar *_mb,
-    scalar *_prod);
+mv_multiply (
+    const size_t rows,
+    const size_t cols,
+    const scalar *const mtx,
+    const scalar *const vtx,
+          scalar *restrict out);
+
+
+/** Matrix-vector product in log domain: log(M) * log(v)
+ *
+ * Compute the product of a (m x n) matrix `M` and a (n, ) column vector `v`.
+ * `mv_multiply_log` assumes that the values in `M` and `v` are transformed
+ * to log domain.
+ *
+ * \param[in]   rows    Number of rows in matrix.
+ * \param[in]   cols    Number of columns in matrix and elements in vector.
+ * \param[in]   mtx     Pointer to log matrix data.
+ * \param[in]   vtx     Pointer to log vector data.
+ * \param       acc     Reusable computation buffer.
+ * \param[out]  prod    Pointer to output object.
+ */
+
+extern void
+mv_multiply_log (
+    const size_t rows,
+    const size_t cols,
+    const scalar *const mtx,
+    const scalar *const vtx,
+          scalar *const acc,
+          scalar *restrict out);
+
+/*
+ * ============================================================================
+ * Matrix/matrix interface
+ * ============================================================================
+ */
+
+extern void
+mm_multiply (
+    const size_t xr,
+    const size_t rc,
+    const size_t yc,
+    const scalar *mtx,
+    const scalar *mty,
+    scalar *out);
+
 
 /*
  * Private API
@@ -541,5 +561,13 @@ strided_absmax (
     const size_t stride,
     const scalar *restrict buffer);
 
+
+
+extern scalar logr1 (scalar val);
+
+
+
+extern void
+mi_row_apply (size_t rows, size_t cols, void (*row_op) (size_t, scalar *), scalar *mtx);
 
 #endif  /* VMATH_H */

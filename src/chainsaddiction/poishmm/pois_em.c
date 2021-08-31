@@ -115,7 +115,7 @@ pois_m_step_lambda (
     scalar *const restrict new_lambda)
 {
     m_log_centroid_cols (lcxpt, data, n_obs, m_states, new_lambda);
-    vi_exp (new_lambda, m_states);
+    vi_exp (m_states, new_lambda);
 }
 
 
@@ -142,7 +142,7 @@ pois_m_step_gamma (
                 size_t b = (n + 1) * m_states + j;
                 pr_buff[n] = lalpha[a] + lbeta[b] + lsdp[b] - llh;
             }
-            new_lgamma[idx] = v_lse (pr_buff, n_obs-1) + lgamma[idx];
+            new_lgamma[idx] = v_lse (n_obs-1, pr_buff) + lgamma[idx];
         }
         vi_log_normalize (m_states, new_lgamma+i*m_states);
     }

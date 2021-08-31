@@ -20,7 +20,7 @@ scalar
 compute_log_likelihood (scalar *lalpha, size_t n_obs, size_t m_states)
 {
     const scalar *restrict last_row = lalpha + ((n_obs-1)*m_states);
-    return v_lse (last_row, m_states);
+    return v_lse (m_states, last_row);
 }
 
 
@@ -43,7 +43,7 @@ vi_log_normalize (
     size_t n_elem,
     scalar *restrict buffer)
 {
-    scalar lsum = v_lse (buffer, n_elem);
+    scalar lsum = v_lse (n_elem, buffer);
     for (size_t i = 0; i < n_elem; i++)
     {
         buffer[i] -= lsum;
@@ -57,7 +57,7 @@ v_log_normalize (
     const scalar *const restrict src,
     scalar *const restrict dest)
 {
-    scalar lsum = v_lse (src, n_elem);
+    scalar lsum = v_lse (n_elem, src);
     for (size_t i = 0; i < n_elem; i++)
     {
         dest[i] = src[i] - lsum;

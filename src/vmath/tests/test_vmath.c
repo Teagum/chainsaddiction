@@ -3,6 +3,193 @@
 
 
 bool
+test__v_sum (void)
+{
+    enum setup {
+        max_vector_size =  1000,
+        SR_LB           =  -100,
+        SR_UB           =   100
+    };
+
+    const size_t n_elem = rnd_size (1, max_vector_size);
+          scalar res    = 0.0L;
+          scalar sum    = 0.0L;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+    v_rnd_scalar (n_elem, SR_LB, SR_UB, vtx);
+
+
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        sum += vtx[i];
+    }
+    res = v_sum (n_elem, vtx);
+
+    FREE (vtx);
+    return ASSERT_EQUAL (res, sum) ? false : true;
+}
+
+
+bool
+test__v_sumlog (void)
+{
+    enum setup {
+        max_vector_size =  1000,
+        SR_LB           =     1,
+        SR_UB           =   100
+    };
+
+    const size_t n_elem = rnd_size (1, max_vector_size);
+          scalar res    = 0.0L;
+          scalar sum    = 0.0L;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+    v_rnd_scalar (n_elem, SR_LB, SR_UB, vtx);
+
+
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        sum += logl (vtx[i]);
+    }
+    res = v_sumlog (n_elem, vtx);
+
+    FREE (vtx);
+    return ASSERT_EQUAL (res, sum) ? false : true;
+}
+
+
+bool
+test__v_argmin (void)
+{
+    const size_t n_elem  = rnd_size (1, 10);
+    const size_t min_idx = rnd_size (0, n_elem-1);
+    const scalar min_val = -111.0L;
+          size_t res_idx =    0u;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_rnd_scalar (n_elem, -10, 10, vtx);
+    vtx[min_idx] = min_val;
+    res_idx = v_argmin (n_elem, vtx);
+
+    FREE (vtx);
+    return (min_idx == res_idx) ? false : true;
+}
+
+
+bool
+test__v_argmin__min_on_first (void)
+{
+    enum setup {
+        max_vector_size =  100,
+        min_idx         =    0,
+        min_val         = -111,
+        SR_LB           = -100,
+        SR_UB           =  100
+    };
+
+    const size_t n_elem  = rnd_size (1, max_vector_size);
+          size_t res_idx = 0u;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_rnd_scalar (n_elem, SR_LB, SR_UB, vtx);
+    vtx[min_idx] = min_val;
+    res_idx = v_argmin (n_elem, vtx);
+
+    FREE (vtx);
+    return (min_idx == res_idx) ? false : true;
+}
+
+
+bool
+test__v_argmin__min_on_last (void)
+{
+    enum setup {
+        max_vector_size =  100,
+        min_val         = -111,
+        SR_LB           = -100,
+        SR_UB           =  100
+    };
+
+    const size_t n_elem  = rnd_size (1, max_vector_size);
+    const size_t min_idx = n_elem - 1;
+          size_t res_idx = 0u;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_rnd_scalar (n_elem, SR_LB, SR_UB, vtx);
+    vtx[min_idx] = min_val;
+    res_idx = v_argmin (n_elem, vtx);
+
+    FREE (vtx);
+    return (min_idx == res_idx) ? false : true;
+}
+
+bool
+test__v_argmax (void)
+{
+    const size_t n_elem  = rnd_size (1, 10);
+    const size_t max_idx = rnd_size (0, n_elem-1);
+    const scalar max_val = 999.0L;
+          size_t res_idx = 0;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_rnd_sample (n_elem, vtx);
+    vtx[max_idx] = max_val;
+    res_idx = v_argmax (n_elem, vtx);
+
+    FREE (vtx);
+    return (max_idx == res_idx) ? false : true;
+}
+
+
+bool test__v_argmax__max_on_first (void)
+{
+    const size_t n_elem  = rnd_size (1, 10);
+    const size_t max_idx = 0;
+    const scalar max_val = 999.0L;
+          size_t res_idx = 999;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_rnd_sample (n_elem, vtx);
+    vtx[max_idx] = max_val;
+    res_idx = v_argmax (n_elem, vtx);
+
+    FREE (vtx);
+    return (max_idx == res_idx) ? false : true;
+}
+
+
+bool test__v_argmax__max_on_last (void)
+{
+    const size_t n_elem  = rnd_size (1, 10);
+    const size_t max_idx = n_elem-1;
+    const scalar max_val = 999.0L;
+          size_t res_idx = 999;
+
+    scalar *vtx = VA_SCALAR_ZEROS (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_rnd_sample (n_elem, vtx);
+    vtx[max_idx] = max_val;
+    res_idx = v_argmax (n_elem, vtx);
+
+    FREE (vtx);
+    return (max_idx == res_idx) ? false : true;
+}
+
+
+bool
 test__strided_max (void)
 {
     bool err = true;
@@ -15,7 +202,7 @@ test__strided_max (void)
     scalar *mtx = VA_SCALAR_ZEROS (n_elem);
     if (mtx == NULL) { return err; }
 
-    v_sample (n_elem, mtx);
+    v_rnd_sample (n_elem, mtx);
     mtx[max_idx] = max_val;
 
     max_res = strided_max (n_elem, stride, mtx);
@@ -29,23 +216,30 @@ test__strided_max (void)
 bool
 test__v_lse (void)
 {
-    const size_t n_elem = 100;
-    scalar *vals = VA_SCALAR_EMPTY (n_elem);
-    scalar *lvals = VA_SCALAR_EMPTY (n_elem);
-    scalar lsum_vals = 0;
-    scalar lse = 0;
-    bool err = true;
+    enum setup {
+        max_vector_size =  100,
+    };
 
-    v_sample (n_elem, vals);
-    v_log (vals, n_elem, lvals);
-    for (size_t i = 0; i < n_elem; i++) { lsum_vals += vals[i]; }
-    lsum_vals = logl (lsum_vals);
-    lse = v_lse (lvals, n_elem);
+    const size_t n_elem   = rnd_size (1, max_vector_size);
+          scalar lsum_vtx = 0;
+          scalar lse      = 0;
 
-    err = !ASSERT_EQUAL (lsum_vals, lse);
-    FREE (vals);
-    FREE (lvals);
-    return err;
+    scalar *vtx  = VA_SCALAR_EMPTY (n_elem);
+    scalar *lvtx = VA_SCALAR_EMPTY (n_elem);
+    if (vtx == NULL || lvtx == NULL) return true;
+
+    v_rnd_sample (n_elem, vtx);
+    v_log (n_elem, vtx, lvtx);
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        lsum_vtx += vtx[i];
+    }
+    lsum_vtx = logl (lsum_vtx);
+    lse = v_lse (n_elem, lvtx);
+
+    FREE (vtx);
+    FREE (lvtx);
+    return ASSERT_EQUAL (lsum_vtx, lse) ? false : true;
 }
 
 
@@ -64,9 +258,9 @@ test__vs_lse_centroid (void)
     const size_t v_stride = 1;
     const size_t w_stride = 1;
 
-    v_sample (n_elem, weights);
-    v_sample (n_elem, vals);
-    v_log (vals, n_elem, lvals);
+    v_rnd_sample (n_elem, weights);
+    v_rnd_sample (n_elem, vals);
+    v_log (n_elem, vals, lvals);
     for (size_t i = 0; i < n_elem; i++) {
         sum += vals[i];
         wsum += vals[i] * weights[i];
@@ -85,14 +279,50 @@ test__v_max (void)
     size_t n_elem = 100;
     scalar *vals = VA_SCALAR_EMPTY (n_elem);
 
-    v_sample (n_elem, vals);
+    v_rnd_sample (n_elem, vals);
     vals[n_elem/2] = max;
-    err = !ASSERT_EQUAL (v_max (vals, n_elem), max);
+    err = !ASSERT_EQUAL (v_max (n_elem, vals), max);
 
     FREE (vals);
     return err;
 }
 
+bool
+test__v_max__max_on_first (void)
+{
+    size_t max_idx = 0u;
+    scalar max_val = 2.0L;
+    scalar res     = 0.0L;
+    size_t n_elem  = rnd_size (1, 100);
+    scalar *vtx    = VA_SCALAR_EMPTY (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_rnd_sample (n_elem, vtx);
+    vtx[max_idx] = max_val;
+    res = v_max (n_elem, vtx);
+
+    FREE (vtx);
+    return ASSERT_EQUAL (res, max_val) ? false : true;
+}
+
+
+bool
+test__v_max__max_on_last (void)
+{
+    scalar max_val = 2.0L;
+    scalar res     = 0.0L;
+    size_t n_elem  = rnd_size (1, 100);
+    size_t max_idx = n_elem - 1;
+    scalar *vtx    = VA_SCALAR_EMPTY (n_elem);
+    if (vtx == NULL) { return true; }
+
+    v_rnd_sample (n_elem, vtx);
+    vtx[max_idx] = max_val;
+    res = v_max (n_elem, vtx);
+
+    FREE (vtx);
+    return ASSERT_EQUAL (res, max_val) ? false : true;
+}
 
 bool
 test__vs_sum (void)
@@ -104,7 +334,7 @@ test__vs_sum (void)
     scalar vs_sum_res = 0;
     bool err = true;
 
-    v_sample (n_elem, vals);
+    v_rnd_sample (n_elem, vals);
     for (size_t i = 0; i < n_elem; i+=stride)
     {
         expected += vals[i];
@@ -123,7 +353,7 @@ test__m_max (void)
     scalar max = 2L;
     scalar vals[N];
 
-    v_sample (N, vals);
+    v_rnd_sample (N, vals);
     vals[N/2] = max;
 
     return !ASSERT_EQUAL (m_max (vals, 2, N/2), max);
@@ -150,7 +380,7 @@ test__m_row_max (void)
         scalar *mtx = VA_SCALAR_EMPTY (n_elem);
         scalar *res = VA_SCALAR_EMPTY (n_rows);
 
-        m_sample (n_rows, n_cols, mtx);
+        m_rnd_sample (n_rows, n_cols, mtx);
         for (size_t row = 0; row < n_rows; row++)
         {
             const size_t max_idx = (size_t) rnd_int (0, n_cols);
@@ -191,7 +421,7 @@ test__m_col_max (void)
     scalar *max_res = VA_SCALAR_EMPTY (n_cols);
     size_t *max_row_idx = VA_SIZE_EMPTY (n_cols);
 
-    m_rnd_scalar (MIN_SAMPLE_RANGE, MAX_SAMPLE_RANGE, n_rows, n_cols, mtx);
+    m_rnd_scalar (n_rows, n_cols, MIN_SAMPLE_RANGE, MAX_SAMPLE_RANGE, mtx);
     v_rnd_size (n_cols, 0, n_rows, max_row_idx);
     v_rnd_scalar (n_cols, MAX_SAMPLE_RANGE+1, MAX_SAMPLE_RANGE+100, max_val);
 
@@ -213,56 +443,6 @@ test__m_col_max (void)
     FREE (max_res);
     FREE (max_row_idx);
     return !err;
-}
-
-
-bool
-test__log_vmp (void)
-{
-    const size_t n_elem = 3;
-    scalar *vt = VA_SCALAR_EMPTY (n_elem);
-    scalar *mt = VA_SCALAR_EMPTY (n_elem*n_elem);
-    scalar *b1 = VA_SCALAR_EMPTY (n_elem);
-    scalar *b2 = VA_SCALAR_ZEROS (n_elem*n_elem);
-    scalar *res = VA_SCALAR_ZEROS (n_elem);
-
-    v_sample (n_elem, vt);
-    v_sample (n_elem*n_elem, mt);
-    vi_log (vt, n_elem);
-    vi_log (mt, n_elem*n_elem);
-
-    log_vmp (vt, mt, n_elem, b1, b2, res);
-
-    FREE (vt);
-    FREE (mt);
-    FREE (b1);
-    FREE (b2);
-    FREE (res);
-    return false;
-}
-
-
-bool
-test__log_mvp (void)
-{
-    const size_t n = 3;
-    scalar vt[] = {1, 2, 3};
-    scalar mt[] = {1, 2, 3, 2, 3, 1, 3, 2, 1};
-    scalar *b1 = VA_SCALAR_EMPTY (n);
-    scalar *b2 = VA_SCALAR_EMPTY (n*n);
-    scalar *res = VA_SCALAR_EMPTY (n);
-
-    v_sample (n, vt);
-    v_sample (n*n, mt);
-    vi_log (vt, n);
-    vi_log (mt, n*n);
-
-    log_mvp (mt, vt, n, b1, b2, res);
-
-    FREE (b1);
-    FREE (b2);
-    FREE (res);
-    return false;
 }
 
 
@@ -297,9 +477,9 @@ test__m_log_centroid_cols (void)
         goto exit;
     }
 
-    m_rnd_scalar (SR_LB, SR_UB, n_rows, n_cols, arr);
-    v_log (arr, n_elem, larr);
     v_rnd_scalar (n_rows, 0, 100, weight_per_row);
+    m_rnd_scalar (n_rows, n_cols, SR_LB, SR_UB, arr);
+    m_log (n_rows, n_cols, arr, larr);
 
     for (size_t i = 0; i < n_elem; i++)
     {
@@ -315,7 +495,7 @@ test__m_log_centroid_cols (void)
         expected_result[i] /= sum_per_col[i];
     }
 
-    vi_log (expected_result, n_cols);
+    vi_log (n_cols, expected_result);
     m_log_centroid_cols (larr, weight_per_row, n_rows, n_cols, average_per_col);
 
     for (size_t i = 0; i < n_cols; i++)
@@ -362,16 +542,17 @@ test__mm_add_s (void)
 }
 
 
+/*
 bool
 test__v_argmax (void)
 {
     enum {
-        size_bound = 100,
+        size_bound = 20,
     };
 
     size_t res = 0;
     const size_t n_elem  = rnd_size (1, size_bound);
-    const size_t arg_max = rnd_size (0, n_elem);
+    const size_t arg_max = rnd_size (0, n_elem-1);
     const scalar max_val =  999.0L;
     const scalar SR_LB   = -100.0L;
     const scalar SR_UB   =  100.0L;
@@ -382,8 +563,11 @@ test__v_argmax (void)
 
     res = v_argmax (n_elem, vect);
 
+    print_vector (n_elem, vect);
+    printf ("Arg: %zu Expected %zu\n", res, arg_max);
     return res == arg_max ? false : true;
 }
+*/
 
 bool
 test__m_row_argmax (void)
@@ -420,4 +604,244 @@ test__m_row_argmax (void)
     FREE (res);
     FREE (mtx);
     return err;
+}
+
+
+bool
+test__v_softmax (void)
+{
+    enum setup {
+        VECTOR_MAX_SIZE = 1000,
+        SRANGE_LB = -10,
+        SRANGE_UB =  10
+    };
+    scalar n_elem = rnd_size (1, VECTOR_MAX_SIZE);
+    scalar total  = 0.0L;
+
+    scalar *vtx = VA_SCALAR_EMPTY (n_elem);
+    scalar *res = VA_SCALAR_EMPTY (n_elem);
+    if (vtx == NULL || res == NULL) VM_RETURN_FAILURE;
+
+    v_rnd_scalar (n_elem, SRANGE_LB, SRANGE_UB, vtx);
+    v_softmax (n_elem, vtx, res);
+    total = v_sum (n_elem, res);
+
+    FREE (vtx);
+    FREE (res);
+    return ASSERT_EQUAL (1.0, total) ? VM_SUCCESS : VM_FAILURE;
+}
+
+
+bool
+test__vi_softmax (void)
+{
+    enum setup {
+        VECTOR_MAX_SIZE = 5,
+        SRANGE_LB = -10,
+        SRANGE_UB =  10
+    };
+    scalar n_elem = rnd_size (1, VECTOR_MAX_SIZE);
+    scalar total  = 0.0L;
+
+    scalar *vtx = VA_SCALAR_EMPTY (n_elem);
+    if (vtx == NULL) VM_RETURN_FAILURE;
+
+    v_rnd_scalar (n_elem, SRANGE_LB, SRANGE_UB, vtx);
+    vi_softmax (n_elem, vtx);
+    total = v_sum (n_elem, vtx);
+
+    FREE (vtx);
+    return ASSERT_EQUAL (1.0, total) ? VM_SUCCESS : VM_FAILURE;
+}
+
+
+bool
+test__vm_multiply (void)
+{
+    enum setup {
+        max_rows = 1000,
+        max_cols = 1000,
+    };
+
+    scalar total = 0.0L;
+    size_t rows = rnd_size (1, max_rows);
+    size_t cols = rnd_size (1, max_cols);
+
+    scalar *vtx = VA_SCALAR_EMPTY (rows);
+    scalar *mtx = VA_SCALAR_EMPTY (rows*cols);
+    scalar *res = VA_SCALAR_EMPTY (cols);
+    if (vtx == NULL || mtx == NULL || res == NULL) VM_RETURN_FAILURE;
+
+    v_rnd_scalar (rows, 0, 1, vtx);
+    v_rnd_scalar (rows*cols, 0, 1, mtx);
+
+    vi_softmax (rows, vtx);
+    mi_row_apply (rows, cols, vi_softmax, mtx);
+
+    vm_multiply (rows, cols, vtx, mtx, res);
+    total = v_sum (cols, res);
+
+    FREE (vtx);
+    FREE (mtx);
+    FREE (res);
+    return ASSERT_EQUAL (total, 1.0L) ? VM_SUCCESS : VM_FAILURE;
+}
+
+
+bool
+test__vm_multiply_log (void)
+{
+    const size_t rows   = rnd_size (1, 10);
+    const size_t cols   = rnd_size (1, 20);
+    const size_t n_elem = rows * cols;
+          scalar total  = 0.0L;
+
+    scalar *vtx = VA_SCALAR_ZEROS (rows);
+    scalar *mtx = VA_SCALAR_ZEROS (n_elem);
+    scalar *acc = VA_SCALAR_ZEROS (rows);
+    scalar *res = VA_SCALAR_ZEROS (cols);
+    if (vtx == NULL || mtx == NULL || acc == NULL || res == NULL)
+        VM_RETURN_FAILURE;
+
+    v_rnd_scalar (rows, 1, 10, vtx);
+    v_rnd_scalar (n_elem, 1, 10, mtx);
+
+    vi_softmax (rows, vtx);
+    mi_row_apply (rows, cols, vi_softmax, mtx);
+
+    vi_log (rows, vtx);
+    vi_log (n_elem, mtx);
+
+    vm_multiply_log (rows, cols , vtx, mtx, acc, res);
+    vi_exp (cols, res);
+    total = v_sum (cols, res);
+
+    FREE (vtx);
+    FREE (mtx);
+    FREE (acc);
+    FREE (res);
+    return ASSERT_EQUAL (1.0L, total) ? VM_SUCCESS : VM_FAILURE;
+}
+
+
+bool
+test__mv_multiply (void)
+{
+    enum setup {
+        N_ROWS_MAX = 1000,
+        N_COLS_MAX = 1000,
+        SRANGE_LB  = -100,
+        SRANGE_UB  =  100,
+    };
+
+    const size_t rows   = rnd_size (1, N_ROWS_MAX);
+    const size_t cols   = rnd_size (1, N_COLS_MAX);
+    const size_t n_elem = rows * cols;
+          scalar total_res  = 0.0L;
+          scalar total_mtx  = 0.0L;
+
+    scalar *vtx = VA_SCALAR_ZEROS (cols);
+    scalar *mtx = VA_SCALAR_ZEROS (n_elem);
+    scalar *res = VA_SCALAR_ZEROS (rows);
+    if (vtx == NULL || mtx == NULL || res == NULL)
+        VM_RETURN_FAILURE;
+
+    for (size_t i = 0; i < cols; i++)
+    {
+        vtx[i] = 1.0L;
+    }
+    v_rnd_scalar (n_elem, SRANGE_LB, SRANGE_UB, mtx);
+    mv_multiply (rows, cols, mtx, vtx, res);
+
+    total_res = v_sum (rows, res);
+    total_mtx = v_sum (n_elem, mtx);
+
+    FREE (vtx);
+    FREE (mtx);
+    FREE (res);
+
+    return ASSERT_EQUAL (total_res, total_mtx) ? VM_SUCCESS : VM_FAILURE;
+}
+
+
+bool
+test__mv_multiply_log (void)
+{
+    enum setup {
+        N_ROWS_MAX =  1000,
+        N_COLS_MAX =  1000,
+        SRANGE_LB  = -1000,
+        SRANGE_UB  =  1000,
+    };
+
+    const size_t rows   = rnd_size (1, N_COLS_MAX);
+    const size_t cols   = rnd_size (1, N_ROWS_MAX);
+    const size_t n_elem = rows * cols;
+          scalar t_xpc  = 0.0L;
+          scalar t_res  = 0.0L;
+
+    scalar *vtx = VA_SCALAR_EMPTY (cols);
+    scalar *mtx = VA_SCALAR_EMPTY (n_elem);
+    scalar *acc = VA_SCALAR_EMPTY (cols);
+    scalar *res = VA_SCALAR_EMPTY (rows);
+    scalar *xpc = VA_SCALAR_EMPTY (rows);
+    if (vtx == NULL || mtx == NULL || acc == NULL || res == NULL ||
+        xpc == NULL)
+    {
+        VM_RETURN_FAILURE;
+    }
+
+    v_rnd_scalar (cols, SRANGE_LB, SRANGE_UB, vtx);
+    v_rnd_scalar (n_elem, SRANGE_LB, SRANGE_UB, mtx);
+    vi_softmax (cols, vtx);
+    mi_row_apply (rows, cols, vi_softmax, mtx);
+
+    mv_multiply (rows, cols, mtx, vtx, xpc);
+    vi_log (rows, xpc);
+    t_xpc = v_sum (rows, xpc);
+
+    vi_log (cols, vtx);
+    vi_log (n_elem, mtx);
+
+    mv_multiply_log (rows, cols , mtx, vtx, acc, res);
+    t_res = v_sum (rows, res);
+
+    FREE (vtx);
+    FREE (mtx);
+    FREE (acc);
+    FREE (res);
+    FREE (xpc);
+    return ASSERT_EQUAL (t_xpc, t_res) ? VM_SUCCESS : VM_FAILURE;
+}
+
+
+bool
+test__mm_multiply (void)
+{
+    enum setup {
+        rc_max = 100,
+    };
+
+    scalar total = 0.0L;
+    const size_t rc = rnd_size (2, rc_max);
+    const size_t n_elem = rc * rc;
+
+    scalar *A = VA_SCALAR_ZEROS (n_elem);
+    scalar *B = VA_SCALAR_ZEROS (n_elem);
+    scalar *C = VA_SCALAR_ZEROS (n_elem);
+    if (A == NULL || B == NULL || C == NULL) VM_RETURN_FAILURE;
+
+    v_rnd_scalar (n_elem, 0, 1, A);
+    v_rnd_scalar (n_elem, 0, 1, B);
+
+    mi_row_apply (rc, rc, vi_softmax, A);
+    mi_row_apply (rc, rc, vi_softmax, B);
+
+    mm_multiply (rc, rc, rc, A, B, C);
+    total = v_sum (n_elem, C);
+
+    FREE (A);
+    FREE (B);
+    FREE (C);
+    return ASSERT_EQUAL (total, rc) ? VM_SUCCESS : VM_FAILURE;
 }

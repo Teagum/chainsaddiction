@@ -7,6 +7,7 @@
 *.a
 .venv
 .vimrc
+benchmarks/
 build/
 dist/
 .eggs/

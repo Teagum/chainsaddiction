@@ -33,8 +33,8 @@ test__PoisHmm_Init (void)
         PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
         v_rnd_scalar (m_states, 1, 100, params->lambda);
-        v_sample (m_states*m_states, params->gamma);
-        v_sample (m_states, params->delta);
+        m_rnd_sample (m_states, m_states, params->gamma);
+        v_rnd_sample (m_states, params->delta);
         PoisHmm_Init (phmm, params->lambda, params->gamma, params->delta);
 
         for (size_t i = 0; i < m_states; i++)
@@ -186,9 +186,9 @@ test__PoisHmm_BackwardProbabilities (void)
     int status = PoisHmm_BackwardProbabilities (hmm);
     if (status) return true;
 
-    for (size_t i = 0; i < hmm->m_states * inp->size; i++)
+    for (size_t i = 0; i < (hmm->m_states * inp->size) - hmm->m_states; i++)
     {
-        if (!isfinite (hmm->probs->lbeta[i]))
+        if (!isnormal (hmm->probs->lbeta[i]))
         {
             return true;
         }

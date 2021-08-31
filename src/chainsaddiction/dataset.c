@@ -33,6 +33,7 @@ ds_NewFromFile (const char *path)
     pds->data = MA_SCALAR_EMPTY (n_elem);
     pds->size = Ca_ReadDataFile (file, n_elem, pds->data);
 
+    Ca_CloseFile (file);
     return pds;
 }
 

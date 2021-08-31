@@ -7,16 +7,14 @@ vpath
 vpath %.h .
 vpath %.h ..
 
-export objs := vmath.o rnd.o stats.o
+export objs := core.o vmath.o rnd.o stats.o
 lib := libvmath.a
 
 warnings = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
 optimize = -O2
 debug    = -g
 standard = -std=c17
-includes = -iquote../../include
-export CFLAGS = $(warnings) $(standard) $(optimize) $(includes)
-export CPPFLAGS = -D LD_MATH
+export CFLAGS = $(warnings) $(standard) $(debug) $(optimize) $(includes)
 
 all: $(lib)
 
@@ -36,7 +34,8 @@ cleantest:
 check: $(lib) test
 	@$(MAKE) runtest -C tests
 
-vmath.o: vmath.h config.h 
+core.o: core.h config.h
+vmath.o: alloc.h config.h vmath.h
 rnd.o: rnd.h config.h
 stats.o: stats.h config.h
 
