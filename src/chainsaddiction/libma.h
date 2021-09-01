@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include "scalar.h"
 
+
 enum ma_types
 {
     MA_SHORT,
@@ -16,12 +17,12 @@ enum ma_types
 };
 
 
-#define MA_INIT_ARRAY(arr, init_val)            \
-do {                                            \
-    for (size_t i__ = 0; i__ < n_elem; ++i__)   \
-    {                                           \
-        arr[i__] = (init_val);                  \
-    }                                           \
+#define MA_INIT_ARRAY(arr, init_val)    \
+do {                                    \
+    for (size_t i = 0; i < n_elem; ++i) \
+    {                                   \
+        arr[i] = (init_val);            \
+    }                                   \
 } while (0)
 
 
@@ -41,11 +42,14 @@ do {                                    \
     ptr = NULL;                         \
 } while (0)
 
+
 size_t
 Ma_TypeSize (enum ma_types type);
 
+
 void *
 Ma_ArrayMemAlloc (const size_t n_elem, enum ma_types type, bool init);
+
 
 #define MA_INT_EMPTY(n_elem) \
     (int *) Ma_ArrayMemAlloc (n_elem, MA_INT, false)
@@ -70,5 +74,6 @@ Ma_ArrayMemAlloc (const size_t n_elem, enum ma_types type, bool init);
 
 #define MA_SCALAR_ZEROS(n_elem) \
     (scalar *) Ma_ArrayMemAlloc (n_elem, MA_SCALAR, true)
+
 
 #endif  /* libma_h */
