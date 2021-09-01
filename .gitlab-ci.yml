@@ -1,6 +1,0 @@
-build:
-  image: python:latest
-  before_script:
-    - pip install numpy
-  script:
-    - pip install .
