@@ -90,10 +90,10 @@ extern int
 global_decoding (
     const size_t n_obs,
     const size_t m_states,
-    const scalar *lgamma,
-    const scalar *ldelta,
-    const scalar *lsdp,
-    size_t *states)
+    const scalar *const restrict lgamma,
+    const scalar *const restrict ldelta,
+    const scalar *restrict lsdp,
+    size_t *restrict states)
 {
     dim n_elem = n_obs * m_states;
     scalar *chi = VA_SCALAR_ZEROS (n_elem);
@@ -102,25 +102,36 @@ global_decoding (
     scalar *mp  = VA_SCALAR_ZEROS (m_states);
     if (chi == NULL || vb == NULL || mb == NULL || mp == NULL)
     {
-        fputs ("Alloc error in global decoding.", stderr);
+        const char fmt[] = "(%s, %d) global_decoding:\nMemory error.";
+        fprintf (stderr, fmt, __FILE__, __LINE__);
         return 1;
     }
+    scalar *chi_prev_row = chi;
+    scalar *chi_this_row = chi+m_states;
 
-    //v_add(ldelta, lsdp, m_states, chi);
     vv_add(m_states, ldelta, lsdp, chi);
-    scalar *prev_row = chi;
-    scalar *this_row = chi+m_states;
-    for (size_t n = 1; n < n_obs; n++, this_row+=m_states, prev_row+=m_states, lsdp+=m_states)
+    lsdp += m_states;
+    for (size_t n = 1; n < n_obs; n++)
     {
-        vm_add (m_states, m_states, prev_row, lgamma, mb);
-        m_row_max (mb, m_states, m_states, this_row);
-        vvi_add (m_states, lsdp, this_row);
-    }
+        vm_add (m_states, m_states, chi_prev_row, lgamma, mb);
+        m_row_max (mb, m_states, m_states, chi_this_row);
+        vvi_add (m_states, lsdp, chi_this_row);
 
-    states[n_obs-1] = v_argmax (m_states, this_row);
-    for (size_t i = n_obs-2; i > 0; i--, prev_row-=m_states)
+        chi_this_row+=m_states;
+        chi_prev_row+=m_states;
+        lsdp+=m_states;
+    }
+    chi_this_row = NULL;
+    lsdp = NULL;
+
+    size_t i = n_obs - 1;
+    states[i] = v_argmax (m_states, chi_prev_row);
+    while (i--)
     {
-        vv_add (m_states, prev_row, lgamma+states[i+1], vb);
+        const size_t row_idx = states[i+1] * m_states;
+        chi_prev_row -= m_states;
+
+        vv_add (m_states, chi_prev_row, lgamma+row_idx, vb);
         states[i] = v_argmax(m_states, vb);
     }
 
