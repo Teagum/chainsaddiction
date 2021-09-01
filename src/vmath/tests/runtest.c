@@ -6,7 +6,7 @@
 int main (void)
 {
     SETUP;
-/*
+
     RUN_TEST (test__rnd_int);
     RUN_TEST (test__v_rnd_int);
     RUN_TEST (test__rnd_scalar);
@@ -36,6 +36,8 @@ int main (void)
     RUN_TEST (test__vs_lse_centroid);
     RUN_TEST (test__vs_sum);
 
+    RUN_TEST (test__vm_add);
+    RUN_TEST (test__vmi_add);
     RUN_TEST (test__vm_multiply);
     RUN_TEST (test__vm_multiply_log);
 
@@ -49,6 +51,6 @@ int main (void)
     RUN_TEST (test__m_log_centroid_cols);
 
     RUN_TEST (test__mm_multiply);
-*/
+
     return 0;
 }
