@@ -36,6 +36,8 @@ int main (void)
     RUN_TEST (test__vs_lse_centroid);
     RUN_TEST (test__vs_sum);
 
+    RUN_TEST (test__vm_add);
+    RUN_TEST (test__vmi_add);
     RUN_TEST (test__vm_multiply);
     RUN_TEST (test__vm_multiply_log);
 

@@ -8,6 +8,7 @@
 
 
 bool test__local_decoding (void);
+bool test__global_decoding (void);
 
 
 #endif  /* test_pois_utils_h */

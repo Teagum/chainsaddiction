@@ -38,6 +38,8 @@ bool test__m_row_argmax (void);
 
 bool test__vi_softmax (void);
 
+bool test__vm_add (void);
+bool test__vmi_add (void);
 bool test__vm_multiply (void);
 bool test__vm_multiply_log (void);
 
