@@ -1,5 +1,6 @@
 #include "libma.h"
 
+
 size_t
 Ma_TypeSize (enum ma_types type)
 {
@@ -33,15 +34,10 @@ Ma_TypeSize (enum ma_types type)
 void *
 Ma_ArrayMemAlloc (const size_t n_elem, enum ma_types type, bool init)
 {
-    size_t size = Ma_TypeSize (type);
-    void *mem = NULL;
-    if (init)
-    {
-        mem = calloc (n_elem, size);
-    } else {
-        mem = malloc (n_elem * size);
-    }
+    size_t  size = Ma_TypeSize (type);
+    void   *mem  = NULL;
+
+    mem = init ? calloc (n_elem, size) : malloc (n_elem * size);
     MA_ASSERT_ALLOC (mem, "Ma_ArrayMemAlloc: Could not allocate buffer.");
     return mem;
 }
-
