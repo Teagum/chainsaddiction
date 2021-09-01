@@ -37,15 +37,5 @@ Third, instruct Python to build ad install ChainsAddiction:
 
     pip install .
 
-DONE.
-
-
-## Working with the Python interpreter
-Calling chainsaddiction from `Python` is simple as pie. You just need to import
-it:
-
-    import chainsaddiction as ca
-    ca.hmm_poisson_fit_em(x, m, init_means, init_tpm, int_sd, max_iter=1000, tol=1e-5)
-
 ## Notes
 Currently only Poisson-distributed HMM are implemented.
