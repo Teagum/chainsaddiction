@@ -3,7 +3,6 @@ SHELL = /bin/sh
 .SUFFIXES:
 .SUFFIXES: .c .o .test .py
 
-src_dir := src/chainsaddiction
 build_dir := build
 bin_dir   := $(build_dir)/bin
 obj_dir   := $(build_dir)/obj
@@ -38,6 +37,8 @@ help:
 	@echo '    install    Install the package.'
 	@echo '    pkg        Build the package under build/.'
 	@echo '    ext        Recompile the extension module.'
+	@echo '    check      Run extension module tests.'
+	@echo '    vmath      Rebuild vmath.'
 
 
 install:
@@ -49,8 +50,12 @@ pkg:
 ext:
 	python setup.py --quiet build_ext --force
 
+check:
+	make check -C tests
 
-
+vmath:
+	make clean -C src/vmath
+	make -C src/vmath
 
 $(obj_dir)/%.o: %.c
 	$(COMPILE.c) $(INCLUDE) $< $(OUTPUT_OPTION)
@@ -58,60 +63,13 @@ $(obj_dir)/%.o: %.c
 $(bin_dir)/%.test: $(obj_dir)/%.o
 	$(LINK.c) $^ $(OUTPUT_OPTION)
 
-$(bin_dir)/dataset.test: $(addprefix $(obj_dir)/, test_dataset.o dataset.o libma.o read.o rnd.o)
-$(bin_dir)/bw.test: $(addprefix $(obj_dir)/, test_bw.o bw.o dataset.o fwbw.o poishmm.o libma.o read.o rnd.o stats.o vmath.o)
-$(bin_dir)/fwbw.test: $(addprefix $(obj_dir)/, test_fwbw.o fwbw.o dataset.o libma.o read.o stats.o vmath.o)
-$(bin_dir)/read.test: $(addprefix $(obj_dir)/, test_read.o read.o)
-$(bin_dir)/rnd.test: $(addprefix $(obj_dir)/, test_rnd.o rnd.o)
-$(bin_dir)/stats.test: $(addprefix $(obj_dir)/, test_stats.o stats.o)
-$(bin_dir)/vmath.test: $(addprefix $(obj_dir)/, test_vmath.o libma.o rnd.o vmath.o)
-
-$(obj_dir)/dataset.o: dataset.h restrict.h read.h scalar.h libma.h
-$(obj_dir)/bw.o: bw.h poishmm.h restrict.h scalar.h vmath.h
-$(obj_dir)/fwbw.o: fwbw.h dataset.h libma.h read.h restrict.h scalar.h stats.h vmath.h
-$(obj_dir)/libma.o: libma.h scalar.h
-$(obj_dir)/rnd.o: rnd.h restrict.h scalar.h
-$(obj_dir)/read.o: read.h scalar.h
-$(obj_dir)/stats.o: stats.h restrict.h scalar.h
-$(obj_dir)/vmath.o: restrict.h scalar.h
-
-$(obj_dir)/test_dataset.o: test_dataset.h dataset.h restrict.h scalar.h rnd.h unittest.h
-$(obj_dir)/test_bw.o: test_bw.h dataset.h poishmm.h restrict.h scalar.h rnd.h unittest.h
-$(obj_dir)/test_fwbw.o: test_fwbw.h fwbw.h dataset.h restrict.h scalar.h stats.h unittest.h vmath.h
-$(obj_dir)/test_read.o: test_read.h restrict.h scalar.h rnd.h unittest.h
-$(obj_dir)/test_rnd.o: test_rnd.h rnd.h unittest.h
-$(obj_dir)/test_stats.o: test_stats.h stats.h unittest.h
-$(obj_dir)/test_vmath.o: libma.h restrict.h rnd.h scalar.h unittest.h vmath.h
-
-$(objs): | $(build_dir)
-$(test_objs): | $(build_dir)
-$(build_dir):
-	mkdir $(build_dir) $(obj_dir) $(bin_dir)
-
-check:
-	make check -C tests
-.PHONY: test
-test: $(test_apps)
-
-.PHONY: clean
 clean:
-	rm -f ./*.o
-	rm -f ./*.test
-	rm -f $(src_dir)/*.o
-	rm -f $(build_dir)/**/*.o
-	rm -f $(build_dir)/**/*.test
-	rm -f $(src_dir)/*.out
+	$(RM) **/*.o
+	$(RM) **/*.out
+	$(RM) **/*.test
 
-.PHONY: distclean
 distclean: clean
-	rm -rf $(build_dir)
 
-.PHONY: test runtest
-
-runtest:
-	@for testapp in $$(ls $(bin_dir)/*.test); do echo "run $$testapp"; $$testapp; echo '\n'; done
-
-.PHONY: build_env
 build_env:
 	@echo 'SRC_DIR:        $(src_dir)'
 	@echo 'BUILD_DIR:      $(build_dir)'
@@ -121,4 +79,4 @@ build_env:
 	@echo 'TEST_ROOT_DIR:  $(test_root_dir)'
 	@echo 'TEST_SRC_DIR:   $(test_src_dir)'
 
-.PHONY: check
+.PHONY: check test clean distclean
