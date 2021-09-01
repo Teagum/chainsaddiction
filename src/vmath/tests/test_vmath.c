@@ -656,6 +656,128 @@ test__vi_softmax (void)
 
 
 bool
+test__vm_add (void)
+{
+    enum setup {
+        N_ROWS_MIN =     1,
+        N_ROWS_MAX =   100,
+        N_COLS_MIN =     1,
+        N_COLS_MAX =   100,
+        SRANGE_LB  = -1000,
+        SRANGE_UB  =  1000
+    };
+
+    bool   err  = false;
+    size_t rows = rnd_size (N_ROWS_MIN, N_ROWS_MAX);
+    size_t cols = rnd_size (N_COLS_MIN, N_COLS_MAX);
+
+    scalar *vtx = VA_SCALAR_EMPTY (cols);
+    scalar *mtx = VA_SCALAR_EMPTY (rows*cols);
+    scalar *res = VA_SCALAR_EMPTY (rows*cols);
+    scalar *xpc = VA_SCALAR_EMPTY (rows*cols);
+    if (vtx == NULL || mtx == NULL)
+    {
+        const char fmt[] = "(%s, %d)\ntest__vm_add: could not allocate.\n";
+        fprintf (stderr, fmt, __FILE__, __LINE__);
+        VM_RETURN_FAILURE;
+    }
+
+    v_rnd_scalar (cols, SRANGE_LB, SRANGE_UB, vtx);
+    m_rnd_scalar (rows, cols, SRANGE_LB, SRANGE_UB, mtx);
+    vm_add (rows, cols, vtx, mtx, res);
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        for (size_t j = 0; j < cols; j++)
+        {
+            size_t idx = i * cols + j;
+            xpc[idx] = vtx[j] + mtx[idx];
+        }
+    }
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        for (size_t j = 0; j < cols; j++)
+        {
+            size_t idx = i * cols + j;
+            if (!ASSERT_EQUAL (res[idx], xpc[idx]))
+            {
+                err = true;
+                goto exit_test;
+            }
+        }
+    }
+
+exit_test:
+    FREE (vtx);
+    FREE (mtx);
+    FREE (res);
+    FREE (xpc);
+    return err ? VM_FAILURE : VM_SUCCESS;
+}
+
+
+bool
+test__vmi_add (void)
+{
+    enum setup {
+        N_ROWS_MIN =     1,
+        N_ROWS_MAX =   100,
+        N_COLS_MIN =     1,
+        N_COLS_MAX =   100,
+        SRANGE_LB  = -1000,
+        SRANGE_UB  =  1000
+    };
+
+    bool   err  = false;
+    size_t rows = rnd_size (N_ROWS_MIN, N_ROWS_MAX);
+    size_t cols = rnd_size (N_COLS_MIN, N_COLS_MAX);
+
+    scalar *vtx = VA_SCALAR_EMPTY (cols);
+    scalar *mtx = VA_SCALAR_EMPTY (rows*cols);
+    scalar *xpc = VA_SCALAR_EMPTY (rows*cols);
+    if (vtx == NULL || mtx == NULL)
+    {
+        const char fmt[] = "(%s, %d)\ntest__vm_add: could not allocate.\n";
+        fprintf (stderr, fmt, __FILE__, __LINE__);
+        VM_RETURN_FAILURE;
+    }
+
+    v_rnd_scalar (cols, SRANGE_LB, SRANGE_UB, vtx);
+    m_rnd_scalar (rows, cols, SRANGE_LB, SRANGE_UB, mtx);
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        for (size_t j = 0; j < cols; j++)
+        {
+            size_t idx = i * cols + j;
+            xpc[idx] = vtx[j] + mtx[idx];
+        }
+    }
+
+    vmi_add (rows, cols, vtx, mtx);
+    for (size_t i = 0; i < rows; i++)
+    {
+        for (size_t j = 0; j < cols; j++)
+        {
+            size_t idx = i * cols + j;
+            if (!ASSERT_EQUAL (mtx[idx], xpc[idx]))
+            {
+                err = true;
+                goto exit_test;
+            }
+        }
+    }
+
+exit_test:
+    FREE (vtx);
+    FREE (mtx);
+    FREE (xpc);
+    return err ? VM_FAILURE : VM_SUCCESS;
+}
+
+
+bool
 test__vm_multiply (void)
 {
     enum setup {

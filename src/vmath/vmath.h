@@ -429,6 +429,36 @@ m_col_absmax (
  */
 
 
+/** Rowise vector matrix addition.
+ *
+ * Compute the rowwise sum of a (, n) row vector `v` and a (n x m) matrix `M`.
+ *
+ * Caution:
+ * The input and output objects must not overlap.
+ *
+ * \param[in]   rows    Number of rows in matrix.
+ * \param[in]   cols    Number of columns in matrix and elements in vector.
+ * \param[in]   vtx     Pointer to vector data.
+ * \param[in]   mtx     Pointer to matrix data.
+ * \param[out]  sum     Pointer to output pbject.
+ */
+extern void
+vm_add (
+    const size_t rows,
+    const size_t cols,
+    const scalar *const restrict vtx,
+    const scalar *restrict mtx,
+    scalar *restrict out);
+
+
+extern void
+vmi_add (
+    const size_t rows,
+    const size_t cols,
+    const scalar *restrict vtx,
+    scalar *restrict mtx);
+
+
 /** Vector-matrix product: v * M.
  *
  * Compute the product of a (, n) row vector `v` and a (n x m) matrix `M`.
@@ -470,7 +500,6 @@ vm_multiply_log (
     const scalar *const mtx,
           scalar *const acc,
           scalar *restrict prod);
-
 
 
 /*
@@ -564,21 +593,6 @@ strided_absmax (
 /*
  * Vector matrix operations
  */
-extern int
-vm_add (
-    const size_t rows,
-    const size_t cols,
-    const scalar *restrict vtr,
-    const scalar *restrict mtx,
-    scalar *out);
-
-
-extern int
-vm_add_i (
-    const size_t rows,
-    const size_t cols,
-    const scalar *restrict vtr,
-    scalar *restrict mtx);
 
 
 extern scalar logr1 (scalar val);

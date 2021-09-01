@@ -414,6 +414,37 @@ m_col_absmax (
 
 
 extern void
+vm_add (
+    const size_t rows,
+    const size_t cols,
+    const scalar *const restrict vtx,
+    const scalar *restrict mtx,
+    scalar *restrict out)
+{
+    for (size_t i = 0; i < rows; i++)
+    {
+        vv_add (cols, vtx, mtx, out);
+        mtx+=cols;
+        out+=cols;
+    }
+}
+
+
+extern void
+vmi_add (
+    const size_t rows,
+    const size_t cols,
+    const scalar *const restrict vtx,
+    scalar *restrict mtx)
+{
+    for (size_t i = 0; i < rows; i++)
+    {
+        vvi_add (cols, vtx, mtx);
+        mtx+=cols;
+    }
+}
+
+extern void
 vm_multiply (const size_t rows, const size_t cols, const scalar *const vtx,
              const scalar *const mtx, scalar *restrict prod)
 {
