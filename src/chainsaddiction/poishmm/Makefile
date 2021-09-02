@@ -13,8 +13,7 @@ objs := pois_em.o pois_fwbw.o pois_hmm.o pois_params.o pois_probs.o pois_utils.o
 
 # Compiler flags
 warnings = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
-optimize = -O2
-debug    = -g
+optimize = -O3
 standard = -std=c17
 includes = -I. -I.. -I../../../include
 

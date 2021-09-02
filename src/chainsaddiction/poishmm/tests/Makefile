@@ -26,7 +26,7 @@ LDLIBS := -lvmath
 all: pois_hmm.test
 
 pois_hmm.test: $(test_runner).o $(test_objs) $(objs) $(addsuffix .o, $(modules) ../pois_utils ../pois_fwbw)
-	$(LINK.c) $^ $(LDLIBS) -o $@
+	$(LINK.c) $^ -o $@ $(LDLIBS)
 
 $(test_runner).o: test_pois_params.h test_pois_probs.h test_pois_hmm.h test_pois_em.h test_pois_utils.h unittest.h libvmath.h \
 	$(addprefix ../, pois_params.h pois_probs.h pois_utils.h pois_hmm.h pois_em.h) \
@@ -65,3 +65,6 @@ env:
 	@echo $(LDLIBS)
 
 .PHONY: check clean env
+
+bb:
+	echo $(LINK.c)

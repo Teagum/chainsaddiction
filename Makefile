@@ -20,10 +20,9 @@ vpath %.h	$(src_dir) $(test_src_dir)
 
 # Compiler flags
 warnings = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
-optimize = -O2
-debug    = -g
+optimize = -O3
 standard = -std=c17
-CFLAGS = $(warnings) $(standard) $(optimize) $(debug)
+CFLAGS = $(warnings) $(standard) $(optimize)
 
 # Preprocessor flags
 # 	_NO_LD_MATH       Disable long double math.
