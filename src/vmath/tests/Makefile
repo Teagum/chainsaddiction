@@ -5,13 +5,15 @@ SHELL = /bin/sh
 
 lib_inlcude := ..
 top_include := ../../../include
+unittest_include := ../../../libs/unittest/include
 
 vpath
 vpath %.h ..
 vpath %.h $(top_include)
+vpath %.h $(unittest_include)
 
 tobjs := test_rnd.o test_stats.o test_vmath.o
-CFLAGS += -iquote$(lib_inlcude) -iquote$(top_include)
+CFLAGS += -iquote$(lib_inlcude) -iquote$(top_include) -iquote$(unittest_include)
 LDFLAGS := -L../ -lvmath
 
 all: vmath.test 
