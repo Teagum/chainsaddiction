@@ -350,20 +350,37 @@ test__vs_sum (void)
 bool
 test__m_max (void)
 {
-    scalar max = 2L;
-    scalar vals[N];
+    enum setup {
+        MAX_VAL    =   999,
+        N_ROWS_MAX =   100,
+        N_COLS_MAX =   100,
+        SRANGE_LB  =  -100,
+        SRANGE_UB  =   100
+    };
 
-    v_rnd_sample (N, vals);
-    vals[N/2] = max;
+    const size_t rows = rnd_size (1, N_ROWS_MAX);
+    const size_t cols = rnd_size (1, N_COLS_MAX);
+    const size_t midx = rnd_size (0, rows*cols);
 
-    return !ASSERT_EQUAL (m_max (vals, 2, N/2), max);
+    scalar *mtx = VA_SCALAR_EMPTY (rows*cols);
+    if (mtx == NULL)
+    {
+        const char fmt[] = "\n(%s, %d) test__m_max:\nMemory error.";
+        fprintf (stderr, fmt, __FILE__, __LINE__);
+        VM_RETURN_FAILURE;
+    }
+
+    m_rnd_scalar (rows, cols, SRANGE_LB, SRANGE_UB, mtx);
+    mtx[midx] = MAX_VAL;
+
+    return !ASSERT_EQUAL (m_max (mtx, rows, cols), MAX_VAL);
 }
 
 
 bool
 test__m_row_max (void)
 {
-    enum {
+    enum setup {
         MIN_ROW_SIZE = 1, MAX_ROW_SIZE = 100,
         MIN_COL_SIZE = 1, MAX_COL_SIZE = 20,
         CHECK_VAL = 10,
