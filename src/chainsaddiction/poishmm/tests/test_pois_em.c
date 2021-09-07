@@ -133,26 +133,23 @@ test__pois_m_step_delta(void)
 bool
 test__score_update (void)
 {
-    enum { n_repeat_test = 100 };
     bool err = false;
 
-    for (size_t n = 0; n < n_repeat_test; n++)
+    scalar score    = 0L;
+    const size_t m_states = rnd_size (1, 50);
+    PoisParams *pa  = PoisParams_NewRandom (m_states);
+    PoisParams *pb  = PoisParams_New (m_states);
+
+    PoisParams_Copy (pa, pb);
+    score = score_update (pa, pb);
+
+    PoisParams_Delete (pa);
+    PoisParams_Delete (pb);
+
+    if (fpclassify (score) != FP_ZERO)
     {
-        scalar score    = 0L;
-        size_t m_states = (size_t) rnd_int (1, 50);
-        PoisParams *pa  = PoisParams_NewRandom (m_states);
-        PoisParams *pb  = PoisParams_New (m_states);
-
-        PoisParams_Copy (pa, pb);
-        score = score_update (pa, pb);
-
-        PoisParams_Delete (pa);
-        PoisParams_Delete (pb);
-
-        if (fpclassify (score) != FP_ZERO)
-        {
-            err = true;
-        }
+        err = true;
     }
+
     return err;
 }
