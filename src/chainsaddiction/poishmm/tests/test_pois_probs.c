@@ -1,33 +1,30 @@
 #include "test_pois_probs.h"
 
+#define IS_ZERO(val) (fpclassify (val) == FP_ZERO)
 
 bool
 test__PoisProbs_New (void)
 {
-    enum { n_repeat_test = 10 };
+    const size_t n_obs    = rnd_int (1, 1000);
+    const size_t m_states = rnd_int (1, 100);
+    const size_t n_elem   = n_obs * m_states;
 
-    for (size_t n = 0; n < n_repeat_test; n++)
-    {
-        size_t n_obs = (size_t) RAND_INT (1, 1000);
-        size_t m_states = (size_t) RAND_INT (1, 100);
-        size_t n_elem = n_obs * m_states;
+    PoisProbs *probs = PoisProbs_New (n_obs, m_states);
+    scalar *dptr[] = { probs->lsdp,
+        probs->lalpha,
+        probs->lbeta,
+        probs->lcxpt
+    };
 
-        PoisProbs *probs = PoisProbs_New (n_obs, m_states);
-        scalar *dptr[] = { probs->lsdp,
-            probs->lalpha,
-            probs->lbeta,
-            probs->lcxpt
-        };
-
-        for (size_t i = 0; i < 3; i++) {
-            for (size_t j = 0; j < n_elem; j++) {
-                if (!IS_ZERO (dptr[i][j])) {
-                    PoisProbs_Delete (probs);
-                    return true;
-                }
+    for (size_t i = 0; i < 4; i++) {
+        for (size_t j = 0; j < n_elem; j++) {
+            if (!IS_ZERO (dptr[i][j])) {
+                PoisProbs_Delete (probs);
+                return true;
             }
         }
-        PoisProbs_Delete (probs);
     }
+
+    PoisProbs_Delete (probs);
     return false;
 }
