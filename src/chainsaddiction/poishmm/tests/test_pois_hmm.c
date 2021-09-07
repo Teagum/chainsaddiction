@@ -56,37 +56,34 @@ test__PoisHmm_Init (void)
 bool
 test__PoisHmm_InitRandom (void)
 {
-    enum { n_repeat_test = 100 };
-    for (size_t n = 0; n < n_repeat_test; n++)
+    const size_t n_obs    = rnd_int (1, 1000);
+    const size_t m_states = rnd_int (1, 50);
+    PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
+
+    PoisHmm_InitRandom (phmm);
+
+    for (size_t i = 0; i < m_states; i++)
     {
-        size_t n_obs = (size_t) RAND_INT (1, 1000);
-        size_t m_states = (size_t) RAND_INT (1, 50);
-        PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
-
-        PoisHmm_InitRandom (phmm);
-
-        for (size_t i = 0; i < m_states; i++)
+        if (!isfinite(phmm->init->lambda[i])   ||
+            !isfinite(phmm->init->delta[i])    ||
+            !isfinite(phmm->params->lambda[i]) ||
+            !isfinite(phmm->params->delta[i]))
         {
-            if (!isfinite(phmm->init->lambda[i]) ||
-                !isfinite(phmm->init->delta[i]) ||
-                !isfinite(phmm->params->lambda[i]) ||
-                !isfinite(phmm->params->delta[i]))
+            return true;
+        }
+
+        for (size_t j = 0; j < m_states; j++)
+        {
+            size_t idx = i * m_states + j;
+            if (!isfinite(phmm->init->gamma[idx]) ||
+                !isfinite(phmm->params->gamma[idx]))
             {
                 return true;
             }
-
-            for (size_t j = 0; j < m_states; j++)
-            {
-                size_t idx = i * m_states + j;
-                if (!isfinite(phmm->init->gamma[idx]) ||
-                    !isfinite(phmm->params->gamma[idx]))
-                {
-                    return true;
-                }
-            }
         }
-        PoisHmm_Delete (phmm);
     }
+
+    PoisHmm_Delete (phmm);
     return false;
 }
 
