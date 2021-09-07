@@ -3,10 +3,12 @@ SHELL = /bin/sh
 .SUFFIXES:
 .SUFFIXES: .h .c .o
 
+root := ../../..
+
 vpath
-vpath %.h ./
-vpath %.h ../
-vpath %.h ../../../include
+vpath %.h .
+vpath %.h ..
+vpath %.h $(root)/include
 
 
 objs := pois_em.o pois_fwbw.o pois_hmm.o pois_params.o pois_probs.o pois_utils.o
@@ -15,14 +17,15 @@ objs := pois_em.o pois_fwbw.o pois_hmm.o pois_params.o pois_probs.o pois_utils.o
 warnings = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
 optimize = -O3
 standard = -std=c17
-includes = -I. -I.. -I../../../include
+includes = -I.. -I../../../include
 
 export CFLAGS = $(warnings) $(standard) $(optimize) 
 
 # Preprocessor flags
 #    _NO_LD_MATH        Disable long double math.
 #    NO_BOUNDS_CHECK    Do not check boundaries in array setters and getters.
-export CPPFLAGS = $(includes)
+CPPFLAGS += $(includes)
+
 
 all: $(objs)
 

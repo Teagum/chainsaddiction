@@ -8,9 +8,12 @@ SHELL = /bin/sh
 .SUFFIXES: .h .c .o
 
 root := ../../../..
+libs := $(root)/libs
 lib_include_dir := $(root)/include
+unittest := $(libs)/unittest/include
 
 vpath %.h $(lib_include_dir)
+vpath %.h $(unittest)
 
 test_srcs = $(wildcard test_pois_*.c)
 test_objs = $(test_srcs:.c=.o)
@@ -18,7 +21,7 @@ objs = $(addprefix ../, $(subst test_,,$(test_objs)))
 modules = $(addprefix ../../, dataset libma read)
 
 test_runner = runtest
-CPPFLAGS += -I$(lib_include_dir)
+CPPFLAGS += -I$(lib_include_dir) -I$(unittest)
 
 LDFLAGS := -L../../../vmath
 LDLIBS := -lvmath
@@ -47,7 +50,6 @@ test_pois_utisl.o: test_pois_utils.h libvmath.h \
 	$(addsuffix .h, $(modules))
 
 
-
 $(test_objs): $(addprefix ../../, scalar.h restrict.h) unittest.h
 
 check: pois_hmm.test
@@ -57,14 +59,4 @@ clean:
 	$(RM) *.o
 	$(RM) *.test
 
-env:
-	@echo $(LINK.c)
-	@echo $(CFLAGS)
-	@echo $(CPPFLAGS)
-	@echo $(LDFLAGS)
-	@echo $(LDLIBS)
-
 .PHONY: check clean env
-
-bb:
-	echo $(LINK.c)
