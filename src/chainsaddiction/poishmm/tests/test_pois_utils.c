@@ -8,7 +8,7 @@ bool test__local_decoding (void)
     };
 
     bool err = true;
-    const char   path[]    = "../../../tests/data/earthquakes";
+    const char   path[]    = "../../../../tests/data/earthquakes";
     const scalar ilambda[] = { 10L, 20L, 30L };
     const scalar igamma[]  =  {.8, .1, .1, .1, .8, .1, .1, .1, .8 };
     const scalar idelta[]  = { 1.0L/3L, 1.0L/3L, 1.0L/3L };
@@ -53,8 +53,8 @@ bool test__global_decoding (void)
     };
 
     bool err = false;
-    const char   path_data[]    = "../../../tests/data/earthquakes";
-    const char   path_params[]  = "tests/data/earthquakes.lprobs";
+    const char   path_data[]    = "../../../../tests/data/earthquakes";
+    const char   path_params[]  = "data/earthquakes.lprobs";
     const size_t xpc[] = {
         0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
        0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2,

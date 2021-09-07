@@ -1,65 +1,54 @@
 #include "test_pois_hmm.h"
 
+
 bool
 test__PoisHmm_New (void)
 {
-    enum { n_repeat_test = 100 };
+    const size_t n_obs    = rnd_size (1, 1000);
+    const size_t m_states = rnd_size (1, 200);
+    PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
-    for (size_t n = 0; n < n_repeat_test; n++)
-    {
-        size_t n_obs = RAND_INT (1, 1000);
-        size_t m_states = RAND_INT (1, 200);
-        PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
-
-        PoisHmm_Delete (phmm);
-    }
+    PoisHmm_Delete (phmm);
     return false;
 }
-
-
-PoisHmm *
-PoisHmm_NewFromFile (const char path[]);
 
 
 bool
 test__PoisHmm_Init (void)
 {
-    enum { n_repeat_test = 100 };
-    for (size_t n = 0; n < n_repeat_test; n++)
+    const size_t n_obs    = rnd_size (1, 1000);
+    const size_t m_states = rnd_size (1, 30);
+    PoisParams *params = PoisParams_New (m_states);
+    PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
+
+    v_rnd_scalar (m_states, 1, 100, params->lambda);
+    m_rnd_sample (m_states, m_states, params->gamma);
+    v_rnd_sample (m_states, params->delta);
+    PoisHmm_Init (phmm, params->lambda, params->gamma, params->delta);
+
+    for (size_t i = 0; i < m_states; i++)
     {
-        size_t n_obs = (size_t) RAND_INT (1, 1000);
-        size_t m_states = (size_t) RAND_INT (1, 30);
-        PoisParams *params = PoisParams_New (m_states);
-        PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
-
-        v_rnd_scalar (m_states, 1, 100, params->lambda);
-        m_rnd_sample (m_states, m_states, params->gamma);
-        v_rnd_sample (m_states, params->delta);
-        PoisHmm_Init (phmm, params->lambda, params->gamma, params->delta);
-
-        for (size_t i = 0; i < m_states; i++)
+        if (!isfinite(phmm->init->lambda[i])   ||
+            !isfinite(phmm->init->delta[i])    ||
+            !isfinite(phmm->params->lambda[i]) ||
+            !isfinite(phmm->params->delta[i]))
         {
-            if (!isfinite(phmm->init->lambda[i]) ||
-                !isfinite(phmm->init->delta[i]) ||
-                !isfinite(phmm->params->lambda[i]) ||
-                !isfinite(phmm->params->delta[i]))
+            return true;
+        }
+
+        for (size_t j = 0; j < m_states; j++)
+        {
+            size_t idx = i * m_states + j;
+            if (!isfinite(phmm->init->gamma[idx]) ||
+                !isfinite(phmm->params->gamma[idx]))
             {
                 return true;
             }
-
-            for (size_t j = 0; j < m_states; j++)
-            {
-                size_t idx = i * m_states + j;
-                if (!isfinite(phmm->init->gamma[idx]) ||
-                    !isfinite(phmm->params->gamma[idx]))
-                {
-                    return true;
-                }
-            }
         }
-        PoisParams_Delete (params);
-        PoisHmm_Delete (phmm);
     }
+
+    PoisParams_Delete (params);
+    PoisHmm_Delete (phmm);
     return false;
 }
 
@@ -67,37 +56,34 @@ test__PoisHmm_Init (void)
 bool
 test__PoisHmm_InitRandom (void)
 {
-    enum { n_repeat_test = 100 };
-    for (size_t n = 0; n < n_repeat_test; n++)
+    const size_t n_obs    = rnd_size (1, 1000);
+    const size_t m_states = rnd_size (1, 50);
+    PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
+
+    PoisHmm_InitRandom (phmm);
+
+    for (size_t i = 0; i < m_states; i++)
     {
-        size_t n_obs = (size_t) RAND_INT (1, 1000);
-        size_t m_states = (size_t) RAND_INT (1, 50);
-        PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
-
-        PoisHmm_InitRandom (phmm);
-
-        for (size_t i = 0; i < m_states; i++)
+        if (!isfinite(phmm->init->lambda[i])   ||
+            !isfinite(phmm->init->delta[i])    ||
+            !isfinite(phmm->params->lambda[i]) ||
+            !isfinite(phmm->params->delta[i]))
         {
-            if (!isfinite(phmm->init->lambda[i]) ||
-                !isfinite(phmm->init->delta[i]) ||
-                !isfinite(phmm->params->lambda[i]) ||
-                !isfinite(phmm->params->delta[i]))
+            return true;
+        }
+
+        for (size_t j = 0; j < m_states; j++)
+        {
+            size_t idx = i * m_states + j;
+            if (!isfinite(phmm->init->gamma[idx]) ||
+                !isfinite(phmm->params->gamma[idx]))
             {
                 return true;
             }
-
-            for (size_t j = 0; j < m_states; j++)
-            {
-                size_t idx = i * m_states + j;
-                if (!isfinite(phmm->init->gamma[idx]) ||
-                    !isfinite(phmm->params->gamma[idx]))
-                {
-                    return true;
-                }
-            }
         }
-        PoisHmm_Delete (phmm);
     }
+
+    PoisHmm_Delete (phmm);
     return false;
 }
 
@@ -124,7 +110,7 @@ test__PoisHmm_LogLikelihood (void)
 bool
 test__PoisHmm_EstimateParams (void)
 {
-    const char path[] = "../../../tests/data/earthquakes";
+    const char path[] = "../../../../tests/data/earthquakes";
     enum { n_repeat_test = 1, m_states = 3, n_obs = 107 };
     const scalar ilambda[] = { 10L, 20L, 30L };
     const scalar igamma[]  =  {.8, .1, .1, .1, .8, .1, .1, .1, .8 };
@@ -144,8 +130,8 @@ test__PoisHmm_EstimateParams (void)
 bool
 test__PoisHmm_ForwardProbabilities(void)
 {
-    const char data_path[] = "../../../tests/data/earthquakes";
-    const char params_path[] = "tests/data/std3s.poisparams";
+    const char data_path[] = "../../../../tests/data/earthquakes";
+    const char params_path[] = "data/std3s.poisparams";
 
     DataSet *inp = ds_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
@@ -172,8 +158,8 @@ test__PoisHmm_ForwardProbabilities(void)
 bool
 test__PoisHmm_BackwardProbabilities (void)
 {
-    const char data_path[] = "../../../tests/data/earthquakes";
-    const char params_path[] = "tests/data/std3s.poisparams";
+    const char data_path[] = "../../../../tests/data/earthquakes";
+    const char params_path[] = "data/std3s.poisparams";
 
     DataSet *inp = ds_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
@@ -200,8 +186,8 @@ test__PoisHmm_BackwardProbabilities (void)
 bool
 test__PoisHmm_ForwardBackward (void)
 {
-    const char data_path[] = "../../../tests/data/earthquakes";
-    const char params_path[] = "tests/data/std3s.poisparams";
+    const char data_path[] = "../../../../tests/data/earthquakes";
+    const char params_path[] = "data/std3s.poisparams";
 
     DataSet *inp = ds_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
