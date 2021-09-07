@@ -72,7 +72,7 @@ PoisHmmFit_Set (PoisHmmFit *out, PoisHmm *hmm)
 
 
 static PyObject *
-poishmm_fit_em (PyObject *self, PyObject *args)
+poishmm_fit (PyObject *self, PyObject *args)
 {
     UNUSED (self);
     PyObject *arg_lambda = NULL;
@@ -251,7 +251,7 @@ global_decoding_impl (PyObject *self, PyObject *args)
 
 static PyMethodDef
 poishmm_methods[] = {
-    {"fit_em", poishmm_fit_em, METH_VARARGS, poishmm_fit_em_doc},
+    {"fit", poishmm_fit, METH_VARARGS, poishmm_fit_doc},
     {"read_params", read_params, METH_VARARGS, read_params_doc},
     {"global_decoding", global_decoding_impl, METH_VARARGS, global_decoding_doc},
     {NULL, NULL, 0, NULL}

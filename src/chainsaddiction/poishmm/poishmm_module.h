@@ -20,7 +20,7 @@
     (PyArrayObject *) PyArray_FROM_OTF (py_obj, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
 
 
-#define poishmm_fit_em_doc                                              \
+#define poishmm_fit_doc                                                 \
     "Estimate HMM parameters given an observation time series by "      \
     "Expectation Maximization\n\n"                                      \
     "fit_em(n_obs: int, m_states: int, max_iter: int, tol: float, "     \
@@ -36,7 +36,7 @@
     "Compute the most likely sequence of states\n"
 
 static PyObject
-*poishmm_fit_em (PyObject* self, PyObject* args);
+*poishmm_fit (PyObject* self, PyObject* args);
 
 static PyObject *
 read_params (PyObject *self, PyObject *args);
