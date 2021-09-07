@@ -36,11 +36,11 @@ test__PoisParams_NewFromFile (void)
     bool err = false;
     PoisParams *out = NULL;
     char test_files[][FNAME_LEN_MAX] = {
-        "tests/data/ppr1",
-        "tests/data/ppr2",
-        "tests/data/ppr3",
-        "tests/data/ppr4",
-        "tests/data/ppr5"
+        "data/ppr1",
+        "data/ppr2",
+        "data/ppr3",
+        "data/ppr4",
+        "data/ppr5"
     };
 
     for (size_t fcnt = 0; fcnt < N_FILES; fcnt++) {

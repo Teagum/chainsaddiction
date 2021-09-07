@@ -110,7 +110,7 @@ test__PoisHmm_LogLikelihood (void)
 bool
 test__PoisHmm_EstimateParams (void)
 {
-    const char path[] = "../../../tests/data/earthquakes";
+    const char path[] = "../../../../tests/data/earthquakes";
     enum { n_repeat_test = 1, m_states = 3, n_obs = 107 };
     const scalar ilambda[] = { 10L, 20L, 30L };
     const scalar igamma[]  =  {.8, .1, .1, .1, .8, .1, .1, .1, .8 };
@@ -130,8 +130,8 @@ test__PoisHmm_EstimateParams (void)
 bool
 test__PoisHmm_ForwardProbabilities(void)
 {
-    const char data_path[] = "../../../tests/data/earthquakes";
-    const char params_path[] = "tests/data/std3s.poisparams";
+    const char data_path[] = "../../../../tests/data/earthquakes";
+    const char params_path[] = "data/std3s.poisparams";
 
     DataSet *inp = ds_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
@@ -158,8 +158,8 @@ test__PoisHmm_ForwardProbabilities(void)
 bool
 test__PoisHmm_BackwardProbabilities (void)
 {
-    const char data_path[] = "../../../tests/data/earthquakes";
-    const char params_path[] = "tests/data/std3s.poisparams";
+    const char data_path[] = "../../../../tests/data/earthquakes";
+    const char params_path[] = "data/std3s.poisparams";
 
     DataSet *inp = ds_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
@@ -186,8 +186,8 @@ test__PoisHmm_BackwardProbabilities (void)
 bool
 test__PoisHmm_ForwardBackward (void)
 {
-    const char data_path[] = "../../../tests/data/earthquakes";
-    const char params_path[] = "tests/data/std3s.poisparams";
+    const char data_path[] = "../../../../tests/data/earthquakes";
+    const char params_path[] = "data/std3s.poisparams";
 
     DataSet *inp = ds_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
