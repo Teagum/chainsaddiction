@@ -1,18 +1,14 @@
 #include "test_pois_hmm.h"
 
+
 bool
 test__PoisHmm_New (void)
 {
-    enum { n_repeat_test = 100 };
+    const size_t n_obs    = rnd_size (1, 1000);
+    const size_t m_states = rnd_size (1, 200);
+    PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
-    for (size_t n = 0; n < n_repeat_test; n++)
-    {
-        size_t n_obs = RAND_INT (1, 1000);
-        size_t m_states = RAND_INT (1, 200);
-        PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
-
-        PoisHmm_Delete (phmm);
-    }
+    PoisHmm_Delete (phmm);
     return false;
 }
 
