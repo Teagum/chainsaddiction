@@ -13,10 +13,6 @@ test__PoisHmm_New (void)
 }
 
 
-PoisHmm *
-PoisHmm_NewFromFile (const char path[]);
-
-
 bool
 test__PoisHmm_Init (void)
 {
