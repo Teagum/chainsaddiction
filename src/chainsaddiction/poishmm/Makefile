@@ -48,12 +48,13 @@ test: all
 	@$(MAKE) all -C tests
 
 runtest: test
-	tests/pois_hmm.test
+	@$(MAKE) check -C tests
+  	
 
 check: all runtest
 
 clean:
 	rm -f *.o
-	@$(MAKE) clean -C tests/
+	@$(MAKE) clean -C tests
 
 .PHONY: test clean

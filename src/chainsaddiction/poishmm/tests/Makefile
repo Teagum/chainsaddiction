@@ -1,8 +1,3 @@
-# NOTE:
-# ============================================================================
-# You have to use the test target in the parent directory to execute this file
-# correctly.
-# ============================================================================
 SHELL = /bin/sh
 
 .SUFFIXES: .h .c .o
