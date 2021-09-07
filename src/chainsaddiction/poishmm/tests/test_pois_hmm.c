@@ -16,8 +16,8 @@ test__PoisHmm_New (void)
 bool
 test__PoisHmm_Init (void)
 {
-    const size_t n_obs    = rnd_int (1, 1000);
-    const size_t m_states = rnd_int (1, 30);
+    const size_t n_obs    = rnd_size (1, 1000);
+    const size_t m_states = rnd_size (1, 30);
     PoisParams *params = PoisParams_New (m_states);
     PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
@@ -56,8 +56,8 @@ test__PoisHmm_Init (void)
 bool
 test__PoisHmm_InitRandom (void)
 {
-    const size_t n_obs    = rnd_int (1, 1000);
-    const size_t m_states = rnd_int (1, 50);
+    const size_t n_obs    = rnd_size (1, 1000);
+    const size_t m_states = rnd_size (1, 50);
     PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
 
     PoisHmm_InitRandom (phmm);

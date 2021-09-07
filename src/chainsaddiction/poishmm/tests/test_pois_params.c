@@ -4,7 +4,7 @@
 bool
 test__PoisParams_New (void)
 {
-    const size_t m_states = rnd_int (1, 100);
+    const size_t m_states = rnd_size (1, 100);
     PoisParams *params = PoisParams_New (m_states);
 
     for (size_t i=0; i<m_states; i++) {

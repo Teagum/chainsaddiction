@@ -5,8 +5,8 @@
 bool
 test__PoisProbs_New (void)
 {
-    const size_t n_obs    = rnd_int (1, 1000);
-    const size_t m_states = rnd_int (1, 100);
+    const size_t n_obs    = rnd_size (1, 1000);
+    const size_t m_states = rnd_size (1, 100);
     const size_t n_elem   = n_obs * m_states;
 
     PoisProbs *probs = PoisProbs_New (n_obs, m_states);
