@@ -249,11 +249,56 @@ global_decoding_impl (PyObject *self, PyObject *args)
     return arr_states;
 }
 
+
+static PyObject *
+local_decoding_impl (PyObject *self, PyObject *args)
+{
+    UNUSED (self);
+
+    npy_intp n_obs       = 0;
+    npy_intp m_states    = 0;
+    PyObject *arg_lsdp   = NULL;
+    PyObject *arr_states = NULL;
+    PyObject *arr_lsdp   = NULL;
+
+    if (!PyArg_ParseTuple (args, "llO", &n_obs, &m_states, &arg_lsdp))
+    {
+        PyErr_SetString (PyExc_TypeError, "local_decoding: Could not parse args.");
+        return NULL;
+    }
+
+    npy_intp dims[2] = { n_obs, m_states };
+    arr_lsdp = PyArray_SimpleNew (2, dims, NPY_LONGDOUBLE);
+    if (arr_lsdp == NULL)
+    {
+        PyErr_SetString (PyExc_TypeError, "local_decoding: Could not allocate lsdp copy.");
+        return NULL;
+    }
+    PyArray_CopyInto ((PyArrayObject *) arr_lsdp, (PyArrayObject *) arg_lsdp);
+
+    arr_states = PyArray_SimpleNew (1, dims, NPY_ULONG);
+    if (arr_states == NULL)
+    {
+        PyErr_SetString (PyExc_TypeError, "local_decoding: Could not allocate states object.");
+        return NULL;
+    }
+
+
+    local_decoding ((size_t) n_obs, (size_t) m_states,
+            (long double *)((PyArrayObject *) arr_lsdp)->data,
+            (size_t *)((PyArrayObject *) arr_states)->data);
+
+    Py_INCREF (arr_states);
+    return arr_states;
+}
+
+
 static PyMethodDef
 poishmm_methods[] = {
     {"fit", poishmm_fit, METH_VARARGS, poishmm_fit_doc},
     {"read_params", read_params, METH_VARARGS, read_params_doc},
     {"global_decoding", global_decoding_impl, METH_VARARGS, global_decoding_doc},
+    {"local_decoding", local_decoding_impl, METH_VARARGS, global_decoding_doc},
     {NULL, NULL, 0, NULL}
 };
 

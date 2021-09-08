@@ -35,8 +35,16 @@
     "global_decoding(n_obs, m_states, lgamma, ldelta, lsdp, /)\n\n"    \
     "Compute the most likely sequence of states\n"
 
+#define local_decoding_doc \
+    "local_decoding(n_obs, m_states, lsdp, /)\n\n"    \
+    "Compute the most likely state for each observation.\n"
+
+
 static PyObject
 *poishmm_fit (PyObject* self, PyObject* args);
+
+static PyObject *
+local_decoding_impl (PyObject *self, PyObject *args);
 
 static PyObject *
 read_params (PyObject *self, PyObject *args);
