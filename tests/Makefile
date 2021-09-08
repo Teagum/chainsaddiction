@@ -11,4 +11,7 @@ check: $(test_objs)
 local_decoding: test-local-decoding.py
 	$(CC) $<
 
+
+global-decoding: test-global-decoding.py
+	$(CC) $<
 .PHONY: check
