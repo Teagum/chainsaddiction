@@ -13,14 +13,13 @@
 #include "fitobject.h"
 
 
-
 #define UNUSED(obj) obj = NULL;
 
 #define PyArray_NEW_LD(py_obj) \
     (PyArrayObject *) PyArray_FROM_OTF (py_obj, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
 
 
-#define poishmm_fit_em_doc                                              \
+#define poishmm_fit_doc                                                 \
     "Estimate HMM parameters given an observation time series by "      \
     "Expectation Maximization\n\n"                                      \
     "fit_em(n_obs: int, m_states: int, max_iter: int, tol: float, "     \
@@ -35,8 +34,19 @@
     "global_decoding(n_obs, m_states, lgamma, ldelta, lsdp, /)\n\n"    \
     "Compute the most likely sequence of states\n"
 
-static PyObject
-*poishmm_fit_em (PyObject* self, PyObject* args);
+#define local_decoding_doc \
+    "local_decoding(n_obs, m_states, lsdp, /)\n\n"    \
+    "Compute the most likely state for each observation.\n"
+
+
+static PyObject *
+poishmm_fit (PyObject* self, PyObject* args);
+
+static PyObject *
+local_decoding_impl (PyObject *self, PyObject *args);
+
+static PyObject *
+global_decoding_impl (PyObject *self, PyObject *args);
 
 static PyObject *
 read_params (PyObject *self, PyObject *args);

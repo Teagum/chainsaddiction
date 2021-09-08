@@ -19,7 +19,7 @@ def main(argv=None):
         prs = poishmm.read_params(str(file))
         hyper = (data.size, prs['m_states'], 300, 1e-6)
         params = prs['lambda'], prs['gamma'], prs['delta']
-        res = poishmm.fit_em(*hyper, *params, data)
+        res = poishmm.fit(*hyper, *params, data)
 
         fmt = f"Error: {res.err} n_iter: {res.n_iter} m_states: {res.m_states}\n" \
             f"llk: {res.llk} AIC: {res.aic} BIC: {res.bic}\n" \

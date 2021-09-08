@@ -72,7 +72,7 @@ PoisHmmFit_Set (PoisHmmFit *out, PoisHmm *hmm)
 
 
 static PyObject *
-poishmm_fit_em (PyObject *self, PyObject *args)
+poishmm_fit (PyObject *self, PyObject *args)
 {
     UNUSED (self);
     PyObject *arg_lambda = NULL;
@@ -218,12 +218,19 @@ read_params (PyObject *self, PyObject *args)
 static PyObject *
 global_decoding_impl (PyObject *self, PyObject *args)
 {
+    UNUSED (self);
+
     npy_intp n_obs    = 0;
     npy_intp m_states = 0;
     PyObject *arg_lgamma = NULL;
     PyObject *arg_ldelta = NULL;
     PyObject *arg_lsdp = NULL;
     PyObject *arr_states = NULL;
+
+    PyObject *arr_lgamma = NULL;
+    PyObject *arr_ldelta = NULL;
+    PyObject *arr_lsdp   = NULL;
+
     if (!PyArg_ParseTuple (args, "llOOO", &n_obs, &m_states, &arg_lgamma,
                             &arg_ldelta, &arg_lsdp))
     {
@@ -232,6 +239,31 @@ global_decoding_impl (PyObject *self, PyObject *args)
     }
 
     npy_intp dims[2] = { n_obs, m_states };
+
+    arr_lgamma = PyArray_SimpleNew (2, ((npy_intp[]){m_states, m_states}), NPY_LONGDOUBLE);
+    if (arr_lgamma == NULL)
+    {
+        PyErr_SetString (PyExc_MemoryError, "global_decoding: Could not allocate lgamma copy.");
+        return NULL;
+    }
+    PyArray_CopyInto ((PyArrayObject *) arr_lgamma, (PyArrayObject *) arg_lgamma);
+
+    arr_ldelta = PyArray_SimpleNew (1, &m_states, NPY_LONGDOUBLE);
+    if (arr_ldelta == NULL)
+    {
+        PyErr_SetString (PyExc_MemoryError, "global_decoding: Could not allocate ldelta copy.");
+        return NULL;
+    }
+    PyArray_CopyInto ((PyArrayObject *) arr_ldelta, (PyArrayObject *) arg_ldelta);
+
+    arr_lsdp = PyArray_SimpleNew (2, dims, NPY_LONGDOUBLE);
+    if (arr_lsdp == NULL)
+    {
+        PyErr_SetString (PyExc_MemoryError, "global_decoding: Could not allocate lsdp copy.");
+        return NULL;
+    }
+    PyArray_CopyInto ((PyArrayObject *) arr_lsdp, (PyArrayObject *) arg_lsdp);
+
     arr_states = PyArray_SimpleNew (1, dims, NPY_ULONG);
     if (arr_states == NULL)
     {
@@ -240,20 +272,65 @@ global_decoding_impl (PyObject *self, PyObject *args)
     }
 
     global_decoding ((size_t) n_obs, (size_t) m_states,
-            (long double *)((PyArrayObject *) arg_lgamma)->data,
-            (long double *)((PyArrayObject *) arg_ldelta)->data,
-            (long double *)((PyArrayObject *) arg_lsdp)->data,
+            (long double *)((PyArrayObject *) arr_lgamma)->data,
+            (long double *)((PyArrayObject *) arr_ldelta)->data,
+            (long double *)((PyArrayObject *) arr_lsdp)->data,
             (size_t *)((PyArrayObject *) arr_states)->data);
 
     Py_INCREF (arr_states);
     return arr_states;
 }
 
+
+static PyObject *
+local_decoding_impl (PyObject *self, PyObject *args)
+{
+    UNUSED (self);
+
+    npy_intp n_obs       = 0;
+    npy_intp m_states    = 0;
+    PyObject *arg_lsdp   = NULL;
+    PyObject *arr_states = NULL;
+    PyObject *arr_lsdp   = NULL;
+
+    if (!PyArg_ParseTuple (args, "llO", &n_obs, &m_states, &arg_lsdp))
+    {
+        PyErr_SetString (PyExc_TypeError, "local_decoding: Could not parse args.");
+        return NULL;
+    }
+
+    npy_intp dims[2] = { n_obs, m_states };
+    arr_lsdp = PyArray_SimpleNew (2, dims, NPY_LONGDOUBLE);
+    if (arr_lsdp == NULL)
+    {
+        PyErr_SetString (PyExc_TypeError, "local_decoding: Could not allocate lsdp copy.");
+        return NULL;
+    }
+    PyArray_CopyInto ((PyArrayObject *) arr_lsdp, (PyArrayObject *) arg_lsdp);
+
+    arr_states = PyArray_SimpleNew (1, dims, NPY_ULONG);
+    if (arr_states == NULL)
+    {
+        PyErr_SetString (PyExc_TypeError, "local_decoding: Could not allocate states object.");
+        return NULL;
+    }
+
+
+    local_decoding ((size_t) n_obs, (size_t) m_states,
+            (long double *)((PyArrayObject *) arr_lsdp)->data,
+            (size_t *)((PyArrayObject *) arr_states)->data);
+
+    Py_INCREF (arr_states);
+    return arr_states;
+}
+
+
 static PyMethodDef
 poishmm_methods[] = {
-    {"fit_em", poishmm_fit_em, METH_VARARGS, poishmm_fit_em_doc},
+    {"fit", poishmm_fit, METH_VARARGS, poishmm_fit_doc},
     {"read_params", read_params, METH_VARARGS, read_params_doc},
     {"global_decoding", global_decoding_impl, METH_VARARGS, global_decoding_doc},
+    {"local_decoding", local_decoding_impl, METH_VARARGS, global_decoding_doc},
     {NULL, NULL, 0, NULL}
 };
 
