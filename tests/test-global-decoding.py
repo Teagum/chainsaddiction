@@ -1,9 +1,9 @@
-
 from pathlib import Path
 import sys
 import numpy as np
 from scipy import stats
 from chainsaddiction import poishmm
+
 
 PARAMS_PATH = 'params/earthquakes/3/quantile.p'
 DATA_PATH = 'data/earthquakes'

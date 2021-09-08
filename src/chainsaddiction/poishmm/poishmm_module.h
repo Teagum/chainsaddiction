@@ -13,7 +13,6 @@
 #include "fitobject.h"
 
 
-
 #define UNUSED(obj) obj = NULL;
 
 #define PyArray_NEW_LD(py_obj) \
@@ -40,11 +39,14 @@
     "Compute the most likely state for each observation.\n"
 
 
-static PyObject
-*poishmm_fit (PyObject* self, PyObject* args);
+static PyObject *
+poishmm_fit (PyObject* self, PyObject* args);
 
 static PyObject *
 local_decoding_impl (PyObject *self, PyObject *args);
+
+static PyObject *
+global_decoding_impl (PyObject *self, PyObject *args);
 
 static PyObject *
 read_params (PyObject *self, PyObject *args);
