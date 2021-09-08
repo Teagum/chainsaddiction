@@ -16,6 +16,9 @@ typedef struct _PyCh_PoisHmm {
     PyObject *lambda;
     PyObject *gamma;
     PyObject *delta;
+    PyObject *lalpha;
+    PyObject *lbeta;
+    PyObject *lcxpt;
 } PyCh_PoisHmm;
 
 
@@ -42,14 +45,17 @@ static PyMemberDef PyCh_PoisHmm_members[] = {
     {"lambda_", T_OBJECT, offsetof (PyCh_PoisHmm, lambda), 0, "State-dependent means"},
     {"gamma_", T_OBJECT, offsetof (PyCh_PoisHmm, gamma), 0, "Transition probability matrix"},
     {"delta_", T_OBJECT, offsetof (PyCh_PoisHmm, delta), 0, "Initial distribution"},
+    {"lalpha", T_OBJECT, offsetof (PyCh_PoisHmm, lalpha), 0, "Forward probabilities"},
+    {"lbeta", T_OBJECT, offsetof (PyCh_PoisHmm, lbeta), 0, "Backward probabilities"},
+    {"lsdp", T_OBJECT, offsetof (PyCh_PoisHmm, lcxpt), 0, "Log of the conditional expectations"},
     {NULL, -1, 0, 0, NULL}  /* Sentinel */
 };
 
 
 static PyTypeObject PyCh_PoisHmm_Type = {
     PyVarObject_HEAD_INIT (NULL, 0)
-    .tp_name = "poishmm.Fit",
-    .tp_doc = "Stuff",
+    .tp_name = "poishmm.PoisHmm",
+    .tp_doc = "Hidden Markov Model with Poiss-distributet latent variables.",
     .tp_basicsize = sizeof (PyCh_PoisHmm),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
