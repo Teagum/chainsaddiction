@@ -7,6 +7,9 @@ PyCh_PoisHmm_Delete (PyCh_PoisHmm *self)
     Py_XDECREF (self->lambda);
     Py_XDECREF (self->gamma);
     Py_XDECREF (self->delta);
+    Py_XDECREF (self->lalpha);
+    Py_XDECREF (self->lbeta);
+    Py_XDECREF (self->lcxpt);
     Py_TYPE(self)->tp_free((PyObject *) self);
 }
 
@@ -30,6 +33,9 @@ PyCh_PoisHmm_New(PyTypeObject *type, PyObject *args, PyObject *kwds)
         self->lambda = NULL;
         self->delta = NULL;
         self->gamma = NULL;
+        self->lalpha = NULL;
+        self->lbeta = NULL;
+        self->lcxpt = NULL;
     }
     return (PyObject *) self;
 }
@@ -360,7 +366,7 @@ PyInit_poishmm (void)
     if (err < 0) return NULL;
 
     Py_INCREF (&PyCh_PoisHmm_Type);
-    err = PyModule_AddObject (module, "PyCh_PoisHmm", (PyObject *) &PyCh_PoisHmm_Type);
+    err = PyModule_AddObject (module, "PoisHmm", (PyObject *) &PyCh_PoisHmm_Type);
     if (err < 0)
     {
         Py_DECREF (&PyCh_PoisHmm_Type);
