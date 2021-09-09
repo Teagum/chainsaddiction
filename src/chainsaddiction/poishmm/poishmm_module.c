@@ -63,31 +63,34 @@ PyCh_PoisHmm_Set (PyCh_PoisHmm *out, PoisHmm *hmm)
 {
     const npy_intp dims_data[] = { (npy_intp) hmm->n_obs, (npy_intp) hmm->m_states };
 
+    double *lambda_out = (double *) PyArray_DATA ((PyArrayObject *) out->lambda);
+    double *gamma_out  = (double *) PyArray_DATA ((PyArrayObject *) out->gamma);
+    double *delta_out  = (double *) PyArray_DATA ((PyArrayObject *) out->delta);
+
+    scalar *lambda_est  = hmm->params->lambda;
+    scalar *gamma_est   = hmm->params->gamma;
+    scalar *delta_est   = hmm->params->delta;
+
+    PyObject *wrap_lalpha = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
+                                NPY_LONGDOUBLE, (void *) hmm->probs->lalpha);
+    PyObject *wrap_lbeta  = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
+                                NPY_LONGDOUBLE, (void *) hmm->probs->lbeta);
+    PyObject *wrap_lcxpt  = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
+                                NPY_LONGDOUBLE, (void *) hmm->probs->lcxpt);
+
     out->err = 0;
     out->n_iter = hmm->n_iter;
     out->llk = (double) hmm->llh;
     out->aic = (double) hmm->aic;
     out->bic = (double) hmm->bic;
 
-    double *lambda_data = (double *) PyArray_DATA ((PyArrayObject *) out->lambda);
-    double *gamma_data  = (double *) PyArray_DATA ((PyArrayObject *) out->gamma);
-    double *delta_data  = (double *) PyArray_DATA ((PyArrayObject *) out->delta);
-
-    PyObject *wrap_lalpha = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
-            NPY_LONGDOUBLE, (void *) hmm->probs->lalpha);
-    PyObject *wrap_lbeta  = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
-            NPY_LONGDOUBLE, (void *) hmm->probs->lbeta);
-    PyObject *wrap_lcxpt  = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
-            NPY_LONGDOUBLE, (void *) hmm->probs->lcxpt);
-
     for (size_t i = 0; i < hmm->m_states; i++)
     {
-        lambda_data[i] = (double) hmm->params->lambda[i];
-        delta_data[i]  = (double) expl (hmm->params->delta[i]);
+        *lambda_out++ = (double) *lambda_est++;
+        *delta_out++  = (double) expl (*delta_est++);
         for (size_t j = 0; j < hmm->m_states; j++)
         {
-            size_t idx = i * hmm->m_states + j;
-            gamma_data[idx] = (double) expl (hmm->params->gamma[idx]);
+            *gamma_out++ = (double) expl (*gamma_est++);
         }
     }
 
