@@ -141,8 +141,9 @@ poishmm_fit (PyObject *self, PyObject *args)
 
     if ((arr_lambda == NULL) || (arr_gamma == NULL) || (arr_delta == NULL) || (arr_inp == NULL))
     {
-        PyErr_SetString (PyExc_MemoryError, "Something went wrong during array creation.");
-        goto exit;
+        const char msg[] = "poishmm.fit: Could not convert input arrays.";
+        PyErr_SetString (PyExc_MemoryError, msg);
+        goto fail;
     }
 
     init = PoisParams_New (hmm.m_states);
@@ -151,14 +152,15 @@ poishmm_fit (PyObject *self, PyObject *args)
 
     if ((init == NULL) || (working == NULL) || (probs == NULL))
     {
-        PyErr_SetString (PyExc_MemoryError, "Error during HMM init.");
-        goto exit;
+        const char msg[] = "poishmm.fit: Could not create PoisHmm members.";
+        PyErr_SetString (PyExc_MemoryError, msg);
+        goto fail;
     }
 
     PoisParams_SetLambda (init, PyArray_DATA (arr_lambda));
     PoisParams_SetGamma  (init, PyArray_DATA (arr_gamma));
     PoisParams_SetDelta  (init, PyArray_DATA (arr_delta));
-    PoisParams_CopyLog (init, working);
+    PoisParams_CopyLog   (init, working);
 
     hmm.init = init;
     hmm.params = working;
@@ -176,13 +178,25 @@ poishmm_fit (PyObject *self, PyObject *args)
     PyCh_PoisHmm_CInit (out, hmm.n_obs, hmm.m_states);
     PyCh_PoisHmm_Set (out, &hmm);
 
-exit:
     PoisParams_Delete (init);
     PoisParams_Delete (working);
     PoisProbs_Delete (probs);
+    Py_XDECREF (arr_lambda);
+    Py_XDECREF (arr_gamma);
+    Py_XDECREF (arr_delta);
     Py_XDECREF (arr_inp);
     Py_INCREF (out);
     return (PyObject *) out;
+
+fail:
+    PoisParams_Delete (init);
+    PoisParams_Delete (working);
+    PoisProbs_Delete (probs);
+    Py_XDECREF (arr_lambda);
+    Py_XDECREF (arr_gamma);
+    Py_XDECREF (arr_delta);
+    Py_XDECREF (arr_inp);
+    Py_RETURN_NONE;
 }
 
 
