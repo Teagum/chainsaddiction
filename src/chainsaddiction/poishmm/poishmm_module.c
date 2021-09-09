@@ -139,7 +139,7 @@ poishmm_fit (PyObject *self, PyObject *args)
     arr_delta  = PyArray_NEW_LD (arg_delta);
     arr_inp    = PyArray_NEW_LD (arg_inp);
 
-    if (arr_lambda == NULL || arr_gamma == NULL || arr_delta == NULL || arr_inp == NULL)
+    if ((arr_lambda == NULL) || (arr_gamma == NULL) || (arr_delta == NULL) || (arr_inp == NULL))
     {
         PyErr_SetString (PyExc_MemoryError, "Something went wrong during array creation.");
         goto exit;
@@ -148,7 +148,8 @@ poishmm_fit (PyObject *self, PyObject *args)
     init = PoisParams_New (hmm.m_states);
     working = PoisParams_New (hmm.m_states);
     probs = PoisProbs_New (hmm.n_obs, hmm.m_states);
-    if (init == NULL || working == NULL || probs == NULL)
+
+    if ((init == NULL) || (working == NULL) || (probs == NULL))
     {
         PyErr_SetString (PyExc_MemoryError, "Error during HMM init.");
         goto exit;
