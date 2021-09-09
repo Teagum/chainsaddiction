@@ -48,12 +48,12 @@ PyCh_PoisHmm_CInit (PyCh_PoisHmm *self, const size_t n_obs, const size_t m_state
     const npy_intp dims_matrix[]  = { (npy_intp) m_states, (npy_intp) m_states };
     const npy_intp dims_data[]    = { (npy_intp) n_obs,    (npy_intp) m_states };
 
-    self->lambda = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_DOUBLE);
-    self->gamma  = PyArray_SimpleNew (PyCh_MATRIX, dims_matrix, NPY_DOUBLE);
-    self->delta  = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_DOUBLE);
-    self->lalpha = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_DOUBLE);
-    self->lbeta  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_DOUBLE);
-    self->lcxpt  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_DOUBLE);
+    self->lambda = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_LONGDOUBLE);
+    self->gamma  = PyArray_SimpleNew (PyCh_MATRIX, dims_matrix, NPY_LONGDOUBLE);
+    self->delta  = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_LONGDOUBLE);
+    self->lalpha = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_LONGDOUBLE);
+    self->lbeta  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_LONGDOUBLE);
+    self->lcxpt  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_LONGDOUBLE);
     return 0;
 }
 
@@ -63,13 +63,12 @@ PyCh_PoisHmm_Set (PyCh_PoisHmm *out, PoisHmm *hmm)
 {
     const npy_intp dims_data[] = { (npy_intp) hmm->n_obs, (npy_intp) hmm->m_states };
 
-    double *lambda_out = (double *) PyArray_DATA ((PyArrayObject *) out->lambda);
-    double *gamma_out  = (double *) PyArray_DATA ((PyArrayObject *) out->gamma);
-    double *delta_out  = (double *) PyArray_DATA ((PyArrayObject *) out->delta);
-
-    scalar *lambda_est  = hmm->params->lambda;
-    scalar *gamma_est   = hmm->params->gamma;
-    scalar *delta_est   = hmm->params->delta;
+    long double *lambda_out = (long double *) PyArray_DATA ((PyArrayObject *) out->lambda);
+    long double *gamma_out  = (long double *) PyArray_DATA ((PyArrayObject *) out->gamma);
+    long double *delta_out  = (long double *) PyArray_DATA ((PyArrayObject *) out->delta);
+    long double *lambda_est = hmm->params->lambda;
+    long double *gamma_est  = hmm->params->gamma;
+    long double *delta_est  = hmm->params->delta;
 
     PyObject *wrap_lalpha = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
                                 NPY_LONGDOUBLE, (void *) hmm->probs->lalpha);
@@ -86,11 +85,11 @@ PyCh_PoisHmm_Set (PyCh_PoisHmm *out, PoisHmm *hmm)
 
     for (size_t i = 0; i < hmm->m_states; i++)
     {
-        *lambda_out++ = (double) *lambda_est++;
-        *delta_out++  = (double) expl (*delta_est++);
+        *lambda_out++ = *lambda_est++;
+        *delta_out++  = expl (*delta_est++);
         for (size_t j = 0; j < hmm->m_states; j++)
         {
-            *gamma_out++ = (double) expl (*gamma_est++);
+            *gamma_out++ = expl (*gamma_est++);
         }
     }
 
