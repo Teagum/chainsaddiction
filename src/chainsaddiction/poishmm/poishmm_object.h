@@ -29,7 +29,7 @@ static PyObject *
 PyCh_PoisHmm_New(PyTypeObject *type, PyObject *args, PyObject *kwds);
 
 static int
-PyCh_PoisHmm_CInit (PyCh_PoisHmm *self, const size_t m_states);
+PyCh_PoisHmm_CInit (PyCh_PoisHmm *self, const size_t n_states, const size_t m_states);
 
 static void
 PyCh_PoisHmm_Set (PyCh_PoisHmm *out, PoisHmm *hmm);
@@ -47,7 +47,7 @@ static PyMemberDef PyCh_PoisHmm_members[] = {
     {"delta_", T_OBJECT, offsetof (PyCh_PoisHmm, delta), 0, "Initial distribution"},
     {"lalpha", T_OBJECT, offsetof (PyCh_PoisHmm, lalpha), 0, "Forward probabilities"},
     {"lbeta", T_OBJECT, offsetof (PyCh_PoisHmm, lbeta), 0, "Backward probabilities"},
-    {"lsdp", T_OBJECT, offsetof (PyCh_PoisHmm, lcxpt), 0, "Log of the conditional expectations"},
+    {"lcxpt", T_OBJECT, offsetof (PyCh_PoisHmm, lcxpt), 0, "Log of the conditional expectations"},
     {NULL, -1, 0, 0, NULL}  /* Sentinel */
 };
 
