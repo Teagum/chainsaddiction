@@ -42,12 +42,18 @@ PyCh_PoisHmm_New(PyTypeObject *type, PyObject *args, PyObject *kwds)
 
 
 static int
-PyCh_PoisHmm_CInit (PyCh_PoisHmm *self, const size_t m_states)
+PyCh_PoisHmm_CInit (PyCh_PoisHmm *self, const size_t n_obs, const size_t m_states)
 {
-    npy_intp shape[] = { (npy_intp) m_states, (npy_intp) m_states };
-    self->lambda = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
-    self->gamma  = PyArray_SimpleNew (2, shape, NPY_DOUBLE);
-    self->delta  = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
+    const npy_intp dims_vector[]  = { (npy_intp) m_states };
+    const npy_intp dims_matrix[]  = { (npy_intp) m_states, (npy_intp) m_states };
+    const npy_intp dims_data[]    = { (npy_intp) n_obs,    (npy_intp) m_states };
+
+    self->lambda = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_DOUBLE);
+    self->gamma  = PyArray_SimpleNew (PyCh_MATRIX, dims_matrix, NPY_DOUBLE);
+    self->delta  = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_DOUBLE);
+    self->lalpha = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_DOUBLE);
+    self->lbeta  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_DOUBLE);
+    self->lcxpt  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_DOUBLE);
     return 0;
 }
 
@@ -149,7 +155,7 @@ poishmm_fit (PyObject *self, PyObject *args)
     }
 
     out = (PyCh_PoisHmm *) PyCh_PoisHmm_New (&PyCh_PoisHmm_Type, NULL, NULL);
-    PyCh_PoisHmm_CInit (out, hmm.m_states);
+    PyCh_PoisHmm_CInit (out, hmm.n_obs, hmm.m_states);
     PyCh_PoisHmm_Set (out, &hmm);
 
 exit:
