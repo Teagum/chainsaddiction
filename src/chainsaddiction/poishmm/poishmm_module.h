@@ -19,6 +19,13 @@
     (PyArrayObject *) PyArray_FROM_OTF (py_obj, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
 
 
+enum PyCh_ArrayDimensions {
+    PyCh_VECTOR = 1,
+    PyCh_MATRIX = 2,
+    PyCh_DATA   = 2,
+};
+
+
 #define poishmm_fit_doc                                                 \
     "Estimate HMM parameters given an observation time series by "      \
     "Expectation Maximization\n\n"                                      \
