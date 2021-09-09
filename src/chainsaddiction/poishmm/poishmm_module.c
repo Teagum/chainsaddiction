@@ -221,18 +221,23 @@ read_params (PyObject *self, PyObject *args)
     }
 
     params = PoisParams_NewFromFile (path);
-    const npy_intp shape[2] = {
+    const npy_intp dims_vector[] = { (npy_intp) params->m_states };
+    const npy_intp dims_matrix[] = {
         (npy_intp) params->m_states,
         (npy_intp) params->m_states
     };
 
     out_states = PyLong_FromUnsignedLong (params->m_states);
-    arr_lambda = PyArray_SimpleNewFromData (1, shape, NPY_LONGDOUBLE, (void *) params->lambda);
-    arr_delta  = PyArray_SimpleNewFromData (1, shape, NPY_LONGDOUBLE, (void *) params->delta);
-    arr_gamma  = PyArray_SimpleNewFromData (2, shape, NPY_LONGDOUBLE, (void *) params->gamma);
-    out_lambda = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
-    out_delta  = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
-    out_gamma  = PyArray_SimpleNew (2, shape, NPY_DOUBLE);
+    arr_lambda = PyArray_SimpleNewFromData (PyCh_VECTOR, dims_vector,
+                        NPY_LONGDOUBLE, (void *) params->lambda);
+    arr_delta  = PyArray_SimpleNewFromData (PyCh_VECTOR, dims_vector,
+                        NPY_LONGDOUBLE, (void *) params->delta);
+    arr_gamma  = PyArray_SimpleNewFromData (PyCh_MATRIX, dims_matrix,
+                        NPY_LONGDOUBLE, (void *) params->gamma);
+    out_lambda = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_LONGDOUBLE);
+    out_delta  = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_LONGDOUBLE);
+    out_gamma  = PyArray_SimpleNew (PyCh_MATRIX, dims_matrix, NPY_LONGDOUBLE);
+
     PyArray_CopyInto ((PyArrayObject *) out_lambda, (PyArrayObject *) arr_lambda);
     PyArray_CopyInto ((PyArrayObject *) out_delta,  (PyArrayObject *) arr_delta);
     PyArray_CopyInto ((PyArrayObject *) out_gamma,  (PyArrayObject *) arr_gamma);
@@ -257,6 +262,7 @@ read_params (PyObject *self, PyObject *args)
 
     return out;
 }
+
 
 static PyObject *
 global_decoding_impl (PyObject *self, PyObject *args)
