@@ -2,23 +2,26 @@
 
 
 static void
-PoisHmmFit_Delete (PoisHmmFit *self)
+PyCh_PoisHmm_Delete (PyCh_PoisHmm *self)
 {
     Py_XDECREF (self->lambda);
     Py_XDECREF (self->gamma);
     Py_XDECREF (self->delta);
+    Py_XDECREF (self->lalpha);
+    Py_XDECREF (self->lbeta);
+    Py_XDECREF (self->lcxpt);
     Py_TYPE(self)->tp_free((PyObject *) self);
 }
 
 
 static PyObject *
-PoisHmmFit_New(PyTypeObject *type, PyObject *args, PyObject *kwds)
+PyCh_PoisHmm_New(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
     UNUSED (args);
     UNUSED (kwds);
 
-    PoisHmmFit *self = NULL;
-    self = (PoisHmmFit *) type->tp_alloc (type, 0);
+    PyCh_PoisHmm *self = NULL;
+    self = (PyCh_PoisHmm *) type->tp_alloc (type, 0);
     if (self != NULL)
     {
         self->err = 1;
@@ -30,44 +33,70 @@ PoisHmmFit_New(PyTypeObject *type, PyObject *args, PyObject *kwds)
         self->lambda = NULL;
         self->delta = NULL;
         self->gamma = NULL;
+        self->lalpha = NULL;
+        self->lbeta = NULL;
+        self->lcxpt = NULL;
     }
     return (PyObject *) self;
 }
 
 
 static int
-PoisHmmFit_CInit (PoisHmmFit *self, const size_t m_states)
+PyCh_PoisHmm_CInit (PyCh_PoisHmm *self, const size_t n_obs, const size_t m_states)
 {
-    npy_intp shape[] = { (npy_intp) m_states, (npy_intp) m_states };
-    self->lambda = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
-    self->gamma  = PyArray_SimpleNew (2, shape, NPY_DOUBLE);
-    self->delta  = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
+    const npy_intp dims_vector[]  = { (npy_intp) m_states };
+    const npy_intp dims_matrix[]  = { (npy_intp) m_states, (npy_intp) m_states };
+    const npy_intp dims_data[]    = { (npy_intp) n_obs,    (npy_intp) m_states };
+
+    self->lambda = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_DOUBLE);
+    self->gamma  = PyArray_SimpleNew (PyCh_MATRIX, dims_matrix, NPY_DOUBLE);
+    self->delta  = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_DOUBLE);
+    self->lalpha = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_DOUBLE);
+    self->lbeta  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_DOUBLE);
+    self->lcxpt  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_DOUBLE);
     return 0;
 }
 
 
 static void
-PoisHmmFit_Set (PoisHmmFit *out, PoisHmm *hmm)
+PyCh_PoisHmm_Set (PyCh_PoisHmm *out, PoisHmm *hmm)
 {
+    const npy_intp dims_data[] = { (npy_intp) hmm->n_obs, (npy_intp) hmm->m_states };
+
+    double *lambda_out = (double *) PyArray_DATA ((PyArrayObject *) out->lambda);
+    double *gamma_out  = (double *) PyArray_DATA ((PyArrayObject *) out->gamma);
+    double *delta_out  = (double *) PyArray_DATA ((PyArrayObject *) out->delta);
+
+    scalar *lambda_est  = hmm->params->lambda;
+    scalar *gamma_est   = hmm->params->gamma;
+    scalar *delta_est   = hmm->params->delta;
+
+    PyObject *wrap_lalpha = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
+                                NPY_LONGDOUBLE, (void *) hmm->probs->lalpha);
+    PyObject *wrap_lbeta  = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
+                                NPY_LONGDOUBLE, (void *) hmm->probs->lbeta);
+    PyObject *wrap_lcxpt  = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
+                                NPY_LONGDOUBLE, (void *) hmm->probs->lcxpt);
+
     out->err = 0;
     out->n_iter = hmm->n_iter;
     out->llk = (double) hmm->llh;
     out->aic = (double) hmm->aic;
     out->bic = (double) hmm->bic;
 
-    double *lambda_data = (double *) PyArray_DATA ((PyArrayObject *) out->lambda);
-    double *gamma_data  = (double *) PyArray_DATA ((PyArrayObject *) out->gamma);
-    double *delta_data  = (double *) PyArray_DATA ((PyArrayObject *) out->delta);
     for (size_t i = 0; i < hmm->m_states; i++)
     {
-        lambda_data[i] = (double) hmm->params->lambda[i];
-        delta_data[i]  = (double) expl (hmm->params->delta[i]);
+        *lambda_out++ = (double) *lambda_est++;
+        *delta_out++  = (double) expl (*delta_est++);
         for (size_t j = 0; j < hmm->m_states; j++)
         {
-            size_t idx = i * hmm->m_states + j;
-            gamma_data[idx] = (double) expl (hmm->params->gamma[idx]);
+            *gamma_out++ = (double) expl (*gamma_est++);
         }
     }
+
+    PyArray_CopyInto ((PyArrayObject *) out->lalpha, (PyArrayObject *) wrap_lalpha);
+    PyArray_CopyInto ((PyArrayObject *) out->lbeta,  (PyArrayObject *) wrap_lbeta);
+    PyArray_CopyInto ((PyArrayObject *) out->lcxpt,  (PyArrayObject *) wrap_lcxpt);
 }
 
 
@@ -91,7 +120,7 @@ poishmm_fit (PyObject *self, PyObject *args)
     PoisParams *init = NULL;
     PoisParams *working = NULL;
     PoisProbs *probs = NULL;
-    PoisHmmFit *out = NULL;
+    PyCh_PoisHmm *out = NULL;
 
     double tol_buffer = 0;
     if (!PyArg_ParseTuple (args, "llldOOOO",
@@ -142,9 +171,9 @@ poishmm_fit (PyObject *self, PyObject *args)
         PyErr_WarnEx (PyExc_Warning, "No convergence.", 1);
     }
 
-    out = (PoisHmmFit *) PoisHmmFit_New (&PoisHmmFit_Type, NULL, NULL);
-    PoisHmmFit_CInit (out, hmm.m_states);
-    PoisHmmFit_Set (out, &hmm);
+    out = (PyCh_PoisHmm *) PyCh_PoisHmm_New (&PyCh_PoisHmm_Type, NULL, NULL);
+    PyCh_PoisHmm_CInit (out, hmm.n_obs, hmm.m_states);
+    PyCh_PoisHmm_Set (out, &hmm);
 
 exit:
     PoisParams_Delete (init);
@@ -356,14 +385,14 @@ PyInit_poishmm (void)
     module = PyModule_Create (&poishmm_module);
     if (module == NULL) return NULL;
 
-    err = PyType_Ready (&PoisHmmFit_Type);
+    err = PyType_Ready (&PyCh_PoisHmm_Type);
     if (err < 0) return NULL;
 
-    Py_INCREF (&PoisHmmFit_Type);
-    err = PyModule_AddObject (module, "PoisHmmFit", (PyObject *) &PoisHmmFit_Type);
+    Py_INCREF (&PyCh_PoisHmm_Type);
+    err = PyModule_AddObject (module, "PoisHmm", (PyObject *) &PyCh_PoisHmm_Type);
     if (err < 0)
     {
-        Py_DECREF (&PoisHmmFit_Type);
+        Py_DECREF (&PyCh_PoisHmm_Type);
         Py_DECREF (module);
         return NULL;
     }
