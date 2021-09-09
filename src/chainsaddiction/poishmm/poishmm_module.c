@@ -269,63 +269,73 @@ global_decoding_impl (PyObject *self, PyObject *args)
 {
     UNUSED (self);
 
-    npy_intp n_obs    = 0;
-    npy_intp m_states = 0;
+    npy_intp n_obs       = 0;
+    npy_intp m_states    = 0;
     PyObject *arg_lgamma = NULL;
     PyObject *arg_ldelta = NULL;
-    PyObject *arg_lsdp = NULL;
+    PyObject *arg_lcxpt  = NULL;
     PyObject *arr_states = NULL;
 
     PyObject *arr_lgamma = NULL;
     PyObject *arr_ldelta = NULL;
-    PyObject *arr_lsdp   = NULL;
+    PyObject *arr_lcxpt  = NULL;
 
     if (!PyArg_ParseTuple (args, "llOOO", &n_obs, &m_states, &arg_lgamma,
-                            &arg_ldelta, &arg_lsdp))
+                            &arg_ldelta, &arg_lcxpt))
     {
         PyErr_SetString (PyExc_TypeError, "global_decoding: Could not parse args.");
         return NULL;
     }
 
-    npy_intp dims[2] = { n_obs, m_states };
+    const npy_intp dims_vector[] = { m_states };
+    const npy_intp dims_matrix[] = { m_states, m_states };
+    const npy_intp dims_data[]   = { n_obs, m_states };
 
-    arr_lgamma = PyArray_SimpleNew (2, ((npy_intp[]){m_states, m_states}), NPY_LONGDOUBLE);
+    arr_lgamma = PyArray_SimpleNew (PyCh_MATRIX, dims_matrix, NPY_LONGDOUBLE);
     if (arr_lgamma == NULL)
     {
-        PyErr_SetString (PyExc_MemoryError, "global_decoding: Could not allocate lgamma copy.");
+
+        PyErr_SetString (PyExc_MemoryError,
+                "poishmm.global_decoding: Could not allocate lgamma.");
         return NULL;
     }
-    PyArray_CopyInto ((PyArrayObject *) arr_lgamma, (PyArrayObject *) arg_lgamma);
 
-    arr_ldelta = PyArray_SimpleNew (1, &m_states, NPY_LONGDOUBLE);
+    arr_ldelta = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_LONGDOUBLE);
     if (arr_ldelta == NULL)
     {
-        PyErr_SetString (PyExc_MemoryError, "global_decoding: Could not allocate ldelta copy.");
+        PyErr_SetString (PyExc_MemoryError,
+                "poishmm.global_decoding: Could not allocate ldelta.");
         return NULL;
     }
-    PyArray_CopyInto ((PyArrayObject *) arr_ldelta, (PyArrayObject *) arg_ldelta);
 
-    arr_lsdp = PyArray_SimpleNew (2, dims, NPY_LONGDOUBLE);
-    if (arr_lsdp == NULL)
+    arr_lcxpt = PyArray_SimpleNew (PyCh_DATA, dims_data, NPY_LONGDOUBLE);
+    if (arr_lcxpt == NULL)
     {
-        PyErr_SetString (PyExc_MemoryError, "global_decoding: Could not allocate lsdp copy.");
+        PyErr_SetString (PyExc_MemoryError,
+                "poishmm.global_decoding: Could not allocate lcxpt copy.");
         return NULL;
     }
-    PyArray_CopyInto ((PyArrayObject *) arr_lsdp, (PyArrayObject *) arg_lsdp);
 
-    arr_states = PyArray_SimpleNew (1, dims, NPY_ULONG);
+    arr_states = PyArray_SimpleNew (PyCh_VECTOR, &n_obs, NPY_ULONG);
     if (arr_states == NULL)
     {
         PyErr_SetString (PyExc_TypeError, "global_decoding: Could not allocate states object.");
         return NULL;
     }
 
+    PyArray_CopyInto ((PyArrayObject *) arr_lgamma, (PyArrayObject *) arg_lgamma);
+    PyArray_CopyInto ((PyArrayObject *) arr_ldelta, (PyArrayObject *) arg_ldelta);
+    PyArray_CopyInto ((PyArrayObject *) arr_lcxpt,  (PyArrayObject *) arg_lcxpt);
+
     global_decoding ((size_t) n_obs, (size_t) m_states,
             (long double *)((PyArrayObject *) arr_lgamma)->data,
             (long double *)((PyArrayObject *) arr_ldelta)->data,
-            (long double *)((PyArrayObject *) arr_lsdp)->data,
+            (long double *)((PyArrayObject *) arr_lcxpt)->data,
             (size_t *)((PyArrayObject *) arr_states)->data);
 
+    Py_DECREF (arr_lgamma);
+    Py_DECREF (arr_ldelta);
+    Py_DECREF (arr_lcxpt);
     Py_INCREF (arr_states);
     return arr_states;
 }
