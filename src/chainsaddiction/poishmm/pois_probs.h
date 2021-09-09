@@ -23,14 +23,16 @@ typedef struct PoisProbs {
 } PoisProbs;
 
 
-#define PoisProbs_Delete(probs) do {    \
-    free (probs->lsdp);                 \
-    free (probs->lalpha);               \
-    free (probs->lbeta);                \
-    free (probs->lcxpt);                \
-    free (probs);                       \
-    probs = NULL;                       \
-} while (false)
+#define PoisProbs_Delete(probs)     \
+if (probs)                          \
+{                                   \
+    free (probs->lsdp);             \
+    free (probs->lalpha);           \
+    free (probs->lbeta);            \
+    free (probs->lcxpt);            \
+    free (probs);                   \
+    probs = NULL;                   \
+}
 
 
 PoisProbs *

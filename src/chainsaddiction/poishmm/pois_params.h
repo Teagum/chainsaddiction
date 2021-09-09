@@ -26,13 +26,15 @@ typedef struct PoisParams {
 } PoisParams;
 
 
-#define PoisParams_Delete(params) do {      \
-    free (params->lambda);                  \
-    free (params->gamma);                   \
-    free (params->delta);                   \
-    free (params);                          \
-    params = NULL;                          \
-} while (false)
+#define PoisParams_Delete(params)   \
+if (params)                         \
+{                                   \
+    free (params->lambda);          \
+    free (params->gamma);           \
+    free (params->delta);           \
+    free (params);                  \
+    params = NULL;                  \
+}
 
 
 PoisParams *
