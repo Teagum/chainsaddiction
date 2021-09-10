@@ -358,8 +358,9 @@ local_decoding_impl (PyObject *self, PyObject *args)
         return NULL;
     }
 
-    npy_intp dims[2] = { n_obs, m_states };
-    arr_lsdp = PyArray_SimpleNew (2, dims, NPY_LONGDOUBLE);
+    const npy_intp dims_vector[] = { m_states };
+    const npy_intp dims_data[]   = { n_obs, m_states };
+    arr_lsdp = PyArray_SimpleNew (PyCh_DATA, dims_data, NPY_LONGDOUBLE);
     if (arr_lsdp == NULL)
     {
         PyErr_SetString (PyExc_TypeError, "local_decoding: Could not allocate lsdp copy.");
@@ -367,7 +368,7 @@ local_decoding_impl (PyObject *self, PyObject *args)
     }
     PyArray_CopyInto ((PyArrayObject *) arr_lsdp, (PyArrayObject *) arg_lsdp);
 
-    arr_states = PyArray_SimpleNew (1, dims, NPY_ULONG);
+    arr_states = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_ULONG);
     if (arr_states == NULL)
     {
         PyErr_SetString (PyExc_TypeError, "local_decoding: Could not allocate states object.");
