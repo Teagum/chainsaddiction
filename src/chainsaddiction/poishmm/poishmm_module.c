@@ -348,9 +348,9 @@ local_decoding_impl (PyObject *self, PyObject *args)
 
     npy_intp n_obs       = 0;
     npy_intp m_states    = 0;
-    PyObject *arg_lcxpt   = NULL;
+    PyObject *arg_lcxpt  = NULL;
+    PyObject *arr_lcxpt  = NULL;
     PyObject *arr_states = NULL;
-    PyObject *arr_lcxpt   = NULL;
 
     if (!PyArg_ParseTuple (args, "llO", &n_obs, &m_states, &arg_lcxpt))
     {
@@ -358,29 +358,21 @@ local_decoding_impl (PyObject *self, PyObject *args)
         return NULL;
     }
 
-    const npy_intp dims_vector[] = { m_states };
-    const npy_intp dims_data[]   = { n_obs, m_states };
-
-    arr_lcxpt = PyArray_SimpleNew (PyCh_DATA, dims_data, NPY_LONGDOUBLE);
-    if (arr_lcxpt == NULL)
-    {
-        PyErr_SetString (PyExc_TypeError, "local_decoding: Could not allocate lsdp copy.");
-        return NULL;
-    }
-    PyArray_CopyInto ((PyArrayObject *) arr_lcxpt, (PyArrayObject *) arg_lcxpt);
-
-    arr_states = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_ULONG);
+    arr_lcxpt = PyArray_FROM_OTF (arg_lcxpt, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
+    if (arr_lcxpt == NULL) return NULL;
+    arr_states = PyArray_SimpleNew (PyCh_VECTOR, &n_obs, NPY_ULONG);
     if (arr_states == NULL)
     {
-        PyErr_SetString (PyExc_TypeError, "local_decoding: Could not allocate states object.");
+        PyErr_SetString (PyExc_TypeError,
+                "local_decoding: Could not allocate states object.");
         return NULL;
     }
-
 
     local_decoding ((size_t) n_obs, (size_t) m_states,
             (long double *)((PyArrayObject *) arr_lcxpt)->data,
             (size_t *)((PyArrayObject *) arr_states)->data);
 
+    Py_DECREF (arr_lcxpt);
     Py_INCREF (arr_states);
     return arr_states;
 }
