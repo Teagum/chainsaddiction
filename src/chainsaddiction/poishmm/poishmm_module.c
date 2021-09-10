@@ -348,11 +348,11 @@ local_decoding_impl (PyObject *self, PyObject *args)
 
     npy_intp n_obs       = 0;
     npy_intp m_states    = 0;
-    PyObject *arg_lsdp   = NULL;
+    PyObject *arg_lcxpt   = NULL;
     PyObject *arr_states = NULL;
-    PyObject *arr_lsdp   = NULL;
+    PyObject *arr_lcxpt   = NULL;
 
-    if (!PyArg_ParseTuple (args, "llO", &n_obs, &m_states, &arg_lsdp))
+    if (!PyArg_ParseTuple (args, "llO", &n_obs, &m_states, &arg_lcxpt))
     {
         PyErr_SetString (PyExc_TypeError, "local_decoding: Could not parse args.");
         return NULL;
@@ -360,13 +360,14 @@ local_decoding_impl (PyObject *self, PyObject *args)
 
     const npy_intp dims_vector[] = { m_states };
     const npy_intp dims_data[]   = { n_obs, m_states };
-    arr_lsdp = PyArray_SimpleNew (PyCh_DATA, dims_data, NPY_LONGDOUBLE);
-    if (arr_lsdp == NULL)
+
+    arr_lcxpt = PyArray_SimpleNew (PyCh_DATA, dims_data, NPY_LONGDOUBLE);
+    if (arr_lcxpt == NULL)
     {
         PyErr_SetString (PyExc_TypeError, "local_decoding: Could not allocate lsdp copy.");
         return NULL;
     }
-    PyArray_CopyInto ((PyArrayObject *) arr_lsdp, (PyArrayObject *) arg_lsdp);
+    PyArray_CopyInto ((PyArrayObject *) arr_lcxpt, (PyArrayObject *) arg_lcxpt);
 
     arr_states = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_ULONG);
     if (arr_states == NULL)
@@ -377,7 +378,7 @@ local_decoding_impl (PyObject *self, PyObject *args)
 
 
     local_decoding ((size_t) n_obs, (size_t) m_states,
-            (long double *)((PyArrayObject *) arr_lsdp)->data,
+            (long double *)((PyArrayObject *) arr_lcxpt)->data,
             (size_t *)((PyArrayObject *) arr_states)->data);
 
     Py_INCREF (arr_states);
