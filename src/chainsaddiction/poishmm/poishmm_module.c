@@ -48,12 +48,12 @@ PyCh_PoisHmm_CInit (PyCh_PoisHmm *self, const size_t n_obs, const size_t m_state
     const npy_intp dims_matrix[]  = { (npy_intp) m_states, (npy_intp) m_states };
     const npy_intp dims_data[]    = { (npy_intp) n_obs,    (npy_intp) m_states };
 
-    self->lambda = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_DOUBLE);
-    self->gamma  = PyArray_SimpleNew (PyCh_MATRIX, dims_matrix, NPY_DOUBLE);
-    self->delta  = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_DOUBLE);
-    self->lalpha = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_DOUBLE);
-    self->lbeta  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_DOUBLE);
-    self->lcxpt  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_DOUBLE);
+    self->lambda = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_LONGDOUBLE);
+    self->gamma  = PyArray_SimpleNew (PyCh_MATRIX, dims_matrix, NPY_LONGDOUBLE);
+    self->delta  = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_LONGDOUBLE);
+    self->lalpha = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_LONGDOUBLE);
+    self->lbeta  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_LONGDOUBLE);
+    self->lcxpt  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_LONGDOUBLE);
     return 0;
 }
 
@@ -63,13 +63,12 @@ PyCh_PoisHmm_Set (PyCh_PoisHmm *out, PoisHmm *hmm)
 {
     const npy_intp dims_data[] = { (npy_intp) hmm->n_obs, (npy_intp) hmm->m_states };
 
-    double *lambda_out = (double *) PyArray_DATA ((PyArrayObject *) out->lambda);
-    double *gamma_out  = (double *) PyArray_DATA ((PyArrayObject *) out->gamma);
-    double *delta_out  = (double *) PyArray_DATA ((PyArrayObject *) out->delta);
-
-    scalar *lambda_est  = hmm->params->lambda;
-    scalar *gamma_est   = hmm->params->gamma;
-    scalar *delta_est   = hmm->params->delta;
+    long double *lambda_out = (long double *) PyArray_DATA ((PyArrayObject *) out->lambda);
+    long double *gamma_out  = (long double *) PyArray_DATA ((PyArrayObject *) out->gamma);
+    long double *delta_out  = (long double *) PyArray_DATA ((PyArrayObject *) out->delta);
+    long double *lambda_est = hmm->params->lambda;
+    long double *gamma_est  = hmm->params->gamma;
+    long double *delta_est  = hmm->params->delta;
 
     PyObject *wrap_lalpha = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
                                 NPY_LONGDOUBLE, (void *) hmm->probs->lalpha);
@@ -86,11 +85,11 @@ PyCh_PoisHmm_Set (PyCh_PoisHmm *out, PoisHmm *hmm)
 
     for (size_t i = 0; i < hmm->m_states; i++)
     {
-        *lambda_out++ = (double) *lambda_est++;
-        *delta_out++  = (double) expl (*delta_est++);
+        *lambda_out++ = *lambda_est++;
+        *delta_out++  = expl (*delta_est++);
         for (size_t j = 0; j < hmm->m_states; j++)
         {
-            *gamma_out++ = (double) expl (*gamma_est++);
+            *gamma_out++ = expl (*gamma_est++);
         }
     }
 
@@ -222,18 +221,23 @@ read_params (PyObject *self, PyObject *args)
     }
 
     params = PoisParams_NewFromFile (path);
-    const npy_intp shape[2] = {
+    const npy_intp dims_vector[] = { (npy_intp) params->m_states };
+    const npy_intp dims_matrix[] = {
         (npy_intp) params->m_states,
         (npy_intp) params->m_states
     };
 
     out_states = PyLong_FromUnsignedLong (params->m_states);
-    arr_lambda = PyArray_SimpleNewFromData (1, shape, NPY_LONGDOUBLE, (void *) params->lambda);
-    arr_delta  = PyArray_SimpleNewFromData (1, shape, NPY_LONGDOUBLE, (void *) params->delta);
-    arr_gamma  = PyArray_SimpleNewFromData (2, shape, NPY_LONGDOUBLE, (void *) params->gamma);
-    out_lambda = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
-    out_delta  = PyArray_SimpleNew (1, shape, NPY_DOUBLE);
-    out_gamma  = PyArray_SimpleNew (2, shape, NPY_DOUBLE);
+    arr_lambda = PyArray_SimpleNewFromData (PyCh_VECTOR, dims_vector,
+                        NPY_LONGDOUBLE, (void *) params->lambda);
+    arr_delta  = PyArray_SimpleNewFromData (PyCh_VECTOR, dims_vector,
+                        NPY_LONGDOUBLE, (void *) params->delta);
+    arr_gamma  = PyArray_SimpleNewFromData (PyCh_MATRIX, dims_matrix,
+                        NPY_LONGDOUBLE, (void *) params->gamma);
+    out_lambda = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_LONGDOUBLE);
+    out_delta  = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_LONGDOUBLE);
+    out_gamma  = PyArray_SimpleNew (PyCh_MATRIX, dims_matrix, NPY_LONGDOUBLE);
+
     PyArray_CopyInto ((PyArrayObject *) out_lambda, (PyArrayObject *) arr_lambda);
     PyArray_CopyInto ((PyArrayObject *) out_delta,  (PyArrayObject *) arr_delta);
     PyArray_CopyInto ((PyArrayObject *) out_gamma,  (PyArrayObject *) arr_gamma);
@@ -259,68 +263,79 @@ read_params (PyObject *self, PyObject *args)
     return out;
 }
 
+
 static PyObject *
 global_decoding_impl (PyObject *self, PyObject *args)
 {
     UNUSED (self);
 
-    npy_intp n_obs    = 0;
-    npy_intp m_states = 0;
+    npy_intp n_obs       = 0;
+    npy_intp m_states    = 0;
     PyObject *arg_lgamma = NULL;
     PyObject *arg_ldelta = NULL;
-    PyObject *arg_lsdp = NULL;
+    PyObject *arg_lcxpt  = NULL;
     PyObject *arr_states = NULL;
 
     PyObject *arr_lgamma = NULL;
     PyObject *arr_ldelta = NULL;
-    PyObject *arr_lsdp   = NULL;
+    PyObject *arr_lcxpt  = NULL;
 
     if (!PyArg_ParseTuple (args, "llOOO", &n_obs, &m_states, &arg_lgamma,
-                            &arg_ldelta, &arg_lsdp))
+                            &arg_ldelta, &arg_lcxpt))
     {
         PyErr_SetString (PyExc_TypeError, "global_decoding: Could not parse args.");
         return NULL;
     }
 
-    npy_intp dims[2] = { n_obs, m_states };
+    const npy_intp dims_vector[] = { m_states };
+    const npy_intp dims_matrix[] = { m_states, m_states };
+    const npy_intp dims_data[]   = { n_obs, m_states };
 
-    arr_lgamma = PyArray_SimpleNew (2, ((npy_intp[]){m_states, m_states}), NPY_LONGDOUBLE);
+    arr_lgamma = PyArray_SimpleNew (PyCh_MATRIX, dims_matrix, NPY_LONGDOUBLE);
     if (arr_lgamma == NULL)
     {
-        PyErr_SetString (PyExc_MemoryError, "global_decoding: Could not allocate lgamma copy.");
+
+        PyErr_SetString (PyExc_MemoryError,
+                "poishmm.global_decoding: Could not allocate lgamma.");
         return NULL;
     }
-    PyArray_CopyInto ((PyArrayObject *) arr_lgamma, (PyArrayObject *) arg_lgamma);
 
-    arr_ldelta = PyArray_SimpleNew (1, &m_states, NPY_LONGDOUBLE);
+    arr_ldelta = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_LONGDOUBLE);
     if (arr_ldelta == NULL)
     {
-        PyErr_SetString (PyExc_MemoryError, "global_decoding: Could not allocate ldelta copy.");
+        PyErr_SetString (PyExc_MemoryError,
+                "poishmm.global_decoding: Could not allocate ldelta.");
         return NULL;
     }
-    PyArray_CopyInto ((PyArrayObject *) arr_ldelta, (PyArrayObject *) arg_ldelta);
 
-    arr_lsdp = PyArray_SimpleNew (2, dims, NPY_LONGDOUBLE);
-    if (arr_lsdp == NULL)
+    arr_lcxpt = PyArray_SimpleNew (PyCh_DATA, dims_data, NPY_LONGDOUBLE);
+    if (arr_lcxpt == NULL)
     {
-        PyErr_SetString (PyExc_MemoryError, "global_decoding: Could not allocate lsdp copy.");
+        PyErr_SetString (PyExc_MemoryError,
+                "poishmm.global_decoding: Could not allocate lcxpt copy.");
         return NULL;
     }
-    PyArray_CopyInto ((PyArrayObject *) arr_lsdp, (PyArrayObject *) arg_lsdp);
 
-    arr_states = PyArray_SimpleNew (1, dims, NPY_ULONG);
+    arr_states = PyArray_SimpleNew (PyCh_VECTOR, &n_obs, NPY_ULONG);
     if (arr_states == NULL)
     {
         PyErr_SetString (PyExc_TypeError, "global_decoding: Could not allocate states object.");
         return NULL;
     }
 
+    PyArray_CopyInto ((PyArrayObject *) arr_lgamma, (PyArrayObject *) arg_lgamma);
+    PyArray_CopyInto ((PyArrayObject *) arr_ldelta, (PyArrayObject *) arg_ldelta);
+    PyArray_CopyInto ((PyArrayObject *) arr_lcxpt,  (PyArrayObject *) arg_lcxpt);
+
     global_decoding ((size_t) n_obs, (size_t) m_states,
             (long double *)((PyArrayObject *) arr_lgamma)->data,
             (long double *)((PyArrayObject *) arr_ldelta)->data,
-            (long double *)((PyArrayObject *) arr_lsdp)->data,
+            (long double *)((PyArrayObject *) arr_lcxpt)->data,
             (size_t *)((PyArrayObject *) arr_states)->data);
 
+    Py_DECREF (arr_lgamma);
+    Py_DECREF (arr_ldelta);
+    Py_DECREF (arr_lcxpt);
     Py_INCREF (arr_states);
     return arr_states;
 }
@@ -333,37 +348,31 @@ local_decoding_impl (PyObject *self, PyObject *args)
 
     npy_intp n_obs       = 0;
     npy_intp m_states    = 0;
-    PyObject *arg_lsdp   = NULL;
+    PyObject *arg_lcxpt  = NULL;
+    PyObject *arr_lcxpt  = NULL;
     PyObject *arr_states = NULL;
-    PyObject *arr_lsdp   = NULL;
 
-    if (!PyArg_ParseTuple (args, "llO", &n_obs, &m_states, &arg_lsdp))
+    if (!PyArg_ParseTuple (args, "llO", &n_obs, &m_states, &arg_lcxpt))
     {
         PyErr_SetString (PyExc_TypeError, "local_decoding: Could not parse args.");
         return NULL;
     }
 
-    npy_intp dims[2] = { n_obs, m_states };
-    arr_lsdp = PyArray_SimpleNew (2, dims, NPY_LONGDOUBLE);
-    if (arr_lsdp == NULL)
-    {
-        PyErr_SetString (PyExc_TypeError, "local_decoding: Could not allocate lsdp copy.");
-        return NULL;
-    }
-    PyArray_CopyInto ((PyArrayObject *) arr_lsdp, (PyArrayObject *) arg_lsdp);
-
-    arr_states = PyArray_SimpleNew (1, dims, NPY_ULONG);
+    arr_lcxpt = PyArray_FROM_OTF (arg_lcxpt, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
+    if (arr_lcxpt == NULL) return NULL;
+    arr_states = PyArray_SimpleNew (PyCh_VECTOR, &n_obs, NPY_ULONG);
     if (arr_states == NULL)
     {
-        PyErr_SetString (PyExc_TypeError, "local_decoding: Could not allocate states object.");
+        PyErr_SetString (PyExc_TypeError,
+                "local_decoding: Could not allocate states object.");
         return NULL;
     }
 
-
     local_decoding ((size_t) n_obs, (size_t) m_states,
-            (long double *)((PyArrayObject *) arr_lsdp)->data,
+            (long double *)((PyArrayObject *) arr_lcxpt)->data,
             (size_t *)((PyArrayObject *) arr_states)->data);
 
+    Py_DECREF (arr_lcxpt);
     Py_INCREF (arr_states);
     return arr_states;
 }
