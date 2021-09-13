@@ -5,6 +5,7 @@
 *.so
 *.swp
 *.a
+*.test
 .venv
 .vimrc
 benchmarks/
@@ -14,9 +15,12 @@ dist/
 tests/bin/
 tests/playground/
 *.egg-info/
-*.ipynb_checkpoints/
 __pycache__/
 .tox/
 .python-version
 Session.vim
-*.test
+
+
+*.ipynb
+*.ipynb_checkpoints/
+notebooks/
