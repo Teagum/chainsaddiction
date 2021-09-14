@@ -269,75 +269,86 @@ global_decoding_impl (PyObject *self, PyObject *args)
 {
     UNUSED (self);
 
-    npy_intp n_obs       = 0;
-    npy_intp m_states    = 0;
-    PyObject *arg_lgamma = NULL;
-    PyObject *arg_ldelta = NULL;
-    PyObject *arg_lcxpt  = NULL;
-    PyObject *arr_states = NULL;
+    npy_intp *shape_lcxpt = NULL;
+    PyObject *pyo_lgamma  = NULL;
+    PyObject *pyo_ldelta  = NULL;
+    PyObject *pyo_lcxpt   = NULL;
+    PyObject *arr_states  = NULL;
 
-    PyObject *arr_lgamma = NULL;
-    PyObject *arr_ldelta = NULL;
-    PyObject *arr_lcxpt  = NULL;
+    PyArrayObject *arr_lgamma  = NULL;
+    PyArrayObject *arr_ldelta  = NULL;
+    PyArrayObject *arr_lcxpt   = NULL;
 
-    if (!PyArg_ParseTuple (args, "llOOO", &n_obs, &m_states, &arg_lgamma,
-                            &arg_ldelta, &arg_lcxpt))
+    if (!PyArg_ParseTuple (args, "OOO", &pyo_lgamma, &pyo_ldelta, &pyo_lcxpt))
     {
-        PyErr_SetString (PyExc_TypeError, "global_decoding: Could not parse args.");
-        return NULL;
+        const char msg[] = "global_decoding: Could not parse args.";
+        PyErr_SetString (PyExc_TypeError, msg);
+        goto fail;
     }
 
-    const npy_intp dims_vector[] = { m_states };
-    const npy_intp dims_matrix[] = { m_states, m_states };
-    const npy_intp dims_data[]   = { n_obs, m_states };
-
-    arr_lgamma = PyArray_SimpleNew (PyCh_MATRIX, dims_matrix, NPY_LONGDOUBLE);
+    arr_lgamma = PyArray_NEW_LD (pyo_lgamma);
     if (arr_lgamma == NULL)
     {
-
-        PyErr_SetString (PyExc_MemoryError,
-                "poishmm.global_decoding: Could not allocate lgamma.");
-        return NULL;
+        const char msg[] = "Could not convert lgamma.";
+        PyErr_SetString (PyExc_MemoryError, msg);
+        goto fail;
+    }
+    if (PyArray_NDIM (arr_lgamma) != PyCh_MATRIX)
+    {
+        const char msg[] = "Number of dimension of lgamma does not equal two.";
+        PyErr_SetString (PyExc_TypeError, msg);
     }
 
-    arr_ldelta = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_LONGDOUBLE);
+    arr_ldelta = PyArray_NEW_LD (pyo_ldelta);
     if (arr_ldelta == NULL)
     {
-        PyErr_SetString (PyExc_MemoryError,
-                "poishmm.global_decoding: Could not allocate ldelta.");
-        return NULL;
+        const char msg[] = "poishmm.global_decoding: Could not allocate ldelta.";
+        PyErr_SetString (PyExc_MemoryError, msg);
+        goto fail;
     }
 
-    arr_lcxpt = PyArray_SimpleNew (PyCh_DATA, dims_data, NPY_LONGDOUBLE);
+    arr_lcxpt = PyArray_NEW_LD (pyo_lcxpt);
     if (arr_lcxpt == NULL)
     {
-        PyErr_SetString (PyExc_MemoryError,
-                "poishmm.global_decoding: Could not allocate lcxpt copy.");
-        return NULL;
+        const char msg[] = "poishmm.global_decoding: Could not allocate lcxpt copy.";
+        PyErr_SetString (PyExc_MemoryError, msg);
+        goto fail;
     }
 
-    arr_states = PyArray_SimpleNew (PyCh_VECTOR, &n_obs, NPY_ULONG);
+    if (PyArray_NDIM (arr_lcxpt) != PyCh_DATA)
+    {
+        const char msg[] = "lcxpt has dimension != 2.";
+        PyErr_SetString (PyExc_TypeError, msg);
+        goto fail;
+    }
+
+    shape_lcxpt = PyArray_SHAPE (arr_lcxpt);
+    arr_states  = PyArray_SimpleNew (PyCh_VECTOR, shape_lcxpt, NPY_ULONG);
     if (arr_states == NULL)
     {
-        PyErr_SetString (PyExc_TypeError, "global_decoding: Could not allocate states object.");
-        return NULL;
+        const char msg[] = "global_decoding: Could not allocate states object.";
+        PyErr_SetString (PyExc_TypeError, msg);
+        goto fail;
     }
 
-    PyArray_CopyInto ((PyArrayObject *) arr_lgamma, (PyArrayObject *) arg_lgamma);
-    PyArray_CopyInto ((PyArrayObject *) arr_ldelta, (PyArrayObject *) arg_ldelta);
-    PyArray_CopyInto ((PyArrayObject *) arr_lcxpt,  (PyArrayObject *) arg_lcxpt);
-
-    global_decoding ((size_t) n_obs, (size_t) m_states,
-            (long double *)((PyArrayObject *) arr_lgamma)->data,
-            (long double *)((PyArrayObject *) arr_ldelta)->data,
-            (long double *)((PyArrayObject *) arr_lcxpt)->data,
-            (size_t *)((PyArrayObject *) arr_states)->data);
+    global_decoding ((size_t) shape_lcxpt[0], (size_t) shape_lcxpt[1],
+            (long double *) PyArray_DATA (arr_lgamma),
+            (long double *) PyArray_DATA (arr_ldelta),
+            (long double *) PyArray_DATA (arr_lcxpt),
+            (size_t *) PyArray_DATA (arr_states));
 
     Py_DECREF (arr_lgamma);
     Py_DECREF (arr_ldelta);
     Py_DECREF (arr_lcxpt);
     Py_INCREF (arr_states);
     return arr_states;
+
+fail:
+    Py_XDECREF (arr_lgamma);
+    Py_XDECREF (arr_ldelta);
+    Py_XDECREF (arr_lcxpt);
+    Py_XDECREF (arr_states);
+    return NULL;
 }
 
 
@@ -346,35 +357,59 @@ local_decoding_impl (PyObject *self, PyObject *args)
 {
     UNUSED (self);
 
-    npy_intp n_obs       = 0;
-    npy_intp m_states    = 0;
-    PyObject *arg_lcxpt  = NULL;
-    PyObject *arr_lcxpt  = NULL;
-    PyObject *arr_states = NULL;
+    npy_intp      *shape        = NULL;
+    PyObject      *pyo_lcxpt    = NULL;
+    PyObject      *pyo_decoding = NULL;
+    PyArrayObject *arr_lcxpt    = NULL;
+    PyArrayObject *arr_decoding = NULL;
 
-    if (!PyArg_ParseTuple (args, "llO", &n_obs, &m_states, &arg_lcxpt))
+    if (!PyArg_ParseTuple (args, "O", &pyo_lcxpt))
     {
-        PyErr_SetString (PyExc_TypeError, "local_decoding: Could not parse args.");
-        return NULL;
+        const char msg[] = "local_decoding: Could not parse args.";
+        PyErr_SetString (PyExc_TypeError, msg);
+        goto fail;
     }
 
-    arr_lcxpt = PyArray_FROM_OTF (arg_lcxpt, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
-    if (arr_lcxpt == NULL) return NULL;
-    arr_states = PyArray_SimpleNew (PyCh_VECTOR, &n_obs, NPY_ULONG);
-    if (arr_states == NULL)
+    arr_lcxpt = (PyArrayObject *) PyArray_FROM_OTF (pyo_lcxpt, NPY_LONGDOUBLE,
+                                                    NPY_ARRAY_IN_ARRAY);
+    if (arr_lcxpt == NULL)
     {
-        PyErr_SetString (PyExc_TypeError,
-                "local_decoding: Could not allocate states object.");
-        return NULL;
+        const char msg[] = "local_decoding: Could not convert input array.";
+        PyErr_SetString (PyExc_MemoryError, msg);
+        goto fail;
     }
 
-    local_decoding ((size_t) n_obs, (size_t) m_states,
-            (long double *)((PyArrayObject *) arr_lcxpt)->data,
-            (size_t *)((PyArrayObject *) arr_states)->data);
+    if (PyArray_NDIM (arr_lcxpt) != 2)
+    {
+        const char msg[] = "local_decoding: Number of dimension must be 2.";
+        PyErr_SetString (PyExc_TypeError, msg);
+        goto fail;
+    }
+
+    shape = PyArray_SHAPE (arr_lcxpt);
+
+    pyo_decoding = PyArray_SimpleNew (PyCh_VECTOR, shape, NPY_ULONG);
+    if (pyo_decoding == NULL)
+    {
+        const char msg[] = "local_decoding: Could not allocate return object.";
+        PyErr_SetString (PyExc_TypeError, msg);
+        goto fail;
+    }
+    arr_decoding = (PyArrayObject *) pyo_decoding;
+
+    local_decoding ((size_t) shape[0], (size_t) shape[1],
+            (long double *) PyArray_DATA (arr_lcxpt),
+            (size_t *) PyArray_DATA (arr_decoding));
 
     Py_DECREF (arr_lcxpt);
-    Py_INCREF (arr_states);
-    return arr_states;
+    Py_INCREF (arr_decoding);
+    return pyo_decoding;
+
+
+fail:
+    Py_XDECREF (arr_lcxpt);
+    Py_XDECREF (arr_decoding);
+    return NULL;
 }
 
 
