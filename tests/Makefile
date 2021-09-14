@@ -1,16 +1,10 @@
 .SUFFIXES:
 .SUFFIXES: .py
 
-test_objs = test-ext-earthquakes.py test-local-decoding.py
-CC = python
+test_objs = test-decoding.py
+PYTHON = python -m unittest
 
 check: $(test_objs)
-	$(foreach f, $^, $(CC) $(f))
-
-local_decoding: test-local-decoding.py
-	$(CC) $<
-
-global-decoding: test-global-decoding.py
-	$(CC) $<
+	$(PYTHON) $(test_objs)
 
 .PHONY: check
