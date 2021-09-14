@@ -2,33 +2,34 @@ from pathlib import Path
 import sys
 import unittest
 
+from utils import load_data
 import numpy as np
 from apollon.hmm import utilities as hmmutils
 from chainsaddiction import poishmm
 
-import utils
-
 
 class TestLocalDecoding(unittest.TestCase):
     def setUp(self):
-        self.lcxpt = np.fromfile('data/earthquakes/3s/lcxpt', dtype='float128')
-        self.res = np.fromfile('data/earthquakes/3s/locald', dtype='float128')
+        src = 'data/earthquakes/3s'
+        self.lcxpt = load_data(src, 'lcxpt').reshape(-1, 3)
+        self.res = load_data(src, 'locald', 'uint64')
 
     def test_local_decoding(self):
         dec = poishmm.local_decoding(self.lcxpt)
-        self.assertEqual(dec, self.res)
+        self.assertTrue(np.array_equal(dec, self.res))
 
 
 class TestGloblaDecoding(unittest.TestCase):
     def setUp(self):
-        self.lcxpt = np.fromfile('data/earthquakes/3s/lcxpt', dtype='float128')
-        self.lgamma = np.fromfile('data/earthquakes/3s/lgamma_', dtype='float128')
-        self.ldelta = np.fromfile('data/earthquakes/3s/ldelta_', dtype='float128')
-        self.res = np.formfile('data/earthquakes/3s/globald_', dtype='float128')
+        src = 'data/earthquakes/3s'
+        self.lcxpt = load_data(src, 'lcxpt').reshape(-1, 3)
+        self.lgamma = load_data(src, 'lgamma_').reshape(3, 3)
+        self.ldelta = load_data(src, 'ldelta_')
+        self.res = load_data(src, 'globald', 'uint64')
 
     def test_global_decoding(self):
         dec = poishmm.global_decoding(self.lgamma, self.ldelta, self.lcxpt)
-        self.assertEqual(dec, self.res)
+        self.assertTrue(np.array_equal(dec, self.res))
 
 
 if __name__ == '__main__':
