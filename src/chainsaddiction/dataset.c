@@ -30,6 +30,12 @@ ds_NewFromFile (const char *path)
     DataSet *pds = ds_NewEmpty ();
 
     Ca_CountLines (file, &n_elem);
+    if (n_elem == 0)
+    {
+        fprintf (stderr, "Empty file: %s\n", path);
+        ds_FREE (pds);
+        return NULL;
+    }
     pds->data = MA_SCALAR_EMPTY (n_elem);
     pds->size = Ca_ReadDataFile (file, n_elem, pds->data);
 
