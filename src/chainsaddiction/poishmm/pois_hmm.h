@@ -63,7 +63,7 @@ PoisHmm_New (
 
 void
 PoisHmm_Init (
-    PoisHmm *const restrict phmm,
+    PoisHmm *const restrict this,
     const scalar *const restrict lambda,
     const scalar *const restrict gamma,
     const scalar *const restrict delta);
@@ -71,11 +71,11 @@ PoisHmm_Init (
 
 void
 PoisHmm_InitRandom (
-    PoisHmm *const restrict phmm);
+    PoisHmm *const restrict this);
 
 
 void
-PoisHmm_LogLikelihood (PoisHmm *phmm);
+PoisHmm_LogLikelihood (PoisHmm *const restrict this);
 
 
 #define PoisHmm_LogConditionalExpectation(phmm) do {                        \
@@ -85,12 +85,12 @@ PoisHmm_LogLikelihood (PoisHmm *phmm);
 
 
 void
-PoisHmm_PrintInit (const PoisHmm *const restrict phmm);
+PoisHmm_PrintInit (const PoisHmm *const restrict this);
 
 
 /** Print Poisson parameters to stdout. */
-void PoisHmm_PrintParams (
-    const PoisHmm *const restrict phmm);
+void
+PoisHmm_PrintParams (const PoisHmm *const this);
 
 
 int

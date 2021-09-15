@@ -30,59 +30,59 @@ PoisHmm *PoisHmm_New (const size_t n_obs, const size_t m_states)
 
 void
 PoisHmm_Init (
-    PoisHmm *const restrict phmm,
+    PoisHmm *const restrict this,
     const scalar *const restrict lambda,
     const scalar *const restrict gamma,
     const scalar *const restrict delta)
 {
-    size_t m_states = phmm->m_states;
+    size_t m_states = this->m_states;
     size_t v_size = m_states * sizeof (scalar);
     size_t m_size = m_states * v_size;
 
 #ifdef __STDC_LIB_EXT1__
     errno_t err = 0;
-    err = memcpy_s (phmm->init->lambda, v_size, lambda, v_size);
+    err = memcpy_s (this->init->lambda, v_size, lambda, v_size);
     if (err != 0) {
         perror ("Failed to copy initial values of `lambda'.");
         exit (1)
     }
-    err = memcpy_s (phmm->init->gamma, m_size, gamma, m_size);
+    err = memcpy_s (this->init->gamma, m_size, gamma, m_size);
     if (err != 0) {
         perror ("Failed to copy initial values of `gamma'.");
         exit (1)
     }
-    err = memcpy_s (phmm->init->delta, v_size, delta, v_size);
+    err = memcpy_s (this->init->delta, v_size, delta, v_size);
     if (err != 0) {
         perror ("Failed to copy initial values of `delta'.");
         exit (1)
     }
 #else
-    memcpy (phmm->init->lambda, lambda, v_size);
-    memcpy (phmm->init->gamma, gamma, m_size);
-    memcpy (phmm->init->delta, delta, v_size);
+    memcpy (this->init->lambda, lambda, v_size);
+    memcpy (this->init->gamma, gamma, m_size);
+    memcpy (this->init->delta, delta, v_size);
 #endif
 
-    memcpy (phmm->params->lambda, phmm->init->lambda, v_size);
-    m_log (m_states, m_states, phmm->init->gamma, phmm->params->gamma);
-    v_log (m_states, phmm->init->delta, phmm->params->delta);
+    memcpy (this->params->lambda, this->init->lambda, v_size);
+    m_log (m_states, m_states, this->init->gamma, this->params->gamma);
+    v_log (m_states, this->init->delta, this->params->delta);
 }
 
 
 void
-PoisHmm_InitRandom (PoisHmm *const restrict phmm)
+PoisHmm_InitRandom (PoisHmm *const restrict this)
 {
-    size_t m_states = phmm->m_states;
+    size_t m_states = this->m_states;
 
-    v_rnd_scalar (m_states, 1, 100, phmm->init->lambda);
-    v_rnd_sample (m_states, phmm->init->delta);
-    m_rnd_sample (m_states, m_states, phmm->init->gamma);
+    v_rnd_scalar (m_states, 1, 100, this->init->lambda);
+    v_rnd_sample (m_states, this->init->delta);
+    m_rnd_sample (m_states, m_states, this->init->gamma);
 
-    mi_row_apply (m_states, m_states, vi_softmax, phmm->init->gamma);
-    vi_softmax (m_states, phmm->init->delta);
+    mi_row_apply (m_states, m_states, vi_softmax, this->init->gamma);
+    vi_softmax (m_states, this->init->delta);
 
-    memcpy (phmm->params->lambda, phmm->init->lambda, m_states * sizeof (scalar));
-    m_log (m_states, m_states, phmm->init->gamma, phmm->params->gamma);
-    v_log (m_states, phmm->init->delta, phmm->params->delta);
+    memcpy (this->params->lambda, this->init->lambda, m_states * sizeof (scalar));
+    m_log (m_states, m_states, this->init->gamma, this->params->gamma);
+    v_log (m_states, this->init->delta, this->params->delta);
 }
 
 
