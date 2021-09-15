@@ -23,10 +23,12 @@ typedef struct {
 
 /** Deallocate struct DataSet.
  */
-#define ds_FREE(pds) do {       \
+#define ds_FREE(pds)            \
+if (pds != NULL)                \
+{                               \
     MA_FREE (pds->data);        \
     MA_FREE (pds);              \
-} while (0)
+}
 
 
 /** Create a new DataSet.
