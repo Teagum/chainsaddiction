@@ -34,6 +34,7 @@ ds_NewFromFile (const char *path)
     {
         fprintf (stderr, "Empty file: %s\n", path);
         ds_FREE (pds);
+        Ca_CloseFile (file);
         return NULL;
     }
     pds->data = MA_SCALAR_EMPTY (n_elem);
