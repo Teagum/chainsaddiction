@@ -4,7 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include "unittest.h"
-#include "../pois_hmm.h"
+#include "../pois-hmm.h"
 
 bool test__PoisHmm_New (void);
 bool test__PoisHmm_Init (void);

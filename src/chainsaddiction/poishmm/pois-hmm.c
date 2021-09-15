@@ -1,4 +1,4 @@
-#include "pois_hmm.h"
+#include "pois-hmm.h"
 
 
 PoisHmm *PoisHmm_New (const size_t n_obs, const size_t m_states)

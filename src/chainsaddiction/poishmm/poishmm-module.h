@@ -8,9 +8,9 @@
 #include <numpy/arrayobject.h>
 #include "structmember.h"
 
-#include "pois_hmm.h"
-#include "pois_params.h"
-#include "poishmm_object.h"
+#include "pois-hmm.h"
+#include "pois-params.h"
+#include "poishmm-object.h"
 
 
 #define UNUSED(obj) obj = NULL;

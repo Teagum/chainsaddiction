@@ -3,7 +3,7 @@
 
 #include <math.h>
 #include "unittest.h"
-#include "../pois_probs.h"
+#include "../pois-probs.h"
 #include "libvmath.h"
 
 

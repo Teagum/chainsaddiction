@@ -1,4 +1,4 @@
-#include "poishmm_module.h"
+#include "poishmm-module.h"
 
 
 static void

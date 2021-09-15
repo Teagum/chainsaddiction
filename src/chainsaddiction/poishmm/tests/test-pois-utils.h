@@ -2,8 +2,8 @@
 #define test_pois_utils_h
 
 #include "unittest.h"
-#include "../pois_hmm.h"
-#include "../pois_utils.h"
+#include "../pois-hmm.h"
+#include "../pois-utils.h"
 #include "../../dataset.h"
 
 

@@ -1,8 +1,8 @@
-#include "test_pois_probs.h"
-#include "test_pois_params.h"
-#include "test_pois_hmm.h"
-#include "test_pois_em.h"
-#include "test_pois_utils.h"
+#include "test-pois-probs.h"
+#include "test-pois-params.h"
+#include "test-pois-hmm.h"
+#include "test-pois-em.h"
+#include "test-pois-utils.h"
 
 int
 main (void)

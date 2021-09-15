@@ -1,4 +1,4 @@
-#include "test_pois_probs.h"
+#include "test-pois-probs.h"
 
 #define IS_ZERO(val) (fpclassify (val) == FP_ZERO)
 

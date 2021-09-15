@@ -1,4 +1,4 @@
-#include "test_pois_params.h"
+#include "test-pois-params.h"
 
 
 bool

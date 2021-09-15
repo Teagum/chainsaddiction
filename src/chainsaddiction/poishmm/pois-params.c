@@ -1,4 +1,4 @@
-#include "pois_params.h"
+#include "pois-params.h"
 
 
 PoisParams *

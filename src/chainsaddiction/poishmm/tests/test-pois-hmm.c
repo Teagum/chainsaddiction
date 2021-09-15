@@ -1,4 +1,4 @@
-#include "test_pois_hmm.h"
+#include "test-pois-hmm.h"
 
 
 bool

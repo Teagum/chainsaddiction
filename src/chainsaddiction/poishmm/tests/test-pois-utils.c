@@ -1,4 +1,4 @@
-#include "test_pois_utils.h"
+#include "test-pois-utils.h"
 
 bool test__local_decoding (void)
 {

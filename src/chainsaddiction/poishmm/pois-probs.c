@@ -1,4 +1,4 @@
-#include "pois_probs.h"
+#include "pois-probs.h"
 
 
 PoisProbs *

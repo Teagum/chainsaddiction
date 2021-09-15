@@ -2,7 +2,7 @@
 #define test_bw_h
 
 #include "unittest.h"
-#include "../pois_em.h"
+#include "../pois-em.h"
 
 
 bool

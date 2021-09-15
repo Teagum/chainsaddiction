@@ -8,11 +8,11 @@
 #include "../dataset.h"
 #include "../restrict.h"
 #include "../scalar.h"
-#include "pois_em.h"
-#include "pois_fwbw.h"
-#include "pois_hmm.h"
-#include "pois_params.h"
-#include "pois_probs.h"
+#include "pois-em.h"
+#include "pois-fwbw.h"
+#include "pois-hmm.h"
+#include "pois-params.h"
+#include "pois-probs.h"
 
 
 int
