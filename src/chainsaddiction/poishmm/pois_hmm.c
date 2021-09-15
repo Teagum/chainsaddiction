@@ -95,18 +95,17 @@ PoisHmm_LogLikelihood (PoisHmm *const restrict this)
 
 
 void
-PoisHmm_PrintInit (const PoisHmm *phmm)
+PoisHmm_PrintInit (const PoisHmm *const restrict this)
 {
-    size_t m_states = phmm->m_states;
-    PoisParams *p = phmm->init;
+   size_t m_states = this->m_states;
 
     puts ("");
     for (size_t i = 0; i < m_states; i++)
-        printf (SF, p->lambda[i]);
+        printf (SF, this->init->lambda[i]);
 
     puts ("");
     for (size_t i = 0; i < m_states; i++)
-        printf (SF, p->delta[i]);
+        printf (SF, this->init->delta[i]);
 
     puts ("");
 }
