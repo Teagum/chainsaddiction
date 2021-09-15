@@ -34,15 +34,16 @@ enum PyCh_ArrayDimensions {
     "data: array-like) -> Fit\n"
 
 
-#define read_params_doc \
-    "read_params(path, /)\n\nRead HMM parameters from file located in ``path``."
+#define read_params_doc                                     \
+    "read_params(path: str, /)\n\n"                         \
+    "Read HMM parameters from file located in ``path``."
 
-#define global_decoding_doc \
-    "global_decoding(n_obs, m_states, lgamma, ldelta, lsdp, /)\n\n"    \
+#define global_decoding_doc                                 \
+    "global_decoding(lgamma, ldelta, lcxpt, /)\n\n"         \
     "Compute the most likely sequence of states\n"
 
-#define local_decoding_doc \
-    "local_decoding(n_obs, m_states, lsdp, /)\n\n"    \
+#define local_decoding_doc                                  \
+    "local_decoding(lcxpt, /)\n\n"                          \
     "Compute the most likely state for each observation.\n"
 
 
