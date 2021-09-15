@@ -9,7 +9,11 @@ test__pois_e_step (void)
 
     scalar llh = 0;
     DataSet *inp = ds_NewFromFile (data_path);
+    if (inp == NULL) return false;
+
     PoisParams *params = PoisParams_NewFromFile (params_path);
+    if (params == NULL) return false;
+
     PoisParams *lparams = PoisParams_New(params->m_states);
     PoisProbs *probs = PoisProbs_New (inp->size, params->m_states);
 
@@ -34,7 +38,11 @@ test__pois_m_step_lambda (void)
     const char params_path[] = "data/ppr1";
 
     DataSet *inp = ds_NewFromFile (data_path);
+    if (inp == NULL) return false;
+
     PoisParams *params = PoisParams_NewFromFile (params_path);
+    if (params == NULL) return false;
+
     PoisParams *lparams = PoisParams_New(params->m_states);
     PoisProbs *probs = PoisProbs_New (inp->size, params->m_states);
     scalar *new_lambda = MA_SCALAR_ZEROS (params->m_states);
@@ -72,8 +80,13 @@ test__pois_m_step_gamma (void)
     scalar llh = 0L;
     const char data_path[] = "../../../../tests/data/earthquakes";
     const char params_path[] = "data/ppr1";
+
     DataSet *inp = ds_NewFromFile (data_path);
+    if (inp == NULL) return false;
+
     PoisParams *params = PoisParams_NewFromFile (params_path);
+    if (params == NULL) return false;
+
     PoisParams *lparams = PoisParams_New(params->m_states);
     PoisProbs *probs = PoisProbs_New (inp->size, params->m_states);
     scalar *new_lgamma = MA_SCALAR_ZEROS (params->m_states*probs->m_states);
@@ -106,8 +119,13 @@ test__pois_m_step_delta(void)
     scalar llh = 0L;
     const char data_path[] = "../../../../tests/data/earthquakes";
     const char params_path[] = "data/ppr1";
+
     DataSet *inp = ds_NewFromFile (data_path);
+    if (inp == NULL) return false;
+
     PoisParams *params = PoisParams_NewFromFile (params_path);
+    if (params == NULL) return false;
+
     PoisParams *lparams = PoisParams_New(params->m_states);
     PoisParams_CopyLog (params, lparams);
     PoisProbs *probs = PoisProbs_New (inp->size, params->m_states);
