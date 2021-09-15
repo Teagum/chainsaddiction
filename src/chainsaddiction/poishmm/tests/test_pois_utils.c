@@ -8,7 +8,7 @@ bool test__local_decoding (void)
     };
 
     bool err = true;
-    const char   path[]    = "../../../../tests/data/earthquakes";
+    const char   path[]    = "../../../../tests/data/earthquakes/dataset";
     const scalar ilambda[] = { 10L, 20L, 30L };
     const scalar igamma[]  =  {.8, .1, .1, .1, .8, .1, .1, .1, .8 };
     const scalar idelta[]  = { 1.0L/3L, 1.0L/3L, 1.0L/3L };
@@ -23,6 +23,8 @@ bool test__local_decoding (void)
     size_t *decoding = NULL;
 
     inp      = ds_NewFromFile (path);
+    if (inp == NULL) return UT_FAILURE;
+
     hmm      = PoisHmm_New (n_obs, m_states);
     decoding = VA_SIZE_ZEROS (hmm->n_obs);
 
@@ -53,7 +55,7 @@ bool test__global_decoding (void)
     };
 
     bool err = false;
-    const char   path_data[]    = "../../../../tests/data/earthquakes";
+    const char   path_data[]    = "../../../../tests/data/earthquakes/dataset";
     const char   path_params[]  = "data/earthquakes.lprobs";
     const size_t xpc[] = {
         0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
@@ -64,6 +66,7 @@ bool test__global_decoding (void)
     };
 
     DataSet     *inp      = ds_NewFromFile (path_data);
+    if (inp == NULL) return UT_FAILURE;
     PoisParams  *params   = PoisParams_NewFromFile (path_params);
     size_t      *decoding = VA_SIZE_ZEROS (n_obs);
     scalar      *lsdp     = VA_SCALAR_EMPTY (n_obs*m_states);
@@ -71,7 +74,7 @@ bool test__global_decoding (void)
     {
         const char fmt[] = "(%s, %d) test__global_decoding:\nMemory error.";
         fprintf (stderr, fmt, __FILE__, __LINE__);
-        VM_RETURN_FAILURE;
+        UT_FAILURE;
     }
 
     v_poisson_logpmf (inp->data, n_obs, params->lambda, m_states, lsdp);
