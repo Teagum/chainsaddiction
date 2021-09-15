@@ -26,9 +26,17 @@ PoisParams_NewFromFile (
     const char *fpath)
 {
     int err = 0;
+    unsigned int n_lines = 0;
     scalar mbuff = 0l;
     PoisParams *out = NULL;
     FILE *dfd = Ca_OpenFile (fpath, "r");
+    Ca_CountLines (dfd, &n_lines);
+    if (n_lines == 0)
+    {
+        fprintf (stderr, "Empty file: %s\n", fpath);
+        Ca_CloseFile (dfd);
+        return NULL;
+    }
 
     err = Ca_ReadSectionHeader (dfd, "[states]");
     CHECK_READ_ERROR (err);
@@ -56,7 +64,7 @@ PoisParams_NewFromFile (
     err = Ca_ReadSectionData (dfd, out->m_states, out->delta);
     CHECK_READ_ERROR (err);
 
-    fclose (dfd);
+    Ca_CloseFile (dfd);
     return out;
 }
 
