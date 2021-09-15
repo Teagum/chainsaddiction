@@ -87,10 +87,10 @@ PoisHmm_InitRandom (PoisHmm *const restrict phmm)
 
 
 void
-PoisHmm_LogLikelihood (PoisHmm *phmm)
+PoisHmm_LogLikelihood (PoisHmm *const restrict this)
 {
-    phmm->llh = compute_log_likelihood (
-            phmm->probs->lalpha, phmm->n_obs, phmm->m_states);
+    this->llh = compute_log_likelihood (
+            this->probs->lalpha, this->n_obs, this->m_states);
 }
 
 
