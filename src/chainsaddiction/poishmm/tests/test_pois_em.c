@@ -4,7 +4,7 @@
 bool
 test__pois_e_step (void)
 {
-    const char data_path[] = "../../../../tests/data/earthquakes";
+    const char data_path[] = "../../../../tests/data/earthquakes/dataset";
     const char params_path[] = "data/ppr1";
 
     scalar llh = 0;
@@ -34,7 +34,7 @@ test__pois_m_step_lambda (void)
 {
     bool err = false;
     scalar llh = 0L;
-    const char data_path[] = "../../../../tests/data/earthquakes";
+    const char data_path[] = "../../../../tests/data/earthquakes/dataset";
     const char params_path[] = "data/ppr1";
 
     DataSet *inp = ds_NewFromFile (data_path);
@@ -78,7 +78,7 @@ test__pois_m_step_gamma (void)
 {
     bool err = false;
     scalar llh = 0L;
-    const char data_path[] = "../../../../tests/data/earthquakes";
+    const char data_path[] = "../../../../tests/data/earthquakes/dataset";
     const char params_path[] = "data/ppr1";
 
     DataSet *inp = ds_NewFromFile (data_path);
@@ -117,7 +117,7 @@ test__pois_m_step_delta(void)
 {
     bool err = false;
     scalar llh = 0L;
-    const char data_path[] = "../../../../tests/data/earthquakes";
+    const char data_path[] = "../../../../tests/data/earthquakes/dataset";
     const char params_path[] = "data/ppr1";
 
     DataSet *inp = ds_NewFromFile (data_path);
