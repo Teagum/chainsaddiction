@@ -117,6 +117,8 @@ test__PoisHmm_EstimateParams (void)
     const scalar idelta[]  = { 1.0L/3L, 1.0L/3L, 1.0L/3L };
 
     DataSet *inp = ds_NewFromFile (path);
+    if (inp == NULL) return true;
+
     PoisHmm *hmm = PoisHmm_New (n_obs, m_states);
     PoisHmm_Init(hmm, ilambda, igamma, idelta);
 
@@ -135,6 +137,12 @@ test__PoisHmm_ForwardProbabilities(void)
 
     DataSet *inp = ds_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
+    if ((inp == NULL) || (params == NULL))
+    {
+        ds_FREE (inp);
+        PoisParams_Delete (params);
+        return true;
+    }
 
     PoisHmm *hmm = PoisHmm_New (inp->size, params->m_states);
     PoisHmm_Init (hmm, params->lambda, params->gamma, params->delta);
@@ -163,6 +171,12 @@ test__PoisHmm_BackwardProbabilities (void)
 
     DataSet *inp = ds_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
+    if ((inp == NULL) || (params == NULL))
+    {
+        ds_FREE (inp);
+        PoisParams_Delete (params);
+        return true;
+    }
 
     PoisHmm *hmm = PoisHmm_New (inp->size, params->m_states);
     PoisHmm_Init (hmm, params->lambda, params->gamma, params->delta);
@@ -191,6 +205,12 @@ test__PoisHmm_ForwardBackward (void)
 
     DataSet *inp = ds_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
+    if ((inp == NULL) || (params == NULL))
+    {
+        ds_FREE (inp);
+        PoisParams_Delete (params);
+        return true;
+    }
 
     PoisHmm *hmm = PoisHmm_New (inp->size, params->m_states);
     PoisHmm_Init (hmm, params->lambda, params->gamma, params->delta);
