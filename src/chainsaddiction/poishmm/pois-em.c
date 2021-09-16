@@ -80,7 +80,7 @@ pois_e_step (
 {
     v_poisson_logpmf (input_data, n_obs, lambda, m_states, lsdp);
     log_fwbw (lsdp, lgamma, ldelta, m_states, n_obs, lalpha, lbeta);
-    *llh = compute_log_likelihood (lalpha, n_obs, m_states);
+    *llh = compute_log_likelihood (n_obs, m_states, lalpha);
     log_cond_expect (n_obs, m_states, lalpha, lbeta, *llh, lcxpt);
 }
 

@@ -28,7 +28,10 @@ compute_bic (
 
 
 scalar
-compute_log_likelihood (scalar *lalpha, size_t n_obs, size_t m_states)
+compute_log_likelihood (
+    const size_t n_obs,
+    const size_t m_states,
+    const scalar *const restrict lalpha)
 {
     const scalar *restrict last_row = lalpha + ((n_obs-1)*m_states);
     return v_lse (m_states, last_row);

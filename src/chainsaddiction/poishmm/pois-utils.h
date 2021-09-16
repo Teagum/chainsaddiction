@@ -32,9 +32,9 @@ compute_bic (
  */
 scalar
 compute_log_likelihood (
-    scalar *lalpha,
-    size_t n_obs,
-    size_t m_states);
+    const size_t n_obs,
+    const size_t m_states,
+    const scalar *const restrict lalpha);
 
 
 /** Compute the conditional expectations. */
