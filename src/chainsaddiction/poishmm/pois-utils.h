@@ -6,7 +6,6 @@
 #include "../chainsaddiction.h"
 #include "libvmath.h"
 
-typedef const size_t dim;
 
 /* Compute Akaine Information criterion. */
 scalar
@@ -76,10 +75,12 @@ local_decoding (
 /** Global decoding */
 extern int
 global_decoding (
-    dim n_obs,
-    dim m_states,
-    const scalar *lgamma,
-    const scalar *ldelta,
-    const scalar *lsdp,
-    size_t *states);
+    const size_t n_obs,
+    const size_t m_states,
+    const scalar *const restrict lgamma,
+    const scalar *const restrict ldelta,
+    const scalar *restrict lcxpt,
+    size_t *restrict states);
+
+
 #endif  /* pois_utils.h */

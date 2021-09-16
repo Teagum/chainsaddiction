@@ -92,10 +92,10 @@ global_decoding (
     const size_t m_states,
     const scalar *const restrict lgamma,
     const scalar *const restrict ldelta,
-    const scalar *restrict lsdp,
+    const scalar *restrict lcxpt,
     size_t *restrict states)
 {
-    dim n_elem = n_obs * m_states;
+    const size_t n_elem = n_obs * m_states;
     scalar *chi = VA_SCALAR_ZEROS (n_elem);
     scalar *vb  = VA_SCALAR_ZEROS (m_states);
     scalar *mb  = VA_SCALAR_ZEROS (m_states*m_states);
@@ -108,20 +108,20 @@ global_decoding (
     scalar *chi_prev_row = chi;
     scalar *chi_this_row = chi+m_states;
 
-    vv_add(m_states, ldelta, lsdp, chi);
-    lsdp += m_states;
+    vv_add(m_states, ldelta, lcxpt, chi);
+    lcxpt += m_states;
     for (size_t n = 1; n < n_obs; n++)
     {
         vm_add (m_states, m_states, chi_prev_row, lgamma, mb);
         m_row_max (mb, m_states, m_states, chi_this_row);
-        vvi_add (m_states, lsdp, chi_this_row);
+        vvi_add (m_states, lcxpt, chi_this_row);
 
         chi_this_row+=m_states;
         chi_prev_row+=m_states;
-        lsdp+=m_states;
+        lcxpt+=m_states;
     }
     chi_this_row = NULL;
-    lsdp = NULL;
+    lcxpt = NULL;
 
     size_t i = n_obs - 1;
     states[i] = v_argmax (m_states, chi_prev_row);
