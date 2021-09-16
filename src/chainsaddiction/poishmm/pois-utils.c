@@ -2,7 +2,9 @@
 
 
 scalar
-compute_aic (scalar llh, size_t m_states)
+compute_aic (
+    const size_t m_states,
+    const scalar llh)
 {
     return 2.0L * llh + (scalar) (2 * m_states + m_states * m_states);
 }

@@ -10,8 +10,8 @@
 /* Compute Akaine Information criterion. */
 scalar
 compute_aic (
-    scalar llh,
-    size_t m_states);
+    const size_t m_states,
+    const scalar llh);
 
 
 /* Compute Bayes Information criterion. */
