@@ -75,7 +75,7 @@ local_decoding (
     scalar *obs_probs = malloc (sizeof (scalar) * n_obs * m_states);
     if (obs_probs == NULL)
     {
-        fputs ("Alloc error in global decoding.", stderr);
+        Ca_ErrMsg ("Allocation failed.");
         return 1;
     }
     m_exp (n_obs, m_states, lcxpt, obs_probs);
@@ -102,8 +102,7 @@ global_decoding (
     scalar *mp  = VA_SCALAR_ZEROS (m_states);
     if (chi == NULL || vb == NULL || mb == NULL || mp == NULL)
     {
-        const char fmt[] = "(%s, %d) global_decoding:\nMemory error.";
-        fprintf (stderr, fmt, __FILE__, __LINE__);
+        Ca_ErrMsg ("Allocation failed.");
         return 1;
     }
     scalar *chi_prev_row = chi;
