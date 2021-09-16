@@ -103,6 +103,10 @@ global_decoding (
     if (chi == NULL || vb == NULL || mb == NULL || mp == NULL)
     {
         Ca_ErrMsg ("Allocation failed.");
+        free (chi);
+        free (vb);
+        free (mb);
+        free (mp);
         return Ca_FAILURE;
     }
     scalar *chi_prev_row = chi;
@@ -134,5 +138,9 @@ global_decoding (
         states[i] = v_argmax(m_states, vb);
     }
 
+    free (chi);
+    free (vb);
+    free (mb);
+    free (mp);
     return Ca_SUCCESS;
 }
