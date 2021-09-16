@@ -3,7 +3,7 @@
 
 #include <math.h>
 #include <stdlib.h>
-#include "../scalar.h"
+#include "../chainsaddiction.h"
 #include "libvmath.h"
 
 typedef const size_t dim;
