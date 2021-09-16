@@ -17,9 +17,9 @@ compute_aic (
 /* Compute Bayes Information criterion. */
 scalar
 compute_bic (
-    scalar llh,
-    size_t n_obs,
-    size_t m_states);
+    const size_t n_obs,
+    const size_t m_states,
+    const scalar llh);
 
 
 /** Estimate log-likelihood given forward probabilities.
