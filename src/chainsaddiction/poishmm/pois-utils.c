@@ -16,8 +16,14 @@ compute_bic (
     const size_t m_states,
     const scalar llh)
 {
-    size_t n_params = 2 * m_states + m_states * m_states;
-    return 2.0L * llh + logl ((scalar) n_obs) * (scalar) (n_params);
+    if (n_obs == 0)
+    {
+        Ca_ErrMsg ("compute_bic: param `n_obs' probably zero.");
+        return 0.0L;
+    }
+    const size_t n_params = 2 * m_states + m_states * m_states;
+    const scalar log_nobs = logl ((scalar) n_obs);
+    return 2.0L * llh + log_nobs * (scalar) (n_params);
 }
 
 
