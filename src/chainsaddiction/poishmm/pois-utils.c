@@ -76,13 +76,13 @@ local_decoding (
     if (obs_probs == NULL)
     {
         Ca_ErrMsg ("Allocation failed.");
-        return 1;
+        return Ca_FAILURE;
     }
     m_exp (n_obs, m_states, lcxpt, obs_probs);
     m_row_argmax (n_obs, m_states, obs_probs, states);
 
     free (obs_probs);
-    return 0;
+    return Ca_SUCCESS;
 }
 
 
@@ -103,7 +103,7 @@ global_decoding (
     if (chi == NULL || vb == NULL || mb == NULL || mp == NULL)
     {
         Ca_ErrMsg ("Allocation failed.");
-        return 1;
+        return Ca_FAILURE;
     }
     scalar *chi_prev_row = chi;
     scalar *chi_this_row = chi+m_states;
@@ -134,5 +134,5 @@ global_decoding (
         states[i] = v_argmax(m_states, vb);
     }
 
-    return 0;
+    return Ca_SUCCESS;
 }
