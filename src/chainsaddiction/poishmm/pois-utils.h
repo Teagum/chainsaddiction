@@ -48,16 +48,6 @@ log_csprobs (
           scalar *const restrict lcsp);
 
 
-/** Normalize buffer inplace in log domain. */
-extern void
-vi_log_normalize (
-    size_t n_elem,
-    scalar *const restrict buffer);
-
-
-/** Normalize buffer in log domain. */
-
-
 /** Local decoding */
 extern int
 local_decoding (

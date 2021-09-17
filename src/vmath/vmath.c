@@ -214,6 +214,19 @@ vi_softmax (size_t n_elem, scalar *vtx)
 }
 
 
+void
+vi_log_normalize (
+    size_t n_elem,
+    scalar *restrict vtx)
+{
+    scalar lsum = v_lse (n_elem, vtx);
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        *vtx++ -= lsum;
+    }
+}
+
+
 /*
  * Basic vector/scalar arithmetic
  */

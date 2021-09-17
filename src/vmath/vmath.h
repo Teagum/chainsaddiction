@@ -78,10 +78,11 @@ inline void v_##name                                                \
  * \param[in]       n_elem      Number of elements in vector.
  * \param[in,out]   vtx         Pointer to vector data.
  */
-extern void vi_exp      (size_t n_elem, scalar *restrict vtx);
-extern void vi_log      (size_t n_elem, scalar *restrict vtx);
-extern void vi_logr1    (size_t n_elem, scalar *restrict vtx);
-extern void vi_softmax  (size_t n_elem, scalar *restrict vtx);
+extern void vi_exp           (size_t n_elem, scalar *restrict vtx);
+extern void vi_log           (size_t n_elem, scalar *restrict vtx);
+extern void vi_logr1         (size_t n_elem, scalar *restrict vtx);
+extern void vi_log_normalize (size_t n_elem, scalar *restrict vtx);
+extern void vi_softmax       (size_t n_elem, scalar *restrict vtx);
 
 #define def_vi_op(name, op_func) \
 inline void                                         \

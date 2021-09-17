@@ -52,19 +52,6 @@ log_csprobs (
 }
 
 
-inline void
-vi_log_normalize (
-    size_t n_elem,
-    scalar *restrict buffer)
-{
-    scalar lsum = v_lse (n_elem, buffer);
-    for (size_t i = 0; i < n_elem; i++)
-    {
-        buffer[i] -= lsum;
-    }
-}
-
-
 extern int
 local_decoding (
     const size_t n_obs,
