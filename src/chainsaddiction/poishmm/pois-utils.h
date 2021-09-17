@@ -39,13 +39,13 @@ compute_log_likelihood (
 
 /** Compute the conditional expectations. */
 extern void
-log_cond_expect (
+log_csprobs (
     const size_t n_obs,
     const size_t m_states,
+    const scalar llh,
     const scalar *const restrict lalpha,
     const scalar *const restrict lbeta,
-    const scalar llh,
-    scalar *lcexpt);
+          scalar *const restrict lcsp);
 
 
 /** Normalize buffer inplace in log domain. */
