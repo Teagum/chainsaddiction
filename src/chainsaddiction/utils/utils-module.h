@@ -10,7 +10,6 @@
 #include "chainsaddiction.h"
 #include "utils.h"
 
-#define UNUSED(obj) obj = NULL;
 
 #define local_decoding_doc                                  \
     "local_decoding(lcsp, /)\n\n"                           \
