@@ -56,11 +56,6 @@ vi_log_normalize (
 
 
 /** Normalize buffer in log domain. */
-extern void
-v_log_normalize (
-    size_t n_elem,
-    const scalar *const restrict src,
-    scalar *const restrict dest);
 
 
 /** Local decoding */

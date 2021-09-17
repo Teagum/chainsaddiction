@@ -65,20 +65,6 @@ vi_log_normalize (
 }
 
 
-extern void
-v_log_normalize (
-    size_t n_elem,
-    const scalar *const restrict src,
-    scalar *const restrict dest)
-{
-    scalar lsum = v_lse (n_elem, src);
-    for (size_t i = 0; i < n_elem; i++)
-    {
-        dest[i] = src[i] - lsum;
-    }
-}
-
-
 extern int
 local_decoding (
     const size_t n_obs,
