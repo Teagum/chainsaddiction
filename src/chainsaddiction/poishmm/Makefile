@@ -11,7 +11,7 @@ vpath %.h ..
 vpath %.h $(root)/include
 
 
-objs := pois-em.o pois-fwbw.o pois-hmm.o pois-params.o pois-probs.o pois-utils.o
+objs := pois-em.o pois-fwbw.o pois-hmm.o pois-params.o pois-probs.o
 
 # Compiler flags
 warnings = -Wall -Wextra -Wfloat-equal -Werror=vla -pedantic
@@ -30,18 +30,17 @@ CPPFLAGS += $(includes)
 all: $(objs)
 
 pois-em.o: pois-em.h pois-fwbw.h pois-hmm.h pois-params.h pois-probs.h \
-	pois-utils.h pois-fwbw.h dataset.h libma.h read.h restrict.h   \
+	utils.h pois-fwbw.h dataset.h libma.h read.h restrict.h   \
 	scalar.h libvmath.h 
 
 pois-fwbw.o: pois-fwbw.h dataset.h libma.h read.h restrict.h scalar.h  \
 	libvmath.h
 
-pois-hmm.o: pois-hmm.h pois-params.h pois-probs.h pois-utils.o         \
+pois-hmm.o: pois-hmm.h pois-params.h pois-probs.h \
 	dataset.h libma.h read.h restrict.h scalar.h libvmath.h 
 
 pois-params.o: pois-params.h libma.h read.h restrict.h scalar.h libvmath.h
 pois-probs.o: pois-probs.h libma.h restrict.h scalar.h
-pois-utils.o: pois-utils.h libma.h restrict.h scalar.h libvmath.h
 
 
 test: all

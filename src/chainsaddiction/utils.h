@@ -1,9 +1,9 @@
-#ifndef pois_utils_h
-#define pois_utils_h
+#ifndef ca_utils_h
+#define ca_utils_h
 
 #include <math.h>
 #include <stdlib.h>
-#include "../chainsaddiction.h"
+#include "chainsaddiction.h"
 #include "libvmath.h"
 
 
@@ -68,4 +68,4 @@ global_decoding (
     size_t *restrict states);
 
 
-#endif  /* pois_utils.h */
+#endif  /* ca_utils.h */
