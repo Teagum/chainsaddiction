@@ -57,10 +57,11 @@ extern size_t   v_argmin    (size_t n_elem, const scalar *restrict vtx);
  * \param[in]   vtx         Pointer to vector data.
  * \param[out]  out         Pointer to output obejct.
  */
-extern void v_exp       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
-extern void v_log       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
-extern void v_logr1     (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
-extern void v_softmax   (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void v_exp           (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void v_log           (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void v_logr1         (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void v_log_normalize (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
+extern void v_softmax       (size_t n_elem, const scalar *restrict vtx, scalar *restrict out);
 
 #define def_v_op(name, op_func)                                     \
 inline void v_##name                                                \

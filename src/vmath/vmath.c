@@ -174,6 +174,20 @@ v_softmax (size_t n_elem, const scalar *restrict vtx, scalar *restrict out)
 }
 
 
+void
+v_log_normalize (
+    size_t n_elem,
+    const scalar *restrict lvtx,
+    scalar *restrict out)
+{
+    const scalar lsum = v_lse (n_elem, lvtx);
+    for (size_t i = 0; i < n_elem; i++)
+    {
+        *out++ = *lvtx++ - lsum;
+    }
+}
+
+
 /*
  * Vectorized inplace transforms
  */
