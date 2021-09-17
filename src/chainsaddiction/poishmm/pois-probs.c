@@ -32,7 +32,7 @@ PoisProbs_New (
     probs->lsdp     = MA_SCALAR_ZEROS (n_elem);
     probs->lalpha   = MA_SCALAR_ZEROS (n_elem);
     probs->lbeta    = MA_SCALAR_ZEROS (n_elem);
-    probs->lcxpt    = MA_SCALAR_ZEROS (n_elem);
+    probs->lcsp    = MA_SCALAR_ZEROS (n_elem);
     probs->n_obs    = n_obs;
     probs->m_states = m_states;
 

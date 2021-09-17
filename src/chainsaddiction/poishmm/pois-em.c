@@ -21,10 +21,10 @@ pois_em (
     {
         pois_e_step (n_obs, m_states, data, params->lambda, params->gamma,
                      params->delta, probs->lsdp, probs->lalpha, probs->lbeta,
-                     probs->lcxpt, llh);
+                     probs->lcsp, llh);
 
         pois_m_step (n_obs, m_states, *llh, data, probs->lsdp, probs->lalpha,
-                     probs->lbeta, probs->lcxpt, params->gamma, nlp->lambda,
+                     probs->lbeta, probs->lcsp, params->gamma, nlp->lambda,
                      nlp->gamma, nlp->delta);
 
         score = score_update (nlp, params);
@@ -75,13 +75,13 @@ pois_e_step (
     scalar *const restrict lsdp,
     scalar *const restrict lalpha,
     scalar *const restrict lbeta,
-    scalar *const restrict lcxpt,
+    scalar *const restrict lcsp,
     scalar *const restrict llh)
 {
     v_poisson_logpmf (input_data, n_obs, lambda, m_states, lsdp);
     log_fwbw (lsdp, lgamma, ldelta, m_states, n_obs, lalpha, lbeta);
     *llh = compute_log_likelihood (n_obs, m_states, lalpha);
-    log_csprobs (n_obs, m_states, *llh, lalpha, lbeta, lcxpt);
+    log_csprobs (n_obs, m_states, *llh, lalpha, lbeta, lcsp);
 }
 
 
@@ -94,15 +94,15 @@ pois_m_step (
     const scalar *const restrict lsdp,
     const scalar *const restrict lalpha,
     const scalar *const restrict lbeta,
-    const scalar *const restrict lcxpt,
+    const scalar *const restrict lcsp,
     const scalar *const restrict lgamma,
     scalar *const restrict new_lambda,
     scalar *const restrict new_lgamma,
     scalar *const restrict new_ldelta)
 {
-    pois_m_step_lambda (n_obs, m_states, data, lcxpt, new_lambda);
+    pois_m_step_lambda (n_obs, m_states, data, lcsp, new_lambda);
     pois_m_step_gamma  (n_obs, m_states, llh, lsdp, lalpha, lbeta, lgamma, new_lgamma);
-    pois_m_step_delta  (m_states, lcxpt, new_ldelta);
+    pois_m_step_delta  (m_states, lcsp, new_ldelta);
 }
 
 
@@ -111,10 +111,10 @@ pois_m_step_lambda (
     const size_t n_obs,
     const size_t m_states,
     const scalar *const restrict data,
-    const scalar *const restrict lcxpt,
+    const scalar *const restrict lcsp,
     scalar *const restrict new_lambda)
 {
-    m_log_centroid_cols (lcxpt, data, n_obs, m_states, new_lambda);
+    m_log_centroid_cols (lcsp, data, n_obs, m_states, new_lambda);
     vi_exp (m_states, new_lambda);
 }
 
@@ -153,8 +153,8 @@ pois_m_step_gamma (
 void
 pois_m_step_delta (
     const size_t m_states,
-    const scalar *const restrict lcxpt,
+    const scalar *const restrict lcsp,
     scalar *const restrict new_ldelta)
 {
-    v_log_normalize (m_states, lcxpt, new_ldelta);
+    v_log_normalize (m_states, lcsp, new_ldelta);
 }

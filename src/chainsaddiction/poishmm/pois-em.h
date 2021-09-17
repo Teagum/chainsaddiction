@@ -39,7 +39,7 @@ pois_e_step (
     scalar *const restrict lsdp,
     scalar *const restrict lalpha,
     scalar *const restrict lbeta,
-    scalar *const restrict lcxpt,
+    scalar *const restrict lcsp,
     scalar *const restrict llh);
 
 
@@ -52,7 +52,7 @@ pois_m_step (
     const scalar *const restrict lsdp,
     const scalar *const restrict lalpha,
     const scalar *const restrict lbeta,
-    const scalar *const restrict lcxpt,
+    const scalar *const restrict lcsp,
     const scalar *const restrict lgamma,
     scalar *const restrict new_lambda,
     scalar *const restrict new_lgamma,
@@ -64,7 +64,7 @@ pois_m_step_lambda (
     const size_t n_obs,
     const size_t m_states,
     const scalar *const restrict data,
-    const scalar *const restrict lcxpt,
+    const scalar *const restrict lcsp,
     scalar *const restrict new_lambda);
 
 
@@ -83,7 +83,7 @@ pois_m_step_gamma (
 void
 pois_m_step_delta (
     const size_t m_states,
-    const scalar *const restrict lcxpt,
+    const scalar *const restrict lcsp,
     scalar *const restrict new_ldelta);
 
 

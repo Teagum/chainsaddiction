@@ -18,7 +18,7 @@ typedef struct _PyCh_PoisHmm {
     PyObject *delta;
     PyObject *lalpha;
     PyObject *lbeta;
-    PyObject *lcxpt;
+    PyObject *lcsp;
 } PyCh_PoisHmm;
 
 
@@ -47,7 +47,7 @@ static PyMemberDef PyCh_PoisHmm_members[] = {
     {"delta_", T_OBJECT, offsetof (PyCh_PoisHmm, delta), 0, "Initial distribution"},
     {"lalpha", T_OBJECT, offsetof (PyCh_PoisHmm, lalpha), 0, "Forward probabilities"},
     {"lbeta", T_OBJECT, offsetof (PyCh_PoisHmm, lbeta), 0, "Backward probabilities"},
-    {"lcxpt", T_OBJECT, offsetof (PyCh_PoisHmm, lcxpt), 0, "Log of the conditional expectations"},
+    {"lcsp", T_OBJECT, offsetof (PyCh_PoisHmm, lcsp), 0, "Log of the conditional expectations"},
     {NULL, -1, 0, 0, NULL}  /* Sentinel */
 };
 

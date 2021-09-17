@@ -31,7 +31,7 @@ bool test__local_decoding (void)
     PoisHmm_Init(hmm, ilambda, igamma, idelta);
     PoisHmm_EstimateParams (hmm, inp);
 
-    local_decoding (hmm->n_obs, hmm->m_states, hmm->probs->lcxpt, decoding);
+    local_decoding (hmm->n_obs, hmm->m_states, hmm->probs->lcsp, decoding);
 
     for (size_t i = 0; i < hmm->n_obs; i++)
     {

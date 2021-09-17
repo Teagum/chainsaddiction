@@ -83,7 +83,7 @@ extern int
 local_decoding (
     const size_t n_obs,
     const size_t m_states,
-    const scalar *lcxpt,
+    const scalar *lcsp,
     size_t *states)
 {
     scalar *obs_probs = malloc (sizeof (scalar) * n_obs * m_states);
@@ -92,7 +92,7 @@ local_decoding (
         Ca_ErrMsg ("Allocation failed.");
         return Ca_FAILURE;
     }
-    m_exp (n_obs, m_states, lcxpt, obs_probs);
+    m_exp (n_obs, m_states, lcsp, obs_probs);
     m_row_argmax (n_obs, m_states, obs_probs, states);
 
     free (obs_probs);
@@ -106,7 +106,7 @@ global_decoding (
     const size_t m_states,
     const scalar *const restrict lgamma,
     const scalar *const restrict ldelta,
-    const scalar *restrict lcxpt,
+    const scalar *restrict lcsp,
     size_t *restrict states)
 {
     const size_t n_elem = n_obs * m_states;
@@ -126,20 +126,20 @@ global_decoding (
     scalar *chi_prev_row = chi;
     scalar *chi_this_row = chi+m_states;
 
-    vv_add(m_states, ldelta, lcxpt, chi);
-    lcxpt += m_states;
+    vv_add(m_states, ldelta, lcsp, chi);
+    lcsp += m_states;
     for (size_t n = 1; n < n_obs; n++)
     {
         vm_add (m_states, m_states, chi_prev_row, lgamma, mb);
         m_row_max (mb, m_states, m_states, chi_this_row);
-        vvi_add (m_states, lcxpt, chi_this_row);
+        vvi_add (m_states, lcsp, chi_this_row);
 
         chi_this_row+=m_states;
         chi_prev_row+=m_states;
-        lcxpt+=m_states;
+        lcsp+=m_states;
     }
     chi_this_row = NULL;
-    lcxpt = NULL;
+    lcsp = NULL;
 
     size_t i = n_obs - 1;
     states[i] = v_argmax (m_states, chi_prev_row);

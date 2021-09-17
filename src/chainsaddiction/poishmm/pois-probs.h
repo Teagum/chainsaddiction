@@ -19,7 +19,7 @@ typedef struct PoisProbs {
     scalar *lsdp;       /**< Log of the state dependent probabilities   */
     scalar *lalpha;     /**< Log forward probabilities                  */
     scalar *lbeta;      /**< Log backward probabilities                 */
-    scalar *lcxpt;      /**< Log conditional expectations               */
+    scalar *lcsp;      /**< Log conditional expectations               */
 } PoisProbs;
 
 
@@ -29,7 +29,7 @@ if (probs)                          \
     free (probs->lsdp);             \
     free (probs->lalpha);           \
     free (probs->lbeta);            \
-    free (probs->lcxpt);            \
+    free (probs->lcsp);            \
     free (probs);                   \
     probs = NULL;                   \
 }

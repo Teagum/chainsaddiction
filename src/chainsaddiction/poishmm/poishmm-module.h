@@ -39,11 +39,11 @@ enum PyCh_ArrayDimensions {
     "Read HMM parameters from file located in ``path``."
 
 #define global_decoding_doc                                 \
-    "global_decoding(lgamma, ldelta, lcxpt, /)\n\n"         \
+    "global_decoding(lgamma, ldelta, lcsp, /)\n\n"         \
     "Compute the most likely sequence of states\n"
 
 #define local_decoding_doc                                  \
-    "local_decoding(lcxpt, /)\n\n"                          \
+    "local_decoding(lcsp, /)\n\n"                          \
     "Compute the most likely state for each observation.\n"
 
 

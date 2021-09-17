@@ -13,7 +13,7 @@ test__PoisProbs_New (void)
     scalar *dptr[] = { probs->lsdp,
         probs->lalpha,
         probs->lbeta,
-        probs->lcxpt
+        probs->lcsp
     };
 
     for (size_t i = 0; i < 4; i++) {

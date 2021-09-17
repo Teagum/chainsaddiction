@@ -68,7 +68,7 @@ extern int
 local_decoding (
     const size_t n_obs,
     const size_t m_states,
-    const scalar *lcxpt,
+    const scalar *lcsp,
     size_t *states);
 
 
@@ -79,7 +79,7 @@ global_decoding (
     const size_t m_states,
     const scalar *const restrict lgamma,
     const scalar *const restrict ldelta,
-    const scalar *restrict lcxpt,
+    const scalar *restrict lcsp,
     size_t *restrict states);
 
 

@@ -20,7 +20,7 @@ test__pois_e_step (void)
     PoisParams_CopyLog (params, lparams);
     pois_e_step (inp->size, params->m_states, inp->data, lparams->lambda,
             lparams->gamma, lparams->delta, probs->lsdp, probs->lalpha,
-            probs->lbeta, probs->lcxpt, &llh);
+            probs->lbeta, probs->lcsp, &llh);
 
     ds_FREE(inp);
     PoisParams_Delete (params);
@@ -50,10 +50,10 @@ test__pois_m_step_lambda (void)
     PoisParams_CopyLog (params, lparams);
     pois_e_step (inp->size, params->m_states, inp->data,
             lparams->lambda, lparams->gamma, lparams->delta,
-            probs->lsdp, probs->lalpha, probs->lbeta, probs->lcxpt,
+            probs->lsdp, probs->lalpha, probs->lbeta, probs->lcsp,
             &llh);
 
-    pois_m_step_lambda (inp->size, probs->m_states, inp->data, probs->lcxpt,
+    pois_m_step_lambda (inp->size, probs->m_states, inp->data, probs->lcsp,
             new_lambda);
 
     for (size_t i = 0; i < params->m_states; i++) {
@@ -95,7 +95,7 @@ test__pois_m_step_gamma (void)
     PoisParams_CopyLog (params, lparams);
     pois_e_step (inp->size, params->m_states, inp->data,
             lparams->lambda, lparams->gamma, lparams->delta,
-            probs->lsdp, probs->lalpha, probs->lbeta, probs->lcxpt,
+            probs->lsdp, probs->lalpha, probs->lbeta, probs->lcsp,
             &llh);
 
     pois_m_step_gamma (inp->size, params->m_states, llh,
@@ -133,10 +133,10 @@ test__pois_m_step_delta(void)
 
     pois_e_step (inp->size, params->m_states, inp->data,
             lparams->lambda, lparams->gamma, lparams->delta,
-            probs->lsdp, probs->lalpha, probs->lbeta, probs->lcxpt,
+            probs->lsdp, probs->lalpha, probs->lbeta, probs->lcsp,
             &llh);
 
-    pois_m_step_delta (probs->m_states, probs->lcxpt, new_ldelta);
+    pois_m_step_delta (probs->m_states, probs->lcsp, new_ldelta);
 
 
     ds_FREE (inp);
