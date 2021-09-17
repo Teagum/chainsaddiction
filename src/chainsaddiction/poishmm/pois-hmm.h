@@ -8,7 +8,7 @@
 #include "pois-em.h"
 #include "pois-params.h"
 #include "pois-probs.h"
-#include "../utils.h"
+#include "../utils/utils.h"
 #include "../dataset.h"
 #include "../restrict.h"
 #include "../scalar.h"
