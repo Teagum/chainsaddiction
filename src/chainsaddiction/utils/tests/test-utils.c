@@ -8,40 +8,30 @@ bool test__local_decoding (void)
     };
 
     bool err = true;
-    const char   path[]    = "../../../../tests/data/earthquakes/dataset";
-    const scalar ilambda[] = { 10L, 20L, 30L };
-    const scalar igamma[]  =  {.8, .1, .1, .1, .8, .1, .1, .1, .8 };
-    const scalar idelta[]  = { 1.0L/3L, 1.0L/3L, 1.0L/3L };
-    const size_t xpc[] = { 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1,
-        1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-    DataSet *inp     = NULL;
-    PoisHmm *hmm     = NULL;
     size_t *decoding = NULL;
+    const char data_path[] = "../../../../tests/data/earthquakes/lcxpt";
+    DataSet *lcsp = NULL;
 
-    inp      = ds_NewFromFile (path);
-    if (inp == NULL) return UT_FAILURE;
+    lcsp = ds_NewFromFile (data_path);
+    if (lcsp == NULL) return UT_FAILURE;
 
-    hmm      = PoisHmm_New (n_obs, m_states);
-    decoding = VA_SIZE_ZEROS (hmm->n_obs);
-
-    PoisHmm_Init(hmm, ilambda, igamma, idelta);
-    PoisHmm_EstimateParams (hmm, inp);
-
-    local_decoding (hmm->n_obs, hmm->m_states, hmm->probs->lcsp, decoding);
-
-    for (size_t i = 0; i < hmm->n_obs; i++)
+    decoding = VA_SIZE_ZEROS (n_obs);
+    if (inp == NULL)
     {
-        err = (decoding[i] != xpc[i]) ? true : false;
+        ds_FREE (lcsp);
+        return UT_FAILURE;
+    }
+
+    local_decoding (n_obs, m_states, lcsp, decoding);
+
+    for (size_t i = 0; i < n_obs; i++)
+    {
+        err = (decoding[i] != lcsp->data[i]) ? true : false;
         if (err) break;
     }
 
+    ds_FREE (lcsp);
     FREE (decoding);
-    ds_FREE (inp);
-    PoisHmm_Delete (hmm);
     return err;
 }
 
