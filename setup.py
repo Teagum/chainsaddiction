@@ -26,6 +26,7 @@ utils_src = (
 poishmm_src = (
     'src/vmath',
     'src/chainsaddiction',
+    'src/chainsaddiction/utils',
     'src/chainsaddiction/poishmm',
 )
 
