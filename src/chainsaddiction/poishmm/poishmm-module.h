@@ -8,22 +8,10 @@
 #include <numpy/arrayobject.h>
 #include "structmember.h"
 
-#include "pois-hmm.h"
-#include "pois-params.h"
-#include "poishmm-object.h"
-
-
-#define UNUSED(obj) obj = NULL;
-
-#define PyArray_NEW_LD(py_obj) \
-    (PyArrayObject *) PyArray_FROM_OTF (py_obj, NPY_LONGDOUBLE, NPY_ARRAY_IN_ARRAY);
-
-
-enum PyCh_ArrayDimensions {
-    PyCh_VECTOR = 1,
-    PyCh_MATRIX = 2,
-    PyCh_DATA   = 2,
-};
+#include "chainsaddiction.h"
+#include "poishmm/pois-hmm.h"
+#include "poishmm/pois-params.h"
+#include "poishmm/poishmm-object.h"
 
 
 #define poishmm_fit_doc                                                 \
@@ -33,31 +21,16 @@ enum PyCh_ArrayDimensions {
     "sdm: array-like, tpm: array-like, distr: array-like, "             \
     "data: array-like) -> Fit\n"
 
-
-#define read_params_doc                                     \
-    "read_params(path: str, /)\n\n"                         \
+#define poishmm_read_params_doc                                     \
+    "read_params(path: str, /)\n\n"                                 \
     "Read HMM parameters from file located in ``path``."
-
-#define global_decoding_doc                                 \
-    "global_decoding(lgamma, ldelta, lcsp, /)\n\n"         \
-    "Compute the most likely sequence of states\n"
-
-#define local_decoding_doc                                  \
-    "local_decoding(lcsp, /)\n\n"                          \
-    "Compute the most likely state for each observation.\n"
 
 
 static PyObject *
 poishmm_fit (PyObject* self, PyObject* args);
 
 static PyObject *
-local_decoding_impl (PyObject *self, PyObject *args);
-
-static PyObject *
-global_decoding_impl (PyObject *self, PyObject *args);
-
-static PyObject *
-read_params (PyObject *self, PyObject *args);
+poishmm_read_params (PyObject *self, PyObject *args);
 
 
 #endif  /* poishmm_module_h */
