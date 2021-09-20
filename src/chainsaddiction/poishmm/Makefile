@@ -30,7 +30,7 @@ CPPFLAGS += $(includes)
 all: $(objs)
 
 pois-em.o: pois-em.h pois-fwbw.h pois-hmm.h pois-params.h pois-probs.h \
-	utils.h pois-fwbw.h dataset.h libma.h read.h restrict.h   \
+	utils/utils.h pois-fwbw.h dataset.h libma.h read.h restrict.h   \
 	scalar.h libvmath.h 
 
 pois-fwbw.o: pois-fwbw.h dataset.h libma.h read.h restrict.h scalar.h  \
