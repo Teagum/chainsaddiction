@@ -38,7 +38,7 @@ runtest.o: unittest.h test-utils.h
 test-utils.o: test-utils.h utils.h unittest.h dataset.h read.h libma.h
 
 make check: all
-	./utils.test > log.txt
+	./utils.test
 
 clean:
 	$(RM) *.o
