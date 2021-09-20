@@ -1,84 +1,96 @@
-#include "test-pois-utils.h"
+#include "test-utils.h"
+
 
 bool test__local_decoding (void)
 {
+#ifdef datapath
+#undef datapath
+#endif
+#define datapath "../../../../tests/data/earthquakes/3s/"
     enum {
         m_states = 3,
         n_obs    = 107
     };
 
-    bool err = true;
-    size_t *decoding = NULL;
-    const char data_path[] = "../../../../tests/data/earthquakes/lcxpt";
+    bool     err  = true;
+    size_t  *dec  = NULL;
     DataSet *lcsp = NULL;
+    DataSet *xpct = NULL;
 
-    lcsp = ds_NewFromFile (data_path);
-    if (lcsp == NULL) return UT_FAILURE;
-
-    decoding = VA_SIZE_ZEROS (n_obs);
-    if (inp == NULL)
+    lcsp = ds_NewFromFile (datapath "lcsp.txt");
+    xpct = ds_NewFromFile (datapath "local-decoding.txt");
+    dec = VA_SIZE_EMPTY (n_obs);
+    if (lcsp == NULL || xpct == NULL || dec == NULL)
     {
         ds_FREE (lcsp);
+        ds_FREE (xpct);
+        FREE (dec);
         return UT_FAILURE;
     }
 
-    local_decoding (n_obs, m_states, lcsp, decoding);
+    local_decoding (n_obs, m_states, lcsp->data, dec);
 
     for (size_t i = 0; i < n_obs; i++)
     {
-        err = (decoding[i] != lcsp->data[i]) ? true : false;
+        err = ((size_t)xpct->data[i] != dec[i]) ? true : false;
         if (err) break;
     }
 
     ds_FREE (lcsp);
-    FREE (decoding);
+    ds_FREE (xpct);
+    free (dec);
     return err;
 }
 
 
-
 bool test__global_decoding (void)
 {
+#ifdef datapath
+#undef datapath
+#endif
+#define datapath "../../../../tests/data/earthquakes/3s/"
+
     enum {
         m_states = 3,
         n_obs    = 107
     };
 
-    bool err = false;
-    const char   path_data[]    = "../../../../tests/data/earthquakes/dataset";
-    const char   path_params[]  = "data/earthquakes.lprobs";
-    const size_t xpc[] = {
-        0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
-       0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2,
-       2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-       1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    };
+    bool    err     = false;
+    size_t  *dec    = NULL;
+    DataSet *lcsp   = NULL;
+    DataSet *lgamma = NULL;
+    DataSet *ldelta = NULL;
+    DataSet *xpct   = NULL;
 
-    DataSet     *inp      = ds_NewFromFile (path_data);
-    if (inp == NULL) return UT_FAILURE;
-    PoisParams  *params   = PoisParams_NewFromFile (path_params);
-    size_t      *decoding = VA_SIZE_ZEROS (n_obs);
-    scalar      *lsdp     = VA_SCALAR_EMPTY (n_obs*m_states);
-    if (decoding == NULL || lsdp == NULL)
+    lcsp   = ds_NewFromFile (datapath "lcsp.txt");
+    lgamma = ds_NewFromFile (datapath "lgamma.txt");
+    ldelta = ds_NewFromFile (datapath "ldelta.txt");
+    xpct   = ds_NewFromFile (datapath "global-decoding.txt");
+    dec    = VA_SIZE_EMPTY (n_obs);
+    if (lcsp == NULL || lgamma == NULL || ldelta == NULL || 
+        xpct == NULL || dec == NULL)
     {
-        const char fmt[] = "(%s, %d) test__global_decoding:\nMemory error.";
-        fprintf (stderr, fmt, __FILE__, __LINE__);
-        UT_FAILURE;
-    }
+        ds_FREE (lcsp);
+        ds_FREE (lgamma);
+        ds_FREE (ldelta);
+        ds_FREE (xpct);
+        free (dec);
+        return UT_FAILURE;
+    }    
 
-    v_poisson_logpmf (inp->data, n_obs, params->lambda, m_states, lsdp);
-    global_decoding (n_obs, m_states, params->gamma, params->delta,
-                     lsdp, decoding);
+    global_decoding (n_obs, m_states, lgamma->data, ldelta->data,
+                     lcsp->data, dec);
 
     for (size_t i = 0; i < n_obs; i++)
     {
-        err |= (xpc[i] != decoding[i]) ? true : false;
+        err = ((size_t)xpct->data[i] != dec[i]) ? true : false;
+        if (err) break;
     }
 
-    FREE (decoding);
-    PoisParams_Delete (params);
-    ds_FREE (inp);
-    FREE (lsdp);
-    return err ? VM_FAILURE : VM_SUCCESS;
+    ds_FREE (lcsp);
+    ds_FREE (lgamma);
+    ds_FREE (ldelta);
+    ds_FREE (xpct);
+    free (dec);
+    return err;
 }

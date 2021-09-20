@@ -1,14 +1,16 @@
-#ifndef test_pois_utils_h
-#define test_pois_utils_h
+#ifndef test_utils_h
+#define test_utils_h
 
+
+#include <stdlib.h>
+#include <time.h>
 #include "unittest.h"
-#include "../pois-hmm.h"
-#include "../pois-utils.h"
-#include "../../dataset.h"
+#include "dataset.h"
+#include "utils.h"
 
 
 bool test__local_decoding (void);
 bool test__global_decoding (void);
 
 
-#endif  /* test_pois_utils_h */
+#endif  /* test_utils_h */
