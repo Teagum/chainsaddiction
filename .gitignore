@@ -10,6 +10,7 @@
 .vimrc
 benchmarks/
 build/
+docs/build
 dist/
 .eggs/
 tests/bin/
