@@ -5,7 +5,7 @@ import unittest
 from utils import load_data
 import numpy as np
 from apollon.hmm import utilities as hmmutils
-from chainsaddiction import poishmm
+from chainsaddiction import utils
 
 
 class TestLocalDecoding(unittest.TestCase):
@@ -15,7 +15,7 @@ class TestLocalDecoding(unittest.TestCase):
         self.res = load_data(src, 'local-decoding.txt', 'uint64')
 
     def test_local_decoding(self):
-        dec = poishmm.local_decoding(self.lcxpt)
+        dec = utils.local_decoding(self.lcxpt)
         self.assertTrue(np.array_equal(dec, self.res))
 
 
@@ -28,7 +28,7 @@ class TestGloblaDecoding(unittest.TestCase):
         self.res = load_data(src, 'global-decoding.txt', 'uint64')
 
     def test_global_decoding(self):
-        dec = poishmm.global_decoding(self.lgamma, self.ldelta, self.lcxpt)
+        dec = utils.global_decoding(self.lgamma, self.ldelta, self.lcxpt)
         self.assertTrue(np.array_equal(dec, self.res))
 
 
