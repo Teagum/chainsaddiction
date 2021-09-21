@@ -20,4 +20,4 @@ def load_data(path: Union[str, Path], file: Union[str, Path],
               dtype: str = 'float128'):
     path = Path(path)
     dfp = path.joinpath(file)
-    return np.fromfile(str(dfp), dtype=dtype)
+    return np.fromfile(str(dfp), dtype=dtype, sep='\n')
