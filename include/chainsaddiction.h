@@ -1,9 +1,9 @@
 #ifndef chainsaddiction_h
 #define chainsaddiction_h
 
-#include "err.h"
-#include "scalar.h"
-#include "restrict.h"
+#include "../src/chainsaddiction/err.h"
+#include "../src/chainsaddiction/scalar.h"
+#include "../src/chainsaddiction/restrict.h"
 
 
 #define UNUSED(obj) obj = NULL;
