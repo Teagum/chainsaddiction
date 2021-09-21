@@ -146,8 +146,8 @@ test__PoisHmm_ForwardProbabilities(void)
 
     PoisHmm *hmm = PoisHmm_New (inp->size, params->m_states);
     PoisHmm_Init (hmm, params->lambda, params->gamma, params->delta);
-    v_poisson_logpmf (inp->data, inp->size, hmm->params->lambda,
-            hmm->m_states, hmm->probs->lsdp);
+    v_poisson_logpmf (inp->size, hmm->m_states, inp->data, hmm->params->lambda,
+                      hmm->probs->lsdp);
 
     int status = PoisHmm_ForwardProbabilities (hmm);
     if (status) return true;
@@ -180,8 +180,8 @@ test__PoisHmm_BackwardProbabilities (void)
 
     PoisHmm *hmm = PoisHmm_New (inp->size, params->m_states);
     PoisHmm_Init (hmm, params->lambda, params->gamma, params->delta);
-    v_poisson_logpmf (inp->data, inp->size, hmm->params->lambda,
-            hmm->m_states, hmm->probs->lsdp);
+    v_poisson_logpmf (inp->size, hmm->m_states, inp->data, hmm->params->lambda,
+                      hmm->probs->lsdp);
 
     int status = PoisHmm_BackwardProbabilities (hmm);
     if (status) return true;
@@ -214,8 +214,8 @@ test__PoisHmm_ForwardBackward (void)
 
     PoisHmm *hmm = PoisHmm_New (inp->size, params->m_states);
     PoisHmm_Init (hmm, params->lambda, params->gamma, params->delta);
-    v_poisson_logpmf (inp->data, inp->size, hmm->params->lambda,
-            hmm->m_states, hmm->probs->lsdp);
+    v_poisson_logpmf (inp->size, hmm->m_states, inp->data, hmm->params->lambda,
+                      hmm->probs->lsdp);
 
     int status = PoisHmm_ForwardBackward (hmm);
     if (status) return true;

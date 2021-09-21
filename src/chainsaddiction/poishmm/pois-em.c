@@ -78,7 +78,7 @@ pois_e_step (
     scalar *const restrict lcsp,
     scalar *const restrict llh)
 {
-    v_poisson_logpmf (input_data, n_obs, lambda, m_states, lsdp);
+    v_poisson_logpmf (n_obs, m_states, input_data, lambda, lsdp);
     log_fwbw (lsdp, lgamma, ldelta, m_states, n_obs, lalpha, lbeta);
     *llh = compute_log_likelihood (n_obs, m_states, lalpha);
     log_csprobs (n_obs, m_states, *llh, lalpha, lbeta, lcsp);

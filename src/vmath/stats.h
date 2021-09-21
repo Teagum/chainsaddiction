@@ -38,10 +38,10 @@ poisson_pmf (
  */
 void
 v_poisson_logpmf (
-    const scalar *restrict qnts,
     const size_t n_qnts,
-    const scalar *restrict means,
     const size_t m_means,
-    scalar *restrict log_probs);
+    const scalar *restrict qnts,
+    const scalar *restrict means,
+          scalar *restrict log_probs);
 
 #endif    /* stats_h */
