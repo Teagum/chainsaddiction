@@ -39,15 +39,16 @@ typedef struct PoisHmm {
 
 /** Deallocate `PoisHmm' object.
  *
- * \param phmm  Pointer to `PoisHmm' object.
+ * \param this  Pointer to `PoisHmm' object.
  */
-#define PoisHmm_Delete(phmm) do {       \
-    PoisParams_Delete (phmm->init);     \
-    PoisParams_Delete (phmm->params);   \
-    PoisProbs_Delete  (phmm->probs);    \
-    free (phmm);                        \
-    phmm = NULL;                        \
-} while (false)
+#define PoisHmm_Delete(this)            \
+if (this != NULL) {                     \
+    PoisParams_Delete (this->init);     \
+    PoisParams_Delete (this->params);   \
+    PoisProbs_Delete  (this->probs);    \
+    free (this);                        \
+    this= NULL;                         \
+}
 
 
 /** Allocate memory for `PoisHmm' object.
