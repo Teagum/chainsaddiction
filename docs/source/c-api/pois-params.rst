@@ -1,9 +1,7 @@
 .. default-domain:: c
 
-Parameter Layer
-===============================================================================
 
-Data structure
+Parameters
 -------------------------------------------------------------------------------
 
 .. struct:: PoisParams
@@ -40,12 +38,12 @@ Data structure
         :member:`PoisParams.m_states` values of type :type:`scalar`.
 
 
-Functions
--------------------------------------------------------------------------------
+Object creation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. function:: PoisParams *PoisParams_New (const size_t m_states)
 
-   Allocates a new :c:struct:`PoisParams` structure for a HMM with
+   Allocate memory fro a new :struct:`PoisParams` structure for a HMM with
    :var:`m_states` states.
 
 
@@ -58,27 +56,33 @@ Functions
 
 .. function:: PoisParams *PoisParams_NewRandom (const size_t m_states)
 
-    Allocate a new :struct:`PoisParams` for a HMM with :var:`m_states`
-    states and initialize it with random data. Internally calls
-    :func:`PoisParams_SetLambdaRnd`,
-    :func:`PoisParams_SetGammaRnd`, and
+    Allocate memory for a new :struct:`PoisParams` for a HMM with
+    :var:`m_states` states and initialize it with random data. Internally calls
+    :func:`PoisParams_SetLambdaRnd`, :func:`PoisParams_SetGammaRnd`, and
     :func:`PoisParams_SetDeltaRnd`.
 
+.. macro:: PoisParams_Delete (this)
 
-.. function:: inline void PoisParams_SetLambdaRnd (PoisParams *const restrict this)
+    Delete a :struct:`PoisParams` struct from memory. 
+
+
+Initialization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. function:: void PoisParams_SetLambdaRnd (PoisParams *const restrict this)
 
     Sample the state-dependend means of :var:`this` uniformly from the
     interval [1, 100].
 
 
-.. function:: inline void PoisParams_SetGammaRnd (PoisParams *const restrict this)
+.. function:: void PoisParams_SetGammaRnd (PoisParams *const restrict this)
 
     Sample the transition probability matrix (tpm) of :var:`this` randomly.
     This function guaratees that each row of the tpm is indeed a discrete
     probability distribution.
 
 
-.. function:: inline void PoisParams_SetDeltaRnd (PoisParams *const restrict this)
+.. function:: void PoisParams_SetDeltaRnd (PoisParams *const restrict this)
 
     Sample the initial distribution of :var:`this` randomly. This function
     guaratees that each row of the tpm is indeed a discrete probability
