@@ -138,3 +138,27 @@ PoisHmm_LogConstStateProbs (PoisHmm *const restrict this)
     log_csprobs (this->n_obs, this->m_states, this->llh, this->probs->lalpha,
                  this->probs->lbeta, this->probs->lcsp);
 }
+
+
+void
+PoisHmm_Summary (const PoisHmm *const restrict this)
+{
+    enum { linewidth = 79 };
+    char border[linewidth+1];
+
+    for (size_t i = 0; i < linewidth; i++)
+    {
+        border[i] = 96;
+    }
+    border[linewidth] = 0;
+
+    fprintf (stderr, "\n%s\n", border);
+    PoisParams_Print (this->params);
+    fprintf (stderr, "\n%s\n", border);
+    fprintf (stderr, "%10s%zu\n%10s%Lf\n%10s%Lf\n%10s%Lf\n",
+            "n_iter: ", this->n_iter,
+            "AIC: ", this->aic,
+            "BIC: ", this->bic,
+            "LLH: ", this->llh);
+    fprintf (stderr, "\n%s\n", border);
+}

@@ -101,4 +101,8 @@ void
 PoisHmm_LogCondStateProbs (PoisHmm *const restrict this);
 
 
+void
+PoisHmm_Summary (const PoisHmm *const restrict this);
+
+
 #endif  /* HMM_H */
