@@ -99,7 +99,7 @@ PoisParams_SetDeltaRnd (
 
 void
 PoisParams_Print (
-    PoisParams *const this);
+    const PoisParams *const restrict this);
 
 
 void
