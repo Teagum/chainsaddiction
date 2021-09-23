@@ -79,30 +79,15 @@ void
 PoisHmm_LogLikelihood (PoisHmm *const restrict this);
 
 
-#define PoisHmm_LogConditionalExpectation(phmm) do {                        \
-    log_cond_expect (phmm->n_obs, phmm->m_states, phmm->probs->lalpha,      \
-            phmm->probs->lbeta, phmm->llh, phmm->probs->lcexpt);            \
-} while (false)
-
-
 void
-PoisHmm_PrintInit (const PoisHmm *const restrict this);
-
-
-/** Print Poisson parameters to stdout. */
-void
-PoisHmm_PrintParams (const PoisHmm *const this);
-
-
-int
 PoisHmm_ForwardProbabilities (PoisHmm *const restrict this);
 
 
-int
+void
 PoisHmm_BackwardProbabilities (PoisHmm *const restrict this);
 
 
-int
+void
 PoisHmm_ForwardBackward (PoisHmm *const restrict this);
 
 
@@ -110,6 +95,14 @@ void
 PoisHmm_EstimateParams (
     PoisHmm *const restrict this,
     const DataSet *const restrict inp);
+
+
+void
+PoisHmm_LogCondStateProbs (PoisHmm *const restrict this);
+
+
+void
+PoisHmm_Summary (const PoisHmm *const restrict this);
 
 
 #endif  /* HMM_H */

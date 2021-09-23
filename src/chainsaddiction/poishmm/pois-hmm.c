@@ -95,102 +95,27 @@ PoisHmm_LogLikelihood (PoisHmm *const restrict this)
 
 
 void
-PoisHmm_PrintInit (const PoisHmm *const restrict this)
-{
-   size_t m_states = this->m_states;
-
-    puts ("");
-    for (size_t i = 0; i < m_states; i++)
-        printf (SF, this->init->lambda[i]);
-
-    puts ("");
-    for (size_t i = 0; i < m_states; i++)
-        printf (SF, this->init->delta[i]);
-
-    puts ("");
-}
-
-
-void
-PoisHmm_PrintParams (const PoisHmm *const this)
-{
-    enum {
-        linewidth = 120
-    };
-    const char border[] = "========================================================================================================================\0";
-    const char sep[]    = "------------------------------------------------------------------------------------------------------------------------\0";
-
-    size_t m_states = this->m_states;
-    PoisParams *params = this->params;
-
-    printf ("\n\n*%s*\n\n", border);
-    printf ("%25s%10zu\n", "m_states:", m_states);
-    printf ("%25s", "log likelihood:");
-    printf (SFN, this->llh);
-    printf ("%25s", "AIC:");
-    printf (SFN, this->aic);
-    printf ("%25s", "BIC:");
-    printf (SFN, this->bic);
-    printf ("%25s%5zu /%4zu\n", "n_iter:", this->n_iter, this->max_iter);
-    printf ("\n%s\n\n", sep);
-
-    printf ("%25s", "State:");
-    for (size_t i = 0; i < m_states; i++)
-        printf ("%15zu", i+1);
-    puts ("");
-    printf ("%25s", "State dependent means:");
-    for (size_t i = 0; i < m_states; i++)
-        printf (SF, params->lambda[i]);
-    puts ("");
-    printf ("%25s", "Start distribution:");
-    for (size_t i = 0; i < m_states; i++)
-        printf (SF, expl (params->delta[i]));
-
-    printf ("\n\n%s\n\n", sep);
-
-    printf ("%25s", "Transition probability matrix:\n");
-    printf ("%25s", " ");
-    for (size_t i = 0; i < m_states; i++)
-        printf ("%10zu", i+1);
-    puts ("");
-    for (size_t i = 0; i < m_states; i++)
-    {
-        printf ("%25zu", i+1);
-        for (size_t j = 0; j < m_states; j++)
-        {
-            printf ("%10.5Lf", expl (params->gamma[i*m_states+j]));
-        }
-        puts ("");
-    }
-    printf ("\n*%s*\n\n", border);
-}
-
-int
 PoisHmm_ForwardProbabilities (PoisHmm *const restrict this)
 {
     log_forward (this->probs->lsdp, this->params->gamma, this->params->delta,
             this->m_states, this->probs->n_obs, this->probs->lalpha);
-
-    return false;
 }
 
 
-int
+void
 PoisHmm_BackwardProbabilities (PoisHmm *const restrict this)
 {
     log_backward (this->probs->lsdp, this->params->gamma, this->m_states,
             this->probs->n_obs, this->probs->lbeta);
-    return false;
 }
 
 
-int
+void
 PoisHmm_ForwardBackward (PoisHmm *const restrict this)
 {
     log_fwbw (this->probs->lsdp, this->params->gamma, this->params->delta,
             this->m_states, this->probs->n_obs, this->probs->lalpha,
             this->probs->lbeta);
-    return false;
 }
 
 
@@ -204,4 +129,36 @@ PoisHmm_EstimateParams (
                          this->params);
     this->aic = compute_aic (this->m_states, this->llh);
     this->bic = compute_bic (this->n_obs, this->m_states, this->llh);
+}
+
+
+void
+PoisHmm_LogConstStateProbs (PoisHmm *const restrict this)
+{
+    log_csprobs (this->n_obs, this->m_states, this->llh, this->probs->lalpha,
+                 this->probs->lbeta, this->probs->lcsp);
+}
+
+
+void
+PoisHmm_Summary (const PoisHmm *const restrict this)
+{
+    enum { linewidth = 79 };
+    char border[linewidth+1];
+
+    for (size_t i = 0; i < linewidth; i++)
+    {
+        border[i] = 96;
+    }
+    border[linewidth] = 0;
+
+    fprintf (stderr, "\n%s\n", border);
+    PoisParams_Print (this->params);
+    fprintf (stderr, "\n%s\n", border);
+    fprintf (stderr, "%10s%zu\n%10s%Lf\n%10s%Lf\n%10s%Lf\n",
+            "n_iter: ", this->n_iter,
+            "AIC: ", this->aic,
+            "BIC: ", this->bic,
+            "LLH: ", this->llh);
+    fprintf (stderr, "\n%s\n", border);
 }
