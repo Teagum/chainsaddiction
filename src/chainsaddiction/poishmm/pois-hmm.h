@@ -79,12 +79,6 @@ void
 PoisHmm_LogLikelihood (PoisHmm *const restrict this);
 
 
-#define PoisHmm_LogConditionalExpectation(phmm) do {                        \
-    log_cond_expect (phmm->n_obs, phmm->m_states, phmm->probs->lalpha,      \
-            phmm->probs->lbeta, phmm->llh, phmm->probs->lcexpt);            \
-} while (false)
-
-
 void
 PoisHmm_PrintInit (const PoisHmm *const restrict this);
 
