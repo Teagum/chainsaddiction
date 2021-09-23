@@ -95,6 +95,7 @@ Object creation
 
     Delete a :struct:`PoisHmm` struct from memory.
 
+
 Initialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -130,7 +131,7 @@ first parameter.
     used for further processing, such as model checking or, in case of errors,
     debuging at any time.
 
-    Also set the error indicator to `true` if the fit or any intermediate
+    Also, set the error indicator to `true` if the fit or any intermediate
     computation fails.
 
 .. function:: int PoisHmm_ForwardBackward (PoisHmm *const restrict this)
@@ -150,7 +151,9 @@ first parameter.
 
     Compute the logarithm of the likelihood of the HMM pointed to by :var:`this`. 
 
+.. function:: void PoisHmm_LogCondStateProbs (PoisHmm *const restrict this)
 
+    Compute the logarithm of the conditional state probabilities.
 
 Utilities
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
