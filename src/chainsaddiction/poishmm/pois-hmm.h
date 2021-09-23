@@ -80,14 +80,6 @@ PoisHmm_LogLikelihood (PoisHmm *const restrict this);
 
 
 void
-PoisHmm_PrintInit (const PoisHmm *const restrict this);
-
-
-void
-PoisHmm_PrintParams (const PoisHmm *const this);
-
-
-void
 PoisHmm_ForwardProbabilities (PoisHmm *const restrict this);
 
 
