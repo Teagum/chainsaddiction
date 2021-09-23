@@ -165,32 +165,29 @@ PoisHmm_PrintParams (const PoisHmm *const this)
     printf ("\n*%s*\n\n", border);
 }
 
-int
+
+void
 PoisHmm_ForwardProbabilities (PoisHmm *const restrict this)
 {
     log_forward (this->probs->lsdp, this->params->gamma, this->params->delta,
             this->m_states, this->probs->n_obs, this->probs->lalpha);
-
-    return false;
 }
 
 
-int
+void
 PoisHmm_BackwardProbabilities (PoisHmm *const restrict this)
 {
     log_backward (this->probs->lsdp, this->params->gamma, this->m_states,
             this->probs->n_obs, this->probs->lbeta);
-    return false;
 }
 
 
-int
+void
 PoisHmm_ForwardBackward (PoisHmm *const restrict this)
 {
     log_fwbw (this->probs->lsdp, this->params->gamma, this->params->delta,
             this->m_states, this->probs->n_obs, this->probs->lalpha,
             this->probs->lbeta);
-    return false;
 }
 
 
@@ -204,4 +201,12 @@ PoisHmm_EstimateParams (
                          this->params);
     this->aic = compute_aic (this->m_states, this->llh);
     this->bic = compute_bic (this->n_obs, this->m_states, this->llh);
+}
+
+
+void
+PoisHmm_LogConstStateProbs (PoisHmm *const restrict this)
+{
+    log_csprobs (this->n_obs, this->m_states, this->llh, this->probs->lalpha,
+                 this->probs->lbeta, this->probs->lcsp);
 }

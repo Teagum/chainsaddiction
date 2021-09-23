@@ -83,20 +83,19 @@ void
 PoisHmm_PrintInit (const PoisHmm *const restrict this);
 
 
-/** Print Poisson parameters to stdout. */
 void
 PoisHmm_PrintParams (const PoisHmm *const this);
 
 
-int
+void
 PoisHmm_ForwardProbabilities (PoisHmm *const restrict this);
 
 
-int
+void
 PoisHmm_BackwardProbabilities (PoisHmm *const restrict this);
 
 
-int
+void
 PoisHmm_ForwardBackward (PoisHmm *const restrict this);
 
 
@@ -104,6 +103,10 @@ void
 PoisHmm_EstimateParams (
     PoisHmm *const restrict this,
     const DataSet *const restrict inp);
+
+
+void
+PoisHmm_LogCondStateProbs (PoisHmm *const restrict this);
 
 
 #endif  /* HMM_H */
