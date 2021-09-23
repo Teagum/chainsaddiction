@@ -167,19 +167,9 @@ void
 PoisParams_Print (
     const PoisParams *const restrict this)
 {
-    enum { linewidth=200 };
-    size_t m_states = this->m_states;
-    char border[linewidth+1];
-
-    for (size_t i = 0; i < linewidth; i++)
-        border[i] = '=';
-    border[linewidth] = '\0';
-
-    fprintf (stderr, "\n\n*%s*\n", border);
-    print_vector (m_states, this->lambda);
-    print_vector (m_states, this->delta);
-    print_matrix (m_states, m_states, this->gamma);
-    fprintf (stderr, "\n*%s*\n\n", border);
+    print_vector (this->m_states, this->lambda);
+    print_vector_exp (this->m_states, this->delta);
+    print_matrix_exp (this->m_states, this->m_states, this->gamma);
 }
 
 
