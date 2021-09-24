@@ -1,10 +1,10 @@
-.. default-domain:: c
+ .. default-domain:: c
 
 PoisHmm object
 -------------------------------------------------------------------------------
 
 .. struct:: PoisHmm
-    
+
     The :struct:`PoisHmm` structure encapsulates all data of a
     Hidden-Markov model with Poisson-distributed states.
 
@@ -27,7 +27,7 @@ PoisHmm object
 
     .. var:: bool err
 
-        A boolean error indicator. `err` equals `true` if an error occured
+        A boolean error indicator. `err` equals `true` if an error occurred
         during fitting.
 
     .. var:: size_t n_obs
@@ -48,7 +48,7 @@ PoisHmm object
 
     .. member:: size_t max_iter
 
-        An positive interal number specifiying the maximum number of iterations of
+        An positive integral number specifying the maximum number of iterations of
         the EM algorithm.
 
     .. member:: scalar tol
@@ -59,11 +59,11 @@ PoisHmm object
 
     .. member:: scalar aic
 
-        Storage for the Akaike Information Critrion of the fitted model.
+        Storage for the Akaike Information Criterion of the fitted model.
 
     .. member:: scalar bic
 
-        Storgae for the Bayseian Infromation Criterion of the fitted model.
+        Storage for the Bayseian Information Criterion of the fitted model.
 
     .. member:: scalar llh
 
@@ -115,7 +115,7 @@ Initialization
 Operations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-All operations require a properly initialized :struct:`PoisHmm` structur as
+All operations require a properly initialized :struct:`PoisHmm` structure as
 first parameter.
 
 .. function:: void PoisHmm_EstimateParams (     \
@@ -123,20 +123,20 @@ first parameter.
     const DataSet *const restrict inp)
 
     Compute maximum-likelihood estimates for the HMM parameters given the data
-    set pointed to by :var:`inp`. Estimates are computed using the `Baum-Welch
+    set pointed to by :var:`inp`. Estimates are computed using the `BaumWelch
     algorithm`_.
 
     During the fit, keep the members :member:`n_iter`, :member:`llh`,
     :member:`params`, and :member:`probs` up to date. This information may be
     used for further processing, such as model checking or, in case of errors,
-    debuging at any time.
+    debugging at any time.
 
     Also, set the error indicator to `true` if the fit or any intermediate
     computation fails.
 
 .. function:: int PoisHmm_ForwardBackward (PoisHmm *const restrict this)
 
-   Compute the forward and backward probabilities of the HMM unsing the
+   Compute the forward and backward probabilities of the HMM using the
    `forward-backward algorithm`_.
 
 .. function:: int PoisHmm_ForwardProbabilities (PoisHmm *const restrict this)
@@ -153,22 +153,18 @@ first parameter.
 
 .. function:: void PoisHmm_LogCondStateProbs (PoisHmm *const restrict this)
 
-    Compute the logarithm of the conditional state probabilities.
+    Compute the logarithm of the conditional state probabilities ``n`` 
+
 
 Utilities
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. function:: void PoisHmm_PrintParams (const PoisHmm *const this)
-.. function:: void PoisHmm_PrintInitParams (const PoisHmm *const restrict this)
+.. function:: void PoisHmm_Summary (const PoisHmm *const restrict this)
 
-    Print parameters to standard output in a nicely formatted fashion.
-
-.. function:: void PoisHmm_PrintModelSummary (const PoisHmm *const restrict this)
-
-    Print estimated parameters and quality measures to standard output.
+    Print estimated parameters and quality measures to stderr.
 
 
 
-.. _Baum-Welch algorithm: https://en.wikipedia.org/wiki/Baum%E2%80%93Welch_algorithm 
+.. _Baum-Welch algorithm: https://en.wikipedia.org/wiki/Baum%E2%80%93Welch_algorithm
 
 .. _forward-backward algorithm: https://en.wikipedia.org/wiki/Forward-backward_algorithm
