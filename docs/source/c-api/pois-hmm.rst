@@ -149,11 +149,11 @@ first parameter.
     
 .. function:: void PoisHmm_LogLikelihood (PoisHmm *const restrict this)
 
-    Compute the logarithm of the likelihood of the HMM pointed to by :var:`this`. 
+    Compute the logarithm of the data likelihood under the HMM.
 
 .. function:: void PoisHmm_LogCondStateProbs (PoisHmm *const restrict this)
 
-    Compute the logarithm of the conditional state probabilities ``n`` 
+    Compute the logarithm of the conditional state probabilities.
 
 
 Utilities
@@ -162,7 +162,6 @@ Utilities
 .. function:: void PoisHmm_Summary (const PoisHmm *const restrict this)
 
     Print estimated parameters and quality measures to stderr.
-
 
 
 .. _Baum-Welch algorithm: https://en.wikipedia.org/wiki/Baum%E2%80%93Welch_algorithm
