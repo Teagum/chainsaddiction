@@ -123,7 +123,7 @@ first parameter.
     const DataSet *const restrict inp)
 
     Compute maximum-likelihood estimates for the HMM parameters given the data
-    set pointed to by :var:`inp`. Estimates are computed using the `BaumWelch
+    set pointed to by :var:`inp`. Estimates are computed using the `Baum-Welch
     algorithm`_.
 
     During the fit, keep the members :member:`n_iter`, :member:`llh`,
