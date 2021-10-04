@@ -26,7 +26,7 @@ Computation buffers
 
     .. member:: size_t PoisProbs.m_states
 
-        Number of in states in the HMM.
+        Number of states in the HMM.
 
     .. member:: scalar *PoisProbs.lsdp
         
