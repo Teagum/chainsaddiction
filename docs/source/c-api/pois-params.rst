@@ -77,13 +77,13 @@ Initialization
 
 .. function:: void PoisParams_SetGammaRnd (PoisParams *const restrict this)
 
-    Sample the transition probability matrix (tpm) of :var:`this` randomly.
+		Sample the transition probability matrix (tpm) of :var:`this` randomly.
     This function guaratees that each row of the tpm is indeed a discrete
     probability distribution.
 
 
 .. function:: void PoisParams_SetDeltaRnd (PoisParams *const restrict this)
 
-    Sample the initial distribution of :var:`this` randomly. This function
-    guaratees that each row of the tpm is indeed a discrete probability
-    distribution.
+		Sample the initial distribution of :var:`this` randomly. This function
+		guaratees that the initial distribution is indeed a discrete probability
+		distributions. 
