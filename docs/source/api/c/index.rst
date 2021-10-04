@@ -7,13 +7,4 @@ C API
 .. toctree::
 
    basics
-
-
-HMMs with Poisson-distributed states
-===============================================================================
-
-.. toctree::
-
-   pois-hmm
-   pois-params
-   pois-probs
+   poishmm/index

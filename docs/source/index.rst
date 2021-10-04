@@ -10,10 +10,9 @@ ChainsAddiction Documentation Home
    :maxdepth: 2
    :caption: Contents:
 
-   
-   python-api/overview
-   c-api/overview
-
+   install
+   userguide/index
+   api/index
 
 Indices and tables
 ==================
