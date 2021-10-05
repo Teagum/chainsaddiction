@@ -4,8 +4,8 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "restrict.h"
-#include "scalar.h"
+#include <stdbool.h>
+#include "chainsaddiction.h"
 #include "libma.h"
 #include "read.h"
 
