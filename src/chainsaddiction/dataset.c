@@ -5,9 +5,16 @@ DataSet *
 ds_NewEmpty (void)
 {
     DataSet *pds = malloc (sizeof pds);
-    MA_ASSERT_ALLOC (pds, "Could not allocate dataset.");
-    pds->data = NULL;
-    pds->size = 0;
+    if (pds == NULL)
+    {
+        Ca_ErrMsg ("Could not allocate data set.");
+    }
+    else
+    {
+        pds->data = NULL;
+        pds->size = 0;
+        pds->err  = false;
+    }
     return pds;
 }
 
