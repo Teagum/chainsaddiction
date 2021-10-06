@@ -27,7 +27,7 @@ test_ds_NewFromFile (void)
     DataSet *pds = ds_NewFromFile (path);
 
     ds_FREE (pds);
-    return false;
+    return UT_SUCCESS;
 }
 
 
@@ -44,12 +44,12 @@ test_ds_set_error_on_idx_out_of_bounds (void)
         ds_set (inp, idx, val);
         if (!inp->err) {
             ds_FREE (inp);
-            return true;
+            return UT_FAILURE;
         }
     }
 
     ds_FREE (inp);
-    return false;
+    return UT_SUCCESS;
 }
 
 
@@ -66,11 +66,11 @@ test_ds_set_values (void)
         ds_set (inp, idx, val);
         if (inp->err || !ASSERT_EQUAL (inp->data[idx], val)) {
             ds_FREE (inp);
-            return true;
+            return UT_FAILURE;
         }
     }
     ds_FREE (inp);
-    return false;
+    return UT_SUCCESS;
 }
 
 
@@ -87,11 +87,11 @@ test_ds_get_error_on_idx_out_of_bounds (void)
         ds_get (inp, idx, &val);
         if (!inp->err) {
             ds_FREE (inp);
-            return true;
+            return UT_FAILURE;
         }
     }
     ds_FREE (inp);
-    return false;
+    return UT_SUCCESS;
 }
 
 
@@ -110,10 +110,10 @@ test_ds_get_values (void)
         ds_get (inp, idx, &out);
         if (inp->err || !ASSERT_EQUAL (val, out)) {
            ds_FREE (inp);
-           return true;
+           return UT_FAILURE;
         }
     }
 
     ds_FREE (inp);
-    return false;
+    return UT_SUCCESS;
 }
