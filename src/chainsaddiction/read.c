@@ -14,13 +14,10 @@ Ca_OpenFile (const char *path, const char *mode)
 }
 
 
-inline void
+inline int
 Ca_CloseFile (FILE *file)
 {
-    if (fclose (file) == EOF)
-    {
-        Ca_ErrMsg ("Failed to close file.");
-    }
+    return fclose (file);
 }
 
 

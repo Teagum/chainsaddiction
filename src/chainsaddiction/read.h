@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include "scalar.h"
+#include "chainsaddiction.h"
 
 #define cnt unsigned int
 #define RETURN_ERROR return 1
@@ -21,25 +21,22 @@
 
 /** Open a file.
  *
- * Try to open path and check for possible errors.
- *
- * \param[in]   path    Path to file.
+ * \param[in]   path    Path to file
  * \param[in]   mode    File mode
  *
- * \return  Pointer to open file stream.
+ * \return  Pointer to open file stream or NULL
  */
 extern FILE *
 Ca_OpenFile (const char *path, const char *mode);
 
 
-/**Close a file and check for errors.
-  *
-  * Try to close `file' and check for possible errors.
+/** Close an open file stream.
   *
   *\param[in]   file    Open file stream.
   *
+  *\return  0 on suceess, `EOF` on failure.
 */
-extern void
+extern int
 Ca_CloseFile (FILE *file);
 
 
