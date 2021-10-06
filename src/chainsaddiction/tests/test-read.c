@@ -1,24 +1,6 @@
 #include "test_read.h"
 
 
-unsigned short N_ERRORS = 0;
-
-int main (void)
-{
-    SETUP;
-
-    RUN_TEST (test_Ca_ReadDataFile_full_file);
-    RUN_TEST (test_Ca_ReadDataFile_n_lines);
-    RUN_TEST (test_Ca_CountLines_earthquakes);
-    /*
-    FEEDBACK (test_Ca_CountLines_empty);
-    FEEDBACK (test_Ca_CountLines_wrong_format);
-    */
-
-    EVALUATE;
-}
-
-
 bool
 test_Ca_ReadDataFile_full_file (void)
 {
