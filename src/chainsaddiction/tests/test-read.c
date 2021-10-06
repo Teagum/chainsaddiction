@@ -1,31 +1,37 @@
-#include "test_read.h"
+#include "test-read.h"
 
 
 bool
 test_Ca_ReadDataFile_full_file (void)
 {
-    bool fail = true;
-    cnt n_lines = 0;
-    cnt r_lines = 0;
+    bool   err     = true;
+    size_t n_lines = 0;
+    size_t r_lines = 0;
+
     scalar *data = NULL;
-    FILE *file = NULL;
+    FILE   *file = NULL;
 
-    file = Ca_OpenFile ("tests/data/earthquakes", "r");
+    file = fopen ("tests/data/earthquakes", "r");
+    if (file == NULL)
+    {
+        Ca_ErrMsg ("Could not open data file.");
+        err = true;
+        goto cleanup;
+    }
+
     Ca_CountLines (file, &n_lines);
-    S_MALLOC (data, n_lines);
+    data = malloc (sizeof data * n_lines);
+    if (data == NULL)
+    {
+        err = true;
+        goto cleanup;
+    }
     r_lines = Ca_ReadDataFile (file, n_lines, data);
-    Ca_CloseFile (file);
-    free (data);
 
-    file = Ca_OpenFile ("tests/data/centroids", "r");
-    Ca_CountLines (file, &n_lines);
-    S_MALLOC (data, n_lines);
-    r_lines = Ca_ReadDataFile (file, n_lines, data);
-    Ca_CloseFile (file);
+cleanup:
+    fclose (file);
     free (data);
-
-    fail = false;
-    return fail;
+    return err ? UT_FAILURE : UT_SUCCESS;
 }
 
 

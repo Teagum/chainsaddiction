@@ -4,7 +4,7 @@
 #include <time.h>
 #include <stdio.h>
 #include "unittest.h"
-#include "scalar.h"
+#include "chainsaddiction.h"
 #include "read.h"
 
 
