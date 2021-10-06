@@ -10,13 +10,7 @@ enum io_error {
 inline FILE *
 Ca_OpenFile (const char *path, const char *mode)
 {
-    FILE *file = fopen (path, mode);
-    if (file == NULL)
-    {
-        perror ("ERROR");
-        exit (EXIT_FAILURE);
-    }
-    return file;
+    return fopen (path, mode);
 }
 
 
