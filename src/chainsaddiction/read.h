@@ -40,15 +40,17 @@ extern int
 Ca_CloseFile (FILE *file);
 
 
-/** Read new line separated files
-  *
-  *\param[in]   file    Open file stream.
-  *\param[out]  target  Pointer to allocated memory.
-  *
-  *\return  Number of read lines.
-  */
-extern cnt
-Ca_ReadDataFile (FILE *stream, cnt n_lines, scalar *target);
+/** Read numerical data from file.
+ *
+ * Numbers have to be separated by newline.
+ *
+ *\param[in]   file    Open file stream.
+ *\param[out]  target  Pointer to allocated memory.
+ *
+ *\return  Number of read lines.
+*/
+extern size_t
+Ca_ReadDataFile (FILE *stream, size_t n_lines, scalar *target);
 
 
 /** Count to number of lines in a file.

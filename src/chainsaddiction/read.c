@@ -21,20 +21,21 @@ Ca_CloseFile (FILE *file)
 }
 
 
-cnt
-Ca_ReadDataFile (FILE *stream, cnt n_lines, scalar *target)
+size_t
+Ca_ReadDataFile (FILE *stream, size_t n_lines, scalar *target)
 {
     int ferr = 0;
-    cnt line_cnt = 0;
+    size_t lcnt = 0;
 
-    while (line_cnt < n_lines)
+    while (lcnt < n_lines)
     {
         ferr = fscanf (stream, RSF, target);
         if (ferr == EOF)
         {
             if (ferror (stream))
             {
-                PERISH ("ERROR: failed reading from stream.");
+                Ca_ErrMsg ("ERROR: failed reading from stream.");
+                break;
             }
             else if (feof (stream))
             {
@@ -43,12 +44,12 @@ Ca_ReadDataFile (FILE *stream, cnt n_lines, scalar *target)
         }
         else if (ferr != 1)
         {
-            PERISH ("ERROR: Content of line does not match format.");
+            Ca_ErrMsg ("ERROR: Content of line does not match format.");
         }
-        line_cnt++;
+        lcnt++;
         target++;
     }
-    return line_cnt;
+    return lcnt;
 }
 
 
