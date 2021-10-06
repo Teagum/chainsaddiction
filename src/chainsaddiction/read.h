@@ -7,7 +7,6 @@
 #include <string.h>
 #include "chainsaddiction.h"
 
-#define cnt unsigned int
 #define RETURN_ERROR return 1
 #define RETURN_SUCCESS return 0
 #define HEADER_SIZE_MAX 100
