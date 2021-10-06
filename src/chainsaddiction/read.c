@@ -19,8 +19,7 @@ Ca_CloseFile (FILE *file)
 {
     if (fclose (file) == EOF)
     {
-        fputs ("ERROR: Failed to close file.", stderr);
-        exit (EXIT_FAILURE);
+        Ca_ErrMsg ("Failed to close file.");
     }
 }
 
