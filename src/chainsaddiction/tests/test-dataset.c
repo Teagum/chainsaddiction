@@ -1,34 +1,17 @@
-#include "test_dataset.h"
-
-
-int main (void)
-{
-    SETUP;
-
-    printf ("scalar size: %zu\n", sizeof (scalar));
-
-    RUN_TEST (test_ds_NewEmpty);
-    //RUN_TEST (test_ds_New);
-    RUN_TEST (test_ds_set_error_on_idx_out_of_bounds);
-    RUN_TEST (test_ds_set_values);
-    RUN_TEST (test_ds_get_error_on_idx_out_of_bounds);
-    RUN_TEST (test_ds_get_values);
-
-    EVALUATE;
-}
+#include "test-dataset.h"
 
 
 bool
 test_ds_NewEmpty (void)
 {
-    scalar acc = 0l;
+    scalar acc = 0.0L;
     bool err = true;
 
     DataSet *inp = ds_New (DS_TEST_INIT_SIZE);
     for (size_t i = 0; i < inp->size; i++) {
         acc += inp->data[i];
     }
-    if (ASSERT_EQUAL (0, acc)) {
+    if (ASSERT_EQUAL (0.0L, acc)) {
         err = false;
     }
 
@@ -55,8 +38,8 @@ test_ds_set_error_on_idx_out_of_bounds (void)
 
     for (size_t i = 0; i < DS_TEST_N_ITER; i++)
     {
-        size_t idx = (size_t) rnd_int (DS_TEST_INIT_SIZE, INT_MAX);
-        scalar val = rnd ();
+        size_t idx = rnd_size (DS_TEST_INIT_SIZE, INT_MAX);
+        scalar val = rnd_sample ();
 
         ds_set (inp, idx, val);
         if (!inp->err) {
@@ -77,8 +60,8 @@ test_ds_set_values (void)
 
     for (size_t i = 0; i < DS_TEST_N_ITER; i++)
     {
-        size_t idx = (size_t) rnd_int (0, DS_TEST_INIT_SIZE);
-        scalar val = rnd ();
+        size_t idx = rnd_size (0, DS_TEST_INIT_SIZE);
+        scalar val = rnd_sample ();
 
         ds_set (inp, idx, val);
         if (inp->err || !ASSERT_EQUAL (inp->data[idx], val)) {
@@ -98,7 +81,7 @@ test_ds_get_error_on_idx_out_of_bounds (void)
 
     for (size_t i = 0; i < DS_TEST_N_ITER; i++)
     {
-        size_t idx = (size_t) rnd_int (DS_TEST_INIT_SIZE, INT_MAX);
+        size_t idx = rnd_size (DS_TEST_INIT_SIZE, INT_MAX);
         scalar val = 0;
 
         ds_get (inp, idx, &val);
@@ -119,8 +102,8 @@ test_ds_get_values (void)
 
     for (size_t i = 0; i < DS_TEST_N_ITER; i++)
     {
-        scalar val = rnd ();
-        size_t idx = (size_t) rnd_int (0, DS_TEST_INIT_SIZE);
+        scalar val = rnd_sample ();
+        size_t idx = rnd_size (0, DS_TEST_INIT_SIZE);
         scalar out = 0;
 
         ds_set (inp, idx, val);

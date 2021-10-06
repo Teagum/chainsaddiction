@@ -5,10 +5,9 @@
 #include <stdio.h>
 #include <time.h>
 #include "unittest.h"
-#include "scalar.h"
-#include "rnd.h"
-#include "restrict.h"
+#include "chainsaddiction.h"
 #include "dataset.h"
+#include "libvmath.h"
 
 #define DS_TEST_INIT_SIZE 1000
 #define DS_TEST_N_ITER 1000
