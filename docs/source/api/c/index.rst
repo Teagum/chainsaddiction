@@ -7,4 +7,5 @@ C API
 .. toctree::
 
    basics
+   dataset
    poishmm/index
