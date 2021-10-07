@@ -6,7 +6,7 @@ test_Ca_ReadDataFile_full_file (void)
 {
     const char path[] = "../../../tests/data/earthquakes/earthquakes";
 
-    bool   err     = true;
+    bool   err     = UT_FAILURE;
     size_t n_lines = 0;
     size_t r_lines = 0;
 
@@ -17,7 +17,6 @@ test_Ca_ReadDataFile_full_file (void)
     if (file == NULL)
     {
         Ca_ErrMsg ("Could not open data file.");
-        err = true;
         goto cleanup;
     }
 
@@ -26,16 +25,15 @@ test_Ca_ReadDataFile_full_file (void)
     if (data == NULL)
     {
         Ca_ErrMsg ("Could not allocate buffer.");
-        err = true;
         goto cleanup;
     }
     r_lines = Ca_ReadDataFile (file, n_lines, data);
-    err = false;
+    err = (r_lines == N_EQ) ? UT_SUCCESS : UT_FAILURE;
 
 cleanup:
     fclose (file);
     free (data);
-    return err ? UT_FAILURE : UT_SUCCESS;
+    return err;
 }
 
 
@@ -44,7 +42,7 @@ test_Ca_ReadDataFile_n_lines (void)
 {
     const char path[] = "../../../tests/data/earthquakes/earthquakes";
 
-    bool   err       = true;
+    bool   err       = UT_FAILURE;
     size_t r_lines   = 0;
     size_t n_lines   = 0;
     size_t max_lines = 0;
@@ -70,15 +68,12 @@ test_Ca_ReadDataFile_n_lines (void)
     }
 
     r_lines = Ca_ReadDataFile (file, n_lines, data);
-    if (r_lines == n_lines)
-    {
-        err = false;
-    }
+    err = (r_lines == n_lines) ? UT_SUCCESS : UT_FAILURE;
 
 cleanup:
     Ca_CloseFile (file);
     free (data);
-    return err ? UT_FAILURE : UT_SUCCESS;
+    return err;
 }
 
 
@@ -86,7 +81,7 @@ bool
 test_Ca_CountLines_earthquakes (void)
 {
     const char path[] = "../../../tests/data/earthquakes/earthquakes";
-    bool   err        = true;
+    bool   err        = UT_FAILURE;
     size_t n_lines    = 0;
     FILE   *file      = NULL;
 
@@ -98,11 +93,11 @@ test_Ca_CountLines_earthquakes (void)
     }
 
     Ca_CountLines (file, &n_lines);
-    err = (n_lines == N_EQ) ? false : true;
+    err = (n_lines == N_EQ) ? UT_SUCCESS : UT_FAILURE;
 
 cleanup:
     Ca_CloseFile (file);
-    return err ? UT_FAILURE : UT_SUCCESS;
+    return err;
 }
 
 
@@ -134,7 +129,7 @@ bool
 test_Ca_CountLines_wrong_format (void)
 {
     bool err = true;
-    cnt n_lines = 0;
+    size_t n_lines = 0;
 
     FILE *file = Ca_OpenFile ("tests/data/wrong_format", "r");
     Ca_CountLines (file, &n_lines);
