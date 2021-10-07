@@ -10,41 +10,32 @@ enum io_error {
 inline FILE *
 Ca_OpenFile (const char *path, const char *mode)
 {
-    FILE *file = fopen (path, mode);
-    if (file == NULL)
-    {
-        perror ("ERROR");
-        exit (EXIT_FAILURE);
-    }
-    return file;
+    return fopen (path, mode);
 }
 
 
-inline void
+inline int
 Ca_CloseFile (FILE *file)
 {
-    if (fclose (file) == EOF)
-    {
-        fputs ("ERROR: Failed to close file.", stderr);
-        exit (EXIT_FAILURE);
-    }
+    return fclose (file);
 }
 
 
-cnt
-Ca_ReadDataFile (FILE *stream, cnt n_lines, scalar *target)
+size_t
+Ca_ReadDataFile (FILE *stream, size_t n_lines, scalar *target)
 {
     int ferr = 0;
-    cnt line_cnt = 0;
+    size_t lcnt = 0;
 
-    while (line_cnt < n_lines)
+    while (lcnt < n_lines)
     {
         ferr = fscanf (stream, RSF, target);
         if (ferr == EOF)
         {
             if (ferror (stream))
             {
-                PERISH ("ERROR: failed reading from stream.");
+                Ca_ErrMsg ("ERROR: failed reading from stream.");
+                break;
             }
             else if (feof (stream))
             {
@@ -53,29 +44,29 @@ Ca_ReadDataFile (FILE *stream, cnt n_lines, scalar *target)
         }
         else if (ferr != 1)
         {
-            PERISH ("ERROR: Content of line does not match format.");
+            Ca_ErrMsg ("ERROR: Content of line does not match format.");
         }
-        line_cnt++;
+        lcnt++;
         target++;
     }
-    return line_cnt;
+    return lcnt;
 }
 
 
 void
-Ca_CountLines (FILE *file, cnt *line_cnt)
+Ca_CountLines (FILE *stream, size_t *line_cnt)
 {
     int fp_err = 1;
     int chr = 0;
     fpos_t fp_start = 0;
     fpos_t fp_current = 0;
 
-    if (file == NULL)
+    if (stream == NULL)
     {
         PERISH ("File pointer points to NULL");
     }
 
-    fp_err = fgetpos (file, &fp_current);
+    fp_err = fgetpos (stream, &fp_current);
     if (fp_err)
     {
         PERISH ("Could not get file position");
@@ -83,7 +74,7 @@ Ca_CountLines (FILE *file, cnt *line_cnt)
 
     if (fp_current != fp_start)
     {
-        fp_err = fsetpos (file, &fp_start);
+        fp_err = fsetpos (stream, &fp_start);
         if (fp_err)
         {
             PERISH ("Could not set file position");
@@ -92,7 +83,7 @@ Ca_CountLines (FILE *file, cnt *line_cnt)
 
     while (true)
     {
-        chr = getc (file);
+        chr = getc (stream);
         if (chr == EOF) break;
 
         if (chr == '\n')
@@ -101,7 +92,7 @@ Ca_CountLines (FILE *file, cnt *line_cnt)
         }
     }
 
-    fp_err = fsetpos (file, &fp_current);
+    fp_err = fsetpos (stream, &fp_current);
     if (fp_err)
     {
         PERISH ("Could not set file position");

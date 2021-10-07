@@ -5,9 +5,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include "scalar.h"
+#include "chainsaddiction.h"
 
-#define cnt unsigned int
 #define RETURN_ERROR return 1
 #define RETURN_SUCCESS return 0
 #define HEADER_SIZE_MAX 100
@@ -21,37 +20,36 @@
 
 /** Open a file.
  *
- * Try to open path and check for possible errors.
- *
- * \param[in]   path    Path to file.
+ * \param[in]   path    Path to file
  * \param[in]   mode    File mode
  *
- * \return  Pointer to open file stream.
+ * \return  Pointer to open file stream or NULL
  */
 extern FILE *
 Ca_OpenFile (const char *path, const char *mode);
 
 
-/**Close a file and check for errors.
-  *
-  * Try to close `file' and check for possible errors.
+/** Close an open file stream.
   *
   *\param[in]   file    Open file stream.
   *
+  *\return  0 on suceess, `EOF` on failure.
 */
-extern void
+extern int
 Ca_CloseFile (FILE *file);
 
 
-/** Read new line separated files
-  *
-  *\param[in]   file    Open file stream.
-  *\param[out]  target  Pointer to allocated memory.
-  *
-  *\return  Number of read lines.
-  */
-extern cnt
-Ca_ReadDataFile (FILE *stream, cnt n_lines, scalar *target);
+/** Read numerical data from file.
+ *
+ * Numbers have to be separated by newline.
+ *
+ *\param[in]   file    Open file stream.
+ *\param[out]  target  Pointer to allocated memory.
+ *
+ *\return  Number of read lines.
+*/
+extern size_t
+Ca_ReadDataFile (FILE *stream, size_t n_lines, scalar *target);
 
 
 /** Count to number of lines in a file.
@@ -59,13 +57,13 @@ Ca_ReadDataFile (FILE *stream, cnt n_lines, scalar *target);
  * Count the number of lines in a file until EOF is reached or an error
  * occures.
  *
- * \params[in]  file    Open file strea.
- * \params[out] cnt     Number of lines.
+ * \params[in]  file     Open file stream.
+ * \params[out] n_lines  Number of lines.
  *
  * \return  Error indicator.
  */
 extern void
-Ca_CountLines (FILE *file, cnt *line_cnt);
+Ca_CountLines (FILE *stream, size_t *n_lines);
 
 
 extern int
