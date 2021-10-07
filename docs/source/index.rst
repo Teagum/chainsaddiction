@@ -12,5 +12,5 @@ ChainsAddiction Documentation Home
    :caption: Contents:
 
    install
-   userguide/index
+   usrguide/index
    api/index
