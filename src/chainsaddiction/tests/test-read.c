@@ -128,21 +128,22 @@ cleanup:
 bool
 test_Ca_CountLines_wrong_format (void)
 {
-    bool err = true;
-    size_t n_lines = 0;
+    const char   path[]  = "../../../tests/data/wrong_format";
+          bool   err     = UT_FAILURE;
+          size_t n_lines = 0;
+          FILE   *file   = NULL;
 
-    FILE *file = Ca_OpenFile ("tests/data/wrong_format", "r");
+    file = Ca_OpenFile (path, "r");
+    if (file == NULL)
+    {
+        Ca_ErrMsg ("Could open file.");
+        goto cleanup;
+    }
+
     Ca_CountLines (file, &n_lines);
+    err = (n_lines == 3) ? UT_SUCCESS : UT_FAILURE;
 
-    if (n_lines == 3)
-    {
-        err = false;
-    }
-    else
-    {
-        err = true;
-    }
-
+cleanup:
     Ca_CloseFile (file);
     return err;
 }
