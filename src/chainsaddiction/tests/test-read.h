@@ -6,6 +6,7 @@
 #include "unittest.h"
 #include "chainsaddiction.h"
 #include "read.h"
+#include "libvmath.h"
 
 
 #define N_EQ 107

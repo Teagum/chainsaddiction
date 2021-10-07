@@ -42,26 +42,43 @@ cleanup:
 bool
 test_Ca_ReadDataFile_n_lines (void)
 {
-    cnt r_lines = 0;
-    cnt n_lines = 0;
+    const char path[] = "../../../tests/data/earthquakes/earthquakes";
+
+    bool   err       = true;
+    size_t r_lines   = 0;
+    size_t n_lines   = 0;
+    size_t max_lines = 0;
+    size_t min_lines = 1;
+
     scalar *data = NULL;
-    FILE *file = NULL;
-    enum { n_runs = 100 };
+    FILE   *file = NULL;
 
-    for (cnt i=0; i < n_runs; i++)
+    file = Ca_OpenFile (path, "r");
+    if (file == NULL)
     {
-        n_lines = rand () % N_EQ;
-        file = Ca_OpenFile ("tests/data/earthquakes", "r");
-        S_MALLOC (data, n_lines);
-        r_lines = Ca_ReadDataFile (file, n_lines, data);
-        Ca_CloseFile (file);
-        free (data);
-
-        if (r_lines != n_lines) {
-            return true;
-        }
+        Ca_ErrMsg ("Could not open data file.");
+        goto cleanup;
     }
-    return false;
+
+    Ca_CountLines (file, &max_lines);
+    n_lines = rnd_size (min_lines, max_lines);
+    data = malloc (sizeof (scalar) * n_lines);
+    if (data == NULL)
+    {
+        Ca_ErrMsg ("Could not allocate buffer.");
+        goto cleanup;
+    }
+
+    r_lines = Ca_ReadDataFile (file, n_lines, data);
+    if (r_lines == n_lines)
+    {
+        err = false;
+    }
+
+cleanup:
+    Ca_CloseFile (file);
+    free (data);
+    return err ? UT_FAILURE : UT_SUCCESS;
 }
 
 
