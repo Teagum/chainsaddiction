@@ -5,7 +5,9 @@ C API
 *******************************************************************************
 
 .. toctree::
+   :maxdepth: 1
 
    basics
    dataset
    poishmm/index
+   internal

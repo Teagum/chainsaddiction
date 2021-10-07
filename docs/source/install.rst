@@ -1,8 +1,9 @@
+*******************************************************************************
 Installation
-===============================================================================
+*******************************************************************************
 
 Download
--------------------------------------------------------------------------------
+===============================================================================
 
 ChainsAddiction is available on `PyPi`_. That means you can download and install
 it with the common ``pip`` command explained below. Note that ``pip`` only installs the Python bindings.
@@ -22,7 +23,7 @@ the following command:
 
 
 Installation
--------------------------------------------------------------------------------
+===============================================================================
 
 ChainsAddiction provides a Python extension module that needs to be compiled
 before you can use it. Therefore, your system has to meet the following
