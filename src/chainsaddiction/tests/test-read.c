@@ -4,6 +4,8 @@
 bool
 test_Ca_ReadDataFile_full_file (void)
 {
+    const char path[] = "../../../tests/data/earthquakes/earthquakes";
+
     bool   err     = true;
     size_t n_lines = 0;
     size_t r_lines = 0;
@@ -11,7 +13,7 @@ test_Ca_ReadDataFile_full_file (void)
     scalar *data = NULL;
     FILE   *file = NULL;
 
-    file = fopen ("tests/data/earthquakes", "r");
+    file = fopen (path, "r");
     if (file == NULL)
     {
         Ca_ErrMsg ("Could not open data file.");
@@ -20,13 +22,15 @@ test_Ca_ReadDataFile_full_file (void)
     }
 
     Ca_CountLines (file, &n_lines);
-    data = malloc (sizeof data * n_lines);
+    data = malloc (sizeof (scalar) * n_lines);
     if (data == NULL)
     {
+        Ca_ErrMsg ("Could not allocate buffer.");
         err = true;
         goto cleanup;
     }
     r_lines = Ca_ReadDataFile (file, n_lines, data);
+    err = false;
 
 cleanup:
     fclose (file);
