@@ -57,13 +57,13 @@ Ca_ReadDataFile (FILE *stream, size_t n_lines, scalar *target);
  * Count the number of lines in a file until EOF is reached or an error
  * occures.
  *
- * \params[in]  file    Open file strea.
- * \params[out] cnt     Number of lines.
+ * \params[in]  file     Open file stream.
+ * \params[out] n_lines  Number of lines.
  *
  * \return  Error indicator.
  */
 extern void
-Ca_CountLines (FILE *file, cnt *line_cnt);
+Ca_CountLines (FILE *stream, size_t *n_lines);
 
 
 extern int

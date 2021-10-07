@@ -54,19 +54,19 @@ Ca_ReadDataFile (FILE *stream, size_t n_lines, scalar *target)
 
 
 void
-Ca_CountLines (FILE *file, cnt *line_cnt)
+Ca_CountLines (FILE *stream, size_t *line_cnt)
 {
     int fp_err = 1;
     int chr = 0;
     fpos_t fp_start = 0;
     fpos_t fp_current = 0;
 
-    if (file == NULL)
+    if (stream == NULL)
     {
         PERISH ("File pointer points to NULL");
     }
 
-    fp_err = fgetpos (file, &fp_current);
+    fp_err = fgetpos (stream, &fp_current);
     if (fp_err)
     {
         PERISH ("Could not get file position");
@@ -74,7 +74,7 @@ Ca_CountLines (FILE *file, cnt *line_cnt)
 
     if (fp_current != fp_start)
     {
-        fp_err = fsetpos (file, &fp_start);
+        fp_err = fsetpos (stream, &fp_start);
         if (fp_err)
         {
             PERISH ("Could not set file position");
@@ -83,7 +83,7 @@ Ca_CountLines (FILE *file, cnt *line_cnt)
 
     while (true)
     {
-        chr = getc (file);
+        chr = getc (stream);
         if (chr == EOF) break;
 
         if (chr == '\n')
@@ -92,7 +92,7 @@ Ca_CountLines (FILE *file, cnt *line_cnt)
         }
     }
 
-    fp_err = fsetpos (file, &fp_current);
+    fp_err = fsetpos (stream, &fp_current);
     if (fp_err)
     {
         PERISH ("Could not set file position");
