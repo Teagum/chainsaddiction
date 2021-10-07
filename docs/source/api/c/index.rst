@@ -10,4 +10,5 @@ C API
    basics
    dataset
    poishmm/index
+   utils
    internal
