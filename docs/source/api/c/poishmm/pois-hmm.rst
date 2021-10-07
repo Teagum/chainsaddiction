@@ -25,12 +25,12 @@ PoisHmm object
             PoisProbs *probs;
         } PoisHmm;
 
-    .. var:: bool err
+    .. member:: bool err
 
         A boolean error indicator. `err` equals `true` if an error occurred
         during fitting.
 
-    .. var:: size_t n_obs
+    .. member:: size_t n_obs
 
         An integral number greater than zero that specifies the number of
         states in an HMM.
