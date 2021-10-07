@@ -85,23 +85,24 @@ cleanup:
 bool
 test_Ca_CountLines_earthquakes (void)
 {
-    bool err = true;
-    cnt n_lines = 0;
+    const char path[] = "../../../tests/data/earthquakes/earthquakes";
+    bool   err        = true;
+    size_t n_lines    = 0;
+    FILE   *file      = NULL;
 
-    FILE *file = Ca_OpenFile ("tests/data/earthquakes", "r");
+    file = Ca_OpenFile (path, "r");
+    if (file == NULL)
+    {
+        Ca_ErrMsg ("Could not allocate buffer.");
+        goto cleanup;
+    }
+
     Ca_CountLines (file, &n_lines);
+    err = (n_lines == N_EQ) ? false : true;
 
-    if (n_lines == N_EQ)
-    {
-        err = false;
-    }
-    else
-    {
-        err = true;
-    }
-
+cleanup:
     Ca_CloseFile (file);
-    return err;
+    return err ? UT_FAILURE : UT_SUCCESS;
 }
 
 
