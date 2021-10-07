@@ -1,8 +1,6 @@
 #ifndef test_read_h
 #define test_read_h
 
-#include <time.h>
-#include <stdio.h>
 #include "unittest.h"
 #include "chainsaddiction.h"
 #include "read.h"
