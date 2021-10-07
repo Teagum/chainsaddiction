@@ -109,21 +109,22 @@ cleanup:
 bool
 test_Ca_CountLines_empty (void)
 {
-    bool err = true;
-    cnt n_lines = 0;
+    const char   path[]  = "../../../tests/data/empty";
+          bool   err     = UT_FAILURE;
+          size_t n_lines = 0;
+          FILE   *file   = NULL;
 
-    FILE *file = Ca_OpenFile ("tests/data/empty", "r");
+    file = Ca_OpenFile (path, "r");
+    if (file == NULL)
+    {
+        Ca_ErrMsg ("Could open file.");
+        goto cleanup;
+    }
+
     Ca_CountLines (file, &n_lines);
+    err = (n_lines == 0) ? UT_SUCCESS : UT_FAILURE;
 
-    if (n_lines == 0)
-    {
-        err = false;
-    }
-    else
-    {
-        err = true;
-    }
-
+cleanup:
     Ca_CloseFile (file);
     return err;
 }
