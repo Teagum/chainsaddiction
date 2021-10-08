@@ -17,13 +17,13 @@ bool test__local_decoding (void)
     DataSet *lcsp = NULL;
     DataSet *xpct = NULL;
 
-    lcsp = ds_NewFromFile (datapath "lcsp.txt");
-    xpct = ds_NewFromFile (datapath "local-decoding.txt");
+    lcsp = DataSet_NewFromFile (datapath "lcsp.txt");
+    xpct = DataSet_NewFromFile (datapath "local-decoding.txt");
     dec = VA_SIZE_EMPTY (n_obs);
     if (lcsp == NULL || xpct == NULL || dec == NULL)
     {
-        ds_FREE (lcsp);
-        ds_FREE (xpct);
+        DataSet_Delete (lcsp);
+        DataSet_Delete (xpct);
         FREE (dec);
         return UT_FAILURE;
     }
@@ -36,8 +36,8 @@ bool test__local_decoding (void)
         if (err) break;
     }
 
-    ds_FREE (lcsp);
-    ds_FREE (xpct);
+    DataSet_Delete (lcsp);
+    DataSet_Delete (xpct);
     free (dec);
     return err;
 }
@@ -62,18 +62,18 @@ bool test__global_decoding (void)
     DataSet *ldelta = NULL;
     DataSet *xpct   = NULL;
 
-    lcsp   = ds_NewFromFile (datapath "lcsp.txt");
-    lgamma = ds_NewFromFile (datapath "lgamma.txt");
-    ldelta = ds_NewFromFile (datapath "ldelta.txt");
-    xpct   = ds_NewFromFile (datapath "global-decoding.txt");
+    lcsp   = DataSet_NewFromFile (datapath "lcsp.txt");
+    lgamma = DataSet_NewFromFile (datapath "lgamma.txt");
+    ldelta = DataSet_NewFromFile (datapath "ldelta.txt");
+    xpct   = DataSet_NewFromFile (datapath "global-decoding.txt");
     dec    = VA_SIZE_EMPTY (n_obs);
     if (lcsp == NULL || lgamma == NULL || ldelta == NULL || 
         xpct == NULL || dec == NULL)
     {
-        ds_FREE (lcsp);
-        ds_FREE (lgamma);
-        ds_FREE (ldelta);
-        ds_FREE (xpct);
+        DataSet_Delete (lcsp);
+        DataSet_Delete (lgamma);
+        DataSet_Delete (ldelta);
+        DataSet_Delete (xpct);
         free (dec);
         return UT_FAILURE;
     }    
@@ -87,10 +87,10 @@ bool test__global_decoding (void)
         if (err) break;
     }
 
-    ds_FREE (lcsp);
-    ds_FREE (lgamma);
-    ds_FREE (ldelta);
-    ds_FREE (xpct);
+    DataSet_Delete (lcsp);
+    DataSet_Delete (lgamma);
+    DataSet_Delete (ldelta);
+    DataSet_Delete (xpct);
     free (dec);
     return err;
 }

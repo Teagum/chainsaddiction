@@ -14,28 +14,28 @@
 
 
 bool
-test_ds_NewEmpty (void);
+test_DataSet_NewEmpty (void);
 
 bool
-test_ds_New (void);
+test_DataSet_New (void);
 
 bool
-test_ds_NewFromFile (void);
+test_DataSet_NewFromFile (void);
 
 bool
-test_ds_read (void);
+test_DataSet_read (void);
 
 bool
-test_ds_set_error_on_idx_out_of_bounds (void);
+test_DataSet_SetValue_error_on_idx_out_of_bounds (void);
 
 bool
-test_ds_set_values (void);
+test_DataSet_SetValue (void);
 
 bool
-test_ds_get_error_on_idx_out_of_bounds (void);
+test_DataSet_GetValue_error_on_idx_out_of_bounds (void);
 
 bool
-test_ds_get_values (void);
+test_DataSet_GetValue (void);
 
 
 #endif  /* TEST_DATASET_H */

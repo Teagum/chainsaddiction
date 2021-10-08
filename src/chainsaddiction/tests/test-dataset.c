@@ -2,12 +2,12 @@
 
 
 bool
-test_ds_NewEmpty (void)
+test_DataSet_NewEmpty (void)
 {
     scalar acc = 0.0L;
     bool err = true;
 
-    DataSet *inp = ds_New (DS_TEST_INIT_SIZE);
+    DataSet *inp = DataSet_New (DS_TEST_INIT_SIZE);
     for (size_t i = 0; i < inp->size; i++) {
         acc += inp->data[i];
     }
@@ -15,90 +15,90 @@ test_ds_NewEmpty (void)
         err = false;
     }
 
-    ds_FREE (inp);
+    DataSet_Delete (inp);
     return err;
 }
 
 
 bool
-test_ds_NewFromFile (void)
+test_DataSet_NewFromFile (void)
 {
     const char path[] = "tests/data/centroids";
-    DataSet *pds = ds_NewFromFile (path);
+    DataSet *pds = DataSet_NewFromFile (path);
 
-    ds_FREE (pds);
+    DataSet_Delete (pds);
     return UT_SUCCESS;
 }
 
 
 bool
-test_ds_set_error_on_idx_out_of_bounds (void)
+test_DataSet_SetValue_error_on_idx_out_of_bounds (void)
 {
-    DataSet *inp = ds_New (DS_TEST_INIT_SIZE);
+    DataSet *inp = DataSet_New (DS_TEST_INIT_SIZE);
 
     for (size_t i = 0; i < DS_TEST_N_ITER; i++)
     {
         size_t idx = rnd_size (DS_TEST_INIT_SIZE, INT_MAX);
         scalar val = rnd_sample ();
 
-        ds_set (inp, idx, val);
+        DataSet_SetValue (inp, idx, val);
         if (!inp->err) {
-            ds_FREE (inp);
+            DataSet_Delete (inp);
             return UT_FAILURE;
         }
     }
 
-    ds_FREE (inp);
+    DataSet_Delete (inp);
     return UT_SUCCESS;
 }
 
 
 bool
-test_ds_set_values (void)
+test_DataSet_SetValue (void)
 {
-    DataSet *inp = ds_New (DS_TEST_INIT_SIZE);
+    DataSet *inp = DataSet_New (DS_TEST_INIT_SIZE);
 
     for (size_t i = 0; i < DS_TEST_N_ITER; i++)
     {
         size_t idx = rnd_size (0, DS_TEST_INIT_SIZE);
         scalar val = rnd_sample ();
 
-        ds_set (inp, idx, val);
+        DataSet_SetValue (inp, idx, val);
         if (inp->err || !ASSERT_EQUAL (inp->data[idx], val)) {
-            ds_FREE (inp);
+            DataSet_Delete (inp);
             return UT_FAILURE;
         }
     }
-    ds_FREE (inp);
+    DataSet_Delete (inp);
     return UT_SUCCESS;
 }
 
 
 bool
-test_ds_get_error_on_idx_out_of_bounds (void)
+test_DataSet_GetValue_error_on_idx_out_of_bounds (void)
 {
-    DataSet *inp = ds_New (DS_TEST_INIT_SIZE);
+    DataSet *inp = DataSet_New (DS_TEST_INIT_SIZE);
 
     for (size_t i = 0; i < DS_TEST_N_ITER; i++)
     {
         size_t idx = rnd_size (DS_TEST_INIT_SIZE, INT_MAX);
         scalar val = 0;
 
-        ds_get (inp, idx, &val);
+        DataSet_GetValue (inp, idx, &val);
         if (!inp->err) {
-            ds_FREE (inp);
+            DataSet_Delete (inp);
             return UT_FAILURE;
         }
     }
-    ds_FREE (inp);
+    DataSet_Delete (inp);
     return UT_SUCCESS;
 }
 
 
 bool
-test_ds_get_values (void)
+test_DataSet_GetValue (void)
 {
-    DataSet *inp = ds_New (DS_TEST_INIT_SIZE);
+    DataSet *inp = DataSet_New (DS_TEST_INIT_SIZE);
 
     for (size_t i = 0; i < DS_TEST_N_ITER; i++)
     {
@@ -106,14 +106,14 @@ test_ds_get_values (void)
         size_t idx = rnd_size (0, DS_TEST_INIT_SIZE);
         scalar out = 0;
 
-        ds_set (inp, idx, val);
-        ds_get (inp, idx, &out);
+        DataSet_SetValue (inp, idx, val);
+        DataSet_GetValue (inp, idx, &out);
         if (inp->err || !ASSERT_EQUAL (val, out)) {
-           ds_FREE (inp);
+           DataSet_Delete (inp);
            return UT_FAILURE;
         }
     }
 
-    ds_FREE (inp);
+    DataSet_Delete (inp);
     return UT_SUCCESS;
 }

@@ -2,7 +2,7 @@
 
 
 DataSet *
-ds_NewEmpty (void)
+DataSet_NewEmpty (void)
 {
     DataSet *this = malloc (sizeof this);
     if (this == NULL)
@@ -20,9 +20,9 @@ ds_NewEmpty (void)
 
 
 DataSet *
-ds_New (const size_t n_elem)
+DataSet_New (const size_t n_elem)
 {
-    DataSet *this = ds_NewEmpty ();
+    DataSet *this = DataSet_NewEmpty ();
     this->data = MA_SCALAR_ZEROS (n_elem);
     this->size = (n_elem);
     return this;
@@ -30,17 +30,17 @@ ds_New (const size_t n_elem)
 
 
 DataSet *
-ds_NewFromFile (const char *path)
+DataSet_NewFromFile (const char *path)
 {
     size_t n_elem = 0;
     FILE   *file  = Ca_OpenFile (path, "r");
-    DataSet *this  = ds_NewEmpty ();
+    DataSet *this  = DataSet_NewEmpty ();
 
     Ca_CountLines (file, &n_elem);
     if (n_elem == 0)
     {
         fprintf (stderr, "Empty file: %s\n", path);
-        ds_FREE (this);
+        DataSet_Delete (this);
         Ca_CloseFile (file);
         return NULL;
     }
@@ -53,7 +53,7 @@ ds_NewFromFile (const char *path)
 
 
 inline void
-ds_set (DataSet *this, size_t idx, scalar val)
+DataSet_SetValue (DataSet *this, size_t idx, scalar val)
 {
     bool err = false;
 #ifdef NO_BOUNDS_CHECK
@@ -71,7 +71,7 @@ ds_set (DataSet *this, size_t idx, scalar val)
 
 
 inline void
-ds_get (DataSet *this, size_t idx, scalar *out)
+DataSet_GetValue (DataSet *this, size_t idx, scalar *out)
 {
     bool err = false;
 #ifdef NO_BOUNDS_CHECK
@@ -89,7 +89,7 @@ ds_get (DataSet *this, size_t idx, scalar *out)
 
 
 extern void
-ds_print (DataSet *this)
+DataSet_Print (DataSet *this)
 {
 #ifdef _NO_LD_MATH
     const char fmt[] = "[%4zu]%12.5f\n";
@@ -104,7 +104,7 @@ ds_print (DataSet *this)
         for (size_t i = 0; i < this->size; i++)
         {
             scalar val;
-            ds_get (this, i, &val);
+            DataSet_GetValue (this, i, &val);
             printf (fmt, i, val);
         }
     }

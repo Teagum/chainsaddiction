@@ -23,11 +23,11 @@ typedef struct {
 
 /** Deallocate struct DataSet.
  */
-#define ds_FREE(this)            \
-if (this != NULL)                \
+#define DataSet_Delete(this)    \
+if (this != NULL)               \
 {                               \
-    MA_FREE (this->data);        \
-    MA_FREE (this);              \
+    MA_FREE (this->data);       \
+    MA_FREE (this);             \
 }
 
 
@@ -36,7 +36,7 @@ if (this != NULL)                \
  * \return  Pointer to DataSet.
  */
 DataSet *
-ds_NewEmpty (void);
+DataSet_NewEmpty (void);
 
 
 /** Create a new DataSet with `n_elem` entries.
@@ -48,7 +48,7 @@ ds_NewEmpty (void);
  * \return  Pointer to DataSet.
  */
 DataSet *
-ds_New (const size_t n_elem);
+DataSet_New (const size_t n_elem);
 
 
 /** Creat a new DataSet from a data file.
@@ -56,7 +56,7 @@ ds_New (const size_t n_elem);
  *\param path   Path to data file.
  */
 DataSet *
-ds_NewFromFile (const char *path);
+DataSet_NewFromFile (const char *path);
 
 
 /** Set a single element of DataSet.
@@ -71,7 +71,7 @@ ds_NewFromFile (const char *path);
  *\param[in] val    Value.
  */
 extern void
-ds_set (DataSet *restrict this, size_t idx, scalar val);
+DataSet_SetValue (DataSet *restrict this, size_t idx, scalar val);
 
 
 /** Get a single element of a DataSet.
@@ -87,14 +87,14 @@ ds_set (DataSet *restrict this, size_t idx, scalar val);
  *\param[out] val    Write the value to the adress of `val`.
  */
 extern void
-ds_get (DataSet *restrict this, size_t idx, scalar *out);
+DataSet_GetValue (DataSet *restrict this, size_t idx, scalar *out);
 
 
 /** Print the contents of a DataSet.
  *
  */
 extern void
-ds_print (DataSet *this);
+DataSet_Print (DataSet *this);
 
 
 #endif    /* dataset_h */

@@ -116,7 +116,7 @@ test__PoisHmm_EstimateParams (void)
     const scalar igamma[]  =  {.8, .1, .1, .1, .8, .1, .1, .1, .8 };
     const scalar idelta[]  = { 1.0L/3L, 1.0L/3L, 1.0L/3L };
 
-    DataSet *inp = ds_NewFromFile (path);
+    DataSet *inp = DataSet_NewFromFile (path);
     if (inp == NULL) return true;
 
     PoisHmm *hmm = PoisHmm_New (n_obs, m_states);
@@ -124,7 +124,7 @@ test__PoisHmm_EstimateParams (void)
 
     PoisHmm_EstimateParams (hmm, inp);
 
-    ds_FREE (inp);
+    DataSet_Delete (inp);
     PoisHmm_Delete (hmm);
     return false;
 }
@@ -135,11 +135,11 @@ test__PoisHmm_ForwardProbabilities(void)
     const char data_path[] = "../../../../tests/data/earthquakes/earthquakes";
     const char params_path[] = "data/std3s.poisparams";
 
-    DataSet *inp = ds_NewFromFile (data_path);
+    DataSet *inp = DataSet_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
     if ((inp == NULL) || (params == NULL))
     {
-        ds_FREE (inp);
+        DataSet_Delete (inp);
         PoisParams_Delete (params);
         return true;
     }
@@ -168,11 +168,11 @@ test__PoisHmm_BackwardProbabilities (void)
     const char data_path[] = "../../../../tests/data/earthquakes/earthquakes";
     const char params_path[] = "data/std3s.poisparams";
 
-    DataSet *inp = ds_NewFromFile (data_path);
+    DataSet *inp = DataSet_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
     if ((inp == NULL) || (params == NULL))
     {
-        ds_FREE (inp);
+        DataSet_Delete (inp);
         PoisParams_Delete (params);
         return true;
     }
@@ -201,11 +201,11 @@ test__PoisHmm_ForwardBackward (void)
     const char data_path[] = "../../../../tests/data/earthquakes/earthquakes";
     const char params_path[] = "data/std3s.poisparams";
 
-    DataSet *inp = ds_NewFromFile (data_path);
+    DataSet *inp = DataSet_NewFromFile (data_path);
     PoisParams *params = PoisParams_NewFromFile (params_path);
     if ((inp == NULL) || (params == NULL))
     {
-        ds_FREE (inp);
+        DataSet_Delete (inp);
         PoisParams_Delete (params);
         return true;
     }
