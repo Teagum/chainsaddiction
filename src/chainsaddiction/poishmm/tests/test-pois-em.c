@@ -8,7 +8,7 @@ test__pois_e_step (void)
     const char params_path[] = "data/ppr1";
 
     scalar llh = 0;
-    DataSet *inp = ds_NewFromFile (data_path);
+    DataSet *inp = DataSet_NewFromFile (data_path);
     if (inp == NULL) return false;
 
     PoisParams *params = PoisParams_NewFromFile (params_path);
@@ -22,7 +22,7 @@ test__pois_e_step (void)
             lparams->gamma, lparams->delta, probs->lsdp, probs->lalpha,
             probs->lbeta, probs->lcsp, &llh);
 
-    ds_FREE(inp);
+    DataSet_Delete(inp);
     PoisParams_Delete (params);
     PoisParams_Delete (lparams);
     return false;
@@ -37,7 +37,7 @@ test__pois_m_step_lambda (void)
     const char data_path[] = "../../../../tests/data/earthquakes/earthquakes";
     const char params_path[] = "data/ppr1";
 
-    DataSet *inp = ds_NewFromFile (data_path);
+    DataSet *inp = DataSet_NewFromFile (data_path);
     if (inp == NULL) return false;
 
     PoisParams *params = PoisParams_NewFromFile (params_path);
@@ -64,7 +64,7 @@ test__pois_m_step_lambda (void)
         }
     }
 
-    ds_FREE (inp);
+    DataSet_Delete (inp);
     PoisParams_Delete (params);
     PoisParams_Delete (lparams);
     PoisProbs_Delete (probs);
@@ -81,7 +81,7 @@ test__pois_m_step_gamma (void)
     const char data_path[] = "../../../../tests/data/earthquakes/earthquakes";
     const char params_path[] = "data/ppr1";
 
-    DataSet *inp = ds_NewFromFile (data_path);
+    DataSet *inp = DataSet_NewFromFile (data_path);
     if (inp == NULL) return false;
 
     PoisParams *params = PoisParams_NewFromFile (params_path);
@@ -103,7 +103,7 @@ test__pois_m_step_gamma (void)
             lparams->gamma, new_lgamma);
 
 
-    ds_FREE (inp);
+    DataSet_Delete (inp);
     PoisParams_Delete (params);
     PoisParams_Delete (lparams);
     PoisProbs_Delete (probs);
@@ -120,7 +120,7 @@ test__pois_m_step_delta(void)
     const char data_path[] = "../../../../tests/data/earthquakes/earthquakes";
     const char params_path[] = "data/ppr1";
 
-    DataSet *inp = ds_NewFromFile (data_path);
+    DataSet *inp = DataSet_NewFromFile (data_path);
     if (inp == NULL) return false;
 
     PoisParams *params = PoisParams_NewFromFile (params_path);
@@ -139,7 +139,7 @@ test__pois_m_step_delta(void)
     pois_m_step_delta (probs->m_states, probs->lcsp, new_ldelta);
 
 
-    ds_FREE (inp);
+    DataSet_Delete (inp);
     PoisParams_Delete (params);
     PoisParams_Delete (lparams);
     PoisProbs_Delete (probs);

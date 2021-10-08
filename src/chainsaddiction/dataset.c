@@ -2,109 +2,109 @@
 
 
 DataSet *
-ds_NewEmpty (void)
+DataSet_NewEmpty (void)
 {
-    DataSet *pds = malloc (sizeof pds);
-    if (pds == NULL)
+    DataSet *this = malloc (sizeof this);
+    if (this == NULL)
     {
         Ca_ErrMsg ("Could not allocate data set.");
     }
     else
     {
-        pds->data = NULL;
-        pds->size = 0;
-        pds->err  = false;
+        this->data = NULL;
+        this->size = 0;
+        this->err  = false;
     }
-    return pds;
+    return this;
 }
 
 
 DataSet *
-ds_New (const size_t n_elem)
+DataSet_New (const size_t n_elem)
 {
-    DataSet *pds = ds_NewEmpty ();
-    pds->data = MA_SCALAR_ZEROS (n_elem);
-    pds->size = (n_elem);
-    return pds;
+    DataSet *this = DataSet_NewEmpty ();
+    this->data = MA_SCALAR_ZEROS (n_elem);
+    this->size = (n_elem);
+    return this;
 }
 
 
 DataSet *
-ds_NewFromFile (const char *path)
+DataSet_NewFromFile (const char *path)
 {
-    cnt n_elem = 0;
-    FILE *file = Ca_OpenFile (path, "r");
-    DataSet *pds = ds_NewEmpty ();
+    size_t n_elem = 0;
+    FILE   *file  = Ca_OpenFile (path, "r");
+    DataSet *this  = DataSet_NewEmpty ();
 
     Ca_CountLines (file, &n_elem);
     if (n_elem == 0)
     {
         fprintf (stderr, "Empty file: %s\n", path);
-        ds_FREE (pds);
+        DataSet_Delete (this);
         Ca_CloseFile (file);
         return NULL;
     }
-    pds->data = MA_SCALAR_EMPTY (n_elem);
-    pds->size = Ca_ReadDataFile (file, n_elem, pds->data);
+    this->data = MA_SCALAR_EMPTY (n_elem);
+    this->size = Ca_ReadDataFile (file, n_elem, this->data);
 
     Ca_CloseFile (file);
-    return pds;
+    return this;
 }
 
 
 inline void
-ds_set (DataSet *pds, size_t idx, scalar val)
+DataSet_SetValue (DataSet *this, size_t idx, scalar val)
 {
     bool err = false;
 #ifdef NO_BOUNDS_CHECK
-    pds->data[idx] = val;
+    this->data[idx] = val;
 #else
-    if (idx >= pds->size) {
+    if (idx >= this->size) {
         err = true;
     } else {
-        pds->data[idx] = val;
+        this->data[idx] = val;
         err = false;
     }
 #endif
-    pds->err = err;
+    this->err = err;
 }
 
 
 inline void
-ds_get (DataSet *pds, size_t idx, scalar *out)
+DataSet_GetValue (DataSet *this, size_t idx, scalar *out)
 {
     bool err = false;
 #ifdef NO_BOUNDS_CHECK
-    *out = pds->data[idx];
+    *out = this->data[idx];
 #else
-    if (idx >= pds->size) {
+    if (idx >= this->size) {
         err = true;
     } else {
-        *out = pds->data[idx];
+        *out = this->data[idx];
         err = false;
     }
 #endif
-    pds->err = err;
+    this->err = err;
 }
 
 
 extern void
-ds_print (DataSet *pds)
+DataSet_Print (DataSet *this)
 {
 #ifdef _NO_LD_MATH
     const char fmt[] = "[%4zu]%12.5f\n";
 #else
     const char fmt[] = "[%4zu]%12.5Lf\n";
 #endif
-    if (pds->size == 0) {
+    if (this->size == 0) {
         puts ("Empty dataset.");
     }
     else
     {
-        for (size_t i = 0; i < pds->size; i++)
+        for (size_t i = 0; i < this->size; i++)
         {
             scalar val;
-            ds_get (pds, i, &val);
+            DataSet_GetValue (this, i, &val);
             printf (fmt, i, val);
         }
     }

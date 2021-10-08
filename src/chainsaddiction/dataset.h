@@ -23,11 +23,11 @@ typedef struct {
 
 /** Deallocate struct DataSet.
  */
-#define ds_FREE(pds)            \
-if (pds != NULL)                \
+#define DataSet_Delete(this)    \
+if (this != NULL)               \
 {                               \
-    MA_FREE (pds->data);        \
-    MA_FREE (pds);              \
+    MA_FREE (this->data);       \
+    MA_FREE (this);             \
 }
 
 
@@ -36,7 +36,7 @@ if (pds != NULL)                \
  * \return  Pointer to DataSet.
  */
 DataSet *
-ds_NewEmpty (void);
+DataSet_NewEmpty (void);
 
 
 /** Create a new DataSet with `n_elem` entries.
@@ -48,7 +48,7 @@ ds_NewEmpty (void);
  * \return  Pointer to DataSet.
  */
 DataSet *
-ds_New (const size_t n_elem);
+DataSet_New (const size_t n_elem);
 
 
 /** Creat a new DataSet from a data file.
@@ -56,7 +56,7 @@ ds_New (const size_t n_elem);
  *\param path   Path to data file.
  */
 DataSet *
-ds_NewFromFile (const char *path);
+DataSet_NewFromFile (const char *path);
 
 
 /** Set a single element of DataSet.
@@ -66,12 +66,12 @@ ds_NewFromFile (const char *path);
  * Set DataSet.err = false on success.
  * Set DataSet.err = true on failure.
  *
- *\param[in] pds    Pointer to dataset.
+ *\param[in] this    Pointer to dataset.
  *\param[in] idx    Element index.
  *\param[in] val    Value.
  */
 extern void
-ds_set (DataSet *restrict pds, size_t idx, scalar val);
+DataSet_SetValue (DataSet *restrict this, size_t idx, scalar val);
 
 
 /** Get a single element of a DataSet.
@@ -82,74 +82,19 @@ ds_set (DataSet *restrict pds, size_t idx, scalar val);
  * Set DataSet.err = false on success.
  * Set DataSet.err = true on failure.
  *
- *\param[in]  pds    Pointer to dataset.
+ *\param[in]  this    Pointer to dataset.
  *\param[in]  idx    Element index.
  *\param[out] val    Write the value to the adress of `val`.
  */
 extern void
-ds_get (DataSet *restrict pds, size_t idx, scalar *out);
-
-
-/** Set a single element of DataSet.
- *
- * Perform bounds checks and set the element.
- * Set DataSet.err = false on success.
- * Set DataSet.err = true on failure.
- * Print error message of failure.
- *
- * \param[in] pds    Pointer to dataset.
- * \param[in] idx    Element index.
- * \param[in] val    Value.
- */
-#ifdef no_diagnostics
-#define ds_SET(pds, idx, val)                                       \
-do {                                                                \
-    ds_set (pds, idx, val);                                         \
-} while (0)
-#else
-#define ds_SET(pds, idx, val)                                       \
-do {                                                                \
-    ds_set (pds, idx, val);                                         \
-    if (pds->err) {                                                 \
-        fprintf (stderr, OUT_OF_BOUNDS_ERR_MSG, idx, pds->size);    \
-    }                                                               \
-} while (0)
-#endif
-
-
-/** Get a single element of a DataSet.
- *
- * Perform bounds checks then read the element and copy
- * it to the addrees of `out`.
- * Set DataSet.err = false on success.
- * Set DataSet.err = true on failure.
- * Print error message of failure.
- *
- * \param[in]  pds    Pointer to dataset.
- * \param[in]  idx    Element index.
- * \param[out] val    Write the value to the adress of `val`.
- */
-#ifdef no_diagnostics
-#define ds_GET(pds, idx, val)                                       \
-do {                                                                \
-    ds_get(pds, idx, val);                                          \
-} while (0)
-#else
-#define ds_GET(pds, idx, val)                                       \
-do {                                                                \
-    ds_get(pds, idx, val);                                          \
-    if (pds->err) {                                                 \
-        fprintf (stderr, OUT_OF_BOUNDS_ERR_MSG, idx, pds->size);    \
-    }                                                               \
-} while (0)
-#endif
+DataSet_GetValue (DataSet *restrict this, size_t idx, scalar *out);
 
 
 /** Print the contents of a DataSet.
  *
  */
 extern void
-ds_print (DataSet *pds);
+DataSet_Print (DataSet *this);
 
 
 #endif    /* dataset_h */
