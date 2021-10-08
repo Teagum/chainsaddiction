@@ -23,11 +23,11 @@ typedef struct {
 
 /** Deallocate struct DataSet.
  */
-#define ds_FREE(pds)            \
-if (pds != NULL)                \
+#define ds_FREE(this)            \
+if (this != NULL)                \
 {                               \
-    MA_FREE (pds->data);        \
-    MA_FREE (pds);              \
+    MA_FREE (this->data);        \
+    MA_FREE (this);              \
 }
 
 
@@ -66,12 +66,12 @@ ds_NewFromFile (const char *path);
  * Set DataSet.err = false on success.
  * Set DataSet.err = true on failure.
  *
- *\param[in] pds    Pointer to dataset.
+ *\param[in] this    Pointer to dataset.
  *\param[in] idx    Element index.
  *\param[in] val    Value.
  */
 extern void
-ds_set (DataSet *restrict pds, size_t idx, scalar val);
+ds_set (DataSet *restrict this, size_t idx, scalar val);
 
 
 /** Get a single element of a DataSet.
@@ -82,19 +82,19 @@ ds_set (DataSet *restrict pds, size_t idx, scalar val);
  * Set DataSet.err = false on success.
  * Set DataSet.err = true on failure.
  *
- *\param[in]  pds    Pointer to dataset.
+ *\param[in]  this    Pointer to dataset.
  *\param[in]  idx    Element index.
  *\param[out] val    Write the value to the adress of `val`.
  */
 extern void
-ds_get (DataSet *restrict pds, size_t idx, scalar *out);
+ds_get (DataSet *restrict this, size_t idx, scalar *out);
 
 
 /** Print the contents of a DataSet.
  *
  */
 extern void
-ds_print (DataSet *pds);
+ds_print (DataSet *this);
 
 
 #endif    /* dataset_h */
