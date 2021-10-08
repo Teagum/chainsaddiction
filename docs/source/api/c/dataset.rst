@@ -30,15 +30,15 @@ Dataset
 Object creation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. function:: DataSet *ds_NewEmpty (void)
+.. function:: DataSet *DataSet_NewEmpty (void)
 
    Create a new, uninitialized ``DataSet`` object and return an pointer to it.
    
-.. function:: DataSet *ds_New (size_t n_elem)
+.. function:: DataSet *DataSet_New (size_t n_elem)
 
    Create a new data set for ``n_elem`` elements and return a pointer to it.
 
-.. function:: DataSet *ds_NewFromFile (const char *path)
+.. function:: DataSet *DataSet_NewFromFile (const char *path)
 
    Create a new data set, set it with the values read from ``path`` and return
    a pointer it.
@@ -47,21 +47,21 @@ Object creation
 Operations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. function:: void ds_set (DataSet *restrict pds, size_t idx, scalar val)
+.. function:: void DataSet_SetValue (DataSet *restrict this, size_t idx, scalar val)
 
-   Set the element with index ``idx`` of ``pds`` to ``val``. Perform bounds
-   checking.
+   Set the element with index ``idx`` of ``this`` to ``val``.  Perform bounds
+   checking. Set :member:`DataSet.err` to ``true`` on failure.
 
 
-.. function:: void ds_get (DataSet *restrict pds, size_t idx, scalar *out)
+.. function:: void DataSet_GetValue (DataSet *restrict this, size_t idx, scalar *out)
 
-   Write the value of the ``pds`` element with index ``idx`` to ``out``.
-   Perform bounds checking.
+   Write the value of the ``this`` element with index ``idx`` to ``out``.
+   Perform bounds checking. Set :member:`DataSet.err` to ``true`` on failure.
 
 
 Utilities
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. function:: void ds_print (DataSet *pds)
+.. function:: void DataSet_Print (DataSet *this)
 
    Print the data set nicely formatted to the standard error stream.
