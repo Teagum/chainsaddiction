@@ -56,9 +56,12 @@ HMM utilities
       const scalar *restrict lcsp,           \
       size_t *restrict states)
 
-   Compute the most likely sequence of hidden states under the HMM.
+   Compute the most likely sequence of hidden states under the HMM using the
+   `Viterbi algorithm`_.
 
 
 .. _Akaike Information Criterion: https://en.wikipedia.org/wiki/Akaike_information_criterion
 
 .. _Bayesian Information Criterion: https://en.wikipedia.org/wiki/Bayesian_information_criterion
+
+.. _Viterbi algorithm: https://en.wikipedia.org/wiki/Viterbi_algorithm
