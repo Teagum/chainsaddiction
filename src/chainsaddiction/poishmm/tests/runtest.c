@@ -22,6 +22,7 @@ main (void)
     RUN_TEST (test__PoisHmm_New);
     RUN_TEST (test__PoisHmm_Init);
     RUN_TEST (test__PoisHmm_InitRandom);
+    RUN_TEST (test__PoisHmm_InitRandom_sorted_lambda);
     RUN_TEST (test__PoisHmm_LogLikelihood);
     RUN_TEST (test__PoisHmm_ForwardProbabilities);
     RUN_TEST (test__PoisHmm_BackwardProbabilities);

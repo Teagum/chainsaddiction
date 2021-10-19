@@ -74,6 +74,7 @@ PoisHmm_InitRandom (PoisHmm *const restrict this)
     size_t m_states = this->m_states;
 
     v_rnd_scalar (m_states, 1, 100, this->init->lambda);
+    qsort (this->init->lambda, m_states, sizeof (scalar), compare_scalar);
     v_rnd_sample (m_states, this->init->delta);
     m_rnd_sample (m_states, m_states, this->init->gamma);
 
@@ -161,4 +162,19 @@ PoisHmm_Summary (const PoisHmm *const restrict this)
             "BIC: ", this->bic,
             "LLH: ", this->llh);
     fprintf (stderr, "\n%s\n", border);
+}
+
+
+int
+compare_scalar (const void *x, const void *y)
+{
+    const scalar a = *(scalar *) x;
+    const scalar b = *(scalar *) y;
+
+    if (a < b)
+        return -1;
+    else if (a > b)
+        return 1;
+    else
+        return 0;
 }

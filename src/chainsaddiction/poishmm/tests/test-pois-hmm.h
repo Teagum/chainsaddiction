@@ -9,6 +9,7 @@
 bool test__PoisHmm_New (void);
 bool test__PoisHmm_Init (void);
 bool test__PoisHmm_InitRandom (void);
+bool test__PoisHmm_InitRandom_sorted_lambda (void);
 bool test__PoisHmm_LogLikelihood (void);
 bool test__PoisHmm_EstimateParams (void);
 bool test__PoisHmm_ForwardProbabilities (void);

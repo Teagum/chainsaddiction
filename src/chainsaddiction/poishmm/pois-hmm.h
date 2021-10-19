@@ -105,4 +105,8 @@ void
 PoisHmm_Summary (const PoisHmm *const restrict this);
 
 
+int
+compare_scalar (const void *x, const void *y);
+
+
 #endif  /* HMM_H */

@@ -89,6 +89,29 @@ test__PoisHmm_InitRandom (void)
 
 
 bool
+test__PoisHmm_InitRandom_sorted_lambda (void)
+{
+    const size_t n_obs    = rnd_size (1, 1000);
+    const size_t m_states = rnd_size (1, 50);
+    bool err = false;
+    PoisHmm *phmm = PoisHmm_New (n_obs, m_states);
+
+    PoisHmm_InitRandom (phmm);
+    for (size_t i = 0; i < m_states - 1; i++)
+    {
+        if (phmm->init->lambda[i] > phmm->init->lambda[i+1])
+        {
+            err = true;
+            break;
+        }
+    }
+
+    PoisHmm_Delete (phmm);
+    return err ? UT_FAILURE : UT_SUCCESS;
+}
+
+
+bool
 test__PoisHmm_LogLikelihood (void)
 {
     bool err = true;
