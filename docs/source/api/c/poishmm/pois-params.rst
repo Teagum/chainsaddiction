@@ -31,7 +31,7 @@ Parameters
         to by :member:`PoisParams.gamma` must hold enough memory for two times
         :member:`PoisParams.m_states` values of type :type:`scalar`.
     
-    .. member::scalar *PoisParams.delta
+    .. member:: scalar *PoisParams.delta
 
         Pointer to memory for initial distribution. The object pointed to by
         :member:`PoisParams.delta` must hold enough memory for
@@ -69,6 +69,27 @@ Object creation
 Initialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. function:: extern void PoisParams_SetLambda (    \
+    PoisParams *const restrict params,              \
+    const scalar *const restrict lambda)            
+
+    Copy data from :var:`lambda` to corresponding member of :var:`params`.
+
+
+.. function:: extern void PoisParams_SetGamma ( \
+    PoisParams *const restrict params,          \
+    const scalar *const restrict gamma)
+
+    Copy data from :var:`gamma` to corresponding member of :var:`params`.
+
+
+.. function:: extern void PoisParams_SetDelta ( \
+    PoisParams *const restrict params,          \
+    const scalar *const restrict delta)
+
+    Copy data from :var:`delta` to correspinding member of :var:`params`.
+
+
 .. function:: void PoisParams_SetLambdaRnd (PoisParams *const restrict this)
 
     Sample the state-dependend means of :var:`this` uniformly from the
@@ -87,3 +108,22 @@ Initialization
 		Sample the initial distribution of :var:`this` randomly. This function
 		guaratees that the initial distribution is indeed a discrete probability
 		distributions. 
+
+
+Utilities
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. function:: extern void PoisParams_Copy ( \
+    const PoisParams *const restrict this,  \
+    PoisParams *const restrict other)
+
+    Copy parameters from :var:`this` to :var:`other`.
+
+.. function:: extern void PoisParams_CopyLog (  \
+    const PoisParams *restrict this,            \
+    PoisParams *restrict other)
+
+    Copy paramters from :var:`this` to :var:`other` and transform :var:`gamma`
+    and :var:`delta` to log domain.
+    
+
