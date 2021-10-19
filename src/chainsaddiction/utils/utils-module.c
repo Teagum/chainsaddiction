@@ -154,7 +154,7 @@ fail:
 static PyMethodDef
 utils_methods[] = {
     {"global_decoding", global_decoding_impl, METH_VARARGS, global_decoding_doc},
-    {"local_decoding", local_decoding_impl, METH_VARARGS, global_decoding_doc},
+    {"local_decoding", local_decoding_impl, METH_VARARGS, local_decoding_doc},
     {NULL, NULL, 0, NULL}
 };
 
