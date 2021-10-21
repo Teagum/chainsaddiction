@@ -4,7 +4,6 @@ import unittest
 
 from utils import load_data
 import numpy as np
-from apollon.hmm import utilities as hmmutils
 from chainsaddiction import utils
 
 
