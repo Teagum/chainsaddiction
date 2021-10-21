@@ -41,13 +41,13 @@ help:
 
 
 install:
-	python setup.py install 
+	python3 setup.py install 
 
 pkg:
-	python setup.py --quiet build --force
+	python3 setup.py --quiet build --force
 
 ext:
-	python setup.py --quiet build_ext --force
+	python3 setup.py --quiet build_ext --force
 
 check:
 	make check -C tests
