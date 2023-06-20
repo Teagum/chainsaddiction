@@ -29,3 +29,7 @@ Documentation = "https://chainsaddiction.rtfd.org"
 [build-system]
 requires = ["setuptools", "setuptools-scm", "numpy"]
 build-backend = "setuptools.build_meta"
+
+[tool.mypy]
+plugins = ["numpy.typing.mypy_plugin"]
+strict = true
