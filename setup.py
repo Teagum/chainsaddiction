@@ -1,19 +1,16 @@
-#/usr/bin/env python3
-
-"""ChainsAddiction setup"""
-
 import itertools
 from pathlib import Path
-from typing import Generator, Tuple
 from setuptools import setup, Extension
+from typing import Generator
+
 import numpy as np
 
 
-def cglob(path: str) -> Generator:
+def cglob(path: str) -> Generator[str, None, None]:
     """Generate all .c files in ``path``."""
     return (f'{src!s}' for src in Path(path).glob('*.c'))
 
-def list_source_files (paths: Tuple[str, ...]) -> list:
+def list_source_files (paths: tuple[str, ...]) -> list[str]:
     """Generate a list of .c files in found in all of ``paths``."""
     return list(itertools.chain.from_iterable(cglob(path) for path in paths))
 

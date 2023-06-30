@@ -64,4 +64,4 @@ HMM utilities
 
 .. _Bayesian Information Criterion: https://en.wikipedia.org/wiki/Bayesian_information_criterion
 
-.. _Viterbi algorithm: https://en.wikipedia.org/wiki/Viterbi_algorithm
+.. _Viterbi algorithm: http://www.scholarpedia.org/article/Viterbi_algorithm

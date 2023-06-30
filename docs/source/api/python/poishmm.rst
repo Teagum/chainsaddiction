@@ -10,7 +10,7 @@ chainsaddiction.poishmm
    .. attribute:: err
       :type: bool
 
-      `True`, if an error was encountered during parameter estimation, else `False`.
+      ``True``, if an error was encountered during parameter estimation, else ``False``.
 
    .. attribute:: m_states
       :type: int
