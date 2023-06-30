@@ -1,9 +1,9 @@
 import itertools
 from pathlib import Path
-from setuptools import setup, Extension
 from typing import Generator
 
 import numpy as np
+from setuptools import setup, Extension
 
 
 def cglob(path: str) -> Generator[str, None, None]:
