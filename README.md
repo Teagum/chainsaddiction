@@ -11,8 +11,8 @@ Python extension module.
 The installation of ChainsAddiction requires to following tools to be installed
 on your system:
 
-- Python >= 3.7
-- pip
+- Python >= 3.9
+- pip, setuptools
 - C compiler
 
 
