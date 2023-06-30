@@ -11,6 +11,6 @@ ChainsAddiction Documentation Home
    :maxdepth: 2
    :caption: Contents:
 
-   install
+   getting-started
    usrguide/index
    api/index
