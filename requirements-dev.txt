@@ -1,0 +1,7 @@
+mypy
+pylint
+types-setuptools
+sphinx
+sphinx-rtd-theme
+build
+twine
