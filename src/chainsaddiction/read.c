@@ -58,8 +58,7 @@ Ca_CountLines (FILE *stream, size_t *line_cnt)
 {
     int fp_err = 1;
     int chr = 0;
-    fpos_t fp_start = 0;
-    fpos_t fp_current = 0;
+    fpos_t fp_current;
 
     if (stream == NULL)
     {
@@ -72,14 +71,7 @@ Ca_CountLines (FILE *stream, size_t *line_cnt)
         PERISH ("Could not get file position");
     }
 
-    if (fp_current != fp_start)
-    {
-        fp_err = fsetpos (stream, &fp_start);
-        if (fp_err)
-        {
-            PERISH ("Could not set file position");
-        }
-    }
+    rewind (stream);
 
     while (true)
     {
