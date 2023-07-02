@@ -12,7 +12,7 @@ test__PoisParams_New (void)
             fpclassify (params->delta[i]) != FP_ZERO)
         {
             PoisParams_Delete (params);
-            return true;
+            return UT_FAILURE;
         }
     }
 
@@ -20,12 +20,12 @@ test__PoisParams_New (void)
         if (fpclassify (params->gamma[i]) != FP_ZERO)
         {
             PoisParams_Delete (params);
-            return true;
+            return UT_FAILURE;
         }
     }
 
     PoisParams_Delete (params);
-    return false;
+    return UT_SUCCESS;
 }
 
 

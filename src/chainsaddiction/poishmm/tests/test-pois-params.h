@@ -1,7 +1,7 @@
 #ifndef test_pois_params_h
 #define test_pois_params_h
 
-#include "unittest.h"
+#include "assertations.h"
 #include "../pois-params.h"
 
 bool test__PoisParams_New (void);

@@ -2,7 +2,7 @@
 #define test_pois_probs_h
 
 #include <math.h>
-#include "unittest.h"
+#include "assertations.h"
 #include "../pois-probs.h"
 #include "libvmath.h"
 

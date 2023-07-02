@@ -2,8 +2,9 @@
 #define test_stats_h
 
 #include <math.h>
+#include <stdbool.h>
 #include "config.h"
-#include "unittest.h"
+#include "assertations.h"
 #include "rnd.h"
 #include "stats.h"
 
