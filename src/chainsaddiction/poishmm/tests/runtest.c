@@ -2,6 +2,7 @@
 #include "test-pois-params.h"
 #include "test-pois-hmm.h"
 #include "test-pois-em.h"
+#include "unittest.h"
 
 int
 main (void)

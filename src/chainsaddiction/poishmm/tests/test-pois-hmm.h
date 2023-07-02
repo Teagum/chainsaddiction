@@ -3,7 +3,7 @@
 
 #include <math.h>
 #include <string.h>
-#include "unittest.h"
+#include "assertations.h"
 #include "../pois-hmm.h"
 
 bool test__PoisHmm_New (void);

@@ -72,11 +72,12 @@ global_decoding_impl (PyObject *self, PyObject *args)
     PyObject *pyo_lgamma  = NULL;
     PyObject *pyo_ldelta  = NULL;
     PyObject *pyo_lcsp   = NULL;
-    PyObject *arr_states  = NULL;
+    PyObject *pyo_states  = NULL;
 
     PyArrayObject *arr_lgamma  = NULL;
     PyArrayObject *arr_ldelta  = NULL;
     PyArrayObject *arr_lcsp   = NULL;
+    PyArrayObject *arr_states = NULL;
 
     if (!PyArg_ParseTuple (args, "OOO", &pyo_lgamma, &pyo_ldelta, &pyo_lcsp))
     {
@@ -122,13 +123,14 @@ global_decoding_impl (PyObject *self, PyObject *args)
     }
 
     shape_lcsp = PyArray_SHAPE (arr_lcsp);
-    arr_states  = PyArray_SimpleNew (PyCh_VECTOR, shape_lcsp, NPY_ULONG);
-    if (arr_states == NULL)
+    pyo_states = PyArray_SimpleNew (PyCh_VECTOR, shape_lcsp, NPY_ULONG);
+    if (pyo_states == NULL)
     {
         const char msg[] = "global_decoding: Could not allocate states object.";
         PyErr_SetString (PyExc_TypeError, msg);
         goto fail;
     }
+    arr_states = (PyArrayObject *) pyo_states;
 
     global_decoding ((size_t) shape_lcsp[0], (size_t) shape_lcsp[1],
             (long double *) PyArray_DATA (arr_lgamma),
@@ -140,7 +142,7 @@ global_decoding_impl (PyObject *self, PyObject *args)
     Py_DECREF (arr_ldelta);
     Py_DECREF (arr_lcsp);
     Py_INCREF (arr_states);
-    return arr_states;
+    return pyo_states;
 
 fail:
     Py_XDECREF (arr_lgamma);

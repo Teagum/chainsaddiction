@@ -41,13 +41,10 @@ help:
 
 
 install:
-	python3 setup.py install 
+	pip3 install .
 
-pkg:
-	python3 setup.py --quiet build --force
-
-ext:
-	python3 setup.py --quiet build_ext --force
+build:
+	python3 -m build
 
 check:
 	make check -C tests
@@ -78,4 +75,4 @@ build_env:
 	@echo 'TEST_ROOT_DIR:  $(test_root_dir)'
 	@echo 'TEST_SRC_DIR:   $(test_src_dir)'
 
-.PHONY: check test clean distclean
+.PHONY: build check clean distclean

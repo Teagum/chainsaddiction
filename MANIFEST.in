@@ -1,7 +1,2 @@
 include src/chainsaddiction/py.typed
 include CHANGELOG.md
-recursive-include include *.h
-recursive-include src/vmath *.h
-recursive-include src/chainsaddiction *.h
-recursice-include src/chainsaddiction/utils *.h
-recursive-include src/chainsaddiction/poishmm *.h

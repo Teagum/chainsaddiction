@@ -26,7 +26,7 @@ PoisParams_NewFromFile (
     const char *fpath)
 {
     int err = 0;
-    unsigned int n_lines = 0;
+    size_t n_lines = 0;
     scalar mbuff = 0l;
     PoisParams *out = NULL;
     FILE *dfd = Ca_OpenFile (fpath, "r");

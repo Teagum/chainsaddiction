@@ -1,8 +1,10 @@
 #ifndef test_vmath_h
 #define test_vmath_h
 
+#include <assert.h>
+#include <stdbool.h>
 #include "config.h"
-#include "unittest.h"
+#include "assertations.h"
 #include "rnd.h"
 #include "vmath.h"
 

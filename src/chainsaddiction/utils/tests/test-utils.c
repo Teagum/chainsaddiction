@@ -1,5 +1,5 @@
+#include <stdio.h>
 #include "test-utils.h"
-
 
 bool test__local_decoding (void)
 {
@@ -27,7 +27,6 @@ bool test__local_decoding (void)
         FREE (dec);
         return UT_FAILURE;
     }
-
     local_decoding (n_obs, m_states, lcsp->data, dec);
 
     for (size_t i = 0; i < n_obs; i++)
@@ -54,7 +53,6 @@ bool test__global_decoding (void)
         m_states = 3,
         n_obs    = 107
     };
-
     bool    err     = false;
     size_t  *dec    = NULL;
     DataSet *lcsp   = NULL;

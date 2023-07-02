@@ -4,7 +4,7 @@
 DataSet *
 DataSet_NewEmpty (void)
 {
-    DataSet *this = malloc (sizeof this);
+    DataSet *this = malloc (sizeof *this);
     if (this == NULL)
     {
         Ca_ErrMsg ("Could not allocate data set.");

@@ -1,8 +1,10 @@
 #ifndef test_rnd_h
 #define test_rnd_h
 
+#include <stdbool.h>
+#include <math.h>
 #include "config.h"
-#include "unittest.h"
+#include "assertations.h"
 #include "rnd.h"
 
 

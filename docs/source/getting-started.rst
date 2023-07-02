@@ -9,7 +9,7 @@ ChainsAddiction provides a Python extension module that needs to be compiled
 before you can use it. Therefore, your system has to meet the following
 requirements:
 
-* Python >= 3.7
+* Python >= 3.9
 * pip and setuptools installed
 * C compiler (Windows and GNU/Linux only)
 
@@ -24,7 +24,7 @@ following command:
 .. note::
 
    The Python interpreter may be available under different names, such as ``python3``, or
-   ``python3.7``, etc, depending on your operating system and virtual
+   ``python3.9``, etc, depending on your operating system and virtual
    environment setup.
 
 

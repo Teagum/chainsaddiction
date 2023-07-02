@@ -14,10 +14,10 @@ test__rnd_int (void)
     {
         if (!ASSERT_IN_RANGE (rnd_int (SR_LB, SR_UB), SR_LB, SR_UB))
         {
-            return true;
+            return UT_FAILURE;
         }
     }
-    return false;
+    return UT_SUCCESS;
 }
 
 
@@ -41,11 +41,11 @@ test__v_rnd_int (void)
         {
             if (!ASSERT_IN_RANGE (arr[i], SR_LB, SR_UB) || !isfinite (arr[i]))
             {
-                return true;
+                return UT_FAILURE;
             }
         }
     }
-    return false;
+    return UT_SUCCESS;
 }
 
 
@@ -60,10 +60,10 @@ test__rnd_scalar (void)
     {
         if (!ASSERT_IN_RANGE (rnd_scalar (SR_LB, SR_UB), SR_LB, SR_UB))
         {
-            return true;
+            return UT_FAILURE;
         }
     }
-    return false;
+    return UT_SUCCESS;
 }
 
 
@@ -82,10 +82,10 @@ test__v_rnd_scalar (void)
     {
         if (!ASSERT_IN_RANGE (arr[i], SR_LB, SR_UB) || !isfinite (arr[i]))
         {
-            return true;
+            return UT_FAILURE;
         }
     }
-    return false;
+    return UT_SUCCESS;
 }
 
 
@@ -101,10 +101,10 @@ test__sample (void)
         scalar val = rnd_sample ();
         if (!ASSERT_IN_RANGE (val, SR_LB, SR_UB) || !isfinite (val))
         {
-            return true;
+            return UT_FAILURE;
         }
     }
-    return false;
+    return UT_SUCCESS;
 }
 
 
@@ -125,9 +125,9 @@ test__v_sample (void)
         {
             if (!ASSERT_IN_RANGE (arr[i], SR_LB, SR_UB) || !isfinite (arr[i]))
             {
-                return true;
+                return UT_FAILURE;
             }
         }
     }
-    return false;
+    return UT_SUCCESS;
 }
