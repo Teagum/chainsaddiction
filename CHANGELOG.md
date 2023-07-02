@@ -1,3 +1,10 @@
+## 0.2.3
+* fix allocation error (#8bc79f) 
+* fix unused parameter warnings in gcc (#26037d)
+* adapting test suite to unittest 0.0.2 (#e5d390)
+* drop support for Python < 3.9 (#f4c4db)
+* many build system upgrades
+
 ## 0.2.2
 * Add type stubs
 * Update documentation
