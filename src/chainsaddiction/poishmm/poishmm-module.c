@@ -24,18 +24,18 @@ PyCh_PoisHmm_New(PyTypeObject *type, PyObject *args, PyObject *kwds)
     self = (PyCh_PoisHmm *) type->tp_alloc (type, 0);
     if (self != NULL)
     {
-        self->err = 1;
-        self->n_iter = 0;
-        self->llk = 0.0;
-        self->aic = 0.0;
-        self->bic = 0.0;
-        self->m_states = 0;
-        self->lambda = NULL;
-        self->delta = NULL;
-        self->gamma = NULL;
-        self->lalpha = NULL;
-        self->lbeta = NULL;
-        self->lcsp = NULL;
+        self->err       = 1;
+        self->n_iter    = 0;
+        self->llk       = 0.0;
+        self->aic       = 0.0;
+        self->bic       = 0.0;
+        self->m_states  = 0;
+        self->lambda    = NULL;
+        self->delta     = NULL;
+        self->gamma     = NULL;
+        self->lalpha    = NULL;
+        self->lbeta     = NULL;
+        self->lcsp      = NULL;
     }
     return (PyObject *) self;
 }
@@ -53,7 +53,7 @@ PyCh_PoisHmm_CInit (PyCh_PoisHmm *self, const size_t n_obs, const size_t m_state
     self->delta  = PyArray_SimpleNew (PyCh_VECTOR, dims_vector, NPY_LONGDOUBLE);
     self->lalpha = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_LONGDOUBLE);
     self->lbeta  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_LONGDOUBLE);
-    self->lcsp  = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_LONGDOUBLE);
+    self->lcsp   = PyArray_SimpleNew (PyCh_DATA,   dims_data,   NPY_LONGDOUBLE);
     return 0;
 }
 
@@ -74,14 +74,13 @@ PyCh_PoisHmm_Set (PyCh_PoisHmm *out, PoisHmm *hmm)
                                 NPY_LONGDOUBLE, (void *) hmm->probs->lalpha);
     PyObject *wrap_lbeta  = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
                                 NPY_LONGDOUBLE, (void *) hmm->probs->lbeta);
-    PyObject *wrap_lcsp  = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
+    PyObject *wrap_lcsp   = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
                                 NPY_LONGDOUBLE, (void *) hmm->probs->lcsp);
 
-    out->err = 0;
+    out->err    = 0;
     out->n_iter = hmm->n_iter;
-    out->llk = (double) hmm->llh;
-    out->aic = (double) hmm->aic;
-    out->bic = (double) hmm->bic;
+    out->llk    = (double) hmm->llh;
+    out->aic    = (double) hmm->aic;
 
     for (size_t i = 0; i < hmm->m_states; i++)
     {
@@ -95,7 +94,7 @@ PyCh_PoisHmm_Set (PyCh_PoisHmm *out, PoisHmm *hmm)
 
     PyArray_CopyInto ((PyArrayObject *) out->lalpha, (PyArrayObject *) wrap_lalpha);
     PyArray_CopyInto ((PyArrayObject *) out->lbeta,  (PyArrayObject *) wrap_lbeta);
-    PyArray_CopyInto ((PyArrayObject *) out->lcsp,  (PyArrayObject *) wrap_lcsp);
+    PyArray_CopyInto ((PyArrayObject *) out->lcsp,   (PyArrayObject *) wrap_lcsp);
 }
 
 
@@ -114,12 +113,12 @@ poishmm_fit (PyObject *self, PyObject *args)
     PyArrayObject *arr_inp    = NULL;
 
 
-    DataSet inp = { NULL, 0, false };
-    PoisHmm hmm = { true, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, NULL, NULL, NULL };
-    PoisParams *init = NULL;
-    PoisParams *working = NULL;
-    PoisProbs *probs = NULL;
-    PyCh_PoisHmm *out = NULL;
+    DataSet      inp      = { NULL, 0, false };
+    PoisHmm      hmm      = { true, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, NULL, NULL, NULL };
+    PoisParams   *init    = NULL;
+    PoisParams   *working = NULL;
+    PoisProbs    *probs   = NULL;
+    PyCh_PoisHmm *out     = NULL;
 
     double tol_buffer = 0;
     if (!PyArg_ParseTuple (args, "llldOOOO",
@@ -145,9 +144,9 @@ poishmm_fit (PyObject *self, PyObject *args)
         goto fail;
     }
 
-    init = PoisParams_New (hmm.m_states);
+    init    = PoisParams_New (hmm.m_states);
     working = PoisParams_New (hmm.m_states);
-    probs = PoisProbs_New (hmm.n_obs, hmm.m_states);
+    probs   = PoisProbs_New  (hmm.n_obs, hmm.m_states);
 
     if ((init == NULL) || (working == NULL) || (probs == NULL))
     {
@@ -161,11 +160,11 @@ poishmm_fit (PyObject *self, PyObject *args)
     PoisParams_SetDelta  (init, PyArray_DATA (arr_delta));
     PoisParams_CopyLog   (init, working);
 
-    hmm.init = init;
+    hmm.init   = init;
     hmm.params = working;
-    hmm.probs = probs;
-    inp.size = PyArray_SIZE (arr_inp);
-    inp.data = PyArray_DATA (arr_inp);
+    hmm.probs  = probs;
+    inp.size   = PyArray_SIZE (arr_inp);
+    inp.data   = PyArray_DATA (arr_inp);
 
     PoisHmm_EstimateParams (&hmm, &inp);
     if (hmm.err)
@@ -203,16 +202,17 @@ static PyObject *
 poishmm_read_params (PyObject *self, PyObject *args)
 {
     UNUSED (self);
-    char *path = NULL;
-    PoisParams *params = NULL;
-    PyObject *arr_lambda = NULL;
-    PyObject *arr_delta  = NULL;
-    PyObject *arr_gamma  = NULL;
-    PyObject *out_lambda = NULL;
-    PyObject *out_delta  = NULL;
-    PyObject *out_gamma  = NULL;
-    PyObject *out_states = NULL;
-    PyObject *out = NULL;
+
+    char       *path       = NULL;
+    PoisParams *params     = NULL;
+    PyObject   *arr_lambda = NULL;
+    PyObject   *arr_delta  = NULL;
+    PyObject   *arr_gamma  = NULL;
+    PyObject   *out_lambda = NULL;
+    PyObject   *out_delta  = NULL;
+    PyObject   *out_gamma  = NULL;
+    PyObject   *out_states = NULL;
+    PyObject   *out        = NULL;
 
     if (!PyArg_ParseTuple (args, "s", &path))
     {

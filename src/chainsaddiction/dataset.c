@@ -32,8 +32,8 @@ DataSet_New (const size_t n_elem)
 DataSet *
 DataSet_NewFromFile (const char *path)
 {
-    size_t n_elem = 0;
-    FILE   *file  = Ca_OpenFile (path, "r");
+    size_t  n_elem = 0;
+    FILE    *file  = Ca_OpenFile (path, "r");
     DataSet *this  = DataSet_NewEmpty ();
 
     Ca_CountLines (file, &n_elem);
