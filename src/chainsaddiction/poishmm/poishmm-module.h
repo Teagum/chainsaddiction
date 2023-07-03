@@ -13,7 +13,6 @@
 #include "poishmm/pois-params.h"
 #include "poishmm/poishmm-object.h"
 
-
 #define poishmm_fit_doc                                                 \
     "Estimate HMM parameters given an observation time series by "      \
     "Expectation Maximization\n\n"                                      \

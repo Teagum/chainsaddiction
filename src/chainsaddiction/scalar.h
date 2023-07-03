@@ -8,11 +8,11 @@
 #endif
 
 #ifdef _NO_LD_MATH
-    #define SF "%15.5f"
+    #define SF  "%15.5f"
     #define SFN "%15.5f\n"
     #define RSF "%40lf"
 #else
-    #define SF "%15.5Lf"
+    #define SF  "%15.5Lf"
     #define SFN "%15.5Lf\n"
     #define RSF "%40Lf"
 #endif

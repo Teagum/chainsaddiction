@@ -36,18 +36,18 @@ PyCh_PoisHmm_Set (PyCh_PoisHmm *out, PoisHmm *hmm);
 
 
 static PyMemberDef PyCh_PoisHmm_members[] = {
-    {"err", T_INT, offsetof (PyCh_PoisHmm, err), 0, "Error number"},
-    {"n_iter", T_ULONG, offsetof (PyCh_PoisHmm, n_iter), 0, "Number of iterations"},
-    {"llk", T_DOUBLE, offsetof (PyCh_PoisHmm, llk), 0, "Log likelihood"},
-    {"aic", T_DOUBLE, offsetof (PyCh_PoisHmm, aic), 0, "Akaike information criterion"},
-    {"bic", T_DOUBLE, offsetof (PyCh_PoisHmm, bic), 0, "Bayesian information criterion"},
-    {"m_states", T_ULONG, offsetof (PyCh_PoisHmm, m_states), 0, "Number of states"},
-    {"lambda_", T_OBJECT, offsetof (PyCh_PoisHmm, lambda), 0, "State-dependent means"},
-    {"gamma_", T_OBJECT, offsetof (PyCh_PoisHmm, gamma), 0, "Transition probability matrix"},
-    {"delta_", T_OBJECT, offsetof (PyCh_PoisHmm, delta), 0, "Initial distribution"},
-    {"lalpha", T_OBJECT, offsetof (PyCh_PoisHmm, lalpha), 0, "Forward probabilities"},
-    {"lbeta", T_OBJECT, offsetof (PyCh_PoisHmm, lbeta), 0, "Backward probabilities"},
-    {"lcsp", T_OBJECT, offsetof (PyCh_PoisHmm, lcsp), 0, "Log of the conditional expectations"},
+    {"err",         T_INT,      offsetof (PyCh_PoisHmm, err),       0, "Error number"},
+    {"n_iter",      T_ULONG,    offsetof (PyCh_PoisHmm, n_iter),    0, "Number of iterations"},
+    {"llk",         T_DOUBLE,   offsetof (PyCh_PoisHmm, llk),       0, "Log likelihood"},
+    {"aic",         T_DOUBLE,   offsetof (PyCh_PoisHmm, aic),       0, "Akaike information criterion"},
+    {"bic",         T_DOUBLE,   offsetof (PyCh_PoisHmm, bic),       0, "Bayesian information criterion"},
+    {"m_states",    T_ULONG,    offsetof (PyCh_PoisHmm, m_states),  0, "Number of states"},
+    {"lambda_",     T_OBJECT,   offsetof (PyCh_PoisHmm, lambda),    0, "State-dependent means"},
+    {"gamma_",      T_OBJECT,   offsetof (PyCh_PoisHmm, gamma),     0, "Transition probability matrix"},
+    {"delta_",      T_OBJECT,   offsetof (PyCh_PoisHmm, delta),     0, "Initial distribution"},
+    {"lalpha",      T_OBJECT,   offsetof (PyCh_PoisHmm, lalpha),    0, "Forward probabilities"},
+    {"lbeta",       T_OBJECT,   offsetof (PyCh_PoisHmm, lbeta),     0, "Backward probabilities"},
+    {"lcsp",        T_OBJECT,   offsetof (PyCh_PoisHmm, lcsp),      0, "Log of the conditional expectations"},
     {NULL, -1, 0, 0, NULL}  /* Sentinel */
 };
 
@@ -55,7 +55,7 @@ static PyMemberDef PyCh_PoisHmm_members[] = {
 static PyTypeObject PyCh_PoisHmm_Type = {
     PyVarObject_HEAD_INIT (NULL, 0)
     .tp_name = "poishmm.PoisHmm",
-    .tp_doc = "Hidden Markov Model with Poiss-distributet latent variables.",
+    .tp_doc = "Hidden Markov Model with Poisson-distributed latent variables.",
     .tp_basicsize = sizeof (PyCh_PoisHmm),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,

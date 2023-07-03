@@ -31,9 +31,9 @@ Ca_OpenFile (const char *path, const char *mode);
 
 /** Close an open file stream.
   *
-  *\param[in]   file    Open file stream.
+  * \param[in]   file    Open file stream.
   *
-  *\return  0 on suceess, `EOF` on failure.
+  * \return  0 on suceess, `EOF` on failure.
 */
 extern int
 Ca_CloseFile (FILE *file);
@@ -43,10 +43,10 @@ Ca_CloseFile (FILE *file);
  *
  * Numbers have to be separated by newline.
  *
- *\param[in]   file    Open file stream.
- *\param[out]  target  Pointer to allocated memory.
+ * \param[in]   file    Open file stream.
+ * \param[out]  target  Pointer to allocated memory.
  *
- *\return  Number of read lines.
+ * \return  Number of read lines.
 */
 extern size_t
 Ca_ReadDataFile (FILE *stream, size_t n_lines, scalar *target);
