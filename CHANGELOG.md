@@ -1,3 +1,7 @@
+## 0.2.4
+* update type hints
+* minor code clean up
+
 ## 0.2.3
 * fix allocation error (#8bc79f) 
 * fix unused parameter warnings in gcc (#26037d)
