@@ -25,7 +25,7 @@ buildcore: &buildcore
 jobs:
   build-win:
     runs-on: windows-latest
-      <<: *buildcore
+    <<: *buildcore
 
   build-mac:
     runs-on: macos-latest
