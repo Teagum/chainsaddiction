@@ -35,14 +35,14 @@ jobs:
           path: dist/*.whl
 
       - name: Upload zip source dist
-        if: matrix.python-version == "3.11" && matrix.target == "windows-latest"
+        if: matrix.python-version == '3.11' && matrix.target == 'windows-latest'
         uses: actions/upload-artifact@v3
         with:
           name: "ca-sdist-zip"
           path: dist/*.tar.gz
 
       - name: Upload tar source dist
-        if: matrix.python-version == "3.11" && matrix.target == "macos-latest"
+        if: matrix.python-version == '3.11' && matrix.target == 'macos-latest'
         uses: actions/upload-artifact@v3
         with:
           name: "ca-sdist-tar-gz"
