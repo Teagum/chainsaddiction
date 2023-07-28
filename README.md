@@ -9,30 +9,26 @@ Python extension module.
 
 
 ## Installation
-### Prerequisites
+### Install from PyPi
 
-The installation of ChainsAddiction requires to following tools to be installed
-on your system:
+We currently provide wheels for macOS and Windows AMD 64, which you can install from PyPI via:
+
+    python3 -m pip install chainsaddiction
+
+Linux users have to build from source until we get that manylinux thing running.
+
+
+### Install from source
+
+Before attemting to build ChainsAddiction from source, make sure you have
 
 - Python >= 3.9
 - pip, setuptools
 - C compiler
 
+installed and ready to go.
 
-### Install from PyPi
-
-You can install chainsaddiction from PyPi with:
-
-    python3 -m pip install chainsaddiction
-
-Please note that ChainsAddiction is a CPython extension module. You have to
-have set up a C compiler in order to install. Currently we provide wheels for
-macOS. So, if you are using this OS you do not need a compiler.
-
-
-### Install from source
-
-First, clone the source code by typing the following command in your terminal app.
+Then, clone the source code by typing the following command in your terminal app.
 Replace `path/to/ca` with the path to where ChainsAddiction should be cloned:
 
     git clone https://github.com/teagum/chainsaddiction path/to/ca

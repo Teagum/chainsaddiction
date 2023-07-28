@@ -4,9 +4,6 @@ on: [push]
 
 jobs:
   build-linux:
-    strategy:
-      matrix:
-        python-version: ["3.9", "3.10", "3.11"]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -15,7 +12,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
@@ -25,14 +22,7 @@ jobs:
       - name: Build the package
         run: python -m build
 
-      - name: Upload wheels
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ format('chainsaddiction-ubuntu-{0}', matrix.python-version) }}
-          path: dist/*.whl
-
       - name: Upload source distribution
-        if: matrix.python-version == '3.11'
         uses: actions/upload-artifact@v3
         with:
           name: "chainsaddiction-sdist-tgz"
