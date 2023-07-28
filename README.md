@@ -1,3 +1,6 @@
+[![build](https://github.com/Teagum/chainsaddiction/actions/workflows/build.yml/badge.svg)](
+https://github.com/Teagum/chainsaddiction/actions/workflows/build.yml)
+
 # ChainsAddiction
 
 ChainsAddiction is an easy to use tool for time series analysis using
