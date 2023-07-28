@@ -4,6 +4,9 @@ on: [push]
 
 jobs:
   build-linux:
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -64,6 +67,7 @@ jobs:
           name: ${{ format('chainsaddiction-windows-{0}', matrix.python-version) }}
           path: dist/*.whl
 
+
   build-windows:
     strategy:
       matrix:
@@ -91,10 +95,3 @@ jobs:
         with:
           name: ${{ format('chainsaddiction-windows-{0}', matrix.python-version) }}
           path: dist/*.whl
-
-      - name: Upload source distribution
-        if: matrix.python-version == '3.11'
-        uses: actions/upload-artifact@v3
-        with:
-          name: "chainsaddiction-sdist-zip"
-          path: dist/*.zip
