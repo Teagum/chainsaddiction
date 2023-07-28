@@ -112,7 +112,8 @@ jobs:
         with:
           path: ./artifacts
       - name: Prepare artifacts
-        run: mkdir ./dist
-        run: cp ./artifacts/**/*.{whl,zip,tar.gz} ./dist
+        run: |
+          mkdir ./dist
+          cp ./artifacts/**/*.{whl,zip,tar.gz} ./dist
       - name: Upload files
         uses: pypa/gh-action-pypi-publish@f8c70e7
