@@ -114,6 +114,6 @@ jobs:
       - name: Prepare artifacts
         run: |
           mkdir ./dist
-          cp ./artifacts/**/*.{whl,zip,tar.gz} ./dist
+          cp ./artifacts/**/*.{whl,tar.gz} ./dist
       - name: Upload files
         uses: pypa/gh-action-pypi-publish@f8c70e705ffc13c3b4d1221169b84f12a75d6ca8
