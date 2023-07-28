@@ -30,4 +30,5 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v3
         with:
+          name: ${{ format('chainsaddiction-ubuntu-{0}', matrix.python-version }}
           path: dist/*.whl
