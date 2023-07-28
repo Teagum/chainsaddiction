@@ -32,3 +32,11 @@ jobs:
         with:
           name: ${{ format('chainsaddiction-ubuntu-{0}', matrix.python-version) }}
           path: dist/*.whl
+
+      - name: Upload source distribution
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v3
+        with:
+          name: "chainsaddiction-sdist"
+          path: dist/*.tar.gz
+
