@@ -1,4 +1,4 @@
-name: build
+name: build-windows
 
 on: [push]
 
@@ -7,9 +7,8 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11"]
-        target: ["macos-latest", "windows-latest"]
 
-    runs-on: ${{ matrix.target }}
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repo
@@ -31,19 +30,12 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v3
         with:
-          name: format('ca-whl-{0}-{1}', matrix.python-version, matrix.target)
+          name: ${{ format('chainsaddiction-windows-{0}', matrix.python-version) }}
           path: dist/*.whl
 
-      - name: Upload zip source dist
-        if: matrix.python-version == '3.11' && matrix.target == 'windows-latest'
+      - name: Upload source distribution
+        if: matrix.python-version == '3.11'
         uses: actions/upload-artifact@v3
         with:
-          name: "ca-sdist-zip"
-          path: dist/*.tar.gz
-
-      - name: Upload tar source dist
-        if: matrix.python-version == '3.11' && matrix.target == 'macos-latest'
-        uses: actions/upload-artifact@v3
-        with:
-          name: "ca-sdist-tar-gz"
-          path: dist/*.tar.gz
+          name: "chainsaddiction-sdist-zip"
+          path: dist/*.zip

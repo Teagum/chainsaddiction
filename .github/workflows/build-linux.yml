@@ -1,4 +1,4 @@
-name: build-manylinux
+name: build-linux
 
 on: [push]
 
@@ -37,6 +37,5 @@ jobs:
         if: matrix.python-version == '3.11'
         uses: actions/upload-artifact@v3
         with:
-          name: "chainsaddiction-sdist"
+          name: "chainsaddiction-sdist-tgz"
           path: dist/*.tar.gz
-
