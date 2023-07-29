@@ -37,7 +37,6 @@ utils = Extension('chainsaddiction.utils',
             'src/chainsaddiction/utils',
             np.get_include(),
         ],
-        extra_compile_args = ['-Wall', '-Wextra'],
         language = 'c')
 
 poishmm = Extension('chainsaddiction.poishmm',
@@ -49,7 +48,6 @@ poishmm = Extension('chainsaddiction.poishmm',
             'src/chainsaddiction/poishmm',
             np.get_include()
         ],
-        extra_compile_args = ['-Wall', '-Wextra'],
         language = 'c')
 
 
