@@ -1,6 +1,6 @@
 [project]
 name = "chainsaddiction"
-version = "0.2.5-dev0"
+version = "0.2.5-dev1"
 authors = [{name = "Michael Blaß", email = "mblass@posteo.net"}]
 description = "HMM with Poisson-distributed latent variables."
 keywords = ["hmm", "poisson", "hidden-markov model"]
