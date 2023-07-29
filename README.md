@@ -1,6 +1,9 @@
 [![publish-releases](https://github.com/Teagum/chainsaddiction/actions/workflows/release.yml/badge.svg)](
 https://github.com/Teagum/chainsaddiction/actions/workflows/release.yml)
 
+[![tests](https://github.com/Teagum/chainsaddiction/actions/workflows/test.yml/badge.svg)](
+https://github.com/Teagum/chainsaddiction/actions/workflows/test.yml)
+
 # ChainsAddiction
 
 ChainsAddiction is an easy to use tool for time series analysis using
