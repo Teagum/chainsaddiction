@@ -330,7 +330,7 @@ m_log_centroid_cols (
 
     if (sum_per_col == NULL || w_sum_per_col == NULL || max_per_col == NULL)
     {
-        fputs ("Virtual memory exhausted in `m_lse_centroid_rows'.", stderr);
+        fputs ("Virtual memory exhausted in `m_lse_centroid_cols'.", stderr);
         err = 1;
     }
     else
@@ -407,7 +407,7 @@ m_col_max (
 {
     if (n_rows == 0 && n_cols == 0)
     {
-        fprintf (stderr, "Maximum of zero sized buffer if not defined.\n");
+        fprintf (stderr, "Maximum of zero sized buffer is not defined.\n");
         return VM_ERR_ZERO_SIZED_BUFFER;
     }
     size_t n_elem = n_rows * n_cols;
@@ -428,7 +428,7 @@ m_col_absmax (
 {
     if (n_rows == 0 && n_cols == 0)
     {
-        fprintf (stderr, "Absolute maximum of zero sized buffer if not defined.\n");
+        fprintf (stderr, "Absolute maximum of zero sized buffer is not defined.\n");
         return VM_ERR_ZERO_SIZED_BUFFER;
     }
     size_t n_elem = n_rows * n_cols;
