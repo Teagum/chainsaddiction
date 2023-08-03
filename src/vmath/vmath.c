@@ -407,7 +407,7 @@ m_col_max (
 {
     if (n_rows == 0 && n_cols == 0)
     {
-        fprintf (stderr, "Maximum of zero sized buffer is not defined.\n");
+        fputs ("Maximum of zero sized buffer is not defined.\n", stderr);
         return VM_ERR_ZERO_SIZED_BUFFER;
     }
     size_t n_elem = n_rows * n_cols;
@@ -428,7 +428,7 @@ m_col_absmax (
 {
     if (n_rows == 0 && n_cols == 0)
     {
-        fprintf (stderr, "Absolute maximum of zero sized buffer is not defined.\n");
+        fputs ("Absolute maximum of zero sized buffer is not defined.\n", stderr);
         return VM_ERR_ZERO_SIZED_BUFFER;
     }
     size_t n_elem = n_rows * n_cols;
