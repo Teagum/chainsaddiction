@@ -1,4 +1,5 @@
 #include "unittest.h"
+#include "test_core.h"
 #include "test_vmath.h"
 #include "test_rnd.h"
 
@@ -7,6 +8,7 @@ int main (void)
 {
     SETUP;
 
+    RUN_TEST (test__acc_prod);
     RUN_TEST (test__rnd_int);
     RUN_TEST (test__v_rnd_int);
     RUN_TEST (test__rnd_scalar);

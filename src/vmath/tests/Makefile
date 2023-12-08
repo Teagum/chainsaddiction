@@ -12,12 +12,13 @@ vpath %.h ..
 vpath %.h $(top_include)
 vpath %.h $(unittest_include)
 
-tobjs := test_rnd.o test_stats.o test_vmath.o
+tobjs := test_core.o test_rnd.o test_stats.o test_vmath.o
 CFLAGS += -iquote$(lib_inlcude) -iquote$(top_include) -iquote$(unittest_include)
 LDFLAGS := -L../ -lvmath
 
 all: vmath.test 
 
+test_core.o: test_rnd.h core.h unittest.h
 test_rnd.o: test_rnd.h rnd.h unittest.h
 test_stats.o: test_stats.h stats.h rnd.h unittest.h 
 test_vmath.o: test_vmath.h vmath.h rnd.h unittest.h
