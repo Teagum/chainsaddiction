@@ -8,6 +8,11 @@
 #define YELLOW "\x1b[34m"
 #define CLEAR "\x1b[0m"
 
+#ifdef _NO_LD_MATH
+	#define FMT "%10.5f "
+#else
+	#define FMT "%10.5Lf "
+#endif
 
 #define print_vector(n, vct) do {                                   \
     NEWLINE;                                                        \
@@ -18,7 +23,7 @@
     NEWLINE;                                                        \
     fprintf (stderr, "%6c", ' ');                                   \
     for (size_t i = 0; i < n; i++) {                                \
-        fprintf (stderr, "%10.5Lf ",  (scalar)(vct)[i]);            \
+        fprintf (stderr, FMT,  (scalar)(vct)[i]);            \
     }                                                               \
     NEWLINE;                                                        \
 } while (0)
@@ -34,7 +39,7 @@
     fprintf (stderr, "%6c", ' ');                                   \
     for (size_t i = 0; i < n; i++) {                                \
         scalar val = expl ((scalar)(vct)[i]);                       \
-        fprintf (stderr, "%10.5Lf ",  val);                         \
+        fprintf (stderr, FMT,  val);                         \
     }                                                               \
     NEWLINE;                                                        \
 } while (0)
@@ -50,7 +55,7 @@
     for (size_t i = 0; i < rows; i++) {                             \
         fprintf (stderr, GREEN "[%3zu] " CLEAR, i);                 \
         for (size_t j = 0; j < cols; j++) {                         \
-            fprintf (stderr, "%10.5Lf ", (scalar)(mtx)[i*cols+j]);  \
+            fprintf (stderr, FMT, (scalar)(mtx)[i*cols+j]);  \
         }                                                           \
         NEWLINE;                                                    \
     }                                                               \
@@ -68,7 +73,7 @@
         fprintf (stderr, GREEN "[%3zu] " CLEAR, i);                 \
         for (size_t j = 0; j < cols; j++) {                         \
             scalar val = expl ((scalar)(mtx)[i*cols+j]);            \
-            fprintf (stderr, "%10.5Lf ", val);                      \
+            fprintf (stderr, FMT, val);                      	\
         }                                                           \
         NEWLINE;                                                    \
     }                                                               \

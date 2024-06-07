@@ -10,8 +10,12 @@
 
 #ifdef _NO_LD_MATH
 typedef double scalar;
+#define LOG log
+#define EXP exp
 #else
 typedef	long double	scalar;
+#define LOG logl
+#define EXP expl
 #endif
 
 #define VM_NAN nanl ("CA_NAN")
