@@ -63,12 +63,12 @@ PyCh_PoisHmm_Set (PyCh_PoisHmm *out, PoisHmm *hmm)
 {
     const npy_intp dims_data[] = { (npy_intp) hmm->n_obs, (npy_intp) hmm->m_states };
 
-    long double *lambda_out = (long double *) PyArray_DATA ((PyArrayObject *) out->lambda);
-    long double *gamma_out  = (long double *) PyArray_DATA ((PyArrayObject *) out->gamma);
-    long double *delta_out  = (long double *) PyArray_DATA ((PyArrayObject *) out->delta);
-    long double *lambda_est = hmm->params->lambda;
-    long double *gamma_est  = hmm->params->gamma;
-    long double *delta_est  = hmm->params->delta;
+    scalar *lambda_out = (scalar *) PyArray_DATA ((PyArrayObject *) out->lambda);
+    scalar *gamma_out  = (scalar *) PyArray_DATA ((PyArrayObject *) out->gamma);
+    scalar *delta_out  = (scalar *) PyArray_DATA ((PyArrayObject *) out->delta);
+    scalar *lambda_est = hmm->params->lambda;
+    scalar *gamma_est  = hmm->params->gamma;
+    scalar *delta_est  = hmm->params->delta;
 
     PyObject *wrap_lalpha = PyArray_SimpleNewFromData (PyCh_DATA, dims_data,
                                 NPY_LONGDOUBLE, (void *) hmm->probs->lalpha);
@@ -130,7 +130,7 @@ poishmm_fit (PyObject *self, PyObject *args)
     {
         return NULL;
     }
-    hmm.tol = (long double) tol_buffer;
+    hmm.tol = (scalar) tol_buffer;
 
     arr_lambda = PyArray_NEW_LD (arg_lambda);
     arr_gamma  = PyArray_NEW_LD (arg_gamma);
