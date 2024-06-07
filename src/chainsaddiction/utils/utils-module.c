@@ -47,7 +47,7 @@ local_decoding_impl (PyObject *self, PyObject *args)
     arr_decoding = (PyArrayObject *) pyo_decoding;
 
     local_decoding ((size_t) shape[0], (size_t) shape[1],
-            (long double *) PyArray_DATA (arr_lcsp),
+            (scalar *) PyArray_DATA (arr_lcsp),
             (size_t *) PyArray_DATA (arr_decoding));
 
     Py_DECREF (arr_lcsp);
@@ -133,9 +133,9 @@ global_decoding_impl (PyObject *self, PyObject *args)
     arr_states = (PyArrayObject *) pyo_states;
 
     global_decoding ((size_t) shape_lcsp[0], (size_t) shape_lcsp[1],
-            (long double *) PyArray_DATA (arr_lgamma),
-            (long double *) PyArray_DATA (arr_ldelta),
-            (long double *) PyArray_DATA (arr_lcsp),
+            (scalar *) PyArray_DATA (arr_lgamma),
+            (scalar *) PyArray_DATA (arr_ldelta),
+            (scalar *) PyArray_DATA (arr_lcsp),
             (size_t *) PyArray_DATA (arr_states));
 
     Py_DECREF (arr_lgamma);
