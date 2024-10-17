@@ -156,7 +156,11 @@ PoisHmm_Summary (const PoisHmm *const restrict this)
     fprintf (stderr, "\n%s\n", border);
     PoisParams_Print (this->params);
     fprintf (stderr, "\n%s\n", border);
+#ifdef _NO_LD_MATH
+    fprintf (stderr, "%10s%zu\n%10s%f\n%10s%f\n%10s%f\n",
+#else
     fprintf (stderr, "%10s%zu\n%10s%Lf\n%10s%Lf\n%10s%Lf\n",
+#endif
             "n_iter: ", this->n_iter,
             "AIC: ", this->aic,
             "BIC: ", this->bic,

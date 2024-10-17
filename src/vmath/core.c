@@ -68,7 +68,7 @@ acc_prod (size_t n_elem, size_t stride, const scalar *restrict vtx,
 {
     for (size_t i = 0; i < n_elem; i+=stride)
     {
-        *res += (*vtx);
+        *res *= (*vtx);
         vtx+=stride;
     }
 }

@@ -18,7 +18,7 @@ def gen_init_params(m_states: int, data: np.ndarray) -> tuple:
 
 
 def load_data(path: Union[str, Path], file: Union[str, Path],
-              dtype: str = 'float128'):
+              dtype: str = "longdouble"):
     """
     Load test data from file.
     """

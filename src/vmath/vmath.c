@@ -62,14 +62,14 @@ v_sum (size_t n_elem, const scalar *restrict vtx)
 inline scalar
 v_sumlog (size_t n_elem, const scalar *restrict vtx)
 {
-    return v_acc_sum (n_elem, 1, logl, vtx);
+    return v_acc_sum (n_elem, 1, LOG, vtx);
 }
 
 
 inline scalar
 v_sumexp (size_t n_elem, const scalar *restrict vtx)
 {
-    return v_acc_sum (n_elem, 1, expl, vtx);
+    return v_acc_sum (n_elem, 1, EXP, vtx);
 }
 
 
@@ -80,9 +80,9 @@ v_lse (size_t n_elem, const scalar *restrict vtx)
     scalar sum_exp = 0;
     for (size_t i = 0; i < n_elem; i++, vtx++)
     {
-        sum_exp += expl (*vtx - max_val);
+        sum_exp += EXP (*vtx - max_val);
     }
-    return logl (sum_exp) + max_val;
+    return LOG (sum_exp) + max_val;
 }
 
 
@@ -113,7 +113,7 @@ v_argmax (size_t n_elem, const scalar *restrict vtx)
 {
     size_t arg = n_elem;
     size_t cnt = n_elem;
-    const long double *max_ptr = vtx;
+    const scalar *max_ptr = vtx;
     while (--cnt) {
         if (*++vtx >= *max_ptr)
         {
@@ -130,7 +130,7 @@ v_argmin (size_t n_elem, const scalar *restrict vtx)
 {
     size_t arg = n_elem;
     size_t cnt = n_elem;
-    const long double *max_ptr = vtx;
+    const scalar *max_ptr = vtx;
     while (--cnt) {
         if (*++vtx <= *max_ptr)
         {
@@ -146,8 +146,8 @@ v_argmin (size_t n_elem, const scalar *restrict vtx)
  * Vectorized transforms
  */
 
-def_v_op (exp, expl)
-def_v_op (log, logl)
+def_v_op (exp, EXP)
+def_v_op (log, LOG)
 def_v_op (logr1, logr1)
 
 
@@ -159,7 +159,7 @@ v_softmax (size_t n_elem, const scalar *restrict vtx, scalar *restrict out)
 
     for (size_t i = 0; i < n_elem; i++)
     {
-        *iter = expl (*vtx);
+        *iter = EXP (*vtx);
         total += *iter;
         iter++;
         vtx++;
@@ -192,8 +192,8 @@ v_log_normalize (
  * Vectorized inplace transforms
  */
 
-def_vi_op(exp, expl)
-def_vi_op(log, logl)
+def_vi_op(exp, EXP)
+def_vi_op(log, LOG)
 def_vi_op(logr1, logr1)
 
 
@@ -205,7 +205,7 @@ vi_softmax (size_t n_elem, scalar *vtx)
 
     for (size_t i = 0; i < n_elem; i++)
     {
-        *iter = expl (*iter);
+        *iter = EXP (*iter);
         total += *iter;
         iter++;
     }
@@ -287,11 +287,11 @@ vs_lse_centroid (
 
     for (size_t i = 0; i < n_elem; i++, vt+=v_stride, weights+=w_stride)
     {
-        scalar _buff = expl (*vt - max_val);
+        scalar _buff = EXP (*vt - max_val);
         sum_exp += _buff;
         sum_exp_w += _buff * (*weights);
     }
-    return logl (sum_exp_w/sum_exp);
+    return LOG (sum_exp_w/sum_exp);
 }
 
 
@@ -330,7 +330,7 @@ m_log_centroid_cols (
 
     if (sum_per_col == NULL || w_sum_per_col == NULL || max_per_col == NULL)
     {
-        fputs ("Virtual memory exhausted in `m_lse_centroid_rows'.", stderr);
+        fputs ("Virtual memory exhausted in `m_lse_centroid_cols'.", stderr);
         err = 1;
     }
     else
@@ -339,7 +339,7 @@ m_log_centroid_cols (
         for (size_t i = 0; i < n_rows*n_cols; i++)
         {
             size_t c = i % n_cols;
-            scalar exp_val = expl (mtx[i] - max_per_col[c]);
+            scalar exp_val = EXP (mtx[i] - max_per_col[c]);
             sum_per_col[c] += exp_val;
             w_sum_per_col[c] += exp_val * wgt[i/n_cols];
         }
@@ -347,7 +347,7 @@ m_log_centroid_cols (
         for (size_t i = 0; i < n_cols; i++)
         {
             /* ceck for division by zero */
-            centroid_in_col[i] = logl (w_sum_per_col[i] / sum_per_col[i]);
+            centroid_in_col[i] = LOG (w_sum_per_col[i] / sum_per_col[i]);
         }
         err = 0;
     }
@@ -407,7 +407,7 @@ m_col_max (
 {
     if (n_rows == 0 && n_cols == 0)
     {
-        fprintf (stderr, "Maximum of zero sized buffer if not defined.\n");
+        fputs ("Maximum of zero sized buffer is not defined.\n", stderr);
         return VM_ERR_ZERO_SIZED_BUFFER;
     }
     size_t n_elem = n_rows * n_cols;
@@ -428,7 +428,7 @@ m_col_absmax (
 {
     if (n_rows == 0 && n_cols == 0)
     {
-        fprintf (stderr, "Absolute maximum of zero sized buffer if not defined.\n");
+        fputs ("Absolute maximum of zero sized buffer is not defined.\n", stderr);
         return VM_ERR_ZERO_SIZED_BUFFER;
     }
     size_t n_elem = n_rows * n_cols;
@@ -525,10 +525,10 @@ vm_multiply_log (
 
         acc_data = acc;
         for (size_t j = 0; j < rows; j++) {
-            *prod += expl (*acc_data++ - row_max);
+            *prod += EXP (*acc_data++ - row_max);
         }
 
-        *prod = logl (*prod) + row_max;
+        *prod = LOG (*prod) + row_max;
         prod++;
     }
 }
@@ -587,9 +587,9 @@ mv_multiply_log (
         acc_data = acc;
         for (size_t j = 0; j < cols; j++)
         {
-            *prod += expl (*acc_data++ - row_max);
+            *prod += EXP (*acc_data++ - row_max);
         }
-        *prod = logl (*prod) + row_max;
+        *prod = LOG (*prod) + row_max;
 
         prod++;
         vt_data = vtx;
@@ -672,7 +672,7 @@ logr1 (scalar val)
 {
     if (isnormal (val))
     {
-        return logl (val);
+        return LOG (val);
     }
     else
     {
