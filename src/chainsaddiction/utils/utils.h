@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "chainsaddiction.h"
 #include "libvmath.h"
+#include "scalar.h"
 
 
 /* Compute Akaine Information criterion. */

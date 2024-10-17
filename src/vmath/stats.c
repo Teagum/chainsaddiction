@@ -6,7 +6,7 @@ poisson_logpmf (
     const scalar qnt,
     const scalar lambda)
 {
-    return qnt * logl (lambda) - lgamma (qnt + 1) - lambda;
+    return qnt * LOG (lambda) - lgamma (qnt + 1) - lambda;
 }
 
 
@@ -15,7 +15,7 @@ poisson_pmf (
     const scalar qnt,
     const scalar lambda)
 {
-    return expl (poisson_logpmf (lambda, qnt));
+    return EXP (poisson_logpmf (lambda, qnt));
 }
 
 
