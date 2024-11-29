@@ -2,7 +2,6 @@
 ChaisAddiction testing utilities
 """
 from pathlib import Path
-from typing import Union
 
 import numpy as np
 
@@ -17,7 +16,7 @@ def gen_init_params(m_states: int, data: np.ndarray) -> tuple:
     return init_lambda, init_gamma, init_delta
 
 
-def load_data(path: Union[str, Path], file: Union[str, Path],
+def load_data(path: Path | str, file: Path | str,
               dtype=np.longdouble):
     """
     Load test data from file.
