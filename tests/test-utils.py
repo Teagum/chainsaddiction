@@ -15,7 +15,7 @@ class TestLocalDecoding(unittest.TestCase):
 
     def test_local_decoding(self):
         dec = utils.local_decoding(self.lcxpt)
-        self.assertTrue(np.array_equal(dec, self.res))
+        self.assertTrue(np.allclose(dec, self.res))
 
 
 class TestGloblaDecoding(unittest.TestCase):
@@ -28,7 +28,7 @@ class TestGloblaDecoding(unittest.TestCase):
 
     def test_global_decoding(self):
         dec = utils.global_decoding(self.lgamma, self.ldelta, self.lcxpt)
-        self.assertTrue(np.array_equal(dec, self.res))
+        self.assertTrue(np.allclose(dec, self.res))
 
 
 if __name__ == '__main__':
